@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -227,7 +228,11 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                         LocalDate to = DateFormatUtility.parse(end);
                         criteria.between(from, to, true, false);
                     } catch (DateTimeParseException dtpe) {
-                        criteria = new SimpleStringCriteria(String.format("%s:%s", field, value));
+                        if (NumberUtils.isParsable(start) && NumberUtils.isParsable(end)) {
+                            criteria.between(Double.parseDouble(start), Double.parseDouble(end), true, false);
+                        } else {
+                            criteria = new SimpleStringCriteria(String.format("%s:%s", field, value));
+                        }
                     }
                 }
             } else {
@@ -260,6 +265,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             break;
         }
         return criteria;
+
     }
 
     @Override
