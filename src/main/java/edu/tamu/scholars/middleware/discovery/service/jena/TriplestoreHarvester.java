@@ -118,7 +118,7 @@ public class TriplestoreHarvester implements Harvester {
     }
 
     private void lookupProperties(AbstractIndexDocument document, String subject) {
-        propertySourceTypeOps.parallelStream().forEach(typeOp -> {
+        propertySourceTypeOps.stream().forEach(typeOp -> {
             try {
                 PropertySource source = typeOp.getPropertySource();
                 Model model = queryForModel(source, subject);
@@ -139,11 +139,12 @@ public class TriplestoreHarvester implements Harvester {
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("%s:\n%s", source.template(), query));
         }
+        System.out.println("<<<");
+        System.out.println(source.template() + ": " + subject);
         try (QueryExecution qe = triplestore.createQueryExecution(query)) {
             Model model = qe.execConstruct();
-            if (logger.isDebugEnabled()) {
-                model.write(System.out, "RDF/XML");
-            }
+            model.write(System.out, "RDF/XML");
+            System.out.println(">>>");
             return model;
         }
     }
