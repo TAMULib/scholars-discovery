@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/vivo-community/scholars-discovery.svg?branch=master)](https://travis-ci.org/vivo-community/scholars-discovery)
-[![Coverage Status](https://coveralls.io/repos/github/vivo-community/scholars-discovery/badge.svg?branch=master)](https://coveralls.io/github/vivo-community/scholars-discovery?branch=master)
+[![Java CI with Maven](https://github.com/TAMULib/scholars-discovery/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/TAMULib/scholars-discovery/actions?query=workflow%3A%22Java+CI+with+Maven%22)
+[![Coverage Status](https://coveralls.io/repos/github/TAMULib/scholars-discovery/badge.svg)](https://coveralls.io/github/TAMULib/scholars-discovery)
 
-# [scholars-discovery](https://vivo-community.github.io/scholars-discovery/)
+# scholars-discovery
 
 VIVO Scholars Discovery is a middleware project that pulls [VIVO](https://duraspace.org/vivo/) content into its own search index (Solr) and then exposes that content via a RESTful service endpoint.
 
@@ -9,6 +9,10 @@ Various frontend applications are available (or can be built) to display the con
 Existing frontend applications include:
 1. [VIVO Scholars Angular](https://github.com/vivo-community/scholars-angular)
 2. [VIVO Scholars React](https://github.com/vivo-community/scholars-react)
+
+# API
+
+[Scholars Middleware REST Service API Documentation](https://tamulib.github.io/scholars-discovery/)
 
 # Background
 
