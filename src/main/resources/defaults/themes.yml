@@ -63,6 +63,7 @@
           value: "#fff"
     variables: []
   footer:
+    copyright: © Scholars University Libraries
     links:
       - label: scholars.edu
         uri: https://scholars.edu/uPortal/
@@ -220,6 +221,7 @@
           value: "#fff"
     variables: []
   footer:
+    copyright: © Texas A&M University Libraries
     links:
       - label: howdy.tamu.edu
         uri: https://howdy.tamu.edu/uPortal/normal/render.uP
