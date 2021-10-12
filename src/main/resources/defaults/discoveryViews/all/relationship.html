@@ -1,0 +1,73 @@
+{{#inArray type "Grant"}}
+<div class="highlighted">
+  {{#if title}}
+  {{#if highlights.title}}
+  <a href="display/{{id}}">{{{highlights.title}}}</a>
+  {{else}}
+  <a href="display/{{id}}">{{title}}</a>
+  {{/if}}
+  {{else}}
+  <a href="display/{{id}}">No title available ({{id}})</a>
+  {{/if}}
+</div>
+<div>
+  <div>
+    {{#if dateTimeIntervalStart}}
+    {{#if dateTimeIntervalEnd}}
+    <span class="label">Date:</span>
+    <span>{{toYear dateTimeIntervalStart}}</span>
+    <span>-</span>
+    <span>{{toYear dateTimeIntervalEnd}}</span>
+    {{else}}
+    <span class="label">Date:</span>
+    <span>{{toYear dateTimeIntervalStart}}</span>
+    {{/if}}
+    {{else}}
+    {{#if dateTimeIntervalEnd}}
+    <span class="label">Date:</span>
+    <span>{{toYear dateTimeIntervalEnd}}</span>
+    {{/if}}
+    {{/if}}
+  </div>
+  {{#if awardedBy}}
+  <div>
+    <span class="label">Awarded By:</span>
+  </div>
+  <div class="highlighted">
+    <ul>
+      {{#each awardedBy}}
+      <li><span><a href="display/{{id}}">{{#if ./snippet}}{{{./snippet}}}{{else}}{{./label}}{{/if}}</a></span></li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+  {{#if contributors}}
+  <div>
+    <span class="label">Contributors:</span>
+  </div>
+  <div class="highlighted">
+    <ul>
+      {{#each contributors}}
+      <li>
+        <a href="display/{{id}}">{{#if ./snippet}}{{{./snippet}}}{{else}}{{./label}}{{/if}}</a>
+        <span class="badge badge-light">{{formalize role}}</span>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+</div>
+{{else}}
+<span>{{class}}: {{id}}</span>
+{{/inArray}}
+<style>
+  .highlighted em {
+    background: #E3D67F;
+    font-style: normal;
+  }
+
+  .label {
+    font-weight: 550;
+    margin-right: 2px;
+  }
+</style>

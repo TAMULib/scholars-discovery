@@ -56,7 +56,7 @@ public class Person extends Common {
     private List<String> positionType;
 
     @NestedMultiValuedProperty
-    @Indexed(type = "nested_whole_strings")
+    @Indexed(type = "nested_whole_strings", copyTo = "organization_nested_facets")
     @NestedObject(root = false, properties = { @Reference(value = "positionOrganizationParent", key = "parent") })
     @PropertySource(template = "person/positionOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private List<String> positionOrganization;
@@ -266,7 +266,7 @@ public class Person extends Common {
     @PropertySource(template = "person/selectedPublicationVenue", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private List<String> selectedPublicationVenue;
 
-    @Indexed(type = "nested_whole_strings")
+    @Indexed(type = "nested_whole_strings", copyTo = "tag_nested_facets")
     @PropertySource(template = "person/selectedPublicationTag", predicate = "http://purl.obolibrary.org/obo/ARG_0000015")
     private List<String> selectedPublicationTag;
 

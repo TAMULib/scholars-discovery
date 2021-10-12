@@ -55,7 +55,7 @@ public class Document extends Common {
 
     @NestedMultiValuedProperty
     @NestedObject(root = false)
-    @Indexed(type = "nested_whole_strings")
+    @Indexed(type = "nested_whole_strings", copyTo = "organization_nested_facets")
     @PropertySource(template = "document/authorOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> authorOrganization;
 
@@ -73,7 +73,7 @@ public class Document extends Common {
     @PropertySource(template = "document/status", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String status;
 
-    @Indexed(type = "pdate")
+    @Indexed(type = "pdate", copyTo = "year_date_facets")
     @PropertySource(template = "document/publicationDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String publicationDate;
 
@@ -315,7 +315,7 @@ public class Document extends Common {
     @PropertySource(template = "document/citationCount", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#CitationCount")
     private Integer citationCount;
 
-    @Indexed(type = "whole_strings")
+    @Indexed(type = "whole_strings", copyTo = "tag_nested_facets")
     @PropertySource(template = "document/tag", predicate = "http://purl.obolibrary.org/obo/ARG_0000015")
     private List<String> tags;
 

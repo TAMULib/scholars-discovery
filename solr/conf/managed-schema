@@ -215,6 +215,9 @@
     <!-- Scholars dynamic facet field -->
     <dynamicField name="*_facets" type="whole_strings" indexed="true" stored="true" multiValued="true"/>
 
+    <!-- Scholars dynamic date facet field -->
+    <dynamicField name="*_date_facets" type="pdates" indexed="true" stored="true" multiValued="true"/>
+
     <!-- Scholars tokenized string type  -->
     <fieldType name="tokenized_string" class="solr.TextField" omitNorms="true" termVectors="false" termPositions="false" termOffsets="false" sortMissingLast="true">
       <analyzer type="index">

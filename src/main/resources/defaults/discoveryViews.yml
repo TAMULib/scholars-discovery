@@ -1,4 +1,103 @@
 ---
+- name: All
+  layout: LIST
+  templates:
+    default: "defaults/discoveryViews/all/default.html"
+    Collection: "defaults/discoveryViews/all/collection.html"
+    Concept: "defaults/discoveryViews/all/concept.html"
+    Document: "defaults/discoveryViews/all/document.html"
+    Organization: "defaults/discoveryViews/all/organization.html"
+    Person: "defaults/discoveryViews/all/person.html"
+    Process: "defaults/discoveryViews/all/process.html"
+    Relationship: "defaults/discoveryViews/all/relationship.html"
+  styles: []
+  highlightFields:
+  fields:
+  facets:
+    - name: Organization
+      field: organization_nested_facets
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+    - name: Year
+      field: year_date_facets
+      opKey: BETWEEN
+      type: DATE_YEAR
+      sort: INDEX
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+    - name: Position
+      field: positions
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+    - name: Research Area
+      field: researchAreas_nested_facets
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+    - name: Research Keywords
+      field: keywords
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+    - name: Published In
+      field: selectedPublicationVenue
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+    - name: UN Sustainable Development Goals
+      field: tag_nested_facets
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+    - name: Awarded By
+      field: awardedBy_nested_facets
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+    - name: Conferred By
+      field: awardConferredBy_nested_facets
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
+  filters:
+  boosts:
+  sort:
+    - field: score
+      direction: DESC
+  export:
+    - columnHeader: Class
+      valuePath: class
+    - columnHeader: Id
+      valuePath: id
+
 - name: People
   layout: GRID
   templates:

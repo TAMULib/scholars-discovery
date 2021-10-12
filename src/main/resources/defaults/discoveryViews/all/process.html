@@ -1,0 +1,36 @@
+{{#inArray type "Course"}}
+<div class="highlighted">
+  {{#if title}}
+  {{#if highlights.title}}
+  <a href="display/{{id}}">{{{highlights.title}}}</a>
+  {{else}}
+  <a href="display/{{id}}">{{title}}</a>
+  {{/if}}
+  {{else}}
+  <a href="display/{{id}}">No title available ({{id}})</a>
+  {{/if}}
+</div>
+{{#if participants}}
+<div class="highlighted">
+  <span class="label">Instructors:</span>
+  <ul>
+    {{#each participants}}
+    <li><span><a href="display/{{./id}}">{{#if ./snippet}}{{{./snippet}}}{{else}}{{./label}}{{/if}}</a></span></li>
+    {{/each}}
+  </ul>
+</div>
+{{/if}}
+{{else}}
+<span>{{class}}: {{id}}</span>
+{{/inArray}}
+<style>
+  .highlighted em {
+    background: #E3D67F;
+    font-style: normal;
+  }
+
+  .label {
+    font-weight: 550;
+    margin-right: 2px;
+  }
+</style>
