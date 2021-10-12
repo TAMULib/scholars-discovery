@@ -1,3 +1,5 @@
+<span class="badge badge-light badge-custom float-right">{{formalize type}}</span>
+
 {{#inArray type "Grant"}}
 <div class="highlighted">
   {{#if title}}
@@ -58,7 +60,54 @@
   {{/if}}
 </div>
 {{else}}
+
+{{#inArray type "AwardReceipt"}}
+<div class="highlighted">
+  {{#if title}}
+  {{#if highlights.title}}
+  <a href="display/{{id}}">{{{highlights.title}}}</a>
+  {{else}}
+  <a href="display/{{id}}">{{title}}</a>
+  {{/if}}
+  {{else}}
+  <a href="display/{{id}}">No title available ({{id}})</a>
+  {{/if}}
+</div>
+<div>
+  <div>
+    {{#if yearAwarded}}
+    <span><span class="label">Date: </span>{{toYear yearAwarded}}</span>
+    {{/if}}
+  </div>
+  {{#if awardOrHonorFor}}
+  <div>
+    <span class="label">Award or Honor for:</span>
+  </div>
+  <div class="highlighted">
+    <ul>
+      {{#each awardOrHonorFor}}
+      <li><span><a href="display/{{id}}">{{#if ./snippet}}{{{./snippet}}}{{else}}{{./label}}{{/if}}</a></span></li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+  {{#if awardConferredBy}}
+  <div>
+    <span class="label">Conferred by:</span>
+  </div>
+  <div class="highlighted">
+    <ul>
+      {{#each awardConferredBy}}
+      <li><span><a href="display/{{id}}">{{#if ./snippet}}{{{./snippet}}}{{else}}{{./label}}{{/if}}</a></span></li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+</div>
+{{else}}
 <span>{{class}}: {{id}}</span>
+{{/inArray}}
+
 {{/inArray}}
 <style>
   .highlighted em {
