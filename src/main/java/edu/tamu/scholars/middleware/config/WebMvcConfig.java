@@ -26,6 +26,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/api").setViewName("forward:/api/index.html");
+        WebMvcConfigurer.super.addViewControllers(registry);
     }
 
     @Override
