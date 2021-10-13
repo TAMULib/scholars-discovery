@@ -3,18 +3,19 @@ package edu.tamu.scholars.middleware.graphql.provider;
 import java.util.Map;
 import java.util.HashMap;
 
+import io.leangen.graphql.metadata.DefaultValue;
 import io.leangen.graphql.metadata.strategy.value.DefaultValueProvider;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.AnnotatedType;
 
 public class DefaultPageRequestProvider implements DefaultValueProvider {
 
-    public Object getDefaultValue(AnnotatedElement targetElement, AnnotatedType type, Object initialValue) {
+    public DefaultValue getDefaultValue(AnnotatedElement targetElement, AnnotatedType type, DefaultValue initialValue) {
         Map<String, Object> values = new HashMap<String, Object>();
-        values.put("pageNumber", new Integer(0));
-        values.put("pageSize", new Integer(100));
+        values.put("pageNumber", Integer.valueOf(0));
+        values.put("pageSize", Integer.valueOf(100));
         values.put("sort", null);
-        return values;
+        return new DefaultValue(values);
     }
 
 }

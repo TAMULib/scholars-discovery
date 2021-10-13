@@ -10,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -32,8 +34,6 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.scholars.middleware.auth.config.TokenConfig;
 import edu.tamu.scholars.middleware.auth.handler.CustomAccessDeniedExceptionHandler;
@@ -95,7 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration embedConfig = new CorsConfiguration();
-        embedConfig.setAllowCredentials(true);
+        embedConfig.setAllowCredentials(false);
         embedConfig.addAllowedOrigin("*");
         embedConfig.addAllowedHeader("Origin");
         embedConfig.addAllowedHeader("Content-Type");
@@ -115,7 +115,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         primaryConfig.setAllowedHeaders(Arrays.asList("Authorization", "Origin", "Content-Type"));
 
         // NOTE: most general path must be last
-        source.registerCorsConfiguration("/**/*", primaryConfig);
+        source.registerCorsConfiguration("/**", primaryConfig);
         return new CorsFilter(source);
     }
 
