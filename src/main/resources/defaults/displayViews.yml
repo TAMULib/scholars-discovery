@@ -20,10 +20,6 @@
   - name: Single Page Bio
     contentTemplate: "defaults/displayViews/persons/singlePageBioContentTemplate.html"
     headerTemplate: "defaults/displayViews/persons/singlePageBioHeaderTemplate.html"
-    requiredFields:
-      - firstName
-      - lastName
-      - publications
     lazyReferences:
       - publications
     fieldViews:
@@ -49,10 +45,6 @@
   - name: Profile Summary
     contentTemplate: "defaults/displayViews/persons/profileSummaryContentTemplate.html"
     headerTemplate: "defaults/displayViews/persons/profileSummaryHeaderTemplate.html"
-    requiredFields:
-      - firstName
-      - lastName
-      - publications
     lazyReferences:
       - publications
       - awardsAndHonors
