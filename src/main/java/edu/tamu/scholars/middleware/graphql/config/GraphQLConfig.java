@@ -38,6 +38,7 @@ import io.leangen.graphql.GeneratorConfiguration;
 import io.leangen.graphql.GraphQLSchemaGenerator;
 import io.leangen.graphql.generator.mapping.ArgumentInjector;
 import io.leangen.graphql.generator.mapping.ArgumentInjectorParams;
+import io.leangen.graphql.metadata.DefaultValue;
 import io.leangen.graphql.metadata.InputField;
 import io.leangen.graphql.metadata.TypedElement;
 import io.leangen.graphql.metadata.strategy.query.DefaultOperationBuilder;
@@ -172,12 +173,12 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("q", "Query expression", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DiscoveryConstants.DEFAULT_QUERY));
-                fields.add(new InputField("df", "Default search field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), StringUtils.EMPTY));
-                fields.add(new InputField("mm", "Minimum should match", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), StringUtils.EMPTY));
-                fields.add(new InputField("qf", "Query fields", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), StringUtils.EMPTY));
-                fields.add(new InputField("bq", "Boost query", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), StringUtils.EMPTY));
-                fields.add(new InputField("fl", "Fields returned", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), StringUtils.EMPTY));
+                fields.add(new InputField("q", "Query expression", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), new DefaultValue(DiscoveryConstants.DEFAULT_QUERY)));
+                fields.add(new InputField("df", "Default search field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.EMPTY));
+                fields.add(new InputField("mm", "Minimum should match", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.EMPTY));
+                fields.add(new InputField("qf", "Query fields", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.EMPTY));
+                fields.add(new InputField("bq", "Boost query", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.EMPTY));
+                fields.add(new InputField("fl", "Fields returned", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.EMPTY));
                 return fields;
             }
 
@@ -190,10 +191,10 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("field", "Filter field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("value", "Filter value", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("opKey", "Filter operation key", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), OpKey.EQUALS.getKey()));
-                fields.add(new InputField("tag", "add SOLR tag to filter (for facet exclusion)", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
+                fields.add(new InputField("field", "Filter field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("value", "Filter value", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("opKey", "Filter operation key", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), new DefaultValue(OpKey.EQUALS.getKey())));
+                fields.add(new InputField("tag", "add SOLR tag to filter (for facet exclusion)", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
                 return fields;
             }
 
@@ -206,15 +207,15 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("field", "Facet field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("sort", "Facet sort", new TypedElement(GenericTypeReflector.annotate(FacetSort.class)), GenericTypeReflector.annotate(FacetSort.class), FacetSort.COUNT));
-                fields.add(new InputField("pageSize", "Facet page size", new TypedElement(GenericTypeReflector.annotate(int.class)), GenericTypeReflector.annotate(int.class), 100));
-                fields.add(new InputField("pageNumber", "Facet page number", new TypedElement(GenericTypeReflector.annotate(int.class)), GenericTypeReflector.annotate(int.class), 1));
-                fields.add(new InputField("type", "Facet type", new TypedElement(GenericTypeReflector.annotate(FacetType.class)), GenericTypeReflector.annotate(FacetType.class), FacetType.STRING));
-                fields.add(new InputField("exclusionTag", "Tag (in conjunction with Filter)", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("rangeStart", "Facet range start", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("rangeEnd", "Facet range end", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("rangeGap", "Facet range gap", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
+                fields.add(new InputField("field", "Facet field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("sort", "Facet sort", new TypedElement(GenericTypeReflector.annotate(FacetSort.class)), GenericTypeReflector.annotate(FacetSort.class), new DefaultValue(FacetSort.COUNT)));
+                fields.add(new InputField("pageSize", "Facet page size", new TypedElement(GenericTypeReflector.annotate(int.class)), GenericTypeReflector.annotate(int.class), new DefaultValue(100)));
+                fields.add(new InputField("pageNumber", "Facet page number", new TypedElement(GenericTypeReflector.annotate(int.class)), GenericTypeReflector.annotate(int.class), new DefaultValue(1)));
+                fields.add(new InputField("type", "Facet type", new TypedElement(GenericTypeReflector.annotate(FacetType.class)), GenericTypeReflector.annotate(FacetType.class), new DefaultValue(FacetType.STRING)));
+                fields.add(new InputField("exclusionTag", "Tag (in conjunction with Filter)", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("rangeStart", "Facet range start", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("rangeEnd", "Facet range end", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("rangeGap", "Facet range gap", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
                 return fields;
             }
 
@@ -227,8 +228,8 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("field", "Boost field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("value", "Boost value", new TypedElement(GenericTypeReflector.annotate(Float.class)), GenericTypeReflector.annotate(Float.class), null));
+                fields.add(new InputField("field", "Boost field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("value", "Boost value", new TypedElement(GenericTypeReflector.annotate(Float.class)), GenericTypeReflector.annotate(Float.class), DefaultValue.NULL));
                 return fields;
             }
 
@@ -241,9 +242,9 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("fields", "Highlight fields", new TypedElement(GenericTypeReflector.annotate(String[].class)), GenericTypeReflector.annotate(String[].class), new ArrayList<String>()));
-                fields.add(new InputField("prefix", "Highlight simple prefix", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), StringUtils.EMPTY));
-                fields.add(new InputField("postfix", "Highlight simple postfix", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), StringUtils.EMPTY));
+                fields.add(new InputField("fields", "Highlight fields", new TypedElement(GenericTypeReflector.annotate(String[].class)), GenericTypeReflector.annotate(String[].class), new DefaultValue(new ArrayList<String>())));
+                fields.add(new InputField("prefix", "Highlight simple prefix", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.EMPTY));
+                fields.add(new InputField("postfix", "Highlight simple postfix", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.EMPTY));
                 return fields;
             }
 
@@ -256,9 +257,9 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("pageNumber", "Page number", new TypedElement(GenericTypeReflector.annotate(int.class)), GenericTypeReflector.annotate(int.class), 0));
-                fields.add(new InputField("pageSize", "Page size", new TypedElement(GenericTypeReflector.annotate(int.class)), GenericTypeReflector.annotate(int.class), 100));
-                fields.add(new InputField("sort", "Page sorting", new TypedElement(GenericTypeReflector.annotate(Sort.class)), GenericTypeReflector.annotate(Sort.class), null));
+                fields.add(new InputField("pageNumber", "Page number", new TypedElement(GenericTypeReflector.annotate(int.class)), GenericTypeReflector.annotate(int.class), new DefaultValue(0)));
+                fields.add(new InputField("pageSize", "Page size", new TypedElement(GenericTypeReflector.annotate(int.class)), GenericTypeReflector.annotate(int.class), new DefaultValue(100)));
+                fields.add(new InputField("sort", "Page sorting", new TypedElement(GenericTypeReflector.annotate(Sort.class)), GenericTypeReflector.annotate(Sort.class), DefaultValue.NULL));
                 return fields;
             }
 
@@ -271,7 +272,7 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("orders", "Orders for sorting", new TypedElement(GenericTypeReflector.annotate(Sort.Order[].class)), GenericTypeReflector.annotate(Sort.Order[].class), null));
+                fields.add(new InputField("orders", "Orders for sorting", new TypedElement(GenericTypeReflector.annotate(Sort.Order[].class)), GenericTypeReflector.annotate(Sort.Order[].class), DefaultValue.NULL));
                 return fields;
             }
 
@@ -284,8 +285,8 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("property", "Sorting order property", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("direction", "Sorting order direction", new TypedElement(GenericTypeReflector.annotate(Sort.Direction.class)), GenericTypeReflector.annotate(Sort.Direction.class), Sort.Direction.ASC));
+                fields.add(new InputField("property", "Sorting order property", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("direction", "Sorting order direction", new TypedElement(GenericTypeReflector.annotate(Sort.Direction.class)), GenericTypeReflector.annotate(Sort.Direction.class), new DefaultValue(Sort.Direction.ASC)));
                 return fields;
             }
 
@@ -298,8 +299,8 @@ public class GraphQLConfig {
             @Override
             public Set<InputField> getInputFields(InputFieldBuilderParams params) {
                 Set<InputField> fields = new HashSet<>();
-                fields.add(new InputField("field", "Export field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
-                fields.add(new InputField("label", "Export label", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), null));
+                fields.add(new InputField("field", "Export field", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
+                fields.add(new InputField("label", "Export label", new TypedElement(GenericTypeReflector.annotate(String.class)), GenericTypeReflector.annotate(String.class), DefaultValue.NULL));
                 return fields;
             }
 

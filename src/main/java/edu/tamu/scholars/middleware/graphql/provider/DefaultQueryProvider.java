@@ -6,14 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
+import io.leangen.graphql.metadata.DefaultValue;
 import io.leangen.graphql.metadata.strategy.value.DefaultValueProvider;
 
 public class DefaultQueryProvider implements DefaultValueProvider {
 
-    public Object getDefaultValue(AnnotatedElement targetElement, AnnotatedType type, Object initialValue) {
+    public DefaultValue getDefaultValue(AnnotatedElement targetElement, AnnotatedType type, DefaultValue initialValue) {
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("q", DiscoveryConstants.DEFAULT_QUERY);
-        return values;
+        return new DefaultValue(values);
     }
 
 }

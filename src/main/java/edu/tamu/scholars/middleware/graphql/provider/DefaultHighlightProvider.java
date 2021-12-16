@@ -6,14 +6,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.leangen.graphql.metadata.DefaultValue;
 import io.leangen.graphql.metadata.strategy.value.DefaultValueProvider;
 
 public class DefaultHighlightProvider implements DefaultValueProvider {
 
-    public Object getDefaultValue(AnnotatedElement targetElement, AnnotatedType type, Object initialValue) {
+    public DefaultValue getDefaultValue(AnnotatedElement targetElement, AnnotatedType type, DefaultValue initialValue) {
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("fields", new ArrayList<String>());
-        return values;
+        return new DefaultValue(values);
     }
 
 }
