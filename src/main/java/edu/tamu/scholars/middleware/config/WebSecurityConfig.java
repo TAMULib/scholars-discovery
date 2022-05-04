@@ -115,7 +115,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         primaryConfig.setAllowedHeaders(Arrays.asList("Authorization", "Origin", "Content-Type"));
 
         // NOTE: most general path must be last
-        source.registerCorsConfiguration("/**/*", primaryConfig);
+        source.registerCorsConfiguration("/**", primaryConfig);
         return new CorsFilter(source);
     }
 
