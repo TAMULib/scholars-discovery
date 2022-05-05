@@ -96,7 +96,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration embedConfig = new CorsConfiguration();
         embedConfig.setAllowCredentials(true);
-        embedConfig.addAllowedOrigin("*");
+        embedConfig.setAllowedOriginPatterns(Arrays.asList("*"));
         embedConfig.addAllowedHeader("Origin");
         embedConfig.addAllowedHeader("Content-Type");
         embedConfig.addAllowedMethod("GET");

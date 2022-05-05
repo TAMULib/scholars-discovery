@@ -78,8 +78,7 @@ graphql:
 
 logging:
   file:
-    name: scholars.log
-    path: logs
+    name: logs/scholars-test.log
   level:
     edu:
       tamu:
@@ -118,11 +117,6 @@ spring:
     basename: i18n/messages
     cache-duration: 15
     encoding: UTF-8 
-  devtools:
-    add-properties: false
-    restart:
-      enabled: false
-      exclude: target
   h2:
     console:
       enabled: false
