@@ -13,7 +13,7 @@
 
   <groupId>edu.tamu.scholars</groupId>
   <artifactId>middleware</artifactId>
-  <version>1.1.3-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 
   <name>middleware</name>
 
@@ -173,7 +173,7 @@
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-core</artifactId>
-      <version>3.2.6</version><!-- $NO-MVN-MAN-VER$ -->
+      <version>4.2.4</version><!-- $NO-MVN-MAN-VER$ -->
     </dependency>
 
     <dependency>
@@ -276,21 +276,7 @@
     <dependency>
       <groupId>org.docx4j</groupId>
       <artifactId>docx4j-ImportXHTML</artifactId>
-      <version>6.1.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>8.2.1</version>
     </dependency>
 
     <dependency>
