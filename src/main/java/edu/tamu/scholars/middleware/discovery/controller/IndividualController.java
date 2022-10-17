@@ -21,7 +21,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
