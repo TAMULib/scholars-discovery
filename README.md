@@ -37,13 +37,10 @@ Here is a list of some dependencies used:
    - [Spring REST Docs](https://spring.io/projects/spring-restdocs)
 2. [Apache Jena](https://jena.apache.org/)
 3. [Apache Solr](https://lucene.apache.org/solr/)
-4. [GraphQL SPQR](https://github.com/leangen/graphql-spqr)
-   - [graphql-spqr-spring-boot-starter](https://github.com/leangen/graphql-spqr-spring-boot-starter)
-5. [JavaPoet](https://github.com/square/javapoet)
 
 ## Configuration
 
-The basic Spring Boot application configuration can be found at [src/main/resources/application.yml](https://github.com/vivo-community/scholars-discovery/blob/master/src/main/resources/application.yml). Here you be able to configure basic server and spring configuration as well as custom configuration for Scholars Discovery. There are several configuration POJOs to represent configurations. They can be found in [src/main/java/edu/tamu/scholars/middleware/config/model](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/config/model), [src/main/java/edu/tamu/scholars/middleware/auth/config](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/auth/config), and [src/main/java/edu/tamu/scholars/middleware/graphql/config/model](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/graphql/config/model).
+The basic Spring Boot application configuration can be found at [src/main/resources/application.yml](https://github.com/vivo-community/scholars-discovery/blob/master/src/main/resources/application.yml). Here you be able to configure basic server and spring configuration as well as custom configuration for Scholars Discovery. There are several configuration POJOs to represent configurations. They can be found in [src/main/java/edu/tamu/scholars/middleware/config/model](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/config/model), and [src/main/java/edu/tamu/scholars/middleware/auth/config](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/auth/config).
 
 ### Harvesting
 
@@ -58,10 +55,6 @@ The application can be configured to harvest and index on startup, ```middleware
 ### Solr
 
 Solr is configured via ```spring.data.solr```.
-
-### GraphQL
-
-GraphQL SPQR configuration can be done via ```graphql.spqr```. Explicit Java [models](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/graphql/model) in which are turned into a GraphQL schema are generated. The generated models are a nested representation of the flattened index documents. An important configuration for GraphQL schema generation is for generating explicit composite models representing relationships between complete index documents. The configuration is done via [src/main/resources/graphql/composites.yml](https://github.com/vivo-community/scholars-discovery/blob/master/src/main/resources/graphql/composites.yml) and represented with [Composite.java](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/graphql/config/model).
 
 ## Installation instructions
 
@@ -92,7 +85,7 @@ docker build -t scholars/discovery .
 ```
 
 ```bash
-docker run -d -p 9000:9000 -e SPRING_APPLICATION_JSON="{\"spring\":{\"data\":{\"solr\":{\"host\":\"http://localhost:8983/solr\"}}},\"ui\":{\"url\":\"http://localhost:3000\"},\"vivo\":{\"base-url\":\"http://localhost:8080/vivo\"},\"graphql\":{\"spqr\":{\"gui\":{\"enabled\":true}}},\"middleware\":{\"allowed-origins\":[\"http://localhost:3000\"],\"index\":{\"onStartup\":false},\"export\":{\"individualBaseUri\":\"http://localhost:3000/display\"}}}" scholars/discovery
+docker run -d -p 9000:9000 -e SPRING_APPLICATION_JSON="{\"spring\":{\"data\":{\"solr\":{\"host\":\"http://localhost:8983/solr\"}}},\"ui\":{\"url\":\"http://localhost:3000\"},\"vivo\":{\"base-url\":\"http://localhost:8080/vivo\"},\"middleware\":{\"allowed-origins\":[\"http://localhost:3000\"],\"index\":{\"onStartup\":false},\"export\":{\"individualBaseUri\":\"http://localhost:3000/display\"}}}" scholars/discovery
 ```
 
 > The environment variable `SPRING_APPLICATION_JSON` will override properties in application.yml.
@@ -104,7 +97,6 @@ With the above installation instructions, the following service endpoints can be
 1. [HAL Explorer (9000/explorer)](http://localhost:9000)
 2. [REST API (9000/individual)](http://localhost:9000/individual)
 3. [REST API Docs (9000/api)](http://localhost:9000/api)
-4. [GraphQL UI (9000/gui)](http://localhost:9000/gui)
 
 The [HAL(Hypertext Application Language)](https://www.baeldung.com/spring-rest-hal) explorer can be used to browse scholars-discovery resources.
 
