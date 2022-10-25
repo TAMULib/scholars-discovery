@@ -26,14 +26,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/api").setViewName("forward:/api/index.html");
-        WebMvcConfigurer.super.addViewControllers(registry);
     }
 
     @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         configurer.setDefaultTimeout(900000);
         configurer.setTaskExecutor(taskExecutor);
-        WebMvcConfigurer.super.configureAsyncSupport(configurer);
     }
 
     @Override
@@ -44,7 +42,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         resolvers.add(new BoostArgumentResolver());
         resolvers.add(new HighlightArgumentResolver());
         resolvers.add(new ExportArgumentResolver());
-        WebMvcConfigurer.super.addArgumentResolvers(resolvers);
     }
 
 }
