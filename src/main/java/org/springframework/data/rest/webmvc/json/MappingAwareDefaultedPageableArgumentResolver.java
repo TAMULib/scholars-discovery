@@ -70,9 +70,9 @@ public class MappingAwareDefaultedPageableArgumentResolver implements HandlerMet
 			return new DefaultedPageable(pageable, delegate.isFallbackPageable(pageable));
 		}
 
+		// Sort translated = translator.translateSort(pageable.getSort(), parameter, webRequest);
 		pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
 		return new DefaultedPageable(pageable, delegate.isFallbackPageable(pageable));
 	}
-
 }

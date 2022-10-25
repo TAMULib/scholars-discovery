@@ -20,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableArgumentResolver;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -38,7 +40,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * @author Oliver Gierke
  * @since 2.6
  */
-public class MappingAwarePageableArgumentResolver implements HandlerMethodArgumentResolver, PageableArgumentResolver {
+public class MappingAwarePageableArgumentResolver implements PageableArgumentResolver {
 
 	private final JacksonMappingAwareSortTranslator translator;
 	private final PageableArgumentResolver delegate;
@@ -59,8 +61,8 @@ public class MappingAwarePageableArgumentResolver implements HandlerMethodArgume
 	}
 
 	@Override
-	public Pageable resolveArgument(MethodParameter methodParameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+	public @NonNull Pageable resolveArgument(MethodParameter methodParameter, @Nullable ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) {
 
 		Pageable pageable = delegate.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
 
@@ -68,7 +70,8 @@ public class MappingAwarePageableArgumentResolver implements HandlerMethodArgume
 			return pageable;
 		}
 
+		// Sort translated = translator.translateSort(pageable.getSort(), methodParameter, webRequest);
+
 		return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 	}
-
 }
