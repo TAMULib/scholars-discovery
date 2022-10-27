@@ -70,6 +70,9 @@ public class MappingAwarePageableArgumentResolver implements PageableArgumentRes
 			return pageable;
 		}
 
+		// The sort translate was removed due to incompatibility with our Individual entity not representing
+		// one-to-one the Solr document properties. The pageable and sort arguments are proxied directly to Solr
+		// where the documents will have the properties to sort where the entity manager is unaware of.
 		// Sort translated = translator.translateSort(pageable.getSort(), methodParameter, webRequest);
 
 		return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
