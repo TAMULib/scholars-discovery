@@ -11,9 +11,7 @@ CONSTRUCT {
         ?position a vivo:Position .
         ?position vivo:relatedBy ?person .
         ?person a foaf:Person .
-        
         ?position rdfs:label ?label .
-
         BIND( CONCAT( STR(?label), REPLACE(STR(?person), "(^.*/)", "::") ) AS ?labelWithId ) .
     }
     UNION
@@ -23,9 +21,7 @@ CONSTRUCT {
         ?position a vivo:Position .
         ?position vivo:relatedBy ?person .
         ?person a foaf:Person .
-        
         ?position rdfs:label ?label .
-
         BIND( CONCAT( STR(?label), REPLACE(STR(?person), "(^.*/)", "::") ) AS ?labelWithId ) .
     }
 }
