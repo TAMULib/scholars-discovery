@@ -170,7 +170,7 @@ public class Person extends Common {
     private List<String> attendedEventEndDate;
 
     @Indexed(type = "nested_whole_strings", searchable = false)
-    @NestedObject(properties = { @Reference(value = "educationAndTrainingName", key = "name"), @Reference(value = "educationAndTrainingInfo", key = "info"), @Reference(value = "educationAndTrainingOrganization", key = "organization"), @Reference(value = "educationAndTrainingMajorField", key = "field"), @Reference(value = "educationAndTrainingDegreeAbbreviation", key = "abbreviation"), @Reference(value = "educationAndTrainingStartDate", key = "startDate"), @Reference(value = "educationAndTrainingEndDate", key = "endDate"), @Reference(value = "isEducationAndTrainingDateSuppressed", key = "isDateSuppressed") })
+    @NestedObject(properties = { @Reference(value = "educationAndTrainingName", key = "name"), @Reference(value = "educationAndTrainingInfo", key = "info"), @Reference(value = "educationAndTrainingOrganization", key = "organization"), @Reference(value = "educationAndTrainingMajorField", key = "field"), @Reference(value = "educationAndTrainingDegreeAbbreviation", key = "abbreviation"), @Reference(value = "educationAndTrainingStartDate", key = "startDate"), @Reference(value = "educationAndTrainingEndDate", key = "endDate"), @Reference(value = "educationAndTrainingIsDateSuppressed", key = "isDateSuppressed") })
     @PropertySource(template = "person/educationAndTraining", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> educationAndTraining;
 
@@ -204,8 +204,8 @@ public class Person extends Common {
     private List<String> educationAndTrainingEndDate;
 
     @Indexed(type="nested_whole_string", searchable = false)
-    @PropertySource(template= "person/isEducationAndTrainingDateSuppressed", predicate = "http://vivoweb.org/ontology/core#supplementalInformation")
-    private List<String> isEducationAndTrainingDateSuppressed;
+    @PropertySource(template= "person/educationAndTrainingIsDateSuppressed", predicate = "http://vivoweb.org/ontology/core#supplementalInformation")
+    private List<String> educationAndTrainingIsDateSuppressed;
 
     @NestedObject
     @Indexed(type = "nested_whole_strings", searchable = false)
@@ -1043,12 +1043,12 @@ public class Person extends Common {
         this.educationAndTrainingEndDate = educationAndTrainingEndDate;
     }
 
-    public List<String> getIsEducationAndTrainingDateSuppressed() {
-        return isEducationAndTrainingDateSuppressed;
+    public List<String> getEducationAndTrainingIsDateSuppressed() {
+        return educationAndTrainingIsDateSuppressed;
     }
 
-    public void setIsEducationAndTrainingDateSuppressed(List<String> isEducationAndTrainingDateSuppressed) {
-        this.isEducationAndTrainingDateSuppressed = isEducationAndTrainingDateSuppressed;
+    public void setEducationAndTrainingIsDateSuppressed(List<String> educationAndTrainingIsDateSuppressed) {
+        this.educationAndTrainingIsDateSuppressed = educationAndTrainingIsDateSuppressed;
     }
 
     public List<String> getCredentials() {
