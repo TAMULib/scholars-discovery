@@ -27,7 +27,7 @@ middleware:
   index:
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    onStartup: false
+    onStartup: true
     onStartupDelay: 10000
     batchSize: 10000
   triplestore:
@@ -116,7 +116,7 @@ spring:
     encoding: UTF-8
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2console
   datasource:
     driver-class-name: org.h2.Driver
