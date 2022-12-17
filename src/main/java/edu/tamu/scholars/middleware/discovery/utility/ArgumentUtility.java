@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -127,7 +128,7 @@ public class ArgumentUtility {
             .collect(Collectors.toList());
         List<FilterArg> filters = new ArrayList<FilterArg>();
         filters = fields.stream().map(field -> {
-            Optional<String> value = parameterNames.stream()
+            Optional<String> values = parameterNames.stream()
                 .filter(paramName -> paramName.equals(String.format(FILTER_VALUE_FORMAT, field)))
                 .map(request::getParameterValues)
                 .map(Arrays::asList)
@@ -144,9 +145,14 @@ public class ArgumentUtility {
                 .map(request::getParameterValues)
                 .map(Arrays::asList)
                 .flatMap(list -> list.stream())
-                .findAny();                
-            return FilterArg.of(field, value, opKey, tag);
-        }).collect(Collectors.toList());
+                .findAny();
+            return values.isPresent()
+                ? Arrays.asList(values.get().split(",")).stream()
+                    .map(value -> FilterArg.of(field, Optional.of(value), opKey, tag))
+                    .collect(Collectors.toList())
+                : Arrays.asList(FilterArg.of(field, values, opKey, tag));
+        }).flatMap(list -> list.stream())
+            .collect(Collectors.toList());
         // @formatter:on
         return filters;
     }

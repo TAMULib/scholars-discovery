@@ -264,18 +264,17 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
     private List<SimpleFilterQuery> buildFilterQueries(List<FilterArg> filters) {
         List<SimpleFilterQuery> results = new ArrayList<SimpleFilterQuery>();
-        Map<String, List<FilterArg>> filtersGrouped = filters.stream().collect(Collectors.groupingBy(w -> w.getField()));
-        filtersGrouped.forEach((field, filterList) -> {
+        filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
             FilterArg firstOne = filterList.get(0);
-            Criteria crit = new CriteriaBuilder(firstOne).buildCriteria();
-            // the rest (of that field) are Or'd
+            Criteria criteria = new CriteriaBuilder(firstOne).buildCriteria();
+            // the rest (of that field) are AND'd
+            // possible solution is to add another filter value delimiter to allow to specify AND/OR
             if (filterList.size() > 1) {
                 for (FilterArg arg : filterList.subList(1, filterList.size())) {
-                    Criteria orCriteria = new CriteriaBuilder(arg).skipTag(true).buildCriteria();
-                    crit = crit.or(orCriteria);
+                    criteria = criteria.and(new CriteriaBuilder(arg).skipTag(true).buildCriteria());
                 }
             }
-            SimpleFilterQuery result = new SimpleFilterQuery(crit);
+            SimpleFilterQuery result = new SimpleFilterQuery(criteria);
             results.add(result);
         });
         return results;
