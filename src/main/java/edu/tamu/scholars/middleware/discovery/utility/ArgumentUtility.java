@@ -127,12 +127,13 @@ public class ArgumentUtility {
             .collect(Collectors.toList());
         List<FilterArg> filters = new ArrayList<FilterArg>();
         filters = fields.stream().map(field -> {
-            Optional<String> values = parameterNames.stream()
+            String values = parameterNames.stream()
                 .filter(paramName -> paramName.equals(String.format(FILTER_VALUE_FORMAT, field)))
                 .map(request::getParameterValues)
                 .map(Arrays::asList)
                 .flatMap(list -> list.stream())
-                .findAny();
+                .findAny()
+                .orElseGet(() -> StringUtils.EMPTY);
             Optional<String> opKey = parameterNames.stream()
                 .filter(paramName -> paramName.equals(String.format(FILTER_OPKEY_FORMAT, field)))
                 .map(request::getParameterValues)
@@ -145,11 +146,9 @@ public class ArgumentUtility {
                 .map(Arrays::asList)
                 .flatMap(list -> list.stream())
                 .findAny();
-            return values.isPresent()
-                ? Arrays.asList(values.get().split(",")).stream()
-                    .map(value -> FilterArg.of(field, Optional.of(value), opKey, tag))
-                    .collect(Collectors.toList())
-                : Arrays.asList(FilterArg.of(field, values, opKey, tag));
+            return Arrays.asList(values.split(",")).stream()
+                .map(value -> FilterArg.of(field, Optional.of(value), opKey, tag))
+                .collect(Collectors.toList());
         }).flatMap(list -> list.stream())
             .collect(Collectors.toList());
         // @formatter:on
