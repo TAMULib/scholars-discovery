@@ -262,7 +262,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     private List<SimpleFilterQuery> buildFilterQueries(List<FilterArg> filters) {
-        List<SimpleFilterQuery> results = new ArrayList<SimpleFilterQuery>();
+        final List<SimpleFilterQuery> results = new ArrayList<SimpleFilterQuery>();
         filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
             FilterArg firstOne = filterList.get(0);
             Criteria criteria = new CriteriaBuilder(firstOne).buildCriteria();
