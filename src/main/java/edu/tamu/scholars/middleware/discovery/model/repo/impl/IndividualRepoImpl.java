@@ -267,7 +267,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             FilterArg firstOne = filterList.get(0);
             Criteria criteria = new CriteriaBuilder(firstOne).buildCriteria();
             // the rest (of that field) are AND'd
-            // possible solution is to add another filter value delimiter to allow to specify AND/OR
+            // NOTE: a solution for supporting Intersection or Union could be to add another filter value delimiter to allow to specify AND/OR
             if (filterList.size() > 1) {
                 for (FilterArg arg : filterList.subList(1, filterList.size())) {
                     criteria = criteria.and(new CriteriaBuilder(arg).skipTag(true).buildCriteria());
