@@ -280,7 +280,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
         filterGroups.forEach(filterGroup -> {
             FilterArg foA = null;
             FilterArg foB = null;
-
+            int ir = 0;
             for (int i = filters.size() - 1; i >= 0; --i) {
                 FilterArg filter = filters.get(i);
 
@@ -288,6 +288,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                 if (foA == null && filterGroup.getA().equals(filter.getField())) {
                     foA = filter;
                     filters.remove(i);
+                    ir = i;
 
                     if (foB == null) {
                         continue;
@@ -296,6 +297,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                 } else if (foB == null && filterGroup.getB().equals(filter.getField())) {
                     foB = filter;
                     filters.remove(i);
+                    ir = i;
 
                     if (foA == null) {
                         continue;
@@ -319,6 +321,10 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
                     results.add(new SimpleFilterQuery(criteria));
                     break;
+                }
+
+                if (i == 0 && (foA == null || foB == null)) {
+                    filters.add(ir, foA != null ? foA : foB);
                 }
             }
         });
