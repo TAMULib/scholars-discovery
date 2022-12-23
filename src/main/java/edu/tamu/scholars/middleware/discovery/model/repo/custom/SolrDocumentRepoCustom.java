@@ -11,6 +11,7 @@ import org.springframework.data.solr.core.query.result.FacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
+import edu.tamu.scholars.middleware.discovery.argument.FilterGroupArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
@@ -31,7 +32,7 @@ public interface SolrDocumentRepoCustom<D extends AbstractIndexDocument> {
 
     public List<D> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters);
 
-    public FacetAndHighlightPage<D> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<BoostArg> boosts, HighlightArg highlight, Pageable page);
+    public FacetAndHighlightPage<D> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<FilterGroupArg> filterGroups, List<BoostArg> boosts, HighlightArg highlight, Pageable page);
 
     public Cursor<D> stream(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort);
 

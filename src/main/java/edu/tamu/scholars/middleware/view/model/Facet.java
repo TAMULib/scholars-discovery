@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.solr.core.query.FacetOptions.FacetSort;
 
-import edu.tamu.scholars.middleware.model.OpKey;
+import edu.tamu.scholars.middleware.model.FilterOp;
 
 @Embeddable
 @JsonInclude(Include.NON_NULL)
@@ -29,7 +29,7 @@ public class Facet {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OpKey opKey;
+    private FilterOp opKey;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -65,7 +65,7 @@ public class Facet {
     private String rangeGap;
 
     public Facet() {
-        opKey = OpKey.EQUALS;
+        opKey = FilterOp.EQUALS;
         type = STRING;
         sort = COUNT;
         direction = DESC;
@@ -91,11 +91,11 @@ public class Facet {
         this.field = field;
     }
 
-    public OpKey getOpKey() {
+    public FilterOp getOpKey() {
         return opKey;
     }
 
-    public void setOpKey(OpKey opKey) {
+    public void setOpKey(FilterOp opKey) {
         this.opKey = opKey;
     }
 

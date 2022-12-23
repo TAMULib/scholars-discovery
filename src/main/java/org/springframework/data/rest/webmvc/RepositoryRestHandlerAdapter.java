@@ -28,6 +28,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import edu.tamu.scholars.middleware.discovery.resolver.BoostArgumentResolver;
 import edu.tamu.scholars.middleware.discovery.resolver.FacetArgumentResolver;
 import edu.tamu.scholars.middleware.discovery.resolver.FilterArgumentResolver;
+import edu.tamu.scholars.middleware.discovery.resolver.FilterGroupArgumentResolver;
 import edu.tamu.scholars.middleware.discovery.resolver.HighlightArgumentResolver;
 import edu.tamu.scholars.middleware.discovery.resolver.QueryArgumentResolver;
 import edu.tamu.scholars.middleware.export.resolver.ExportArgumentResolver;
@@ -58,6 +59,7 @@ public class RepositoryRestHandlerAdapter extends RequestMappingHandlerAdapter {
 		// MODIFIED: custom arugement resolvers
 		this.argumentResolvers.add(new QueryArgumentResolver());
 		this.argumentResolvers.add(new FilterArgumentResolver());
+		this.argumentResolvers.add(new FilterGroupArgumentResolver());
 		this.argumentResolvers.add(new FacetArgumentResolver());
 		this.argumentResolvers.add(new BoostArgumentResolver());
 		this.argumentResolvers.add(new HighlightArgumentResolver());

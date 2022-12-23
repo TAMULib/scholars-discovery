@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import edu.tamu.scholars.middleware.model.FilterOp;
+
 @ExtendWith(SpringExtension.class)
 public class FilterTest {
 
@@ -22,9 +24,11 @@ public class FilterTest {
 
         filter.setField("test");
         filter.setValue("Hello, Wolrd!");
+        filter.setOpKey(FilterOp.EQUALS);
 
         assertEquals("test", filter.getField());
         assertEquals("Hello, Wolrd!", filter.getValue());
+        assertEquals(FilterOp.EQUALS, filter.getOpKey());
     }
 
 }

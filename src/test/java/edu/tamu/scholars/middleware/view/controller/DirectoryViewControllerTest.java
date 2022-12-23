@@ -57,6 +57,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
                         describeDirectoryView.withSubsection("index", "A <<resources-index, Index resource>>."),
                         describeDirectoryView.withSubsection("facets", "An array of <<resources-facets, Facet resources>>."),
                         describeDirectoryView.withSubsection("filters", "An array of <<resources-filters, Filters resources>>."),
+                        describeDirectoryView.withSubsection("filterGroups", "An array of <<resources-filterGroups, Filter groups resources>>."),
                         describeDirectoryView.withSubsection("boosts", "An array of <<resources-boosts, Boosts resources>>."),
                         describeDirectoryView.withSubsection("sort", "An array of <<resources-sort, Sort resources>>."),
                         describeDirectoryView.withSubsection("export", "An array of <<resources-export, Export resources>>.")
@@ -74,6 +75,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
                         describeDirectoryView.withSubsection("index", "A <<resources-index, Index resource>>."),
                         describeDirectoryView.withSubsection("facets", "An array of <<resources-facets, Facet resources>>."),
                         describeDirectoryView.withSubsection("filters", "An array of <<resources-filters, Filters resources>>."),
+                        describeDirectoryView.withSubsection("filterGroups", "An array of <<resources-filterGroups, Filter groups resources>>."),
                         describeDirectoryView.withSubsection("boosts", "An array of <<resources-boosts, Boosts resources>>."),
                         describeDirectoryView.withSubsection("sort", "An array of <<resources-sort, Sort resources>>."),
                         describeDirectoryView.withSubsection("export", "An array of <<resources-export, Export resources>>."),
@@ -106,6 +108,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
                         describeDirectoryView.withSubsection("index", "A <<resources-index, Index resource>>."),
                         describeDirectoryView.withSubsection("facets", "An array of <<resources-facets, Facet resources>>."),
                         describeDirectoryView.withSubsection("filters", "An array of <<resources-filters, Filters resources>>."),
+                        describeDirectoryView.withSubsection("filterGroups", "An array of <<resources-filterGroups, Filter groups resources>>."),
                         describeDirectoryView.withSubsection("boosts", "An array of <<resources-boosts, Boosts resources>>."),
                         describeDirectoryView.withSubsection("sort", "An array of <<resources-sort, Sort resources>>."),
                         describeDirectoryView.withSubsection("export", "An array of <<resources-export, Export resources>>.")
@@ -123,6 +126,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
                         describeDirectoryView.withSubsection("index", "A <<resources-index, Index resource>>."),
                         describeDirectoryView.withSubsection("facets", "An array of <<resources-facets, Facet resources>>."),
                         describeDirectoryView.withSubsection("filters", "An array of <<resources-filters, Filters resources>>."),
+                        describeDirectoryView.withSubsection("filterGroups", "An array of <<resources-filterGroups, Filter groups resources>>."),
                         describeDirectoryView.withSubsection("boosts", "An array of <<resources-boosts, Boosts resources>>."),
                         describeDirectoryView.withSubsection("sort", "An array of <<resources-sort, Sort resources>>."),
                         describeDirectoryView.withSubsection("export", "An array of <<resources-export, Export resources>>."),
@@ -162,9 +166,10 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
                                 describeDirectoryView.withParameter("fields", "An array of fields of the Directory View.").optional(),
                                 describeDirectoryView.withParameter("facets", "An array of <<resources-facets, Facet resources>>.").optional(),
                                 describeDirectoryView.withParameter("filters", "An array of <<resources-filters, Filters resources>>.").optional(),
+                                describeDirectoryView.withParameter("filterGroups", "An array of <<resources-filterGroups, Filter groups resources>>.").optional(),
                                 describeDirectoryView.withParameter("boosts", "An array of <<resources-boosts, Boosts resources>>.").optional(),
                                 describeDirectoryView.withParameter("sort", "An array of <<resources-sort, Sort resources>>.").optional(),
-                                describeDirectoryView.withParameter("export", "An array of <<resources-export, Export resources>>.").optional()                                
+                                describeDirectoryView.withParameter("export", "An array of <<resources-export, Export resources>>.").optional()
                             ),
                             links(
                                 linkWithRel("self").description("Canonical link for this resource."),
@@ -179,6 +184,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
                                 describeDirectoryView.withSubsection("index", "A <<resources-index, Index resource>>."),
                                 describeDirectoryView.withSubsection("facets", "An array of <<resources-facets, Facet resources>>."),
                                 describeDirectoryView.withSubsection("filters", "An array of <<resources-filters, Filters resources>>."),
+                                describeDirectoryView.withSubsection("filterGroups", "An array of <<resources-filterGroups, Filter groups resources>>."),
                                 describeDirectoryView.withSubsection("boosts", "An array of <<resources-boosts, Boosts resources>>."),
                                 describeDirectoryView.withSubsection("sort", "An array of <<resources-sort, Sort resources>>."),
                                 describeDirectoryView.withSubsection("export", "An array of <<resources-export, Export resources>>."),
@@ -218,6 +224,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
                             describeDirectoryView.withSubsection("index", "A <<resources-index, Index resource>>."),
                             describeDirectoryView.withSubsection("facets", "An array of <<resources-facets, Facet resources>>."),
                             describeDirectoryView.withSubsection("filters", "An array of <<resources-filters, Filters resources>>."),
+                            describeDirectoryView.withSubsection("filterGroups", "An array of <<resources-filterGroups, Filter groups resources>>."),
                             describeDirectoryView.withSubsection("boosts", "An array of <<resources-boosts, Boosts resources>>."),
                             describeDirectoryView.withSubsection("sort", "An array of <<resources-sort, Sort resources>>."),
                             describeDirectoryView.withSubsection("export", "An array of <<resources-export, Export resources>>."),

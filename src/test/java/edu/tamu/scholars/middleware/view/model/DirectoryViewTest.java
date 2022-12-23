@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.solr.core.query.FacetOptions;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import edu.tamu.scholars.middleware.model.OpKey;
+import edu.tamu.scholars.middleware.model.FilterOp;
 
 @ExtendWith(SpringExtension.class)
 public class DirectoryViewTest {
@@ -61,9 +61,15 @@ public class DirectoryViewTest {
         assertTrue(directoryView.getFacets().get(0).isCollapsed());
         assertFalse(directoryView.getFacets().get(0).isHidden());
 
-        assertEquals(1, directoryView.getFilters().size());
-        assertEquals("type", directoryView.getFilters().get(0).getField());
-        assertEquals("FacultyMember", directoryView.getFilters().get(0).getValue());
+        assertEquals(2, directoryView.getFilters().size());
+        assertEquals("class", directoryView.getFilters().get(0).getField());
+        assertEquals("Person", directoryView.getFilters().get(0).getValue());
+        assertEquals("type", directoryView.getFilters().get(1).getField());
+        assertEquals("FacultyMember", directoryView.getFilters().get(1).getValue());
+
+        assertEquals(1, directoryView.getFilterGroups().size());
+        assertEquals("class", directoryView.getFilterGroups().get(0).getA());
+        assertEquals("type", directoryView.getFilterGroups().get(0).getB());
 
         assertEquals(1, directoryView.getBoosts().size());
         assertEquals("name", directoryView.getBoosts().get(0).getField());
@@ -75,7 +81,7 @@ public class DirectoryViewTest {
 
         assertNotNull(directoryView.getIndex());
         assertEquals("name", directoryView.getIndex().getField());
-        assertEquals(OpKey.ENDS_WITH, directoryView.getIndex().getOpKey());
+        assertEquals(FilterOp.ENDS_WITH, directoryView.getIndex().getOpKey());
 
         assertEquals(2, directoryView.getExport().size());
         assertEquals("Id", directoryView.getExport().get(0).getColumnHeader());

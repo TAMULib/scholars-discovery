@@ -45,6 +45,7 @@ import org.springframework.data.solr.core.query.result.FacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
+import edu.tamu.scholars.middleware.discovery.argument.FilterGroupArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
@@ -53,7 +54,7 @@ import edu.tamu.scholars.middleware.discovery.query.CustomSimpleFacetAndHighligh
 import edu.tamu.scholars.middleware.discovery.query.CustomSimpleFacetQuery;
 import edu.tamu.scholars.middleware.discovery.query.parser.CustomSimpleFacetAndHighlightQueryParser;
 import edu.tamu.scholars.middleware.discovery.query.parser.CustomSimpleFacetQueryParser;
-import edu.tamu.scholars.middleware.model.OpKey;
+import edu.tamu.scholars.middleware.model.FilterOp;
 import io.micrometer.core.instrument.util.StringUtils;
 
 public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
@@ -86,7 +87,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
     @Override
     public List<Individual> findByType(String type, List<FilterArg> filters) {
-        filters.add(FilterArg.of(TYPE, Optional.of(type), Optional.of(OpKey.EQUALS.getKey()), Optional.empty()));
+        filters.add(FilterArg.of(TYPE, Optional.of(type), Optional.of(FilterOp.EQUALS.getKey()), Optional.empty()));
         return findAll(filters);
     }
 
@@ -130,8 +131,17 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     @Override
-    public FacetAndHighlightPage<Individual> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<BoostArg> boosts, HighlightArg highlight, Pageable page) {
+    public FacetAndHighlightPage<Individual> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<FilterGroupArg> filterGroups, List<BoostArg> boosts, HighlightArg highlight, Pageable page) {
         CustomSimpleFacetAndHighlightQuery advancedQuery = new CustomSimpleFacetAndHighlightQuery();
+
+        // HERE
+        System.out.println(String.format("\n\n%s filter groups", filterGroups.size()));
+        filterGroups.forEach(fg -> {
+            System.out.println(String.format("a: %s", fg.getA()));
+            System.out.println(String.format("o: %s", fg.getExpOp()));
+            System.out.println(String.format("b: %s", fg.getB()));
+        });
+        System.out.println("\n\n");
 
         Criteria criteria = buildBoostedQueryCriteria(query.getExpression(), boosts);
 
@@ -164,7 +174,8 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             advancedQuery.setFacetOptions(facetOptions);
         }
 
-        buildFilterQueries(filters).forEach(filterQuery -> {
+        // fq added are intersection between filter and cached individually
+        buildFilterQueries(filters, filterGroups).forEach(filterQuery -> {
             advancedQuery.addFilterQuery(filterQuery);
         });
 
@@ -253,7 +264,8 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
     private SimpleQuery buildSimpleQuery(List<FilterArg> filters) {
         SimpleQuery simpleQuery = new SimpleQuery();
-        buildFilterQueries(filters).forEach(filterQuery -> {
+        // fq added are intersection between filter and cached individually
+        buildFilterQueries(filters, new ArrayList<>()).forEach(filterQuery -> {
             simpleQuery.addFilterQuery(filterQuery);
         });
         simpleQuery.setDefaultOperator(defaultOperator);
@@ -261,20 +273,69 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
         return simpleQuery;
     }
 
-    private List<SimpleFilterQuery> buildFilterQueries(List<FilterArg> filters) {
+    private List<SimpleFilterQuery> buildFilterQueries(List<FilterArg> filters, List<FilterGroupArg> filterGroups) {
         final List<SimpleFilterQuery> results = new ArrayList<SimpleFilterQuery>();
-        filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
-            FilterArg firstOne = filterList.get(0);
-            Criteria criteria = new CriteriaBuilder(firstOne).buildCriteria();
-            // the rest (of that field) are AND'd
-            // NOTE: a solution for supporting Intersection or Union could be to add another filter value delimiter to allow to specify AND/OR
-            if (filterList.size() > 1) {
-                for (FilterArg arg : filterList.subList(1, filterList.size())) {
-                    criteria = criteria.and(new CriteriaBuilder(arg).skipTag(true).buildCriteria());
+
+        // group filters specified by args
+        filterGroups.forEach(filterGroup -> {
+            FilterArg foA = null;
+            FilterArg foB = null;
+
+            for (int i = filters.size() - 1; i >= 0; --i) {
+                FilterArg filter = filters.get(i);
+
+                // remove filter as operand a, continue if operand b not found yet
+                if (foA == null && filterGroup.getA().equals(filter.getField())) {
+                    foA = filter;
+                    filters.remove(i);
+
+                    if (foB == null) {
+                        continue;
+                    }
+                // remove filter as operand b, continue if operand a not found yet
+                } else if (foB == null && filterGroup.getB().equals(filter.getField())) {
+                    foB = filter;
+                    filters.remove(i);
+
+                    if (foA == null) {
+                        continue;
+                    }
+                }
+
+                // if operand a and b filters are found group according to operator and break loop
+                if (foA != null && foB != null) {
+                    Criteria criteria = buildCriteria(foA);
+
+                    switch (filterGroup.getExpOp()) {
+                        case AND:
+                            criteria = criteria.and(buildCriteria(foB, true));
+                            break;
+                        case OR:
+                            criteria = criteria.or(buildCriteria(foB, true));
+                            break;
+                        default:
+                            break;
+                    }
+
+                    results.add(new SimpleFilterQuery(criteria));
+                    break;
                 }
             }
-            SimpleFilterQuery result = new SimpleFilterQuery(criteria);
-            results.add(result);
+        });
+
+        // proceed with default filter grouping behavior
+
+        // group by field (within same facet)
+        filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
+            FilterArg ff = filterList.get(0);
+            Criteria criteria = buildCriteria(ff);
+            // AND filters within a facet
+            if (filterList.size() > 1) {
+                for (FilterArg nf : filterList.subList(1, filterList.size())) {
+                    criteria = criteria.and(buildCriteria(nf, true));
+                }
+            }
+            results.add(new SimpleFilterQuery(criteria));
         });
         return results;
     }
@@ -284,68 +345,55 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
         return Individual.class;
     }
 
-    public class CriteriaBuilder {
+    private Criteria buildCriteria(FilterArg filter) {
+        return buildCriteria(filter, false);
+    }
 
-        private FilterArg filter;
-
-        private Boolean skipTag = false; // this has a default
-
-        public CriteriaBuilder(FilterArg filter) {
-            this.filter = filter;
-        }
-
-        public Criteria buildCriteria() {
-            String field = skipTag ? filter.getField() : filter.getCommand();
-            String value = filter.getValue();
-            Criteria criteria = Criteria.where(field);
-            switch (filter.getOpKey()) {
-            case BETWEEN:
-                Matcher rangeMatcher = RANGE_PATTERN.matcher(value);
-                if (rangeMatcher.matches()) {
-                    String start = rangeMatcher.group(1);
-                    String end = rangeMatcher.group(2);
-                    // NOTE: if date field, must be ISO format for Solr to recognize
-                    // https://lucene.apache.org/solr/7_5_0/solr-core/org/apache/solr/schema/DatePointField.html
-                    criteria.between(start, end, true, false);
-                } else {
-                    criteria.is(value);
-                }
-                break;
-            case CONTAINS:
-                criteria.contains(value);
-                break;
-            case ENDS_WITH:
-                criteria.endsWith(value);
-                break;
-            case EQUALS:
+    private Criteria buildCriteria(FilterArg filter, Boolean skipTag) {
+        String field = skipTag ? filter.getField() : filter.getCommand();
+        String value = filter.getValue();
+        Criteria criteria = Criteria.where(field);
+        switch (filter.getOpKey()) {
+        case BETWEEN:
+            Matcher rangeMatcher = RANGE_PATTERN.matcher(value);
+            if (rangeMatcher.matches()) {
+                String start = rangeMatcher.group(1);
+                String end = rangeMatcher.group(2);
+                // NOTE: if date field, must be ISO format for Solr to recognize
+                // https://lucene.apache.org/solr/7_5_0/solr-core/org/apache/solr/schema/DatePointField.html
+                criteria.between(start, end, true, false);
+            } else {
                 criteria.is(value);
-                break;
-            case EXPRESSION:
-                criteria.expression(value);
-                break;
-            case FUZZY:
-                // NOTE: more arguments can be used for fuzzy compare, yet unsupported
-                criteria.fuzzy(value);
-                break;
-            case NOT_EQUALS:
-                criteria.is(value).not();
-                break;
-            case STARTS_WITH:
-                criteria.startsWith(value);
-                break;
-            case RAW:
-                criteria = new SimpleStringCriteria(String.format("%s:%s", field, value));
-            default:
-                break;
             }
-            return criteria;
+            break;
+        case CONTAINS:
+            criteria.contains(value);
+            break;
+        case ENDS_WITH:
+            criteria.endsWith(value);
+            break;
+        case EQUALS:
+            criteria.is(value);
+            break;
+        case EXPRESSION:
+            criteria.expression(value);
+            break;
+        case FUZZY:
+            // NOTE: more arguments can be used for fuzzy compare, yet unsupported
+            criteria.fuzzy(value);
+            break;
+        case NOT_EQUALS:
+            criteria.is(value).not();
+            break;
+        case STARTS_WITH:
+            criteria.startsWith(value);
+            break;
+        case RAW:
+            criteria = new SimpleStringCriteria(String.format("%s:%s", field, value));
+        default:
+            break;
         }
-
-        public CriteriaBuilder skipTag(Boolean skipTag) {
-            this.skipTag = skipTag;
-            return this;
-        }
-
+        return criteria;
     }
 
 }

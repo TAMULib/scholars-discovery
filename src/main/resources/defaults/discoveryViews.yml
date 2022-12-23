@@ -300,6 +300,12 @@
   filters:
     - field: class
       value: Document
+    - field: type
+      value: creativeWork
+  filterGroups:
+    - a: class
+      b: type
+      opKey: OR
   boosts:
     - field: title
       value: 2

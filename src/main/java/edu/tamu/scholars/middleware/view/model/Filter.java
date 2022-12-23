@@ -5,7 +5,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import edu.tamu.scholars.middleware.model.OpKey;
+import edu.tamu.scholars.middleware.model.FilterOp;
 
 @Embeddable
 public class Filter {
@@ -18,10 +18,10 @@ public class Filter {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OpKey opKey;
+    private FilterOp opKey;
 
     public Filter() {
-        opKey = OpKey.EQUALS;
+        opKey = FilterOp.EQUALS;
     }
 
     public String getField() {
@@ -40,11 +40,11 @@ public class Filter {
         this.value = value;
     }
 
-    public OpKey getOpKey() {
+    public FilterOp getOpKey() {
         return opKey;
     }
 
-    public void setOpKey(OpKey opKey) {
+    public void setOpKey(FilterOp opKey) {
         this.opKey = opKey;
     }
 

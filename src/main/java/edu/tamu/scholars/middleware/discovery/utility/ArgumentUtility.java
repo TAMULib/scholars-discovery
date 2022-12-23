@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
+import edu.tamu.scholars.middleware.discovery.argument.FilterGroupArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 
@@ -47,6 +48,7 @@ public class ArgumentUtility {
     private final static String FILTER_OPKEY_FORMAT = "%s.opKey";
     private final static String FILTER_TAG_FORMAT = "%s.tag";
 
+    // TODO: minimize number of iterations over parameter names
     public static List<FacetArg> getFacetArguments(HttpServletRequest request) {
         List<String> parameterNames = Collections.list(request.getParameterNames());
         // @formatter:off
@@ -113,7 +115,9 @@ public class ArgumentUtility {
         // @formatter:on
     }
 
+    // TODO: minimize number of iterations over parameter names
     public static List<FilterArg> getFilterArguments(HttpServletRequest request) {
+        List<FilterArg> filters = new ArrayList<FilterArg>();
         List<String> parameterNames = Collections.list(request.getParameterNames());
         // @formatter:off
         List<String> fields = parameterNames.stream()
@@ -125,7 +129,6 @@ public class ArgumentUtility {
             .map(Arrays::asList)
             .flatMap(list -> list.stream())
             .collect(Collectors.toList());
-        List<FilterArg> filters = new ArrayList<FilterArg>();
         filters = fields.stream().map(field -> {
             String values = parameterNames.stream()
                 .filter(paramName -> paramName.equals(String.format(FILTER_VALUE_FORMAT, field)))
@@ -153,6 +156,18 @@ public class ArgumentUtility {
             .collect(Collectors.toList());
         // @formatter:on
         return filters;
+    }
+
+    // HERE => from request query params to filter group args
+    public static List<FilterGroupArg> getFilterGroupArguments(HttpServletRequest request) {
+        // @formatter:off
+        return Collections.list(request.getParameterNames()).stream()
+            .filter(paramName -> paramName.contains("<->"))
+            .map(paramName -> {
+                String[] operands = paramName.split("<->");
+                return FilterGroupArg.of(operands[0], operands[1], Optional.ofNullable(request.getParameterValues(paramName)[0]));
+        }).collect(Collectors.toList());
+        // @formatter:on
     }
 
     public static List<BoostArg> getBoostArguments(HttpServletRequest request) {

@@ -66,9 +66,15 @@ public class DiscoveryViewTest {
         assertTrue(discoveryView.getFacets().get(0).isCollapsed());
         assertFalse(discoveryView.getFacets().get(0).isHidden());
 
-        assertEquals(1, discoveryView.getFilters().size());
-        assertEquals("type", discoveryView.getFilters().get(0).getField());
-        assertEquals("FacultyMember", discoveryView.getFilters().get(0).getValue());
+        assertEquals(2, discoveryView.getFilters().size());
+        assertEquals("class", discoveryView.getFilters().get(0).getField());
+        assertEquals("Person", discoveryView.getFilters().get(0).getValue());
+        assertEquals("type", discoveryView.getFilters().get(1).getField());
+        assertEquals("FacultyMember", discoveryView.getFilters().get(1).getValue());
+
+        assertEquals(1, discoveryView.getFilterGroups().size());
+        assertEquals("class", discoveryView.getFilterGroups().get(0).getA());
+        assertEquals("type", discoveryView.getFilterGroups().get(0).getB());
 
         assertEquals(1, discoveryView.getBoosts().size());
         assertEquals("name", discoveryView.getBoosts().get(0).getField());

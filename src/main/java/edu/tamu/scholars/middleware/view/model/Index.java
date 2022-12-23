@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import edu.tamu.scholars.middleware.model.OpKey;
+import edu.tamu.scholars.middleware.model.FilterOp;
 
 @Embeddable
 public class Index {
@@ -18,13 +18,13 @@ public class Index {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OpKey opKey;
+    private FilterOp opKey;
 
     @ElementCollection
     private List<String> options;
 
     public Index() {
-        opKey = OpKey.STARTS_WITH;
+        opKey = FilterOp.STARTS_WITH;
     }
 
     public String getField() {
@@ -35,11 +35,11 @@ public class Index {
         this.field = field;
     }
 
-    public OpKey getOpKey() {
+    public FilterOp getOpKey() {
         return opKey;
     }
 
-    public void setOpKey(OpKey opKey) {
+    public void setOpKey(FilterOp opKey) {
         this.opKey = opKey;
     }
 

@@ -8,7 +8,8 @@ import java.util.Map;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.solr.core.query.FacetOptions;
 
-import edu.tamu.scholars.middleware.model.OpKey;
+import edu.tamu.scholars.middleware.model.FilterOp;
+import edu.tamu.scholars.middleware.model.GroupOp;
 import edu.tamu.scholars.middleware.view.model.Boost;
 import edu.tamu.scholars.middleware.view.model.DirectoryView;
 import edu.tamu.scholars.middleware.view.model.DiscoveryView;
@@ -22,6 +23,7 @@ import edu.tamu.scholars.middleware.view.model.ExportView;
 import edu.tamu.scholars.middleware.view.model.Facet;
 import edu.tamu.scholars.middleware.view.model.FacetType;
 import edu.tamu.scholars.middleware.view.model.Filter;
+import edu.tamu.scholars.middleware.view.model.FilterGroup;
 import edu.tamu.scholars.middleware.view.model.Index;
 import edu.tamu.scholars.middleware.view.model.Layout;
 import edu.tamu.scholars.middleware.view.model.Side;
@@ -74,12 +76,31 @@ public class ViewTestUtility {
 
         Filter filter = new Filter();
 
-        filter.setField("type");
-        filter.setValue("FacultyMember");
+        filter.setField("class");
+        filter.setValue("Person");
 
         filters.add(filter);
 
+        Filter anotherFilter = new Filter();
+
+        anotherFilter.setField("type");
+        anotherFilter.setValue("FacultyMember");
+
+        filters.add(anotherFilter);
+
         directoryView.setFilters(filters);
+
+        List<FilterGroup> filterGroups = new ArrayList<FilterGroup>();
+
+        FilterGroup filterGroup = new FilterGroup();
+
+        filterGroup.setA("class");
+        filterGroup.setB("type");
+        filterGroup.setOpKey(GroupOp.AND);
+
+        filterGroups.add(filterGroup);
+
+        directoryView.setFilterGroups(filterGroups);
 
         List<Boost> boosts = new ArrayList<Boost>();
 
@@ -105,7 +126,7 @@ public class ViewTestUtility {
         Index index = new Index();
 
         index.setField("name");
-        index.setOpKey(OpKey.ENDS_WITH);
+        index.setOpKey(FilterOp.ENDS_WITH);
 
         directoryView.setIndex(index);
 
@@ -180,12 +201,31 @@ public class ViewTestUtility {
 
         Filter filter = new Filter();
 
-        filter.setField("type");
-        filter.setValue("FacultyMember");
+        filter.setField("class");
+        filter.setValue("Person");
 
         filters.add(filter);
 
+        Filter anotherFilter = new Filter();
+
+        anotherFilter.setField("type");
+        anotherFilter.setValue("FacultyMember");
+
+        filters.add(anotherFilter);
+
         discoveryView.setFilters(filters);
+
+        List<FilterGroup> filterGroups = new ArrayList<FilterGroup>();
+
+        FilterGroup filterGroup = new FilterGroup();
+
+        filterGroup.setA("class");
+        filterGroup.setB("type");
+        filterGroup.setOpKey(GroupOp.AND);
+
+        filterGroups.add(filterGroup);
+
+        discoveryView.setFilterGroups(filterGroups);
 
         List<Boost> boosts = new ArrayList<Boost>();
 

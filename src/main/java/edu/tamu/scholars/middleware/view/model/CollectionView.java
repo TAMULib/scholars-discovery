@@ -15,6 +15,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 // @ValidCollectionFacets(message = "{CollectionView.validCollectionFacets}")
 // @ValidCollectionFilters(message = "{CollectionView.validCollectionFilters}")
+// @ValidCollectionFilters(message = "{CollectionView.validCollectionFilterGroups}")
 // @ValidCollectionExport(message = "{CollectionView.validCollectionExport}")
 public abstract class CollectionView extends View {
 
@@ -42,6 +43,9 @@ public abstract class CollectionView extends View {
     private List<Filter> filters;
 
     @ElementCollection
+    private List<FilterGroup> filterGroups;
+
+    @ElementCollection
     private List<Boost> boosts;
 
     @ElementCollection
@@ -57,6 +61,7 @@ public abstract class CollectionView extends View {
         fields = new ArrayList<String>();
         facets = new ArrayList<Facet>();
         filters = new ArrayList<Filter>();
+        filterGroups = new ArrayList<FilterGroup>();
         boosts = new ArrayList<Boost>();
         sort = new ArrayList<Sort>();
         export = new ArrayList<ExportField>();
@@ -108,6 +113,14 @@ public abstract class CollectionView extends View {
 
     public void setFilters(List<Filter> filters) {
         this.filters = filters;
+    }
+
+    public List<FilterGroup> getFilterGroups() {
+        return filterGroups;
+    }
+
+    public void setFilterGroups(List<FilterGroup> filterGroups) {
+        this.filterGroups = filterGroups;
     }
 
     public List<Boost> getBoosts() {

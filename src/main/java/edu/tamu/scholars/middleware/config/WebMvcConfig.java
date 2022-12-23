@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import edu.tamu.scholars.middleware.discovery.resolver.BoostArgumentResolver;
 import edu.tamu.scholars.middleware.discovery.resolver.FacetArgumentResolver;
 import edu.tamu.scholars.middleware.discovery.resolver.FilterArgumentResolver;
+import edu.tamu.scholars.middleware.discovery.resolver.FilterGroupArgumentResolver;
 import edu.tamu.scholars.middleware.discovery.resolver.HighlightArgumentResolver;
 import edu.tamu.scholars.middleware.discovery.resolver.QueryArgumentResolver;
 import edu.tamu.scholars.middleware.export.resolver.ExportArgumentResolver;
@@ -38,6 +39,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new QueryArgumentResolver());
         resolvers.add(new FilterArgumentResolver());
+        resolvers.add(new FilterGroupArgumentResolver());
         resolvers.add(new FacetArgumentResolver());
         resolvers.add(new BoostArgumentResolver());
         resolvers.add(new HighlightArgumentResolver());

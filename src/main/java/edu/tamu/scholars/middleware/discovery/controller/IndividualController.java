@@ -26,6 +26,7 @@ import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
+import edu.tamu.scholars.middleware.discovery.argument.FilterGroupArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.assembler.DiscoveryPagedResourcesAssembler;
@@ -52,12 +53,13 @@ public class IndividualController implements RepresentationModelProcessor<Reposi
         QueryArg query,
         List<FacetArg> facets,
         List<FilterArg> filters,
+        List<FilterGroupArg> filterGroups,
         List<BoostArg> boosts,
         HighlightArg highlight,
         @PageableDefault(page = 0, size = 10, sort = "id", direction = ASC) Pageable page
     ) {
     // @formatter:on
-        return ResponseEntity.ok(discoveryPagedResourcesAssembler.toModel(repo.search(query, facets, filters, boosts, highlight, page), assembler));
+        return ResponseEntity.ok(discoveryPagedResourcesAssembler.toModel(repo.search(query, facets, filters, filterGroups, boosts, highlight, page), assembler));
     }
 
     @GetMapping("/individual/search/recentlyUpdated")
@@ -79,6 +81,7 @@ public class IndividualController implements RepresentationModelProcessor<Reposi
                 ),
                 new ArrayList<FacetArg>(),
                 new ArrayList<FilterArg>(),
+                new ArrayList<FilterGroupArg>(),
                 new ArrayList<BoostArg>(),
                 HighlightArg.of(new String[] {}, Optional.empty(), Optional.empty()),
                 PageRequest.of(0, 10)

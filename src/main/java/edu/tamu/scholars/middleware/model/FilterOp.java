@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.model;
 
-public enum OpKey {
+public enum FilterOp {
 
     // @formatter:off
     BETWEEN("BETWEEN"),
@@ -16,7 +16,7 @@ public enum OpKey {
 
     private final String key;
 
-    OpKey(String key) {
+    FilterOp(String key) {
         this.key = key;
     }
 
