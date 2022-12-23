@@ -146,7 +146,7 @@ public class ArgumentUtility {
                 .map(Arrays::asList)
                 .flatMap(list -> list.stream())
                 .findAny();
-            return Arrays.asList(values.split(",")).stream()
+            return Arrays.asList(values.split(";")).stream()
                 .map(value -> FilterArg.of(field, Optional.of(value), opKey, tag))
                 .collect(Collectors.toList());
         }).flatMap(list -> list.stream())
