@@ -299,13 +299,8 @@
       rangeGap: 100
   filters:
     - field: class
-      value: Document
-    - field: type
-      value: creativeWork
-  filterGroups:
-    - a: class
-      b: type
-      opKey: OR
+      value: Document OR type:creativeWork
+      opKey: EXPRESSION
   boosts:
     - field: title
       value: 2
