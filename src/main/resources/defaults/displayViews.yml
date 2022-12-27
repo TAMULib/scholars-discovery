@@ -1597,6 +1597,7 @@
 - name: Processes
   types:
     - Course
+    - creativeWork
   mainContentTemplate: "defaults/displayViews/processes/mainContentTemplate.html"
   metaTemplates:
     title: "defaults/displayViews/processes/meta/title.txt"
@@ -1605,38 +1606,68 @@
   tabs:
     - name: Overview
       sections:
+        - name: abstract
+          template: "defaults/displayViews/processes/overview/abstract.html"
+          field: abstract
+          order: 1
+        - name: authors
+          template: "defaults/displayViews/processes/overview/authors.html"
+          field: authors
+          order: 2
+        - name: author list (cited authors)
+          template: "defaults/displayViews/processes/overview/authorList.html"
+          field: authorList
+          order: 3
         - name: description
           template: "defaults/displayViews/processes/overview/description.html"
           field: description
-          order: 1
-        - name: offered by
-          template: "defaults/displayViews/processes/overview/offeredBy.html"
-          field: offeredBy
-          order: 2
-          lazyReferences:
-            - offeredBy
+          order: 4
         - name: date/time interval
           template: "defaults/displayViews/processes/overview/dateTimeInterval.html"
           field: dateTimeIntervalStart
-          order: 3
-          requiredFields:
-            - dateTimeIntervalEnd
+          order: 5
+        - name: type
+          template: "defaults/displayViews/processes/overview/type.html"
+          field: subtype
+          order: 6
+        - name: venue
+          template: "defaults/displayViews/processes/overview/venue.html"
+          field: venue
+          order: 7
+        - name: location
+          template: "defaults/displayViews/processes/overview/location.html"
+          field: location
+          order: 8
+        - name: URL
+          template: "defaults/displayViews/processes/overview/url.html"
+          field: url
+          order: 9
+        - name: Note
+          template: "defaults/displayViews/processes/overview/note.html"
+          field: note
+          order: 10
+        - name: offered by
+          template: "defaults/displayViews/processes/overview/offeredBy.html"
+          field: offeredBy
+          order: 11
+          lazyReferences:
+            - offeredBy
         - name: occurs within event
           template: "defaults/displayViews/processes/overview/occursWithinEvent.html"
           field: occursWithinEvent
-          order: 4
+          order: 12
         - name: includes event
           template: "defaults/displayViews/processes/overview/includesEvent.html"
           field: includesEvent
-          order: 5
+          order: 13
         - name: in event series
           template: "defaults/displayViews/processes/overview/inEventSeries.html"
           field: inEventSeries
-          order: 6
+          order: 14
         - name: participant
           template: "defaults/displayViews/processes/overview/participants.html"
           field: participants
-          order: 7
+          order: 15
           paginated: true
           sort:
             - field: label
@@ -1644,23 +1675,23 @@
         - name: has subject area
           template: "defaults/displayViews/processes/overview/hasSubjectArea.html"
           field: subjectAreas
-          order: 8
+          order: 16
         - name: has prerequisite
           template: "defaults/displayViews/processes/overview/hasPrerequisite.html"
           field: hasPrerequisite
-          order: 9
+          order: 17
         - name: prerequisite for
           template: "defaults/displayViews/processes/overview/prerequisiteFor.html"
           field: prerequisiteFor
-          order: 10
+          order: 18
         - name: credits
           template: "defaults/displayViews/processes/overview/credits.html"
           field: credits
-          order: 11
+          order: 19
         - name: geographic focus
           template: "defaults/displayViews/processes/overview/geographicFocus.html"
           field: geographicFocus
-          order: 12
+          order: 20
     - name: Publications
       sections:
         - name: output publications or other works
