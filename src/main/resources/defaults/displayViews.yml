@@ -133,7 +133,7 @@
           template: "defaults/displayViews/persons/academicBackground/adviseeOf.html"
           field: adviseeOf
           order: 4
-    - name: Publications
+    - name: Scholarly Works
       sections:
         - name: selected publications
           shared: true
@@ -273,6 +273,105 @@
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/publications/selectedPublications/default.html"
+        - name: creative works
+          shared: true
+          template: "defaults/displayViews/persons/creativeWorks/creativeWorks.html"
+          field: creativeWorks
+          order: 1
+          lazyReferences:
+            - creativeWorks
+          subsections:
+            - name: Exhibitions
+              field: creativeWorks
+              order: 1
+              filters:
+                - field: subtype
+                  value: Exhibition
+              sort:
+                - field: dateTimeIntervalStart
+                  direction: DESC
+                  date: true
+                - field: title
+                  direction: ASC
+              template: "defaults/displayViews/persons/creativeWorks/default.html"
+            - name: Performances
+              field: creativeWorks
+              order: 2
+              filters:
+                - field: subtype
+                  value: Performance
+              sort:
+                - field: dateTimeIntervalStart
+                  direction: DESC
+                  date: true
+                - field: title
+                  direction: ASC
+              template: "defaults/displayViews/persons/creativeWorks/default.html"
+            - name: Paintings
+              field: creativeWorks
+              order: 3
+              filters:
+                - field: subtype
+                  value: Painting
+              sort:
+                - field: dateTimeIntervalStart
+                  direction: DESC
+                  date: true
+                - field: title
+                  direction: ASC
+              template: "defaults/displayViews/persons/creativeWorks/default.html"
+            - name: Photographs
+              field: creativeWorks
+              order: 4
+              filters:
+                - field: subtype
+                  value: Photograph
+              sort:
+                - field: dateTimeIntervalStart
+                  direction: DESC
+                  date: true
+                - field: title
+                  direction: ASC
+              template: "defaults/displayViews/persons/creativeWorks/default.html"
+            - name: Sculptures
+              field: creativeWorks
+              order: 5
+              filters:
+                - field: subtype
+                  value: Sculpture
+              sort:
+                - field: dateTimeIntervalStart
+                  direction: DESC
+                  date: true
+                - field: title
+                  direction: ASC
+              template: "defaults/displayViews/persons/creativeWorks/default.html"
+            - name: Albums
+              field: creativeWorks
+              order: 6
+              filters:
+                - field: subtype
+                  value: Album
+              sort:
+                - field: dateTimeIntervalStart
+                  direction: DESC
+                  date: true
+                - field: title
+                  direction: ASC
+              template: "defaults/displayViews/persons/creativeWorks/default.html"
+            - name: Tracks
+              field: creativeWorks
+              order: 7
+              filters:
+                - field: subtype
+                  value: Track
+              sort:
+                - field: dateTimeIntervalStart
+                  direction: DESC
+                  date: true
+                - field: title
+                  direction: ASC
+              template: "defaults/displayViews/persons/creativeWorks/default.html"
         - name: open teaching materials
           shared: true
           paginated: true
