@@ -1,9 +1,5 @@
 package edu.tamu.scholars.middleware.config;
 
-import static org.springframework.data.solr.core.schema.SolrPersistentEntitySchemaCreator.Feature.CREATE_MISSING_FIELDS;
-
-import java.util.Collections;
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.springframework.beans.factory.annotation.Value;
