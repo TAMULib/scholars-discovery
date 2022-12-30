@@ -455,12 +455,16 @@
         <filter name="flattenGraph"/>
         -->
         <filter name="lowercase"/>
+        <filter name="englishMinimalStem"/>
+        <filter name="wordDelimiterGraph" preserveOriginal="1"/>
+        <filter name="flattenGraph"/> <!-- required on index analyzers after graph filters -->
       </analyzer>
       <analyzer type="query">
         <tokenizer name="standard"/>
         <filter name="stop" ignoreCase="true" words="stopwords.txt" />
         <filter name="synonymGraph" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
         <filter name="lowercase"/>
+        <filter name="englishMinimalStem"/>
       </analyzer>
     </fieldType>
 
