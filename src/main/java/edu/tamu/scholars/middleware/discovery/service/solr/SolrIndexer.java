@@ -3,6 +3,7 @@ package edu.tamu.scholars.middleware.discovery.service.solr;
 import static edu.tamu.scholars.middleware.discovery.service.IndexService.CREATED_FIELDS;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,17 +65,23 @@ public class SolrIndexer implements Indexer {
                 }
 
                 fieldAttributes.put("multiValued", Collection.class.isAssignableFrom(field.getType()));
-                // fieldAttributes.put("omitNorms", false);
-                // fieldAttributes.put("docValues", false);
-                // fieldAttributes.put("uninvertable", false);
 
                 fieldAttributes.put("name", name);
 
                 try {
-                    SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
-                    SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient, collection);
+                    SchemaRequest.AddField addFieldRequest = new SchemaRequest.AddField(fieldAttributes);
+                    addFieldRequest.process(solrClient, collection);
                 } catch (Exception e) {
-                    System.out.println("Failed: " + e.getMessage());
+                    logger.error("Failed to add field", e);
+                }
+
+                if (indexed.copyTo().length > 0) {
+                    try {
+                        SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(indexed.copyTo()));
+                        addCopyFieldRequest.process(solrClient, collection);
+                    } catch (Exception e) {
+                        logger.error("Failed to add copy field", e);
+                    }
                 }
             }
 
