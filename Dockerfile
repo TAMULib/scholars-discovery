@@ -5,7 +5,7 @@ ARG HOME_DIR=/$USER_NAME
 ARG SOURCE_DIR=$HOME_DIR/source
 
 # Maven stage.
-FROM maven:3-openjdk-11-slim as maven
+FROM maven:3-openjdk-17-slim as maven
 ARG USER_ID
 ARG USER_NAME
 ARG HOME_DIR
@@ -37,7 +37,7 @@ USER $USER_NAME
 RUN mvn package
 
 # Switch to Normal JRE Stage.
-FROM openjdk:11-jre-slim
+FROM openjdk:17-slim
 ARG USER_ID
 ARG USER_NAME
 ARG HOME_DIR
