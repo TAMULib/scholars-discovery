@@ -385,6 +385,7 @@
                       to occupy. Note that when this option is specified, the size
                       and initialSize parameters are ignored.
       -->
+
     <filterCache size="8192"
                  initialSize="2048"
                  autowarmCount="1024"/>
@@ -397,6 +398,7 @@
             maxRamMB - the maximum amount of RAM (in MB) that this cache is allowed
                        to occupy
       -->
+
     <queryResultCache size="8192"
                       initialSize="2048"
                       autowarmCount="1024"/>
