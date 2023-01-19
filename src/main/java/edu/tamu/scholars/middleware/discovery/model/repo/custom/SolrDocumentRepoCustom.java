@@ -13,9 +13,14 @@ import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
+import edu.tamu.scholars.middleware.discovery.dto.CoDataNetwork;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 
 public interface SolrDocumentRepoCustom<D extends AbstractIndexDocument> {
+	
+	public CoDataNetwork getCoAuthorNetwork(String id);
+
+	public CoDataNetwork getCoInvestigatorNetwork(String id);
 
     public long count(String query, List<FilterArg> filters);
 

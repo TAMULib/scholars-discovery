@@ -1,16 +1,20 @@
 package edu.tamu.scholars.middleware.discovery.model.repo.impl;
 
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.*;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.PARENTHESES_TEMPLATE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 import static org.springframework.data.solr.core.query.Criteria.WILDCARD;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,8 +23,13 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.FacetParams.FacetRangeInclude;
 import org.apache.solr.common.params.FacetParams.FacetRangeOther;
+import org.apache.solr.common.params.MapSolrParams;
+import org.apache.solr.common.params.SolrParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -47,6 +56,8 @@ import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
+import edu.tamu.scholars.middleware.discovery.dto.CoDataNetwork;
+import edu.tamu.scholars.middleware.discovery.dto.DirectedData;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.custom.SolrDocumentRepoCustom;
 import edu.tamu.scholars.middleware.discovery.query.CustomSimpleFacetAndHighlightQuery;
@@ -68,6 +79,9 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
     @Autowired
     private SolrTemplate solrTemplate;
+    
+    @Autowired
+    private SolrClient solrClient;
 
     @PostConstruct
     public void setup() {
@@ -76,6 +90,63 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
         solrTemplate.registerQueryParser(CustomSimpleFacetQuery.class, new CustomSimpleFacetQueryParser(new SimpleSolrMappingContext()));
         solrTemplate.registerQueryParser(CustomSimpleFacetAndHighlightQuery.class, new CustomSimpleFacetAndHighlightQueryParser(new SimpleSolrMappingContext()));
     }
+    
+    @Override
+	public CoDataNetwork getCoAuthorNetwork(String id) {
+    	CoDataNetwork coAuthorNetwork = new CoDataNetwork();
+    	
+    	String root = null;
+    	
+    	try {
+    		final Map<String, String> queryParamMap = new HashMap<>();
+    		queryParamMap.put("q", "*:*");
+    		queryParamMap.put("fl", "authors");
+    		queryParamMap.put("rows", String.valueOf(Integer.MAX_VALUE));
+    		queryParamMap.put("fq", String.format("syncIds:%s AND type:AcademicArticle", id));
+    		SolrParams queryParams = new MapSolrParams(queryParamMap);
+
+    		final QueryResponse response = solrClient.query(collection(), queryParams);
+
+    		for (org.apache.solr.common.SolrDocument document : response.getResults()) {
+    			List<Object> authors =  new ArrayList<>(document.getFieldValues("authors"));
+    			
+    			for (Object value : authors) {
+    				String author = (String) value;
+    				if (author.contains(id)) {
+    					root = author.split("::")[0];
+    					break;
+    				}
+    			}
+
+    			for (int i = 0; i < authors.size(); ++i) {
+    				String author = (String) authors.get(i);
+    				String name = author.split("::")[0];
+    				if (!author.contains(id)) {
+						 coAuthorNetwork.addCoAuthor(name);
+					}
+    				if (!root.equals(name)) {
+    					if (i == 0) {
+        					coAuthorNetwork.addCoAuthor(DirectedData.of(name, root));
+        				} else {
+        					coAuthorNetwork.addCoAuthor(DirectedData.of(root, name));
+        				}	
+    				}
+    			}
+    		}
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return coAuthorNetwork.to(root);
+	}
+    
+    @Override
+	public CoDataNetwork getCoInvestigatorNetwork(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     @Override
     public long count(String query, List<FilterArg> filters) {

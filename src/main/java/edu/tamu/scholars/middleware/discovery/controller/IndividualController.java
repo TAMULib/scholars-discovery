@@ -20,6 +20,7 @@ import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
@@ -30,6 +31,7 @@ import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.assembler.DiscoveryPagedResourcesAssembler;
 import edu.tamu.scholars.middleware.discovery.assembler.IndividualResourceAssembler;
+import edu.tamu.scholars.middleware.discovery.dto.CoDataNetwork;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.discovery.resource.IndividualResource;
@@ -45,6 +47,16 @@ public class IndividualController implements RepresentationModelProcessor<Reposi
 
     @Autowired
     private DiscoveryPagedResourcesAssembler<Individual> discoveryPagedResourcesAssembler;
+    
+    @GetMapping("/individual/{id}/co-author-network")
+    public ResponseEntity<CoDataNetwork> coAuthorNetwork(@PathVariable String id) {    
+    	return ResponseEntity.ok(repo.getCoAuthorNetwork(id));
+    }
+    
+    @GetMapping("/individual/{id}/co-investigator-network")
+    public ResponseEntity<CoDataNetwork> coInvestigatorNetwork(@PathVariable String id) {
+    	return ResponseEntity.ok(repo.getCoInvestigatorNetwork(id));
+    }
 
     @GetMapping("/individual/search/advanced")
     // @formatter:off
@@ -56,9 +68,9 @@ public class IndividualController implements RepresentationModelProcessor<Reposi
         HighlightArg highlight,
         @PageableDefault(page = 0, size = 10, sort = "id", direction = ASC) Pageable page
     ) {
-    // @formatter:on
         return ResponseEntity.ok(discoveryPagedResourcesAssembler.toModel(repo.search(query, facets, filters, boosts, highlight, page), assembler));
     }
+    // @formatter:on
 
     @GetMapping("/individual/search/recentlyUpdated")
     public ResponseEntity<CollectionModel<IndividualResource>> recentlyUpdated(@RequestParam(value = "limit", defaultValue = "10") int limit, List<FilterArg> filters) {
