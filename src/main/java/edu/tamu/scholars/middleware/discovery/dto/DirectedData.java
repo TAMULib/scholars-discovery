@@ -4,59 +4,59 @@ import java.util.Objects;
 
 public class DirectedData {
 
-	private final String source;
+    private final String source;
 
-	private final String target;
-	
-	private Integer count;
+    private final String target;
 
-	public DirectedData(String source, String target) {
-		this.source = source;
-		this.target = target;
-		this.count = 1;
-	}
+    private Integer count;
 
-	public String getSource() {
-		return source;
-	}
+    public DirectedData(String source, String target) {
+        this.source = source;
+        this.target = target;
+        this.count = 1;
+    }
 
-	public String getTarget() {
-		return target;
-	}
+    public String getSource() {
+        return source;
+    }
 
-	public Integer getCount() {
-		return count;
-	}
+    public String getTarget() {
+        return target;
+    }
 
-	public static DirectedData of(String source, String target) {
-		return new DirectedData(source, target);
-	}
-	
-	public DirectedData total(Integer count) {
-		this.count = count;
+    public Integer getCount() {
+        return count;
+    }
 
-		return this;
-	}
+    public static DirectedData of(String source, String target) {
+        return new DirectedData(source, target);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(source, target);
-	}
+    public DirectedData total(Integer count) {
+        this.count = count;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}	
-		DirectedData other = (DirectedData) obj;
+        return this;
+    }
 
-		return Objects.equals(source, other.source) && Objects.equals(target, other.target);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(source, target);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DirectedData other = (DirectedData) obj;
+
+        return Objects.equals(source, other.source) && Objects.equals(target, other.target);
+    }
 
 }

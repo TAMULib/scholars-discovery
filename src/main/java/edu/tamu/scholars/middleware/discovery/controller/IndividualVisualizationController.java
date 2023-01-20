@@ -25,18 +25,18 @@ public class IndividualVisualizationController implements RepresentationModelPro
 
     @GetMapping("/individual/{id}/co-author-network")
     public ResponseEntity<CoDataNetworkResponse> coAuthorNetwork(@PathVariable String id) {
-    	String dateField = "publicationDate";
-    	List<String> dataFields = Arrays.asList("authors");
-    	List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Document"));
-    	return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
+        String dateField = "publicationDate";
+        List<String> dataFields = Arrays.asList("authors");
+        List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Document"));
+        return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
     }
     
     @GetMapping("/individual/{id}/co-investigator-network")
     public ResponseEntity<CoDataNetworkResponse> coInvestigatorNetwork(@PathVariable String id) {
-    	String dateField = "dateTimeIntervalStart";
+        String dateField = "dateTimeIntervalStart";
         List<String> dataFields = Arrays.asList("contributors", "principalInvestigators", "coPrincipalInvestigators");
         List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Relationship"), Pair.of("type", "Grant"));
-    	return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
+        return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
     }
 
     @Override
@@ -48,14 +48,14 @@ public class IndividualVisualizationController implements RepresentationModelPro
                   WebMvcLinkBuilder
                     .methodOn(this.getClass())
                     .coAuthorNetwork(resource.getContent().getId())
-                ).withRel("export")
+                ).withRel("co-author-network")
             );
             resource.add(
                 WebMvcLinkBuilder.linkTo(
                   WebMvcLinkBuilder
                     .methodOn(this.getClass())
                     .coInvestigatorNetwork(resource.getContent().getId())
-                ).withRel("export")
+                ).withRel("co-investigator-network")
             );
             // @formatter:on
         } catch (IllegalArgumentException e) {

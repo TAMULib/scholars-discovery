@@ -6,5 +6,5 @@ import edu.tamu.scholars.middleware.discovery.model.Individual;
 
 @RepositoryRestResource(path = "individual", collectionResourceRel = "individual")
 public interface IndividualRepo extends SolrDocumentRepo<Individual> {
-	
+
 }

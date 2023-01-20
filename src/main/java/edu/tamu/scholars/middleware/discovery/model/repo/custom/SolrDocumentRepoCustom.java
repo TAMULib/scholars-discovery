@@ -18,8 +18,8 @@ import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkRequest;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 
 public interface SolrDocumentRepoCustom<D extends AbstractIndexDocument> {
-	
-	public CoDataNetworkResponse getCoDataNetwork(CoDataNetworkRequest coDataRequest);
+
+    public CoDataNetworkResponse getCoDataNetwork(CoDataNetworkRequest coDataRequest);
 
     public long count(String query, List<FilterArg> filters);
 

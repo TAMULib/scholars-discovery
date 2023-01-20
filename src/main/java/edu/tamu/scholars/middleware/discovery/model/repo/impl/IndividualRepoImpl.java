@@ -72,8 +72,8 @@ import edu.tamu.scholars.middleware.model.OpKey;
 import io.micrometer.core.instrument.util.StringUtils;
 
 public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
-	
-	private static final Logger logger = LoggerFactory.getLogger(IndividualRepoImpl.class);
+    
+    private static final Logger logger = LoggerFactory.getLogger(IndividualRepoImpl.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
 
@@ -98,87 +98,87 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     @Override
-	public CoDataNetworkResponse getCoDataNetwork(CoDataNetworkRequest coDataRequest) {
-    	final CoDataNetworkResponse coDataNetwork = new CoDataNetworkResponse();
+    public CoDataNetworkResponse getCoDataNetwork(CoDataNetworkRequest coDataRequest) {
+        final CoDataNetworkResponse coDataNetwork = new CoDataNetworkResponse();
 
-    	String root = null;
+        String root = null;
 
-    	try {
-    		final SolrParams queryParams = coDataRequest.getSolrParams();
+        try {
+            final SolrParams queryParams = coDataRequest.getSolrParams();
 
-    		final QueryResponse response = solrClient.query(collection(), queryParams);
+            final QueryResponse response = solrClient.query(collection(), queryParams);
 
-    		final SolrDocumentList documents = response.getResults();
-    		
-    		final String id = coDataRequest.getId();
-    		final String dateField = coDataRequest.getDateField();
-    		final String primaryDataField = coDataRequest.getDataFields().get(0);
+            final SolrDocumentList documents = response.getResults();
+            
+            final String id = coDataRequest.getId();
+            final String dateField = coDataRequest.getDateField();
+            final String primaryDataField = coDataRequest.getDataFields().get(0);
 
-    		// figure out root name
-    		for (org.apache.solr.common.SolrDocument document : documents) {
-    			if (!document.containsKey(primaryDataField)) {
-    				continue;
-    			}
-    			List<String> values = getValues(document, coDataRequest.getDataFields());
-    			if (Objects.isNull(root)) {
-    				for (String value : values) {
-        				if (value.contains(id)) {
-        					root = withoutId(value);
-        				}
-        			}
-    			} else {
-    				break;
-    			}
-    		}
+            // figure out root name
+            for (org.apache.solr.common.SolrDocument document : documents) {
+                if (!document.containsKey(primaryDataField)) {
+                    continue;
+                }
+                List<String> values = getValues(document, coDataRequest.getDataFields());
+                if (Objects.isNull(root)) {
+                    for (String value : values) {
+                        if (value.contains(id)) {
+                            root = withoutId(value);
+                        }
+                    }
+                } else {
+                    break;
+                }
+            }
 
-    		// build network
-    		for (org.apache.solr.common.SolrDocument document : documents) {
-    			if (!document.containsKey(primaryDataField)) {
-    				continue;
-    			}
-    			if (document.containsKey(dateField)) {
-    				Date publicationDate = ((Date) document.getFieldValue(dateField));
-    				Calendar calendar = Calendar.getInstance();
-    				calendar.setTime(publicationDate);
-    				coDataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
-    			}
-    			List<String> values = getValues(document, coDataRequest.getDataFields());
-    			
-    			for (String value : values) {
-    				String name = withoutId(value);
-    				if (!name.equals(root)) {
-    					coDataNetwork.countLink(name);	
-    				}
-    			}
+            // build network
+            for (org.apache.solr.common.SolrDocument document : documents) {
+                if (!document.containsKey(primaryDataField)) {
+                    continue;
+                }
+                if (document.containsKey(dateField)) {
+                    Date publicationDate = ((Date) document.getFieldValue(dateField));
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(publicationDate);
+                    coDataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
+                }
+                List<String> values = getValues(document, coDataRequest.getDataFields());
 
-    			for (List<String> combination : findCombinations(values)) {
-    				String v0 = withoutId(combination.get(0));
-    				String v1 = withoutId(combination.get(1));
-    				
-    				if (v1.equals(root)) {
-    					coDataNetwork.mapCoAuthor(DirectedData.of(v1, v0));	
-    				} else {
-						coDataNetwork.mapCoAuthor(DirectedData.of(v0, v1));
-    				}
-    			}
-    		}
-		} catch (Exception e) {
-			logger.error("Failed to build co-data network!", e);
-		}
+                for (String value : values) {
+                    String name = withoutId(value);
+                    if (!name.equals(root)) {
+                        coDataNetwork.countLink(name);
+                    }
+                }
 
-		return coDataNetwork.to(root);
-	}
-    
+                for (List<String> combination : findCombinations(values)) {
+                    String v0 = withoutId(combination.get(0));
+                    String v1 = withoutId(combination.get(1));
+                    
+                    if (v1.equals(root)) {
+                        coDataNetwork.mapCoAuthor(DirectedData.of(v1, v0));
+                    } else {
+                        coDataNetwork.mapCoAuthor(DirectedData.of(v0, v1));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to build co-data network!", e);
+        }
+
+        return coDataNetwork.to(root);
+    }
+
     private List<String> getValues(org.apache.solr.common.SolrDocument document, List<String> dataFields) {
-		return dataFields.stream()
-			.filter(v -> document.containsKey(v))
-			.flatMap(v -> document.getFieldValues(v).stream())
-			.map(v -> (String) v)
-			.collect(Collectors.toList());
-	}
+        return dataFields.stream()
+            .filter(v -> document.containsKey(v))
+            .flatMap(v -> document.getFieldValues(v).stream())
+            .map(v -> (String) v)
+            .collect(Collectors.toList());
+    }
 
     private String withoutId(String value) {
-    	return value.split("::")[0];
+        return value.split("::")[0];
     }
 
     private Set<List<String>> findCombinations(List<String> array) {
