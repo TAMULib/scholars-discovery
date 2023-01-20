@@ -11,42 +11,58 @@ public class CoDataNetwork {
 	
 	private String name;
 	
-	private final Map<String, Integer> map;
+	private final Map<String, Integer> linkCounts;
 	
-	private final Map<DirectedData, Integer> data;
+	private final Map<String, Integer> yearCounts;
+
+	private final Map<DirectedData, Integer> map;
 
 	public CoDataNetwork() {
+		linkCounts = new HashMap<>();
+		yearCounts = new HashMap<>();
 		map = new HashMap<>();
-		data = new HashMap<>();
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Map<String, Integer> getMap() {
-		return map.entrySet().stream()
+	public Map<String, Integer> getLinkCounts() {
+		return linkCounts.entrySet().stream()
 			.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
-	
-	public List<DirectedData> getData() {
-		return data.entrySet().stream()
+
+	public Map<String, Integer> getYearCounts() {
+		return yearCounts.entrySet().stream()
+			.sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+	}
+
+	public List<DirectedData> getMap() {
+		return map.entrySet().stream()
 			.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
 			.map(entry -> entry.getKey().total(entry.getValue()))
 			.collect(Collectors.toList());
 	}
-	
-	public CoDataNetwork addCoAuthor(String coAuthor) {
-		Integer count = map.containsKey(coAuthor) ? map.get(coAuthor) : 0;
-		map.put(coAuthor, ++count);
+
+	public CoDataNetwork countLink(String value) {
+		Integer count = linkCounts.containsKey(value) ? linkCounts.get(value) : 0;
+		linkCounts.put(value, ++count);
 
 		return this;
 	}
-	
-	public CoDataNetwork addCoAuthor(DirectedData coAuthor) {
-		Integer count = data.containsKey(coAuthor) ? data.get(coAuthor) : 0;
-		data.put(coAuthor, ++count);
+
+	public CoDataNetwork countYear(String year) {
+		Integer count = yearCounts.containsKey(year) ? yearCounts.get(year) : 0;
+		yearCounts.put(year, ++count);
+
+		return this;
+	}
+
+	public CoDataNetwork mapCoAuthor(DirectedData coAuthor) {
+		Integer count = map.containsKey(coAuthor) ? map.get(coAuthor) : 0;
+		map.put(coAuthor, ++count);
 
 		return this;
 	}
