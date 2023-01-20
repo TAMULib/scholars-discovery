@@ -94,8 +94,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
         solrTemplate.registerQueryParser(CustomSimpleFacetQuery.class, new CustomSimpleFacetQueryParser(new SimpleSolrMappingContext()));
         solrTemplate.registerQueryParser(CustomSimpleFacetAndHighlightQuery.class, new CustomSimpleFacetAndHighlightQueryParser(new SimpleSolrMappingContext()));
     }
-    
-    
+
     @Override
 	public CoDataNetwork getCoAuthorNetwork(String id) {
     	CoDataNetwork coAuthorNetwork = new CoDataNetwork();
@@ -105,17 +104,21 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     	try {
     		final Map<String, String> queryParamMap = new HashMap<>();
     		queryParamMap.put("q", "*:*");
-    		queryParamMap.put("sort", "id asc");
+    		queryParamMap.put("sort", "publicationDate asc");
     		queryParamMap.put("fl", "authors");
     		queryParamMap.put("rows", String.valueOf(Integer.MAX_VALUE));
     		queryParamMap.put("fq", String.format("syncIds:%s AND class:Document", id));
-    		SolrParams queryParams = new MapSolrParams(queryParamMap);
+
+    		final SolrParams queryParams = new MapSolrParams(queryParamMap);
 
     		final QueryResponse response = solrClient.query(collection(), queryParams);
 
     		final SolrDocumentList documents = response.getResults();
 
     		for (org.apache.solr.common.SolrDocument document : documents) {
+    			if (!document.containsKey("authors")) {
+    				continue;
+    			}
     			List<Object> authors =  new ArrayList<>(document.getFieldValues("authors"));
     			if (Objects.isNull(root)) {
     				for (Object value : authors) {
@@ -130,8 +133,11 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     		}
 
     		for (org.apache.solr.common.SolrDocument document : documents) {
+    			if (!document.containsKey("authors")) {
+    				continue;
+    			}
     			List<Object> values =  new ArrayList<>(document.getFieldValues("authors"));
-    			
+
     			for (Object value : values) {
     				String author = (String) value;
     				String name = withoutId(author);
@@ -141,8 +147,8 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     			}
 
     			for (List<String> combination : findCombinations(values)) {
-    				String source = withoutId(combination.get(1));
-    				String target = withoutId(combination.get(0));
+    				String source = withoutId(combination.get(0));
+    				String target = withoutId(combination.get(1));
     				coAuthorNetwork.addCoAuthor(DirectedData.of(source, target));
     			}
     		}
@@ -154,7 +160,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
 		return coAuthorNetwork.to(root);
 	}
-    
+
     private String withoutId(String value) {
     	return value.split("::")[0];
     }
