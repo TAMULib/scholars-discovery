@@ -34,8 +34,8 @@ public class IndividualVisualizationController implements RepresentationModelPro
     @GetMapping("/individual/{id}/co-investigator-network")
     public ResponseEntity<CoDataNetworkResponse> coInvestigatorNetwork(@PathVariable String id) {
     	String dateField = "dateTimeIntervalStart";
-    	List<String> dataFields = Arrays.asList("principalInvestigators", "coPrincipalInvestigators");
-    	List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Relationship"), Pair.of("type", "Grant"));
+        List<String> dataFields = Arrays.asList("contributors", "principalInvestigators", "coPrincipalInvestigators");
+        List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Relationship"), Pair.of("type", "Grant"));
     	return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
     }
 
