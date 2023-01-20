@@ -9,7 +9,6 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 import static org.springframework.data.solr.core.query.Criteria.WILDCARD;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -27,12 +26,13 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.FacetParams.FacetRangeInclude;
 import org.apache.solr.common.params.FacetParams.FacetRangeOther;
 import org.apache.solr.common.params.SolrParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -59,8 +59,8 @@ import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
-import edu.tamu.scholars.middleware.discovery.dto.CoDataNetwork;
-import edu.tamu.scholars.middleware.discovery.dto.CoDataRequest;
+import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkRequest;
+import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkResponse;
 import edu.tamu.scholars.middleware.discovery.dto.DirectedData;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.custom.SolrDocumentRepoCustom;
@@ -72,6 +72,8 @@ import edu.tamu.scholars.middleware.model.OpKey;
 import io.micrometer.core.instrument.util.StringUtils;
 
 public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
+	
+	private static final Logger logger = LoggerFactory.getLogger(IndividualRepoImpl.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
 
@@ -96,8 +98,8 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     @Override
-	public CoDataNetwork getCoDataNetwork(CoDataRequest coDataRequest) {
-    	final CoDataNetwork coAuthorNetwork = new CoDataNetwork();
+	public CoDataNetworkResponse getCoDataNetwork(CoDataNetworkRequest coDataRequest) {
+    	final CoDataNetworkResponse coDataNetwork = new CoDataNetworkResponse();
 
     	String root = null;
 
@@ -112,6 +114,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     		final String dateField = coDataRequest.getDateField();
     		final String primaryDataField = coDataRequest.getDataFields().get(0);
 
+    		// figure out root name
     		for (org.apache.solr.common.SolrDocument document : documents) {
     			if (!document.containsKey(primaryDataField)) {
     				continue;
@@ -128,6 +131,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     			}
     		}
 
+    		// build network
     		for (org.apache.solr.common.SolrDocument document : documents) {
     			if (!document.containsKey(primaryDataField)) {
     				continue;
@@ -136,32 +140,33 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     				Date publicationDate = ((Date) document.getFieldValue(dateField));
     				Calendar calendar = Calendar.getInstance();
     				calendar.setTime(publicationDate);
-    				coAuthorNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
+    				coDataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
     			}
     			List<String> values = getValues(document, coDataRequest.getDataFields());
-
+    			
     			for (String value : values) {
     				String name = withoutId(value);
     				if (!name.equals(root)) {
-    					coAuthorNetwork.countLink(name);	
+    					coDataNetwork.countLink(name);	
     				}
     			}
 
     			for (List<String> combination : findCombinations(values)) {
-    				String source = withoutId(combination.get(0));
-    				String target = withoutId(combination.get(1));
-    				coAuthorNetwork.mapCoAuthor(DirectedData.of(source, target));
+    				String v0 = withoutId(combination.get(0));
+    				String v1 = withoutId(combination.get(1));
+    				
+    				if (v1.equals(root)) {
+    					coDataNetwork.mapCoAuthor(DirectedData.of(v1, v0));	
+    				} else {
+						coDataNetwork.mapCoAuthor(DirectedData.of(v0, v1));
+    				}
     			}
     		}
-		} catch (SolrServerException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (IndexOutOfBoundsException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("Failed to build co-data network!", e);
 		}
 
-		return coAuthorNetwork.to(root);
+		return coDataNetwork.to(root);
 	}
     
     private List<String> getValues(org.apache.solr.common.SolrDocument document, List<String> dataFields) {

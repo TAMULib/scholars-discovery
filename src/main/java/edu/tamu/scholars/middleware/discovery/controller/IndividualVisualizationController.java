@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import edu.tamu.scholars.middleware.discovery.dto.CoDataNetwork;
-import edu.tamu.scholars.middleware.discovery.dto.CoDataRequest;
+import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkResponse;
+import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkRequest;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.discovery.resource.IndividualResource;
 
@@ -24,19 +24,19 @@ public class IndividualVisualizationController implements RepresentationModelPro
     private IndividualRepo repo;
 
     @GetMapping("/individual/{id}/co-author-network")
-    public ResponseEntity<CoDataNetwork> coAuthorNetwork(@PathVariable String id) {
+    public ResponseEntity<CoDataNetworkResponse> coAuthorNetwork(@PathVariable String id) {
     	String dateField = "publicationDate";
     	List<String> dataFields = Arrays.asList("authors");
     	List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Document"));
-    	return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataRequest(id, dateField, dataFields, typeFilters)));
+    	return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
     }
     
     @GetMapping("/individual/{id}/co-investigator-network")
-    public ResponseEntity<CoDataNetwork> coInvestigatorNetwork(@PathVariable String id) {
+    public ResponseEntity<CoDataNetworkResponse> coInvestigatorNetwork(@PathVariable String id) {
     	String dateField = "dateTimeIntervalStart";
     	List<String> dataFields = Arrays.asList("principalInvestigators", "coPrincipalInvestigators");
     	List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Relationship"), Pair.of("type", "Grant"));
-    	return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataRequest(id, dateField, dataFields, typeFilters)));
+    	return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
     }
 
     @Override

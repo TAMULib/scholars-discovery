@@ -8,7 +8,7 @@ import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.springframework.data.util.Pair;
 
-public class CoDataRequest {
+public class CoDataNetworkRequest {
 
 	private final String id;
 
@@ -18,7 +18,7 @@ public class CoDataRequest {
 
 	private final List<Pair<String, String>> typeFilters;
 
-	public CoDataRequest(String id, String dateField, List<String> dataFields, List<Pair<String, String>> typeFilters) {
+	public CoDataNetworkRequest(String id, String dateField, List<String> dataFields, List<Pair<String, String>> typeFilters) {
 		super();
 		this.id = id;
 		this.dateField = dateField;
