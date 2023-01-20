@@ -13,9 +13,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.FacetParams.FacetRangeInclude;
 import org.apache.solr.common.params.FacetParams.FacetRangeOther;
 import org.apache.solr.common.params.MapSolrParams;
@@ -91,46 +95,55 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
         solrTemplate.registerQueryParser(CustomSimpleFacetAndHighlightQuery.class, new CustomSimpleFacetAndHighlightQueryParser(new SimpleSolrMappingContext()));
     }
     
+    
     @Override
 	public CoDataNetwork getCoAuthorNetwork(String id) {
     	CoDataNetwork coAuthorNetwork = new CoDataNetwork();
-    	
+
     	String root = null;
-    	
+
     	try {
     		final Map<String, String> queryParamMap = new HashMap<>();
     		queryParamMap.put("q", "*:*");
+    		queryParamMap.put("sort", "id asc");
     		queryParamMap.put("fl", "authors");
     		queryParamMap.put("rows", String.valueOf(Integer.MAX_VALUE));
-    		queryParamMap.put("fq", String.format("syncIds:%s AND type:AcademicArticle", id));
+    		queryParamMap.put("fq", String.format("syncIds:%s AND class:Document", id));
     		SolrParams queryParams = new MapSolrParams(queryParamMap);
 
     		final QueryResponse response = solrClient.query(collection(), queryParams);
 
-    		for (org.apache.solr.common.SolrDocument document : response.getResults()) {
+    		final SolrDocumentList documents = response.getResults();
+
+    		for (org.apache.solr.common.SolrDocument document : documents) {
     			List<Object> authors =  new ArrayList<>(document.getFieldValues("authors"));
+    			if (Objects.isNull(root)) {
+    				for (Object value : authors) {
+        				String author = (String) value;
+        				if (author.contains(id)) {
+        					root = withoutId(author);
+        				}
+        			}
+    			} else {
+    				break;
+    			}
+    		}
+
+    		for (org.apache.solr.common.SolrDocument document : documents) {
+    			List<Object> values =  new ArrayList<>(document.getFieldValues("authors"));
     			
-    			for (Object value : authors) {
+    			for (Object value : values) {
     				String author = (String) value;
-    				if (author.contains(id)) {
-    					root = author.split("::")[0];
-    					break;
+    				String name = withoutId(author);
+    				if (!name.equals(root)) {
+    					coAuthorNetwork.addCoAuthor(name);	
     				}
     			}
 
-    			for (int i = 0; i < authors.size(); ++i) {
-    				String author = (String) authors.get(i);
-    				String name = author.split("::")[0];
-    				if (!author.contains(id)) {
-						 coAuthorNetwork.addCoAuthor(name);
-					}
-    				if (!root.equals(name)) {
-    					if (i == 0) {
-        					coAuthorNetwork.addCoAuthor(DirectedData.of(name, root));
-        				} else {
-        					coAuthorNetwork.addCoAuthor(DirectedData.of(root, name));
-        				}	
-    				}
+    			for (List<String> combination : findCombinations(values)) {
+    				String source = withoutId(combination.get(1));
+    				String target = withoutId(combination.get(0));
+    				coAuthorNetwork.addCoAuthor(DirectedData.of(source, target));
     			}
     		}
 		} catch (SolrServerException e) {
@@ -141,6 +154,33 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
 		return coAuthorNetwork.to(root);
 	}
+    
+    private String withoutId(String value) {
+    	return value.split("::")[0];
+    }
+    
+    private Set<List<String>> findCombinations(List<Object> array) {
+        Set<List<String>> subarrays = new HashSet<>();
+        findCombinations(array, 0, 2, subarrays, new ArrayList<>());
+        return subarrays;
+    }
+    
+    private void findCombinations(List<Object> array, int i, int k, Set<List<String>> subarrays, List<String> out) {
+        if (array.size() == 0 || k > array.size()) {
+            return;
+        }
+ 
+        if (k == 0) {
+            subarrays.add(new ArrayList<>(out));
+            return;
+        }
+ 
+        for (int j = i; j < array.size(); j++) {
+            out.add((String) array.get(j));
+            findCombinations(array, j + 1, k - 1, subarrays, out);
+            out.remove(out.size() - 1);
+        }
+    }
     
     @Override
 	public CoDataNetwork getCoInvestigatorNetwork(String id) {
