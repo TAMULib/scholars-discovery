@@ -20,7 +20,6 @@ import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
@@ -31,13 +30,12 @@ import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.assembler.DiscoveryPagedResourcesAssembler;
 import edu.tamu.scholars.middleware.discovery.assembler.IndividualResourceAssembler;
-import edu.tamu.scholars.middleware.discovery.dto.CoDataNetwork;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.discovery.resource.IndividualResource;
 
 @RepositoryRestController
-public class IndividualController implements RepresentationModelProcessor<RepositorySearchesResource> {
+public class IndividualSearchController implements RepresentationModelProcessor<RepositorySearchesResource> {
 
     @Autowired
     private IndividualRepo repo;
@@ -47,16 +45,6 @@ public class IndividualController implements RepresentationModelProcessor<Reposi
 
     @Autowired
     private DiscoveryPagedResourcesAssembler<Individual> discoveryPagedResourcesAssembler;
-    
-    @GetMapping("/individual/{id}/co-author-network")
-    public ResponseEntity<CoDataNetwork> coAuthorNetwork(@PathVariable String id) {    
-    	return ResponseEntity.ok(repo.getCoAuthorNetwork(id));
-    }
-    
-    @GetMapping("/individual/{id}/co-investigator-network")
-    public ResponseEntity<CoDataNetwork> coInvestigatorNetwork(@PathVariable String id) {
-    	return ResponseEntity.ok(repo.getCoInvestigatorNetwork(id));
-    }
 
     @GetMapping("/individual/search/advanced")
     // @formatter:off
@@ -80,7 +68,7 @@ public class IndividualController implements RepresentationModelProcessor<Reposi
     @Override
     public RepositorySearchesResource process(RepositorySearchesResource resource) {
         if (Individual.class.equals(resource.getDomainType())) {
-            resource.add(linkTo(methodOn(IndividualController.class).search(
+            resource.add(linkTo(methodOn(IndividualSearchController.class).search(
                 QueryArg.of(
                     Optional.of(DiscoveryConstants.DEFAULT_QUERY),
                     Optional.empty(),
@@ -105,7 +93,7 @@ public class IndividualController implements RepresentationModelProcessor<Reposi
                 )
             ).withRel("count").withTitle("Count Query"));
 
-            resource.add(linkTo(methodOn(IndividualController.class).recentlyUpdated(
+            resource.add(linkTo(methodOn(IndividualSearchController.class).recentlyUpdated(
                 10,
                 new ArrayList<FilterArg>()
             )).withRel("recentlyUpdated").withTitle("Recently Updated Query"));

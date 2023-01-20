@@ -14,10 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -34,7 +32,6 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.FacetParams.FacetRangeInclude;
 import org.apache.solr.common.params.FacetParams.FacetRangeOther;
-import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +60,7 @@ import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.dto.CoDataNetwork;
+import edu.tamu.scholars.middleware.discovery.dto.CoDataRequest;
 import edu.tamu.scholars.middleware.discovery.dto.DirectedData;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.custom.SolrDocumentRepoCustom;
@@ -98,38 +96,31 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     @Override
-	public CoDataNetwork getCoAuthorNetwork(String id) {
+	public CoDataNetwork getCoDataNetwork(CoDataRequest coDataRequest) {
     	final CoDataNetwork coAuthorNetwork = new CoDataNetwork();
-
-    	String authrosField = "authors";
-    	String publicationDateField = "publicationDate";
 
     	String root = null;
 
     	try {
-    		final Map<String, String> queryParamMap = new HashMap<>();
-    		queryParamMap.put("q", "*:*");
-    		queryParamMap.put("sort", String.format("%s asc", publicationDateField));
-    		queryParamMap.put("fl", String.format("%s,%s", authrosField, publicationDateField));
-    		queryParamMap.put("rows", String.valueOf(Integer.MAX_VALUE));
-    		queryParamMap.put("fq", String.format("syncIds:%s AND class:Document", id));
-
-    		final SolrParams queryParams = new MapSolrParams(queryParamMap);
+    		final SolrParams queryParams = coDataRequest.getSolrParams();
 
     		final QueryResponse response = solrClient.query(collection(), queryParams);
 
     		final SolrDocumentList documents = response.getResults();
+    		
+    		final String id = coDataRequest.getId();
+    		final String dateField = coDataRequest.getDateField();
+    		final String primaryDataField = coDataRequest.getDataFields().get(0);
 
     		for (org.apache.solr.common.SolrDocument document : documents) {
-    			if (!document.containsKey(authrosField)) {
+    			if (!document.containsKey(primaryDataField)) {
     				continue;
     			}
-    			List<Object> authors =  new ArrayList<>(document.getFieldValues(authrosField));
+    			List<String> values = getValues(document, coDataRequest.getDataFields());
     			if (Objects.isNull(root)) {
-    				for (Object value : authors) {
-        				String author = (String) value;
-        				if (author.contains(id)) {
-        					root = withoutId(author);
+    				for (String value : values) {
+        				if (value.contains(id)) {
+        					root = withoutId(value);
         				}
         			}
     			} else {
@@ -138,20 +129,19 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     		}
 
     		for (org.apache.solr.common.SolrDocument document : documents) {
-    			if (!document.containsKey(authrosField)) {
+    			if (!document.containsKey(primaryDataField)) {
     				continue;
     			}
-    			if (document.containsKey(publicationDateField)) {
-    				Date publicationDate = ((Date) document.getFieldValue(publicationDateField));
+    			if (document.containsKey(dateField)) {
+    				Date publicationDate = ((Date) document.getFieldValue(dateField));
     				Calendar calendar = Calendar.getInstance();
     				calendar.setTime(publicationDate);
     				coAuthorNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
     			}
-    			List<Object> values =  new ArrayList<>(document.getFieldValues(authrosField));
+    			List<String> values = getValues(document, coDataRequest.getDataFields());
 
-    			for (Object value : values) {
-    				String author = (String) value;
-    				String name = withoutId(author);
+    			for (String value : values) {
+    				String name = withoutId(value);
     				if (!name.equals(root)) {
     					coAuthorNetwork.countLink(name);	
     				}
@@ -167,119 +157,47 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (IndexOutOfBoundsException e) {
+			e.printStackTrace();
 		}
 
 		return coAuthorNetwork.to(root);
+	}
+    
+    private List<String> getValues(org.apache.solr.common.SolrDocument document, List<String> dataFields) {
+		return dataFields.stream()
+			.filter(v -> document.containsKey(v))
+			.flatMap(v -> document.getFieldValues(v).stream())
+			.map(v -> (String) v)
+			.collect(Collectors.toList());
 	}
 
     private String withoutId(String value) {
     	return value.split("::")[0];
     }
-    
-    private Set<List<String>> findCombinations(List<Object> array) {
+
+    private Set<List<String>> findCombinations(List<String> array) {
         Set<List<String>> subarrays = new HashSet<>();
         findCombinations(array, 0, 2, subarrays, new ArrayList<>());
         return subarrays;
     }
-    
-    private void findCombinations(List<Object> array, int i, int k, Set<List<String>> subarrays, List<String> out) {
+
+    private void findCombinations(List<String> array, int i, int k, Set<List<String>> subarrays, List<String> out) {
         if (array.size() == 0 || k > array.size()) {
             return;
         }
- 
+
         if (k == 0) {
             subarrays.add(new ArrayList<>(out));
             return;
         }
- 
+
         for (int j = i; j < array.size(); j++) {
-            out.add((String) array.get(j));
+            out.add(array.get(j));
             findCombinations(array, j + 1, k - 1, subarrays, out);
             out.remove(out.size() - 1);
         }
     }
-    
-    @Override
-	public CoDataNetwork getCoInvestigatorNetwork(String id) {
-    	final CoDataNetwork coAuthorNetwork = new CoDataNetwork();
-
-    	String authrosField = "principalInvestigators";
-    	String coField = "coPrincipalInvestigators";
-    	String publicationDateField = "dateTimeIntervalStart";
-
-    	String root = null;
-
-    	try {
-    		final Map<String, String> queryParamMap = new HashMap<>();
-    		queryParamMap.put("q", "*:*");
-    		queryParamMap.put("sort", String.format("%s asc", publicationDateField));
-    		queryParamMap.put("fl", String.format("%s,%s,%s", authrosField, publicationDateField, coField));
-    		queryParamMap.put("rows", String.valueOf(Integer.MAX_VALUE));
-    		queryParamMap.put("fq", String.format("syncIds:%s AND class:Relationship AND type:Grant", id));
-
-    		final SolrParams queryParams = new MapSolrParams(queryParamMap);
-
-    		final QueryResponse response = solrClient.query(collection(), queryParams);
-
-    		final SolrDocumentList documents = response.getResults();
-
-    		for (org.apache.solr.common.SolrDocument document : documents) {
-    			if (!document.containsKey(authrosField)) {
-    				continue;
-    			}
-    			List<Object> authors = new ArrayList<>(document.getFieldValues(authrosField));
-    			if (document.containsKey(coField)) {
-    				authors.addAll(document.getFieldValues(coField));
-    			}
-    			if (Objects.isNull(root)) {
-    				for (Object value : authors) {
-        				String author = (String) value;
-        				if (author.contains(id)) {
-        					root = withoutId(author);
-        				}
-        			}
-    			} else {
-    				break;
-    			}
-    		}
-
-    		for (org.apache.solr.common.SolrDocument document : documents) {
-    			if (!document.containsKey(authrosField)) {
-    				continue;
-    			}
-    			if (document.containsKey(publicationDateField)) {
-    				Date publicationDate = ((Date) document.getFieldValue(publicationDateField));
-    				Calendar calendar = Calendar.getInstance();
-    				calendar.setTime(publicationDate);
-    				coAuthorNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
-    			}
-    			List<Object> values =  new ArrayList<>(document.getFieldValues(authrosField));
-    			if (document.containsKey(coField)) {
-    				values.addAll(document.getFieldValues(coField));
-    			}
-
-    			for (Object value : values) {
-    				String author = (String) value;
-    				String name = withoutId(author);
-    				if (!name.equals(root)) {
-    					coAuthorNetwork.countLink(name);	
-    				}
-    			}
-
-    			for (List<String> combination : findCombinations(values)) {
-    				String source = withoutId(combination.get(0));
-    				String target = withoutId(combination.get(1));
-    				coAuthorNetwork.mapCoAuthor(DirectedData.of(source, target));
-    			}
-    		}
-		} catch (SolrServerException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return coAuthorNetwork.to(root);
-	}
 
     @Override
     public long count(String query, List<FilterArg> filters) {
