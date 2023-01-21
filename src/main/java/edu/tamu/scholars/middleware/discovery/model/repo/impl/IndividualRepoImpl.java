@@ -168,7 +168,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                 }
             }
         } catch (Exception e) {
-            logger.error("Failed to build co-data network!", e);
+            logger.error("Failed to build data network!", e);
         }
 
         return dataNetwork.to(withoutId(root));
