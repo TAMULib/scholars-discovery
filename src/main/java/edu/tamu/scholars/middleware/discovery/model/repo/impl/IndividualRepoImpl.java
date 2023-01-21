@@ -4,6 +4,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_DELIMITER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.PARENTHESES_TEMPLATE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
@@ -59,8 +60,8 @@ import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
-import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkRequest;
-import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkResponse;
+import edu.tamu.scholars.middleware.discovery.dto.DataNetworkRequest;
+import edu.tamu.scholars.middleware.discovery.dto.DataNetworkResponse;
 import edu.tamu.scholars.middleware.discovery.dto.DirectedData;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.custom.SolrDocumentRepoCustom;
@@ -85,7 +86,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
     @Autowired
     private SolrTemplate solrTemplate;
-    
+
     @Autowired
     private SolrClient solrClient;
 
@@ -98,8 +99,8 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     @Override
-    public CoDataNetworkResponse getCoDataNetwork(CoDataNetworkRequest coDataRequest) {
-        final CoDataNetworkResponse coDataNetwork = new CoDataNetworkResponse();
+    public DataNetworkResponse getDataNetwork(DataNetworkRequest coDataRequest) {
+        final DataNetworkResponse dataNetwork = new DataNetworkResponse();
 
         String root = null;
 
@@ -109,7 +110,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             final QueryResponse response = solrClient.query(collection(), queryParams);
 
             final SolrDocumentList documents = response.getResults();
-            
+
             final String id = coDataRequest.getId();
             final String dateField = coDataRequest.getDateField();
             final String primaryDataField = coDataRequest.getDataFields().get(0);
@@ -123,7 +124,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                 if (Objects.isNull(root)) {
                     for (String value : values) {
                         if (value.contains(id)) {
-                            root = withoutId(value);
+                            root = value;
                         }
                     }
                 } else {
@@ -140,25 +141,29 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                     Date publicationDate = ((Date) document.getFieldValue(dateField));
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(publicationDate);
-                    coDataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
+                    dataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
                 }
                 List<String> values = getValues(document, coDataRequest.getDataFields());
 
                 for (String value : values) {
-                    String name = withoutId(value);
-                    if (!name.equals(root)) {
-                        coDataNetwork.countLink(name);
+                    dataNetwork.index(value);
+                    if (!value.equals(root)) {
+                        dataNetwork.countLink(withoutId(value));
                     }
                 }
 
                 for (List<String> combination : findCombinations(values)) {
                     String v0 = withoutId(combination.get(0));
                     String v1 = withoutId(combination.get(1));
-                    
+
+                    if (v0.equals(v1)) {
+                        continue;
+                    }
+
                     if (v1.equals(root)) {
-                        coDataNetwork.mapCoAuthor(DirectedData.of(v1, v0));
+                        dataNetwork.map(DirectedData.of(v1, v0));
                     } else {
-                        coDataNetwork.mapCoAuthor(DirectedData.of(v0, v1));
+                        dataNetwork.map(DirectedData.of(v0, v1));
                     }
                 }
             }
@@ -166,7 +171,11 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             logger.error("Failed to build co-data network!", e);
         }
 
-        return coDataNetwork.to(root);
+        return dataNetwork.to(withoutId(root));
+    }
+
+    private String withoutId(String value) {
+        return value.split(NESTED_DELIMITER)[0];
     }
 
     private List<String> getValues(org.apache.solr.common.SolrDocument document, List<String> dataFields) {
@@ -175,10 +184,6 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             .flatMap(v -> document.getFieldValues(v).stream())
             .map(v -> (String) v)
             .collect(Collectors.toList());
-    }
-
-    private String withoutId(String value) {
-        return value.split("::")[0];
     }
 
     private Set<List<String>> findCombinations(List<String> array) {

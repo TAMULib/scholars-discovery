@@ -5,15 +5,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.data.util.Pair;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkResponse;
-import edu.tamu.scholars.middleware.discovery.dto.CoDataNetworkRequest;
+import edu.tamu.scholars.middleware.discovery.dto.DataNetworkRequest;
+import edu.tamu.scholars.middleware.discovery.dto.DataNetworkResponse;
+import edu.tamu.scholars.middleware.discovery.dto.Filter;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.discovery.resource.IndividualResource;
 
@@ -24,19 +24,19 @@ public class IndividualVisualizationController implements RepresentationModelPro
     private IndividualRepo repo;
 
     @GetMapping("/individual/{id}/co-author-network")
-    public ResponseEntity<CoDataNetworkResponse> coAuthorNetwork(@PathVariable String id) {
+    public ResponseEntity<DataNetworkResponse> coAuthorNetwork(@PathVariable String id) {
         String dateField = "publicationDate";
         List<String> dataFields = Arrays.asList("authors");
-        List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Document"));
-        return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
+        List<Filter> typeFilters = Arrays.asList(Filter.of("class", "Document"));
+        return ResponseEntity.ok(repo.getDataNetwork(new DataNetworkRequest(id, dateField, dataFields, typeFilters)));
     }
     
     @GetMapping("/individual/{id}/co-investigator-network")
-    public ResponseEntity<CoDataNetworkResponse> coInvestigatorNetwork(@PathVariable String id) {
+    public ResponseEntity<DataNetworkResponse> coInvestigatorNetwork(@PathVariable String id) {
         String dateField = "dateTimeIntervalStart";
         List<String> dataFields = Arrays.asList("contributors", "principalInvestigators", "coPrincipalInvestigators");
-        List<Pair<String, String>> typeFilters = Arrays.asList(Pair.of("class", "Relationship"), Pair.of("type", "Grant"));
-        return ResponseEntity.ok(repo.getCoDataNetwork(new CoDataNetworkRequest(id, dateField, dataFields, typeFilters)));
+        List<Filter> typeFilters = Arrays.asList(Filter.of("class", "Relationship"), Filter.of("type", "Grant"));
+        return ResponseEntity.ok(repo.getDataNetwork(new DataNetworkRequest(id, dateField, dataFields, typeFilters)));
     }
 
     @Override

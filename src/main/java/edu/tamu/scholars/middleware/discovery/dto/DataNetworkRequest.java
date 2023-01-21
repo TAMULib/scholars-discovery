@@ -6,9 +6,8 @@ import java.util.Map;
 
 import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
-import org.springframework.data.util.Pair;
 
-public class CoDataNetworkRequest {
+public class DataNetworkRequest {
 
     private final String id;
 
@@ -16,9 +15,9 @@ public class CoDataNetworkRequest {
 
     private final List<String> dataFields;
 
-    private final List<Pair<String, String>> typeFilters;
+    private final List<Filter> typeFilters;
 
-    public CoDataNetworkRequest(String id, String dateField, List<String> dataFields, List<Pair<String, String>> typeFilters) {
+    public DataNetworkRequest(String id, String dateField, List<String> dataFields, List<Filter> typeFilters) {
         super();
         this.id = id;
         this.dateField = dateField;
@@ -38,7 +37,7 @@ public class CoDataNetworkRequest {
         return dataFields;
     }
 
-    public List<Pair<String, String>> getTypeFilters() {
+    public List<Filter> getTypeFilters() {
         return typeFilters;
     }
 
@@ -62,9 +61,9 @@ public class CoDataNetworkRequest {
         fq.append(id);
         typeFilters.forEach(typeFilter -> {
             fq.append(" AND ");
-            fq.append(typeFilter.getFirst());
+            fq.append(typeFilter.getField());
             fq.append(":");
-            fq.append(typeFilter.getSecond());
+            fq.append(typeFilter.getValue());
         });
         return fq.toString();
     }

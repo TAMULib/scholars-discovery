@@ -1,5 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.dto;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_DELIMITER;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -7,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CoDataNetworkResponse {
+public class DataNetworkResponse {
 
     private String name;
+
+    private final Map<String, String> lookup;
 
     private final Map<String, Integer> linkCounts;
 
@@ -17,7 +21,8 @@ public class CoDataNetworkResponse {
 
     private final Map<DirectedData, Integer> data;
 
-    public CoDataNetworkResponse() {
+    public DataNetworkResponse() {
+        lookup = new HashMap<>();
         linkCounts = new HashMap<>();
         yearCounts = new HashMap<>();
         data = new HashMap<>();
@@ -25,6 +30,10 @@ public class CoDataNetworkResponse {
 
     public String getName() {
         return name;
+    }
+
+    public Map<String, String> getLookup() {
+        return lookup;
     }
 
     public Map<String, Integer> getLinkCounts() {
@@ -45,29 +54,28 @@ public class CoDataNetworkResponse {
             .map(entry -> entry.getKey().total(entry.getValue()))
             .collect(Collectors.toList());
     }
+    
+    public void index(String value) {
+        String[] parts = value.split(NESTED_DELIMITER);
+        lookup.put(parts[0], parts[1]);
+    }
 
-    public CoDataNetworkResponse countLink(String value) {
+    public void countLink(String value) {
         Integer count = linkCounts.containsKey(value) ? linkCounts.get(value) : 0;
         linkCounts.put(value, ++count);
-
-        return this;
     }
 
-    public CoDataNetworkResponse countYear(String year) {
+    public void countYear(String year) {
         Integer count = yearCounts.containsKey(year) ? yearCounts.get(year) : 0;
         yearCounts.put(year, ++count);
-
-        return this;
     }
 
-    public CoDataNetworkResponse mapCoAuthor(DirectedData coAuthor) {
-        Integer count = data.containsKey(coAuthor) ? data.get(coAuthor) : 0;
-        data.put(coAuthor, ++count);
-
-        return this;
+    public void map(DirectedData data) {
+        Integer count = this.data.containsKey(data) ? this.data.get(data) : 0;
+        this.data.put(data, ++count);
     }
 
-    public CoDataNetworkResponse to(String name) {
+    public DataNetworkResponse to(String name) {
         this.name = name;
 
         return this;
