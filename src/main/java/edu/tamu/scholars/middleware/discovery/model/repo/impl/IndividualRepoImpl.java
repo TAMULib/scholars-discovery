@@ -99,28 +99,24 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     @Override
-    public DataNetwork getDataNetwork(DataNetworkDescriptor coDataRequest) {
+    public DataNetwork getDataNetwork(DataNetworkDescriptor dataNetworkDescriptor) {
         final DataNetwork dataNetwork = new DataNetwork();
 
         String root = null;
 
         try {
-            final SolrParams queryParams = coDataRequest.getSolrParams();
+            final SolrParams queryParams = dataNetworkDescriptor.getSolrParams();
 
             final QueryResponse response = solrClient.query(collection(), queryParams);
 
             final SolrDocumentList documents = response.getResults();
 
-            final String id = coDataRequest.getId();
-            final String dateField = coDataRequest.getDateField();
-            final String primaryDataField = coDataRequest.getDataFields().get(0);
+            final String id = dataNetworkDescriptor.getId();
+            final String dateField = dataNetworkDescriptor.getDateField();
 
             // figure out root name
             for (org.apache.solr.common.SolrDocument document : documents) {
-                if (!document.containsKey(primaryDataField)) {
-                    continue;
-                }
-                List<String> values = getValues(document, coDataRequest.getDataFields());
+                List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
                 if (Objects.isNull(root)) {
                     for (String value : values) {
                         if (value.contains(id)) {
@@ -134,16 +130,13 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
             // build network
             for (org.apache.solr.common.SolrDocument document : documents) {
-                if (!document.containsKey(primaryDataField)) {
-                    continue;
-                }
                 if (document.containsKey(dateField)) {
                     Date publicationDate = ((Date) document.getFieldValue(dateField));
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(publicationDate);
                     dataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
                 }
-                List<String> values = getValues(document, coDataRequest.getDataFields());
+                List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
 
                 for (String value : values) {
                     dataNetwork.index(value);

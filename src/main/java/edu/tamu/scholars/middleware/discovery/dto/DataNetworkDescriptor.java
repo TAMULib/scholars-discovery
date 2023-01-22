@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.dto;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,12 @@ public class DataNetworkDescriptor {
         return String.format("%s asc", dateField);
     }
 
+    public String getFieldList() {
+        List<String> fields = new ArrayList<>(getDataFields());
+        fields.add(dateField);
+        return String.join(",", fields);
+    }
+
     public String getFilterQuery() {
         return String.format("syncIds:%s AND %s", id, typeFilter);
     }
@@ -54,7 +61,7 @@ public class DataNetworkDescriptor {
         queryParamMap.put("q", "*:*");
         queryParamMap.put("rows", String.valueOf(Integer.MAX_VALUE));
         queryParamMap.put("sort", getSort());
-        queryParamMap.put("fl", String.join(",", getDataFields()));
+        queryParamMap.put("fl", getFieldList());
         queryParamMap.put("fq", getFilterQuery());
 
         return new MapSolrParams(queryParamMap);
