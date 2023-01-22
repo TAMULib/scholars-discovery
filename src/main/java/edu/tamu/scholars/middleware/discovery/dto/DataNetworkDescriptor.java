@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
 
-public class DataNetworkRequest {
+public class DataNetworkDescriptor {
 
     private final String id;
 
@@ -15,14 +15,14 @@ public class DataNetworkRequest {
 
     private final List<String> dataFields;
 
-    private final List<Filter> typeFilters;
+    private final String typeFilter;
 
-    public DataNetworkRequest(String id, String dateField, List<String> dataFields, List<Filter> typeFilters) {
+    private DataNetworkDescriptor(String id, String dateField, List<String> dataFields, String typeFilter) {
         super();
         this.id = id;
         this.dateField = dateField;
         this.dataFields = dataFields;
-        this.typeFilters = typeFilters;
+        this.typeFilter = typeFilter;
     }
 
     public String getId() {
@@ -37,35 +37,16 @@ public class DataNetworkRequest {
         return dataFields;
     }
 
-    public List<Filter> getTypeFilters() {
-        return typeFilters;
+    public String getTypeFilter() {
+        return typeFilter;
     }
 
     public String getSort() {
         return String.format("%s asc", dateField);
     }
 
-    public String getFieldList() {
-        StringBuilder fl = new StringBuilder();
-        fl.append(dateField);
-        dataFields.forEach(dataField -> {
-            fl.append(",");
-            fl.append(dataField);
-        });
-        return fl.toString();
-    }
-
     public String getFilterQuery() {
-        StringBuilder fq = new StringBuilder();
-        fq.append("syncIds:");
-        fq.append(id);
-        typeFilters.forEach(typeFilter -> {
-            fq.append(" AND ");
-            fq.append(typeFilter.getField());
-            fq.append(":");
-            fq.append(typeFilter.getValue());
-        });
-        return fq.toString();
+        return String.format("syncIds:%s AND %s", id, typeFilter);
     }
 
     public SolrParams getSolrParams() {
@@ -73,10 +54,14 @@ public class DataNetworkRequest {
         queryParamMap.put("q", "*:*");
         queryParamMap.put("rows", String.valueOf(Integer.MAX_VALUE));
         queryParamMap.put("sort", getSort());
-        queryParamMap.put("fl", getFieldList());
+        queryParamMap.put("fl", String.join(",", getDataFields()));
         queryParamMap.put("fq", getFilterQuery());
 
         return new MapSolrParams(queryParamMap);
+    }
+
+    public static DataNetworkDescriptor of(String id, String dateField, List<String> dataFields, String typeFilter) {
+        return new DataNetworkDescriptor(id, dateField, dataFields, typeFilter);
     }
 
 }

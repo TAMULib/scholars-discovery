@@ -60,8 +60,8 @@ import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
-import edu.tamu.scholars.middleware.discovery.dto.DataNetworkRequest;
-import edu.tamu.scholars.middleware.discovery.dto.DataNetworkResponse;
+import edu.tamu.scholars.middleware.discovery.dto.DataNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.dto.DataNetwork;
 import edu.tamu.scholars.middleware.discovery.dto.DirectedData;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.custom.SolrDocumentRepoCustom;
@@ -99,8 +99,8 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     @Override
-    public DataNetworkResponse getDataNetwork(DataNetworkRequest coDataRequest) {
-        final DataNetworkResponse dataNetwork = new DataNetworkResponse();
+    public DataNetwork getDataNetwork(DataNetworkDescriptor coDataRequest) {
+        final DataNetwork dataNetwork = new DataNetwork();
 
         String root = null;
 
@@ -171,7 +171,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             logger.error("Failed to build data network!", e);
         }
 
-        return dataNetwork.to(withoutId(root));
+        return dataNetwork.to(Objects.nonNull(root) ? withoutId(root) : null);
     }
 
     private String withoutId(String value) {

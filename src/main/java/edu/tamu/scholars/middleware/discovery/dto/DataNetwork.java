@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DataNetworkResponse {
+public class DataNetwork {
 
     private String name;
 
@@ -21,7 +21,7 @@ public class DataNetworkResponse {
 
     private final Map<DirectedData, Integer> data;
 
-    public DataNetworkResponse() {
+    public DataNetwork() {
         lookup = new HashMap<>();
         linkCounts = new HashMap<>();
         yearCounts = new HashMap<>();
@@ -54,7 +54,7 @@ public class DataNetworkResponse {
             .map(entry -> entry.getKey().total(entry.getValue()))
             .collect(Collectors.toList());
     }
-    
+
     public void index(String value) {
         String[] parts = value.split(NESTED_DELIMITER);
         lookup.put(parts[0], parts[1]);
@@ -75,7 +75,7 @@ public class DataNetworkResponse {
         this.data.put(data, ++count);
     }
 
-    public DataNetworkResponse to(String name) {
+    public DataNetwork to(String name) {
         this.name = name;
 
         return this;
