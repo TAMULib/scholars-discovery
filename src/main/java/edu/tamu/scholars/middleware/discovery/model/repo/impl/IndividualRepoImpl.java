@@ -120,7 +120,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                 if (Objects.isNull(root)) {
                     for (String value : values) {
                         if (value.contains(id)) {
-                            root = value;
+                            root = withoutId(value);
                         }
                     }
                 } else {
@@ -164,7 +164,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             logger.error("Failed to build data network!", e);
         }
 
-        return dataNetwork.to(Objects.nonNull(root) ? withoutId(root) : null);
+        return dataNetwork.to(root);
     }
 
     private String withoutId(String value) {
