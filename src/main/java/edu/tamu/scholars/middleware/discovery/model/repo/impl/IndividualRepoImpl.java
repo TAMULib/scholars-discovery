@@ -135,11 +135,13 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                     String[] v0Parts = v0.split(NESTED_DELIMITER);
                     String[] v1Parts = v1.split(NESTED_DELIMITER);
 
-                    if (v0Parts.length <= 1 || v1Parts.length <= 1 || v0Parts[1].equals(v1Parts[1])) {
+                    // continue if either missing id
+                    if (v0Parts.length <= 1 || v1Parts.length <= 1) {
                         continue;
                     }
 
-                    if (v0Parts[1].endsWith(id)) {
+                    // prefer id as source
+                    if (v1Parts[1].equals(id)) {
                         dataNetwork.map(DirectedData.of(v1Parts[1], v0Parts[1]));
                     } else {
                         dataNetwork.map(DirectedData.of(v0Parts[1], v1Parts[1]));
