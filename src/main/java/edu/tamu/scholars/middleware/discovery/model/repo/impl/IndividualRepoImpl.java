@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -60,8 +59,8 @@ import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
-import edu.tamu.scholars.middleware.discovery.dto.DataNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.dto.DataNetwork;
+import edu.tamu.scholars.middleware.discovery.dto.DataNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.dto.DirectedData;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.custom.SolrDocumentRepoCustom;
@@ -100,9 +99,8 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
     @Override
     public DataNetwork getDataNetwork(DataNetworkDescriptor dataNetworkDescriptor) {
-        final DataNetwork dataNetwork = new DataNetwork();
-
-        String root = null;
+        final String id = dataNetworkDescriptor.getId();
+        final DataNetwork dataNetwork = DataNetwork.to(id);
 
         try {
             final SolrParams queryParams = dataNetworkDescriptor.getSolrParams();
@@ -111,24 +109,8 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
             final SolrDocumentList documents = response.getResults();
 
-            final String id = dataNetworkDescriptor.getId();
             final String dateField = dataNetworkDescriptor.getDateField();
 
-            // figure out root name
-            for (org.apache.solr.common.SolrDocument document : documents) {
-                List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
-                if (Objects.isNull(root)) {
-                    for (String value : values) {
-                        if (value.contains(id)) {
-                            root = withoutId(value);
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }
-
-            // build network
             for (org.apache.solr.common.SolrDocument document : documents) {
                 if (document.containsKey(dateField)) {
                     Date publicationDate = ((Date) document.getFieldValue(dateField));
@@ -140,23 +122,27 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
                 for (String value : values) {
                     dataNetwork.index(value);
-                    if (!value.equals(root)) {
-                        dataNetwork.countLink(withoutId(value));
+
+                    if (!value.endsWith(id)) {
+                        dataNetwork.countLink(value);
                     }
                 }
 
                 for (List<String> combination : findCombinations(values)) {
-                    String v0 = withoutId(combination.get(0));
-                    String v1 = withoutId(combination.get(1));
+                    String v0 = combination.get(0);
+                    String v1 = combination.get(1);
 
-                    if (v0.equals(v1)) {
+                    String[] v0Parts = v0.split(NESTED_DELIMITER);
+                    String[] v1Parts = v1.split(NESTED_DELIMITER);
+
+                    if (v0Parts.length <= 1 || v1Parts.length <= 1 || v0Parts[1].equals(v1Parts[1])) {
                         continue;
                     }
 
-                    if (v1.equals(root)) {
-                        dataNetwork.map(DirectedData.of(v1, v0));
+                    if (v0Parts[1].endsWith(id)) {
+                        dataNetwork.map(DirectedData.of(v1Parts[1], v0Parts[1]));
                     } else {
-                        dataNetwork.map(DirectedData.of(v0, v1));
+                        dataNetwork.map(DirectedData.of(v0Parts[1], v1Parts[1]));
                     }
                 }
             }
@@ -164,11 +150,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
             logger.error("Failed to build data network!", e);
         }
 
-        return dataNetwork.to(root);
-    }
-
-    private String withoutId(String value) {
-        return value.split(NESTED_DELIMITER)[0];
+        return dataNetwork;
     }
 
     private List<String> getValues(org.apache.solr.common.SolrDocument document, List<String> dataFields) {

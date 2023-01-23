@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class DataNetwork {
 
-    private String name;
+    private final String id;
 
     private final Map<String, String> lookup;
 
@@ -21,15 +21,16 @@ public class DataNetwork {
 
     private final Map<DirectedData, Integer> data;
 
-    public DataNetwork() {
+    private DataNetwork(String id) {
+        this.id = id;
         lookup = new HashMap<>();
         linkCounts = new HashMap<>();
         yearCounts = new HashMap<>();
         data = new HashMap<>();
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public Map<String, String> getLookup() {
@@ -57,12 +58,17 @@ public class DataNetwork {
 
     public void index(String value) {
         String[] parts = value.split(NESTED_DELIMITER);
-        lookup.put(parts[0], parts[1]);
+        if (parts.length > 1) {
+            lookup.put(parts[1], parts[0]);
+        }
     }
 
     public void countLink(String value) {
-        Integer count = linkCounts.containsKey(value) ? linkCounts.get(value) : 0;
-        linkCounts.put(value, ++count);
+        String[] parts = value.split(NESTED_DELIMITER);
+        if (parts.length > 1) {
+            Integer count = linkCounts.containsKey(parts[1]) ? linkCounts.get(parts[1]) : 0;
+            linkCounts.put(parts[1], ++count);
+        }
     }
 
     public void countYear(String year) {
@@ -75,10 +81,8 @@ public class DataNetwork {
         this.data.put(data, ++count);
     }
 
-    public DataNetwork to(String name) {
-        this.name = name;
-
-        return this;
+    public static DataNetwork to(String id) {
+        return new DataNetwork(id);
     }
 
 }
