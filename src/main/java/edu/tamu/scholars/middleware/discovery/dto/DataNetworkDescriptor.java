@@ -49,6 +49,7 @@ public class DataNetworkDescriptor {
     public String getFieldList() {
         List<String> fields = new ArrayList<>(getDataFields());
         fields.add(dateField);
+        fields.add("id");
         return String.join(",", fields);
     }
 
