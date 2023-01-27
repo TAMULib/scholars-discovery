@@ -116,7 +116,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                 }
                 List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
 
-                String iid = (String) document.getFieldValue("id");
+                String iid = (String) document.getFieldValue(ID);
 
                 for (String v1 : values) {
                     dataNetwork.index(v1);
