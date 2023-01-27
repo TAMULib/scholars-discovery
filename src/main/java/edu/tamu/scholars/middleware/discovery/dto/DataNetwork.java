@@ -92,7 +92,8 @@ public class DataNetwork {
         String tId = tParts[1];
 
         for (DirectedData dd : this.data) {
-            if ((dd.getSource().equals(sId) && dd.getTarget().equals(tId))) {
+            if ((dd.getSource().equals(sId) && dd.getTarget().equals(tId)) ||
+                (dd.getSource().equals(tId) && dd.getTarget().equals(sId))) {
                 dd.add(id);
                 return;
             }

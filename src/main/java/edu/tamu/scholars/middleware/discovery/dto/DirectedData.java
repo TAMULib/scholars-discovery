@@ -13,7 +13,7 @@ public class DirectedData {
 
     private Integer count;
 
-    public DirectedData(String id, String source, String target) {
+    private DirectedData(String id, String source, String target) {
         this.ids = new HashSet<>();
         this.ids.add(id);
         this.source = source;

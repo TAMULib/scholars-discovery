@@ -118,19 +118,17 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
                 String iid = (String) document.getFieldValue("id");
 
-                for (int i = 0; i < values.size(); i++) {
-                    String v1 = values.get(i);
+                for (String v1 : values) {
                     dataNetwork.index(v1);
 
                     if (!v1.endsWith(id)) {
                         dataNetwork.countLink(v1);
                     }
-                    for (int j = 0; j < values.size(); j++) {
-                        String v2 = values.get(j);
-                        if (i < j) {
-                            dataNetwork.map(iid, v1, v2);
-                        } else if (j > i) {
+                    for (String v2 : values) {
+                        if (v2.endsWith(id)) {
                             dataNetwork.map(iid, v2, v1);
+                        } else {
+                            dataNetwork.map(iid, v1, v2);
                         }
                     }
                 }
