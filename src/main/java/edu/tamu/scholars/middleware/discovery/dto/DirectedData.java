@@ -38,7 +38,7 @@ public class DirectedData {
     }
 
     public void add(String id) {
-        // count unique connection between id
+        // count unique connection for id
         if (this.ids.add(id)) {
             count++;
         }
