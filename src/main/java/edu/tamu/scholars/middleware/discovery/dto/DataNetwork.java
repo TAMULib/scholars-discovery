@@ -92,12 +92,14 @@ public class DataNetwork {
         String tId = tParts[1];
 
         for (DirectedData dd : this.data) {
+            // count either direction
             if ((dd.getSource().equals(sId) && dd.getTarget().equals(tId)) ||
                 (dd.getSource().equals(tId) && dd.getTarget().equals(sId))) {
                 dd.add(id);
                 return;
             }
         }
+        // add new connection
         this.data.add(DirectedData.of(id, sId, tId));
     }
 

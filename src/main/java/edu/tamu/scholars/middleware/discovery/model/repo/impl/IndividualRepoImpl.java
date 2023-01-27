@@ -125,6 +125,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
                         dataNetwork.countLink(v1);
                     }
                     for (String v2 : values) {
+                        // prefer id as source
                         if (v2.endsWith(id)) {
                             dataNetwork.map(iid, v2, v1);
                         } else {
