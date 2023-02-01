@@ -24,6 +24,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.FacetParams.FacetRangeInclude;
 import org.apache.solr.common.params.FacetParams.FacetRangeOther;
@@ -38,7 +39,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.mapping.SimpleSolrMappingContext;
-import org.springframework.data.solr.core.mapping.SolrDocument;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.FacetOptions;
 import org.springframework.data.solr.core.query.FacetOptions.FieldWithFacetParameters;
@@ -51,6 +51,7 @@ import org.springframework.data.solr.core.query.SimpleStringCriteria;
 import org.springframework.data.solr.core.query.result.Cursor;
 import org.springframework.data.solr.core.query.result.FacetAndHighlightPage;
 
+import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
@@ -107,7 +108,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
 
             final String dateField = dataNetworkDescriptor.getDateField();
 
-            for (org.apache.solr.common.SolrDocument document : documents) {
+            for (SolrDocument document : documents) {
                 if (document.containsKey(dateField)) {
                     Date publicationDate = ((Date) document.getFieldValue(dateField));
                     Calendar calendar = Calendar.getInstance();
@@ -141,7 +142,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
         return dataNetwork;
     }
 
-    private List<String> getValues(org.apache.solr.common.SolrDocument document, List<String> dataFields) {
+    private List<String> getValues(SolrDocument document, List<String> dataFields) {
         return dataFields.stream()
             .filter(v -> document.containsKey(v))
             .flatMap(v -> document.getFieldValues(v).stream())
@@ -299,7 +300,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual> {
     }
 
     public String collection() {
-        return type().getAnnotation(SolrDocument.class).collection();
+        return type().getAnnotation(CollectionTarget.class).collection();
     }
 
     private Criteria buildQueryCriteria(String query) {

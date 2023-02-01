@@ -6,28 +6,28 @@ import java.util.Set;
 
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.solr.core.mapping.Indexed;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
+import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 
 public abstract class AbstractIndexDocument {
 
     @Id
-    @Indexed(required = true, readonly = true)
+    @PropertyTarget(required = true, readonly = true)
     private String id;
 
-    @Indexed(type = "whole_strings")
+    @PropertyTarget(type = "whole_strings")
     @PropertySource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> type;
 
     @Field("class")
     @JsonProperty("class")
-    @Indexed(type = "string", value = "class", required = true)
+    @PropertyTarget(type = "string", value = "class", required = true)
     private String clazz = this.getClass().getSimpleName();
 
-    @Indexed(type = "strings")
+    @PropertyTarget(type = "strings")
     private Set<String> syncIds = new HashSet<String>();
 
     public String getId() {

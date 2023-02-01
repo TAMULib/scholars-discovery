@@ -27,10 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.solr.core.mapping.Indexed;
+import org.springframework.stereotype.Indexed;
 
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionSource;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
+import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.service.Harvester;
 import edu.tamu.scholars.middleware.service.TemplateService;
@@ -67,7 +68,7 @@ public class TriplestoreHarvester implements Harvester {
     public TriplestoreHarvester(Class<AbstractIndexDocument> type) {
         this.type = type;
         this.propertySourceTypeOps = FieldUtils.getFieldsListWithAnnotation(type, PropertySource.class).stream().map(this::getTypeOp).collect(Collectors.toList());
-        this.indexedFields = FieldUtils.getFieldsListWithAnnotation(type, Indexed.class);
+        this.indexedFields = FieldUtils.getFieldsListWithAnnotation(type, PropertyTarget.class);
     }
 
     public Flux<AbstractIndexDocument> harvest() {

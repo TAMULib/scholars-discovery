@@ -1,6 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.response;
 
 import static edu.tamu.scholars.middleware.discovery.utility.DiscoveryUtility.findPath;
+import static org.assertj.core.api.Assertions.entry;
 
 import java.text.ParseException;
 import java.time.ZonedDateTime;
@@ -13,13 +14,13 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.solr.core.query.FacetOptions.FacetSort;
 import org.springframework.data.solr.core.query.result.FacetFieldEntry;
 import org.springframework.data.solr.core.query.result.FacetPage;
 
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetSortArg;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
+import edu.tamu.scholars.middleware.view.model.FacetSort;
 
 public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 

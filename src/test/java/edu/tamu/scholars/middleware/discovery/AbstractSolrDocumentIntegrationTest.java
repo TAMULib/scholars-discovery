@@ -27,6 +27,7 @@ import org.springframework.core.io.Resource;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 
@@ -106,11 +107,10 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
     }
 
     private String getCollection() {
-         SolrDocument solrDocument = getType().getAnnotation(SolrDocument.class);
-         String collection = solrDocument.collection();
-         assertFalse(collection.isEmpty());
-         return collection;
-        return "";
+        CollectionTarget solrDocument = getType().getAnnotation(CollectionTarget.class);
+        String collection = solrDocument.collection();
+        assertFalse(collection.isEmpty());
+        return collection;
     }
 
     protected String getDocPath() {

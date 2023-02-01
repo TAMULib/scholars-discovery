@@ -2,42 +2,41 @@ package edu.tamu.scholars.middleware.discovery.model;
 
 import java.util.List;
 
-import org.springframework.data.solr.core.mapping.Indexed;
-
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
+import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 
 public class Common extends AbstractIndexDocument {
 
-    @Indexed(type = "whole_string", searchable = false)
+    @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "common/image", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl", relative = true)
     private String image;
 
-    @Indexed(type = "whole_string", searchable = false)
+    @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "common/thumbnail", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl", relative = true)
     private String thumbnail;
 
-    @Indexed(type = "nested_whole_strings", searchable = false)
+    @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "websiteUrl", key = "url") })
     @PropertySource(template = "common/website", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> websites;
 
-    @Indexed(type = "nested_whole_strings", searchable = false)
+    @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "common/websiteUrl", predicate = "http://www.w3.org/2006/vcard/ns#url")
     private List<String> websiteUrl;
 
     @NestedObject
-    @Indexed(type = "nested_whole_strings", searchable = false)
+    @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "common/geographicFocus", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> geographicFocus;
 
     @NestedObject
-    @Indexed(type = "nested_whole_strings", searchable = false)
+    @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "common/sameAs", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> sameAs;
 
-    @Indexed(type = "pdate")
+    @PropertyTarget(type = "pdate")
     @PropertySource(template = "common/modTime", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#modTime")
     private String modTime;
 
