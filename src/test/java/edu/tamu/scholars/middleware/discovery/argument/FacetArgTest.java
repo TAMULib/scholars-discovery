@@ -10,9 +10,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.solr.core.query.FacetOptions.FacetSort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import edu.tamu.scholars.middleware.view.model.FacetSort;
 import edu.tamu.scholars.middleware.view.model.FacetType;
 
 @ExtendWith(SpringExtension.class)

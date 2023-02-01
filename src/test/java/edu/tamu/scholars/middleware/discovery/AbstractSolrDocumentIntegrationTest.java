@@ -23,9 +23,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.data.solr.core.mapping.SolrDocument;
-import org.springframework.data.solr.core.query.SimpleQuery;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,9 +44,6 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @Autowired
     protected IndividualRepo repo;
-
-    @Autowired
-    protected SolrTemplate solrTemplate;
 
     protected List<D> mockDocuments = new ArrayList<D>();
 
@@ -78,29 +72,29 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
     }
 
     private void createDocuments() throws IOException {
-        assertEquals(0, repo.count());
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<File> mockFiles = getMockFiles();
-        for (File file : mockFiles) {
-            JsonNode mockDocumentNode = objectMapper.readTree(file);
-            String name = mockDocumentNode.get("class").asText();
-            Class<?> type = getDiscoveryDocumentTypeByName(name);
-            solrTemplate.saveBean(getCollection(), objectMapper.readValue(file, type));
-            if (type.equals(getType())) {
-                @SuppressWarnings("unchecked")
-                D mockDocument = (D) objectMapper.readValue(file, getType());
-                assertNotNull(mockDocument);
-                mockDocuments.add(mockDocument);
-            }
-        }
-        assertTrue(mockDocuments.size() > 0);
-        solrTemplate.commit(getCollection());
-        numberOfDocuments = (int) solrTemplate.count(getCollection(), new SimpleQuery("*"));
-        assertEquals(mockFiles.size(), numberOfDocuments);
+         assertEquals(0, repo.count());
+         ObjectMapper objectMapper = new ObjectMapper();
+         List<File> mockFiles = getMockFiles();
+         for (File file : mockFiles) {
+             JsonNode mockDocumentNode = objectMapper.readTree(file);
+             String name = mockDocumentNode.get("class").asText();
+             Class<?> type = getDiscoveryDocumentTypeByName(name);
+             solrTemplate.saveBean(getCollection(), objectMapper.readValue(file, type));
+             if (type.equals(getType())) {
+                 @SuppressWarnings("unchecked")
+                 D mockDocument = (D) objectMapper.readValue(file, getType());
+                 assertNotNull(mockDocument);
+                 mockDocuments.add(mockDocument);
+             }
+         }
+         assertTrue(mockDocuments.size() > 0);
+         solrTemplate.commit(getCollection());
+         numberOfDocuments = (int) solrTemplate.count(getCollection(), new SimpleQuery("*"));
+         assertEquals(mockFiles.size(), numberOfDocuments);
     }
 
     private void deleteDocuments() {
-        repo.deleteAll();
+         repo.deleteAll();
     }
 
     private List<File> getMockFiles() throws IOException {
@@ -112,10 +106,11 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
     }
 
     private String getCollection() {
-        SolrDocument solrDocument = getType().getAnnotation(SolrDocument.class);
-        String collection = solrDocument.collection();
-        assertFalse(collection.isEmpty());
-        return collection;
+         SolrDocument solrDocument = getType().getAnnotation(SolrDocument.class);
+         String collection = solrDocument.collection();
+         assertFalse(collection.isEmpty());
+         return collection;
+        return "";
     }
 
     protected String getDocPath() {

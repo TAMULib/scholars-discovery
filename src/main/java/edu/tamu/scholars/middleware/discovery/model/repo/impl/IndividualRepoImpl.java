@@ -7,7 +7,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.PARENTHESES_TEMPLATE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
-import static org.springframework.data.solr.core.query.Criteria.WILDCARD;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.WILDCARD;
 
 import java.util.ArrayList;
 import java.util.Arrays;

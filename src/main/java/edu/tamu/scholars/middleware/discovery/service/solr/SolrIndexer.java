@@ -15,9 +15,6 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.data.solr.core.mapping.Indexed;
-import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.service.Indexer;
@@ -25,9 +22,6 @@ import edu.tamu.scholars.middleware.discovery.service.Indexer;
 public class SolrIndexer implements Indexer {
 
     private static final Logger logger = LoggerFactory.getLogger(SolrIndexer.class);
-
-    @Autowired
-    private SolrTemplate solrTemplate;
  
     @Autowired
     private SolrClient solrClient;
