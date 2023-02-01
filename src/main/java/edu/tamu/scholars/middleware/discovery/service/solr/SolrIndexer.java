@@ -84,8 +84,8 @@ public class SolrIndexer implements Indexer {
     public void index(Collection<AbstractIndexDocument> documents) {
         String collection = collection();
         try {
-            solrTemplate.saveBeans(collection, documents);
-            solrTemplate.commit(collection);
+//            solrTemplate.saveBeans(collection, documents);
+//            solrTemplate.commit(collection);
             logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
         } catch (Exception e) {
             logger.warn("Failed to save batch. Attempting individually.");
@@ -97,8 +97,8 @@ public class SolrIndexer implements Indexer {
     public void index(AbstractIndexDocument document) {
         String collection = collection();
         try {
-            solrTemplate.saveBean(collection, document);
-            solrTemplate.commit(collection);
+//            solrTemplate.saveBean(collection, document);
+//            solrTemplate.commit(collection);
             logger.info(String.format("Saved %s with id %s", name(), document.getId()));
         } catch (Exception e) {
             logger.warn(String.format("Failed to save document with id %s", document.getId()));

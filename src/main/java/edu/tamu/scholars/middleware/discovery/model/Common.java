@@ -8,7 +8,7 @@ import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 
 public class Common extends AbstractIndexDocument {
-
+	
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "common/image", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl", relative = true)
     private String image;

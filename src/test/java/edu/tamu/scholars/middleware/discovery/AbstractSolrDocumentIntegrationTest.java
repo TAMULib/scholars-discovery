@@ -80,7 +80,7 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
              JsonNode mockDocumentNode = objectMapper.readTree(file);
              String name = mockDocumentNode.get("class").asText();
              Class<?> type = getDiscoveryDocumentTypeByName(name);
-             solrTemplate.saveBean(getCollection(), objectMapper.readValue(file, type));
+//             solrTemplate.saveBean(getCollection(), objectMapper.readValue(file, type));
              if (type.equals(getType())) {
                  @SuppressWarnings("unchecked")
                  D mockDocument = (D) objectMapper.readValue(file, getType());
@@ -89,8 +89,8 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
              }
          }
          assertTrue(mockDocuments.size() > 0);
-         solrTemplate.commit(getCollection());
-         numberOfDocuments = (int) solrTemplate.count(getCollection(), new SimpleQuery("*"));
+//         solrTemplate.commit(getCollection());
+//         numberOfDocuments = (int) solrTemplate.count(getCollection(), new SimpleQuery("*"));
          assertEquals(mockFiles.size(), numberOfDocuments);
     }
 

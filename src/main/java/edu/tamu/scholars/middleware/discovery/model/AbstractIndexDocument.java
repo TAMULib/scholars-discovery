@@ -1,32 +1,44 @@
 package edu.tamu.scholars.middleware.discovery.model;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import org.apache.solr.client.solrj.beans.Field;
-import org.springframework.data.annotation.Id;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 
+@MappedSuperclass
 public abstract class AbstractIndexDocument {
 
     @Id
+    @GeneratedValue(strategy = IDENTITY)
     @PropertyTarget(required = true, readonly = true)
     private String id;
 
+    @Transient
     @PropertyTarget(type = "whole_strings")
     @PropertySource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> type;
 
+    @Transient
     @Field("class")
     @JsonProperty("class")
     @PropertyTarget(type = "string", value = "class", required = true)
     private String clazz = this.getClass().getSimpleName();
 
+    @ElementCollection
     @PropertyTarget(type = "strings")
     private Set<String> syncIds = new HashSet<String>();
 
