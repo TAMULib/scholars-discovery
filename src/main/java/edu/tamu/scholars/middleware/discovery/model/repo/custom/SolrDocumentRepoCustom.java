@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.solr.core.query.result.Cursor;
-import org.springframework.data.solr.core.query.result.FacetAndHighlightPage;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
@@ -15,7 +13,9 @@ import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.dto.DataNetwork;
 import edu.tamu.scholars.middleware.discovery.dto.DataNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.dto.internal.FacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
+import edu.tamu.scholars.middleware.shared.Cursor;
 
 public interface SolrDocumentRepoCustom<D extends AbstractIndexDocument> {
 

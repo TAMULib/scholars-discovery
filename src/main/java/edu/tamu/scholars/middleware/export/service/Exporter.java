@@ -2,12 +2,12 @@ package edu.tamu.scholars.middleware.export.service;
 
 import java.util.List;
 
-import org.springframework.data.solr.core.query.result.Cursor;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.export.argument.ExportArg;
 import edu.tamu.scholars.middleware.export.exception.UnsupportedExporterTypeException;
+import edu.tamu.scholars.middleware.shared.Cursor;
 
 public interface Exporter {
 

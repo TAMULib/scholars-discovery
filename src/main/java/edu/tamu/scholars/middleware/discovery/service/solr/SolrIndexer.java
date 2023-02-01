@@ -12,11 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
-import org.apache.solr.common.SolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.service.Indexer;
@@ -115,7 +115,7 @@ public class SolrIndexer implements Indexer {
     }
 
     private String collection() {
-        return type.getAnnotation(SolrDocument.class).collection();
+        return type.getAnnotation(CollectionTarget.class).collection();
     }
 
 }

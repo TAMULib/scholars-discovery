@@ -11,14 +11,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.data.solr.core.query.Field;
-import org.springframework.data.solr.core.query.result.FacetAndHighlightPage;
-import org.springframework.data.solr.core.query.result.FacetPage;
-import org.springframework.data.solr.core.query.result.HighlightEntry;
 
 import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
+import edu.tamu.scholars.middleware.discovery.dto.internal.FacetAndHighlightPage;
+import edu.tamu.scholars.middleware.discovery.dto.internal.FacetPage;
+import edu.tamu.scholars.middleware.discovery.dto.internal.Field;
+import edu.tamu.scholars.middleware.discovery.dto.internal.HighlightEntry;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 
 public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {

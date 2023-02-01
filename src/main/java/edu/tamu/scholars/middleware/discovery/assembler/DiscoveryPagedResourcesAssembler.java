@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
-import org.springframework.data.solr.core.query.result.FacetAndHighlightPage;
-import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
@@ -24,6 +22,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 
+import edu.tamu.scholars.middleware.discovery.dto.internal.FacetAndHighlightPage;
+import edu.tamu.scholars.middleware.discovery.dto.internal.FacetPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage.Highlight;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetPage.Facet;
 
