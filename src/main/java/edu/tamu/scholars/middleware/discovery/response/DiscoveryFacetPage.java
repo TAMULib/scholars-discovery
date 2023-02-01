@@ -1,7 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.response;
 
 import static edu.tamu.scholars.middleware.discovery.utility.DiscoveryUtility.findPath;
-import static org.assertj.core.api.Assertions.entry;
 
 import java.text.ParseException;
 import java.time.ZonedDateTime;

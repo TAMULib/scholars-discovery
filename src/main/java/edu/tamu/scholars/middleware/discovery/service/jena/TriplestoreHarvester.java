@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Indexed;
 
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionSource;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
@@ -238,7 +237,7 @@ public class TriplestoreHarvester implements Harvester {
     }
 
     private boolean isNestedField(Field field) {
-        return !field.getName().equals(ID) && field.getAnnotation(Indexed.class).type().startsWith(NESTED);
+        return !field.getName().equals(ID) && field.getAnnotation(PropertyTarget.class).type().startsWith(NESTED);
     }
 
     private void addSyncId(Set<String> syncIds, String value) {
