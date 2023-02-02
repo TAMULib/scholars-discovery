@@ -1,13 +1,10 @@
 package edu.tamu.scholars.middleware.discovery.model;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.ElementCollection;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -23,11 +20,12 @@ import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 public abstract class AbstractIndexDocument {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @Field
     @PropertyTarget(required = true, readonly = true)
     private String id;
 
     @Transient
+    @Field
     @PropertyTarget(type = "whole_strings")
     @PropertySource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> type;
@@ -38,6 +36,7 @@ public abstract class AbstractIndexDocument {
     @PropertyTarget(type = "string", value = "class", required = true)
     private String clazz = this.getClass().getSimpleName();
 
+    @Field
     @ElementCollection
     @PropertyTarget(type = "strings")
     private Set<String> syncIds = new HashSet<String>();

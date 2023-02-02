@@ -22,6 +22,7 @@ import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 @CollectionSource(name = "processes", predicate = "http://purl.obolibrary.org/obo/BFO_0000015")
 public class Process extends Common {
 
+    @Field
     @PropertyTarget(type = "tokenized_string", copyTo = { "_text_", "title_sort" })
     @PropertySource(template = "process/title", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String title;
@@ -32,142 +33,173 @@ public class Process extends Common {
     @PropertySource(template = "process/abstract", predicate = "http://purl.org/ontology/bibo/abstract")
     private String abstractText;
 
+    @Field
     @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
     @NestedObject(properties = { @Reference(value = "authorOrganization", key = "organizations") })
     @PropertySource(template = "process/author", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> authors;
 
+    @Field
     @NestedMultiValuedProperty
     @NestedObject(root = false)
     @PropertyTarget(type = "nested_whole_strings")
     @PropertySource(template = "process/authorOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> authorOrganization;
 
+    @Field
     @PropertyTarget(type = "whole_strings")
     @PropertySource(template = "process/authorList", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#fullAuthorList")
     private List<String> authorList;
 
+    @Field
     @PropertyTarget(type = "tokenized_string", copyTo = "_text_")
     @PropertySource(template = "process/description", predicate = "http://vivoweb.org/ontology/core#description")
     private String description;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings")
     @PropertySource(template = "process/offeredBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> offeredBy;
 
+    @Field
     @PropertyTarget(type = "pdate")
     @PropertySource(template = "process/dateTimeIntervalStart", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String dateTimeIntervalStart;
 
+    @Field
     @PropertyTarget(type = "pdate")
     @PropertySource(template = "process/dateTimeIntervalEnd", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String dateTimeIntervalEnd;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "process/subtype", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#subtype")
     private String subtype;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "process/venue", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#venue")
     private String venue;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "process/location", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#location")
     private String location;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "process/url", predicate = "http://www.w3.org/2006/vcard/ns#url")
     private String url;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "process/note", predicate = "http://www.w3.org/2006/vcard/ns#note")
     private String note;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/occursWithinEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> occursWithinEvent;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/includesEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> includesEvent;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/inEventSeries", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> inEventSeries;
 
+    @Field
     @PropertyTarget(type = "nested_tokenized_strings", copyTo = { "_text_", "participants_nested_facets" })
     @NestedObject(properties = { @Reference(value = "participantId", key = "personId"), @Reference(value = "participantRole", key = "role"), @Reference(value = "participantDateTimeIntervalStart", key = "startDate"), @Reference(value = "participantDateTimeIntervalEnd", key = "endDate") })
     @PropertySource(template = "process/participant", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> participants;
 
+    @Field
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/participantId", predicate = "http://purl.obolibrary.org/obo/RO_0000052", parse = true)
     private List<String> participantId;
 
+    @Field
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/participantRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> participantRole;
 
+    @Field
     @PropertyTarget(type = "nested_dates")
     @PropertySource(template = "process/participantDateTimeIntervalStart", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> participantDateTimeIntervalStart;
 
+    @Field
     @PropertyTarget(type = "nested_dates")
     @PropertySource(template = "process/participantDateTimeIntervalEnd", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> participantDateTimeIntervalEnd;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings")
     @PropertySource(template = "process/hasSubjectArea", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> subjectAreas;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/hasPrerequisite", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> hasPrerequisite;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/prerequisiteFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> prerequisiteFor;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "process/credits", predicate = "http://vivoweb.org/ontology/core#courseCredits")
     private String credits;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/outputPublicationOrOtherWork", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> outputPublicationOrOtherWork;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/relatedDocument", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> relatedDocuments;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "process/contactInformation", predicate = "http://vivoweb.org/ontology/core#contactInformation")
     private String contactInformation;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/heldInFacility", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> heldInFacility;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/heldInGeographicLocation", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> heldInGeographicLocation;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/hasOutput", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> hasOutput;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "process/hasParticipant", predicate = "http://www.w3.org/2000/01/rdf-schema#label")

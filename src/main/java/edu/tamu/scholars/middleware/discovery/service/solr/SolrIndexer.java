@@ -38,14 +38,13 @@ public class SolrIndexer implements Indexer {
         String collection = collection();
 
         for (Field field : FieldUtils.getFieldsListWithAnnotation(type, PropertyTarget.class)) {
-        	PropertyTarget indexed = field.getAnnotation(PropertyTarget.class);
+            PropertyTarget indexed = field.getAnnotation(PropertyTarget.class);
 
             String name = StringUtils.isNotEmpty(indexed.value())
                 ? indexed.value()
                 : field.getName();
 
             if (!indexed.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
-
                 Map<String, Object> fieldAttributes = new HashMap<String,Object>();
 
                 fieldAttributes.put("type", indexed.type());
@@ -84,8 +83,7 @@ public class SolrIndexer implements Indexer {
     public void index(Collection<AbstractIndexDocument> documents) {
         String collection = collection();
         try {
-        	solrClient.addBeans(collection, documents);
-        	solrClient.commit();
+            solrClient.addBeans(collection, documents, 250);
             logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
         } catch (Exception e) {
             logger.warn("Failed to save batch. Attempting individually.", e);
@@ -96,8 +94,7 @@ public class SolrIndexer implements Indexer {
     public void index(AbstractIndexDocument document) {
         String collection = collection();
         try {
-        	solrClient.addBean(collection, document);
-        	solrClient.commit();
+            solrClient.addBean(collection, document, 250);
             logger.info(String.format("Saved %s with id %s", name(), document.getId()));
         } catch (Exception e) {
             logger.warn(String.format("Failed to save document with id %s", document.getId()), e);

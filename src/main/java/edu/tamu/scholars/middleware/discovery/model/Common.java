@@ -2,40 +2,49 @@ package edu.tamu.scholars.middleware.discovery.model;
 
 import java.util.List;
 
+import org.apache.solr.client.solrj.beans.Field;
+
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 
 public class Common extends AbstractIndexDocument {
-	
+
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "common/image", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl", relative = true)
     private String image;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "common/thumbnail", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl", relative = true)
     private String thumbnail;
 
+    @Field
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "websiteUrl", key = "url") })
     @PropertySource(template = "common/website", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> websites;
 
+    @Field
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "common/websiteUrl", predicate = "http://www.w3.org/2006/vcard/ns#url")
     private List<String> websiteUrl;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "common/geographicFocus", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> geographicFocus;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "common/sameAs", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> sameAs;
 
+    @Field
     @PropertyTarget(type = "pdate")
     @PropertySource(template = "common/modTime", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#modTime")
     private String modTime;

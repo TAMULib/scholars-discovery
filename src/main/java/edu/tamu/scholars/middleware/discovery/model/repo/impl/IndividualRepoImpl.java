@@ -1,9 +1,10 @@
 package edu.tamu.scholars.middleware.discovery.model.repo.impl;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
-import java.time.Duration;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,7 +14,10 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -59,27 +63,49 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     private SolrClient solrClient;
 
     @Override
-    public <S extends Individual> S save(S entity, Duration commitWithin) {
-        // TODO Auto-generated method stub
-        return null;
+    public <S extends Individual> S save(S entity, int commitWithinMs) {
+        try {
+			solrClient.addBean(collection(), entity, commitWithinMs);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
+        return entity;
     }
 
     @Override
-    public <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, Duration commitWithin) {
-        // TODO Auto-generated method stub
-        return null;
+    public <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, int commitWithinMs) {
+    	List<S> individuals = IterableUtils.toList(entities);
+    	try {
+			solrClient.addBeans(collection(), individuals, commitWithinMs);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
+        return entities;
     }
 
     @Override
     public long count() {
-        // TODO Auto-generated method stub
-        return 0;
+    	SolrQuery query = new SolrQuery(DEFAULT_QUERY);
+        query.setRows(0);
+        try {
+        	return solrClient.query(query)
+    			.getResults()
+    			.getNumFound();
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
     public List<Individual> findAll() {
-        // TODO Auto-generated method stub
-        return null;
+    	SolrQuery query = new SolrQuery(DEFAULT_QUERY);
+    	query.setRows(Integer.MAX_VALUE);
+    	try {
+    		return solrClient.query(query)
+				.getBeans(Individual.class);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
@@ -96,44 +122,72 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public <S extends Individual> List<S> saveAll(Iterable<S> entities) {
-        // TODO Auto-generated method stub
-        return null;
+    	List<S> individuals = IterableUtils.toList(entities);
+    	try {
+			solrClient.addBeans(collection(), individuals);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
+        return individuals;
     }
 
     @Override
     public void flush() {
-        // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public <S extends Individual> S saveAndFlush(S entity) {
-        // TODO Auto-generated method stub
-        return null;
+    	try {
+			solrClient.addBean(collection(), entity, 250);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
+        return entity;
     }
 
     @Override
     public <S extends Individual> List<S> saveAllAndFlush(Iterable<S> entities) {
-        // TODO Auto-generated method stub
-        return null;
+    	List<S> individuals = IterableUtils.toList(entities);
+    	try {
+			solrClient.addBeans(collection(), individuals, 250);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
+        return individuals;
     }
 
     @Override
     public void deleteAllInBatch(Iterable<Individual> entities) {
-        // TODO Auto-generated method stub
-        
+    	// use batch solr client
+    	List<String> ids = IterableUtils.toList(entities).stream()
+			.map(i -> i.getId())
+			.collect(Collectors.toList());
+    	try {
+			solrClient.deleteById(collection(), ids, 250);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
     public void deleteAllByIdInBatch(Iterable<String> ids) {
-        // TODO Auto-generated method stub
-        
+    	// use batch solr client
+    	try {
+			solrClient.deleteById(collection(), IterableUtils.toList(ids), 250);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
     public void deleteAllInBatch() {
-        // TODO Auto-generated method stub
-        
+    	// use batch solr client
+    	try {
+			solrClient.deleteByQuery(collection(), DEFAULT_QUERY, 250);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
@@ -184,22 +238,35 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
         
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void deleteAllById(Iterable<? extends String> ids) {
-        // TODO Auto-generated method stub
-        
+    	try {
+			solrClient.deleteById(collection(), IterableUtils.toList((Iterable<String>) ids), 250);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
     public void deleteAll(Iterable<? extends Individual> entities) {
-        // TODO Auto-generated method stub
-        
+    	List<String> ids = IterableUtils.toList(entities).stream()
+			.map(i -> i.getId())
+			.collect(Collectors.toList());
+    	try {
+			solrClient.deleteById(collection(), ids, 250);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
     public void deleteAll() {
-        // TODO Auto-generated method stub
-        
+    	try {
+			solrClient.deleteByQuery(collection(), DEFAULT_QUERY, 250);
+		} catch (IOException | SolrServerException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override

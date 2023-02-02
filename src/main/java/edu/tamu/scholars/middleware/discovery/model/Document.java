@@ -22,6 +22,7 @@ import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 @CollectionSource(name = "documents", predicate = "http://purl.org/ontology/bibo/Document")
 public class Document extends Common {
 
+    @Field
     @PropertyTarget(type = "tokenized_string", copyTo = { "_text_", "title_sort" })
     @PropertySource(template = "document/title", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String title;
@@ -32,337 +33,413 @@ public class Document extends Common {
     @PropertySource(template = "document/abstract", predicate = "http://purl.org/ontology/bibo/abstract")
     private String abstractText;
 
+    @Field
     @PropertyTarget(type = "whole_string", copyTo = "_text_")
     @PropertySource(template = "document/abbreviation", predicate = "http://vivoweb.org/ontology/core#abbreviation")
     private String abbreviation;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_string", copyTo = "_text_")
     @PropertySource(template = "document/publicationVenue", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private String publicationVenue;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_string", searchable = false)
     @PropertySource(template = "document/hasPublicationVenueFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private String hasPublicationVenueFor;
 
+    @Field
     @PropertyTarget(type = "whole_string", copyTo = "_text_")
     @PropertySource(template = "document/publicationOutlet", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#publishedProceedings", unique = true)
     private String publicationOutlet;
 
+    @Field
     @PropertyTarget(type = "whole_string", copyTo = "_text_")
     @PropertySource(template = "document/nameOfConference", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#nameOfConference", unique = true)
     private String nameOfConference;
 
+    @Field
     @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
     @NestedObject(properties = { @Reference(value = "authorOrganization", key = "organizations") })
     @PropertySource(template = "document/author", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> authors;
 
+    @Field
     @NestedMultiValuedProperty
     @NestedObject(root = false)
     @PropertyTarget(type = "nested_whole_strings")
     @PropertySource(template = "document/authorOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> authorOrganization;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/editor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> editors;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/translator", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> translators;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/status", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String status;
 
+    @Field
     @PropertyTarget(type = "pdate")
     @PropertySource(template = "document/publicationDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String publicationDate;
 
+    @Field
     @PropertyTarget(type = "nested_whole_string")
     @NestedObject(properties = { @Reference(value = "publisherType", key = "type") })
     @PropertySource(template = "document/publisher", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private String publisher;
 
+    @Field
     @PropertyTarget(type = "nested_whole_string")
     @PropertySource(template = "document/publisherType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private String publisherType;
 
+    @Field
     @PropertyTarget(type = "pdate", searchable = false)
     @PropertySource(template = "document/dateFiled", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String dateFiled;
 
+    @Field
     @PropertyTarget(type = "pdate", searchable = false)
     @PropertySource(template = "document/dateIssued", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String dateIssued;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings")
     @PropertySource(template = "document/hasSubjectArea", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> subjectAreas;
 
+    @Field
     @PropertyTarget(type = "whole_strings", searchable = false)
     @PropertySource(template = "document/hasRestriction", predicate = "http://purl.obolibrary.org/obo/ERO_0000045")
     private List<String> restrictions;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/documentPart", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> documentParts;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/chapter", predicate = "http://purl.org/ontology/bibo/chapter")
     private String chapter;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/feature", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> features;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/edition", predicate = "http://purl.org/ontology/bibo/edition")
     private String edition;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/documentationForProjectOrResource", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> documentationForProjectOrResource;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/outputOfProcessOrEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> outputOfProcessOrEvent;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/presentedAt", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> presentedAt;
 
+    @Field
     @PropertyTarget(type = "whole_strings", copyTo = "_text_")
     @PropertySource(template = "document/keyword", predicate = "http://vivoweb.org/ontology/core#freetextKeyword")
     private List<String> keywords;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/eanucc13", predicate = "http://purl.org/ontology/bibo/eanucc13")
     private String eanucc13;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/nihmsid", predicate = "http://vivoweb.org/ontology/core#nihmsid")
     private String nihmsid;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/pmcid", predicate = "http://vivoweb.org/ontology/core#pmcid")
     private String pmcid;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/identifier", predicate = "http://purl.org/ontology/bibo/identifier")
     private String identifier;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/patentNumber", predicate = "http://vivoweb.org/ontology/core#patentNumber")
     private String patentNumber;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/doi", predicate = "http://purl.org/ontology/bibo/doi")
     private String doi;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/oclcnum", predicate = "http://purl.org/ontology/bibo/oclcnum")
     private String oclcnum;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/isbn10", predicate = "http://purl.org/ontology/bibo/isbn10")
     private String isbn10;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/isbn13", predicate = "http://purl.org/ontology/bibo/isbn13")
     private String isbn13;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/pmid", predicate = "http://purl.org/ontology/bibo/pmid")
     private String pmid;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/lccn", predicate = "http://purl.org/ontology/bibo/lccn")
     private String lccn;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/issn", predicate = "http://purl.org/ontology/bibo/issn")
     private String issn;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/eissn", predicate = "http://purl.org/ontology/bibo/eissn")
     private String eissn;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/uri", predicate = "http://purl.org/ontology/bibo/uri")
     private String uri;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/citedBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> citedBy;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/cites", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> cites;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/citesAsDataSource", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> citesAsDataSource;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/hasTranslation", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> translations;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/translationOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> translationOf;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/globalCitationFrequency", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> globalCitationFrequency;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/iclCode", predicate = "http://vivoweb.org/ontology/core#iclCode")
     private String iclCode;
 
+    @Field
     @PropertyTarget(type = "pint")
     @PropertySource(template = "document/numberOfPages", predicate = "http://purl.org/ontology/bibo/numPages")
     private Integer numberOfPages;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/pageStart", predicate = "http://purl.org/ontology/bibo/pageStart")
     private String pageStart;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/pageEnd", predicate = "http://purl.org/ontology/bibo/pageEnd")
     private String pageEnd;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/number", predicate = "http://purl.org/ontology/bibo/number")
     private String number;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/volume", predicate = "http://purl.org/ontology/bibo/volume")
     private String volume;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/issue", predicate = "http://purl.org/ontology/bibo/issue")
     private String issue;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/placeOfPublication", predicate = "http://vivoweb.org/ontology/core#placeOfPublication")
     private String placeOfPublication;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/assignee", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> assignees;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/reproducedIn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> reproducedIn;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/reproduces", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> reproduces;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/isAbout", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> isAbout;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/specifiedOutputOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> specifiedOutputOf;
 
+    @Field
     @PropertyTarget(type = "whole_string", searchable = false)
     @PropertySource(template = "document/isTemplate", predicate = "http://purl.obolibrary.org/obo/ARG_0000001")
     private String isTemplate;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/mention", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> mentions;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/participatesIn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> participatesIn;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/supportedBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> supportedBy;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/receipt", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> receipts;
 
+    @Field
     @PropertyTarget(type = "pfloat")
     @PropertySource(template = "document/altmetricScore", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#AltmetricScore")
     private Float altmetricScore;
 
+    @Field
     @PropertyTarget(type = "pint")
     @PropertySource(template = "document/citationCount", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#CitationCount")
     private Integer citationCount;
 
+    @Field
     @PropertyTarget(type = "whole_strings")
     @PropertySource(template = "document/tag", predicate = "http://purl.obolibrary.org/obo/ARG_0000015")
     private List<String> tags;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/note", predicate = "http://www.w3.org/2006/vcard/ns#note")
     private String note;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/key", predicate = "http://www.w3.org/2006/vcard/ns#key")
     private String key;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/url", predicate = "http://www.w3.org/2006/vcard/ns#url")
     private String url;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings", searchable = false)
     @PropertySource(template = "document/etdChairedBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> etdChairedBy;
 
+    @Field
     @NestedObject
     @PropertyTarget(type = "nested_whole_strings")
     @PropertySource(template = "document/advisedBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> advisedBy;
 
+    @Field
     @PropertyTarget(type = "whole_strings")
     @PropertySource(template = "document/completeAuthorList", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#completeAuthorList", split = true)
     private List<String> completeAuthorList;
 
+    @Field
     @PropertyTarget(type = "whole_strings")
     @PropertySource(template = "document/authorList", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#fullAuthorList")
     private List<String> authorList;
 
+    @Field
     @PropertyTarget(type = "whole_strings", searchable = false)
     @PropertySource(template = "document/editorList", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#fullEditorList")
     private List<String> editorList;
 
+    @Field
     @PropertyTarget(type = "tokenized_string", copyTo = "_text_")
     @PropertySource(template = "document/bookTitle", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#bookTitleForChapter")
     private String bookTitle;
 
+    @Field
     @PropertyTarget(type = "whole_string")
     @PropertySource(template = "document/newsOutlet", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#NewsOutlet")
     private String newsOutlet;
