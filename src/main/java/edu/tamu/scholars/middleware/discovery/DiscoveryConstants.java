@@ -3,7 +3,7 @@ package edu.tamu.scholars.middleware.discovery;
 public class DiscoveryConstants {
 
     public static String EXPORT_INDIVIDUAL_KEY;
-    
+
     public static final String WILDCARD = "*";
 
     public static final String ID = "id";
@@ -16,7 +16,9 @@ public class DiscoveryConstants {
 
     public static final String MOD_TIME = "modTime";
 
-    public static final String DEFAULT_QUERY = String.format("%s:%s", WILDCARD, WILDCARD);
+    public static final String QUERY_TEMPLATE = "%s:%s";
+
+    public static final String DEFAULT_QUERY = String.format(QUERY_TEMPLATE, WILDCARD, WILDCARD);
 
     public static final String NESTED_DELIMITER = "::";
 

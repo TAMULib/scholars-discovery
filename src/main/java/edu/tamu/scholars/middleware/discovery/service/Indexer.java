@@ -12,6 +12,8 @@ public interface Indexer {
 
     public void index(AbstractIndexDocument document);
 
+    public void optimize();
+
     public Class<AbstractIndexDocument> type();
 
 }
