@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.core.NodeConfig;
 import org.springframework.context.annotation.Bean;
@@ -15,27 +16,30 @@ import org.springframework.context.annotation.Profile;
 @Profile("test")
 public class EmbeddedSolrServiceConfig {
 
-    @Bean
-    public EmbeddedSolrServer solrServer() throws Exception {
-        final String solrHome = "target/solr";
-        final String configSetHome = "solr";
-        final String coreName = "scholars-discovery";
+    public final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
+    public final static String NODE_NAME = "discovery";
+    public final static String CORE_NAME = "scholars-discovery";
 
-        final File solrHomeDir = new File(solrHome);
-        if (solrHomeDir.exists()) {
-            FileUtils.deleteDirectory(solrHomeDir);
-            solrHomeDir.mkdirs();
-        } else {
-            solrHomeDir.mkdirs();
+    @Bean
+    public SolrClient solrServer() throws Exception {
+        final File solrDir = new File("solr");
+        final File solrHome = SOLR_HOME.toFile();
+
+        if (solrHome.exists()) {
+            FileUtils.deleteDirectory(solrHome);
         }
 
-        final Path solrHomePath = Paths.get(solrHome).toAbsolutePath();
+        FileUtils.copyDirectory(solrDir, solrHome);
 
-        final NodeConfig config = new NodeConfig.NodeConfigBuilder("scholasr-discovery", solrHomePath)
-                .setConfigSetBaseDirectory(configSetHome)
+        System.setProperty("solr.install.dir", SOLR_HOME.toFile().getAbsolutePath());
+
+        final Path solrConfigSetsPath = SOLR_HOME.resolve("configsets");
+
+        final NodeConfig config = new NodeConfig.NodeConfigBuilder(NODE_NAME, SOLR_HOME)
+                .setConfigSetBaseDirectory(solrConfigSetsPath.toFile().getAbsolutePath())
                 .build();
 
-        return new EmbeddedSolrServer(config, coreName);
+        return new EmbeddedSolrServer(config, CORE_NAME);
     }
 
 }

@@ -40,11 +40,10 @@ import edu.tamu.scholars.middleware.discovery.dto.DataNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.dto.internal.FacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.SolrDocumentRepo;
-import edu.tamu.scholars.middleware.discovery.model.repo.custom.SolrDocumentRepoCustom;
 import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.shared.Cursor;
 
-public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual>, SolrDocumentRepo<Individual> {
+public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     
     private static final Logger logger = LoggerFactory.getLogger(IndividualRepoImpl.class);
 
@@ -59,217 +58,217 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual>, S
     @Autowired
     private SolrClient solrClient;
 
-	@Override
-	public <S extends Individual> S save(S entity, Duration commitWithin) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> S save(S entity, Duration commitWithin) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, Duration commitWithin) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, Duration commitWithin) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public long count() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public long count() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public List<Individual> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Individual> findAll() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<Individual> findAll(Sort sort) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Individual> findAll(Sort sort) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<Individual> findAllById(Iterable<String> ids) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Individual> findAllById(Iterable<String> ids) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <S extends Individual> List<S> saveAll(Iterable<S> entities) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> List<S> saveAll(Iterable<S> entities) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void flush() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void flush() {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public <S extends Individual> S saveAndFlush(S entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> S saveAndFlush(S entity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <S extends Individual> List<S> saveAllAndFlush(Iterable<S> entities) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> List<S> saveAllAndFlush(Iterable<S> entities) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void deleteAllInBatch(Iterable<Individual> entities) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void deleteAllInBatch(Iterable<Individual> entities) {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public void deleteAllByIdInBatch(Iterable<String> ids) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void deleteAllByIdInBatch(Iterable<String> ids) {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public void deleteAllInBatch() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void deleteAllInBatch() {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public Individual getOne(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Individual getOne(String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Individual getById(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Individual getById(String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <S extends Individual> List<S> findAll(Example<S> example) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> List<S> findAll(Example<S> example) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <S extends Individual> List<S> findAll(Example<S> example, Sort sort) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> List<S> findAll(Example<S> example, Sort sort) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Page<Individual> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Page<Individual> findAll(Pageable pageable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Optional<Individual> findById(String id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
+    @Override
+    public Optional<Individual> findById(String id) {
+        // TODO Auto-generated method stub
+        return Optional.empty();
+    }
 
-	@Override
-	public boolean existsById(String id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean existsById(String id) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public void deleteById(String id) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void deleteById(String id) {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public void deleteAllById(Iterable<? extends String> ids) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void deleteAllById(Iterable<? extends String> ids) {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public void deleteAll(Iterable<? extends Individual> entities) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void deleteAll(Iterable<? extends Individual> entities) {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public void deleteAll() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void deleteAll() {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public <S extends Individual> Optional<S> findOne(Example<S> example) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
+    @Override
+    public <S extends Individual> Optional<S> findOne(Example<S> example) {
+        // TODO Auto-generated method stub
+        return Optional.empty();
+    }
 
-	@Override
-	public <S extends Individual> Page<S> findAll(Example<S> example, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> Page<S> findAll(Example<S> example, Pageable pageable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <S extends Individual> long count(Example<S> example) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public <S extends Individual> long count(Example<S> example) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public <S extends Individual> boolean exists(Example<S> example) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public <S extends Individual> boolean exists(Example<S> example) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public <S extends Individual, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <S extends Individual> S save(S document) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <S extends Individual> S save(S document) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void delete(Individual document) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void delete(Individual document) {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
-	public List<Individual> findByType(String type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Individual> findByType(String type) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<Individual> findByIdIn(List<String> ids) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Individual> findByIdIn(List<String> ids) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<Individual> findBySyncIds(String syncId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Individual> findBySyncIds(String syncId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<Individual> findBySyncIdsIn(List<String> syncIds) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Individual> findBySyncIdsIn(List<String> syncIds) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
+    @Override
     public DataNetwork getDataNetwork(DataNetworkDescriptor dataNetworkDescriptor) {
         final String id = dataNetworkDescriptor.getId();
         final DataNetwork dataNetwork = DataNetwork.to(id);
@@ -348,17 +347,17 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual>, S
 
     @Override
     public List<Individual> findAll(List<FilterArg> filters) {
-    	return new ArrayList<>();
+        return new ArrayList<>();
     }
 
     @Override
     public List<Individual> findAll(List<FilterArg> filters, Sort sort) {
-    	return new ArrayList<>();
+        return new ArrayList<>();
     }
 
     @Override
     public Page<Individual> findAll(List<FilterArg> filters, Pageable page) {
-    	return new PageImpl<>(new ArrayList<>());
+        return new PageImpl<>(new ArrayList<>());
     }
 
     @Override
@@ -368,7 +367,7 @@ public class IndividualRepoImpl implements SolrDocumentRepoCustom<Individual>, S
 
     @Override
     public Cursor<Individual> stream(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort) {
-    	return null;
+        return null;
     }
 
     public String collection() {

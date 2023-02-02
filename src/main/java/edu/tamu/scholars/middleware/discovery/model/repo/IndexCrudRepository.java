@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.time.Duration;
 
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 @NoRepositoryBean
-public interface IndexCrudRepository<T, ID extends Serializable> extends IndexRepository<T, ID>, PagingAndSortingRepository<T, ID> {
+public interface IndexCrudRepository<T, ID extends Serializable> extends IndexRepository<T, ID> {
 
-	<S extends T> S save(S entity, Duration commitWithin);
+    <S extends T> S save(S entity, Duration commitWithin);
 
-	<S extends T> Iterable<S> saveAll(Iterable<S> entities, Duration commitWithin);
+    <S extends T> Iterable<S> saveAll(Iterable<S> entities, Duration commitWithin);
+
 }

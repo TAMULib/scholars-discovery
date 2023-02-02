@@ -8,6 +8,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface IndexRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
-	long count();
+    long count();
 
 }
