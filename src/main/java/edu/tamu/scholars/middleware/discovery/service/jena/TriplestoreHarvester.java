@@ -233,7 +233,7 @@ public class TriplestoreHarvester implements Harvester {
                 }
             }
         });
-        document.setSyncIds(syncIds);
+        document.setSyncIds(new ArrayList<>(syncIds));
     }
 
     private boolean isNestedField(Field field) {

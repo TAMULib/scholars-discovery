@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +40,7 @@ public abstract class AbstractIndexDocument {
     @Field
     @ElementCollection
     @PropertyTarget(type = "strings")
-    private Set<String> syncIds = new HashSet<String>();
+    private List<String> syncIds = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -65,11 +66,11 @@ public abstract class AbstractIndexDocument {
         this.clazz = clazz;
     }
 
-    public Set<String> getSyncIds() {
+    public List<String> getSyncIds() {
         return syncIds;
     }
 
-    public void setSyncIds(Set<String> syncIds) {
+    public void setSyncIds(List<String> syncIds) {
         this.syncIds = syncIds;
     }
 

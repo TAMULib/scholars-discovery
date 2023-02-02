@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
@@ -214,7 +215,15 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findAll() {
-        throw new UnsupportedOperationException();
+        try {
+            SolrQuery query = new SolrQuery(DEFAULT_QUERY)
+                .setRows(Integer.MAX_VALUE);
+
+            return solrClient.query(CORE_NAME, query)
+                .getBeans(Individual.class);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -226,6 +235,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     public List<Individual> findAllById(Iterable<String> ids) {
         try {
             SolrDocumentList documents = solrClient.getById(CORE_NAME, IterableUtils.toList(ids));
+
             return solrClient.getBinder()
                 .getBeans(Individual.class, documents);
         } catch (IOException | SolrServerException e) {
@@ -247,6 +257,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     public Individual getById(String id) {
         try {
             SolrDocument document = solrClient.getById(CORE_NAME, id);
+
             return solrClient.getBinder()
                 .getBean(Individual.class, document);
         } catch (IOException | SolrServerException e) {
@@ -256,7 +267,20 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public Page<Individual> findAll(Pageable pageable) {
-        throw new UnsupportedOperationException();
+        try {
+            SolrQuery query = new SolrQuery(DEFAULT_QUERY)
+                .setRows(pageable.getPageSize())
+                .setStart((int) pageable.getOffset());
+            // TODO: apply sorting
+            SolrDocumentList documents = solrClient.query(CORE_NAME, query)
+                .getResults();
+            List<Individual> individuals = solrClient.getBinder()
+                .getBeans(Individual.class, documents);
+
+            return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -376,9 +400,9 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     }
 
     private long count(String q) {
-        SolrQuery query = new SolrQuery(q);
-        query.setRows(0);
-        return count (query);
+        SolrQuery query = new SolrQuery(q)
+            .setRows(0);
+        return count(query);
     }
 
     private long count(SolrQuery query) {
