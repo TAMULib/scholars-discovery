@@ -3,7 +3,6 @@ package edu.tamu.scholars.middleware.discovery;
 import static edu.tamu.scholars.middleware.config.EmbeddedSolrServiceConfig.CORE_NAME;
 import static edu.tamu.scholars.middleware.discovery.utility.DiscoveryUtility.getDiscoveryDocumentTypeByName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
