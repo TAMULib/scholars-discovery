@@ -1,5 +1,7 @@
 package edu.tamu.scholars.middleware.config;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,11 +16,10 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile("test")
-public class EmbeddedSolrServiceConfig {
+public class SolrConfig {
 
-    public final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
-    public final static String NODE_NAME = "discovery";
-    public final static String CORE_NAME = "scholars-discovery";
+    private final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
+    private final static String NODE_NAME = "discovery";
 
     @Bean
     public SolrClient solrServer() throws Exception {

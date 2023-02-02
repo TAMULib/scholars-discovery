@@ -1,6 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.model;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
 import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 
 @JsonInclude(NON_EMPTY)
-@CollectionTarget(collection = "scholars-discovery")
+@CollectionTarget(collection = CORE_NAME)
 @CollectionSource(name = "organizations", predicate = "http://xmlns.com/foaf/0.1/Organization")
 public class Organization extends Common {
 

@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.model.repo.impl;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
@@ -28,12 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
-import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
@@ -48,7 +47,7 @@ import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.shared.Cursor;
 
 public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(IndividualRepoImpl.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
@@ -63,279 +62,6 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     private SolrClient solrClient;
 
     @Override
-    public <S extends Individual> S save(S entity, int commitWithinMs) {
-        try {
-			solrClient.addBean(collection(), entity, commitWithinMs);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-        return entity;
-    }
-
-    @Override
-    public <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, int commitWithinMs) {
-    	List<S> individuals = IterableUtils.toList(entities);
-    	try {
-			solrClient.addBeans(collection(), individuals, commitWithinMs);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-        return entities;
-    }
-
-    @Override
-    public long count() {
-    	SolrQuery query = new SolrQuery(DEFAULT_QUERY);
-        query.setRows(0);
-        try {
-        	return solrClient.query(query)
-    			.getResults()
-    			.getNumFound();
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    @Override
-    public List<Individual> findAll() {
-    	SolrQuery query = new SolrQuery(DEFAULT_QUERY);
-    	query.setRows(Integer.MAX_VALUE);
-    	try {
-    		return solrClient.query(query)
-				.getBeans(Individual.class);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    @Override
-    public List<Individual> findAll(Sort sort) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Individual> findAllById(Iterable<String> ids) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <S extends Individual> List<S> saveAll(Iterable<S> entities) {
-    	List<S> individuals = IterableUtils.toList(entities);
-    	try {
-			solrClient.addBeans(collection(), individuals);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-        return individuals;
-    }
-
-    @Override
-    public void flush() {
-
-    }
-
-    @Override
-    public <S extends Individual> S saveAndFlush(S entity) {
-    	try {
-			solrClient.addBean(collection(), entity, 250);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-        return entity;
-    }
-
-    @Override
-    public <S extends Individual> List<S> saveAllAndFlush(Iterable<S> entities) {
-    	List<S> individuals = IterableUtils.toList(entities);
-    	try {
-			solrClient.addBeans(collection(), individuals, 250);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-        return individuals;
-    }
-
-    @Override
-    public void deleteAllInBatch(Iterable<Individual> entities) {
-    	// use batch solr client
-    	List<String> ids = IterableUtils.toList(entities).stream()
-			.map(i -> i.getId())
-			.collect(Collectors.toList());
-    	try {
-			solrClient.deleteById(collection(), ids, 250);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    @Override
-    public void deleteAllByIdInBatch(Iterable<String> ids) {
-    	// use batch solr client
-    	try {
-			solrClient.deleteById(collection(), IterableUtils.toList(ids), 250);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    @Override
-    public void deleteAllInBatch() {
-    	// use batch solr client
-    	try {
-			solrClient.deleteByQuery(collection(), DEFAULT_QUERY, 250);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    @Override
-    public Individual getOne(String id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Individual getById(String id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <S extends Individual> List<S> findAll(Example<S> example) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <S extends Individual> List<S> findAll(Example<S> example, Sort sort) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Page<Individual> findAll(Pageable pageable) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Optional<Individual> findById(String id) {
-        // TODO Auto-generated method stub
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean existsById(String id) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void deleteById(String id) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @SuppressWarnings("unchecked")
-	@Override
-    public void deleteAllById(Iterable<? extends String> ids) {
-    	try {
-			solrClient.deleteById(collection(), IterableUtils.toList((Iterable<String>) ids), 250);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    @Override
-    public void deleteAll(Iterable<? extends Individual> entities) {
-    	List<String> ids = IterableUtils.toList(entities).stream()
-			.map(i -> i.getId())
-			.collect(Collectors.toList());
-    	try {
-			solrClient.deleteById(collection(), ids, 250);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    @Override
-    public void deleteAll() {
-    	try {
-			solrClient.deleteByQuery(collection(), DEFAULT_QUERY, 250);
-		} catch (IOException | SolrServerException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    @Override
-    public <S extends Individual> Optional<S> findOne(Example<S> example) {
-        // TODO Auto-generated method stub
-        return Optional.empty();
-    }
-
-    @Override
-    public <S extends Individual> Page<S> findAll(Example<S> example, Pageable pageable) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <S extends Individual> long count(Example<S> example) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public <S extends Individual> boolean exists(Example<S> example) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public <S extends Individual, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <S extends Individual> S save(S document) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void delete(Individual document) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public List<Individual> findByType(String type) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Individual> findByIdIn(List<String> ids) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Individual> findBySyncIds(String syncId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Individual> findBySyncIdsIn(List<String> syncIds) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public DataNetwork getDataNetwork(DataNetworkDescriptor dataNetworkDescriptor) {
         final String id = dataNetworkDescriptor.getId();
         final DataNetwork dataNetwork = DataNetwork.to(id);
@@ -343,7 +69,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
         try {
             final SolrParams queryParams = dataNetworkDescriptor.getSolrParams();
 
-            final QueryResponse response = solrClient.query(collection(), queryParams);
+            final QueryResponse response = solrClient.query(CORE_NAME, queryParams);
 
             final SolrDocumentList documents = response.getResults();
 
@@ -382,15 +108,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
         return dataNetwork;
     }
-
-    private List<String> getValues(SolrDocument document, List<String> dataFields) {
-        return dataFields.stream()
-            .filter(v -> document.containsKey(v))
-            .flatMap(v -> document.getFieldValues(v).stream())
-            .map(v -> (String) v)
-            .collect(Collectors.toList());
-    }
-
+    
     @Override
     public long count(String query, List<FilterArg> filters) {
         return 0;
@@ -409,41 +127,280 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters) {
-        return new ArrayList<>();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<Individual> findAll(List<FilterArg> filters) {
-        return new ArrayList<>();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<Individual> findAll(List<FilterArg> filters, Sort sort) {
-        return new ArrayList<>();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Page<Individual> findAll(List<FilterArg> filters, Pageable page) {
-        return new PageImpl<>(new ArrayList<>());
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public FacetAndHighlightPage<Individual> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<BoostArg> boosts, HighlightArg highlight, Pageable page) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Cursor<Individual> stream(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort) {
-        return null;
-    }
-
-    public String collection() {
-        return type().getAnnotation(CollectionTarget.class).collection();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Class<Individual> type() {
         return Individual.class;
+    }
+
+    @Override
+    public <S extends Individual> S save(S entity, int commitWithinMs) {
+        try {
+            solrClient.addBean(CORE_NAME, entity, commitWithinMs);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+        return entity;
+    }
+
+    @Override
+    public <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, int commitWithinMs) {
+        List<S> individuals = IterableUtils.toList(entities);
+        try {
+            solrClient.addBeans(CORE_NAME, individuals, commitWithinMs);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+        return entities;
+    }
+
+    @Override
+    public long count() {
+        SolrQuery query = new SolrQuery(DEFAULT_QUERY);
+        query.setRows(0);
+        try {
+            return solrClient.query(CORE_NAME, query)
+                .getResults()
+                .getNumFound();
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Individual> findAll() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Individual> findAll(Sort sort) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Individual> findAllById(Iterable<String> ids) {
+        try {
+            SolrDocumentList documents = solrClient.getById(CORE_NAME, IterableUtils.toList(ids));
+            return solrClient.getBinder()
+                .getBeans(Individual.class, documents);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public <S extends Individual> List<S> saveAll(Iterable<S> entities) {
+        List<S> individuals = IterableUtils.toList(entities);
+        try {
+            solrClient.addBeans(CORE_NAME, individuals, 250);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+        return individuals;
+    }
+
+    @Override
+    public void flush() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <S extends Individual> S saveAndFlush(S entity) {
+        try {
+            solrClient.addBean(CORE_NAME, entity, 250);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+        return entity;
+    }
+
+    @Override
+    public <S extends Individual> List<S> saveAllAndFlush(Iterable<S> entities) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteAllInBatch(Iterable<Individual> entities) {
+        // use batch solr client
+        List<String> ids = IterableUtils.toList(entities).stream()
+            .map(i -> i.getId())
+            .collect(Collectors.toList());
+        try {
+            solrClient.deleteById(CORE_NAME, ids, 250);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteAllByIdInBatch(Iterable<String> ids) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Individual getOne(String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Individual getById(String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <S extends Individual> List<S> findAll(Example<S> example) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <S extends Individual> List<S> findAll(Example<S> example, Sort sort) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Page<Individual> findAll(Pageable pageable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Optional<Individual> findById(String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteById(String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void deleteAllById(Iterable<? extends String> ids) {
+        try {
+            solrClient.deleteById(CORE_NAME, IterableUtils.toList((Iterable<String>) ids), 250);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends Individual> entities) {
+        List<String> ids = IterableUtils.toList(entities).stream()
+            .map(i -> i.getId())
+            .collect(Collectors.toList());
+        try {
+            solrClient.deleteById(CORE_NAME, ids, 250);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        try {
+            solrClient.deleteByQuery(CORE_NAME, DEFAULT_QUERY, 250);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public <S extends Individual> Optional<S> findOne(Example<S> example) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <S extends Individual> Page<S> findAll(Example<S> example, Pageable pageable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <S extends Individual> long count(Example<S> example) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <S extends Individual> boolean exists(Example<S> example) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <S extends Individual, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <S extends Individual> S save(S document) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void delete(Individual document) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Individual> findByType(String type) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Individual> findByIdIn(List<String> ids) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Individual> findBySyncIds(String syncId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Individual> findBySyncIdsIn(List<String> syncIds) {
+        throw new UnsupportedOperationException();
+    }
+
+    private List<String> getValues(SolrDocument document, List<String> dataFields) {
+        return dataFields.stream()
+            .filter(v -> document.containsKey(v))
+            .flatMap(v -> document.getFieldValues(v).stream())
+            .map(v -> (String) v)
+            .collect(Collectors.toList());
     }
 
 }
