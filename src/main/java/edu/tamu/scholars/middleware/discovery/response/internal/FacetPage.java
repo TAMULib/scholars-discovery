@@ -1,4 +1,4 @@
-package edu.tamu.scholars.middleware.discovery.dto.internal;
+package edu.tamu.scholars.middleware.discovery.response.internal;
 
 import org.springframework.data.domain.Page;
 

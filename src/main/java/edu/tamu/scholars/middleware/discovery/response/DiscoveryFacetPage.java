@@ -16,8 +16,8 @@ import org.springframework.data.domain.Sort.Direction;
 
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetSortArg;
-import edu.tamu.scholars.middleware.discovery.dto.internal.FacetFieldEntry;
-import edu.tamu.scholars.middleware.discovery.dto.internal.FacetPage;
+import edu.tamu.scholars.middleware.discovery.response.internal.FacetFieldEntry;
+import edu.tamu.scholars.middleware.discovery.response.internal.FacetPage;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 import edu.tamu.scholars.middleware.view.model.FacetSort;
 

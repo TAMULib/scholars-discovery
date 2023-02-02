@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import edu.tamu.scholars.middleware.discovery.dto.DataNetwork;
-import edu.tamu.scholars.middleware.discovery.dto.DataNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DataNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.discovery.resource.IndividualResource;
+import edu.tamu.scholars.middleware.discovery.response.DataNetwork;
 
 @RepositoryRestController
 public class IndividualNetworkController implements RepresentationModelProcessor<IndividualResource> {

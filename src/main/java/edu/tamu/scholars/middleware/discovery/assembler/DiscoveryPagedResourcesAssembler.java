@@ -22,10 +22,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 
-import edu.tamu.scholars.middleware.discovery.dto.internal.FacetAndHighlightPage;
-import edu.tamu.scholars.middleware.discovery.dto.internal.FacetPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage.Highlight;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetPage.Facet;
+import edu.tamu.scholars.middleware.discovery.response.internal.FacetAndHighlightPage;
+import edu.tamu.scholars.middleware.discovery.response.internal.FacetPage;
 
 @Service
 @Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
