@@ -95,6 +95,10 @@ public class IndexService {
                 }
                 logger.info(String.format("Indexing %s documents finished.", harvester.type().getSimpleName()));
             });
+            indexers.stream().forEach(indexer -> {
+                logger.info(String.format("Optimizing %s index.", indexer.type().getSimpleName()));
+                indexer.optimize();
+            });
             logger.info(String.format("Indexing finished. %s seconds.", Duration.between(start, Instant.now()).toMillis() / 1000.0));
             triplestore.destroy();
             indexing.set(false);
