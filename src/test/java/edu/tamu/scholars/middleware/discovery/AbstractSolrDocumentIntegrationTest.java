@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
@@ -42,6 +43,9 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @Autowired
     private EmbeddedSolrServer solrServer;
+    
+    @Autowired
+    protected SolrClient solrClient;
 
     @Autowired
     protected IndividualRepo repo;
@@ -72,7 +76,7 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
         CoreAdminRequest.unloadCore(getCollection(), solrServer);
     }
 
-    private void createDocuments() throws IOException {
+    private void createDocuments() throws IOException, SolrServerException {
          assertEquals(0, repo.count());
          ObjectMapper objectMapper = new ObjectMapper();
          List<File> mockFiles = getMockFiles();
@@ -80,7 +84,7 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
              JsonNode mockDocumentNode = objectMapper.readTree(file);
              String name = mockDocumentNode.get("class").asText();
              Class<?> type = getDiscoveryDocumentTypeByName(name);
-//             solrTemplate.saveBean(getCollection(), objectMapper.readValue(file, type));
+             solrClient.addBean(getCollection(), objectMapper.readValue(file, type));
              if (type.equals(getType())) {
                  @SuppressWarnings("unchecked")
                  D mockDocument = (D) objectMapper.readValue(file, getType());
@@ -89,8 +93,8 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
              }
          }
          assertTrue(mockDocuments.size() > 0);
-//         solrTemplate.commit(getCollection());
-//         numberOfDocuments = (int) solrTemplate.count(getCollection(), new SimpleQuery("*"));
+         solrClient.commit(getCollection());
+         numberOfDocuments = (int) repo.count();
          assertEquals(mockFiles.size(), numberOfDocuments);
     }
 

@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile("test")
-public class SolrTestConfig {
+public class EmbeddedSolrServiceConfig {
 
     @Bean
     public EmbeddedSolrServer solrServer() throws Exception {
