@@ -14,8 +14,8 @@ import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedMultiValuedProperty;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 
 @JsonInclude(NON_EMPTY)
 @CollectionTarget(collection = CORE_NAME)
@@ -23,857 +23,857 @@ import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 public class Person extends Common {
 
     @Field
-    @PropertyTarget(type = "tokenized_string", copyTo = { "_text_", "name_sort" })
-    @PropertySource(template = "person/name", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "tokenized_string", copyTo = { "_text_", "name_sort" })
+    @FieldSource(template = "person/name", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String name;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/primaryEmail", predicate = "http://www.w3.org/2006/vcard/ns#email")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/primaryEmail", predicate = "http://www.w3.org/2006/vcard/ns#email")
     private String primaryEmail;
 
     @Field
-    @PropertyTarget(type = "whole_strings", searchable = false)
-    @PropertySource(template = "person/additionalEmail", predicate = "http://www.w3.org/2006/vcard/ns#email")
+    @FieldType(type = "whole_strings", searchable = false)
+    @FieldSource(template = "person/additionalEmail", predicate = "http://www.w3.org/2006/vcard/ns#email")
     private List<String> additionalEmails;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/phone", predicate = "http://www.w3.org/2006/vcard/ns#telephone")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/phone", predicate = "http://www.w3.org/2006/vcard/ns#telephone")
     private String phone;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/orcidId", predicate = "http://vivoweb.org/ontology/core#orcidId", parse = true)
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/orcidId", predicate = "http://vivoweb.org/ontology/core#orcidId", parse = true)
     private String orcidId;
 
     @Field
-    @PropertyTarget(type = "tokenized_string")
-    @PropertySource(template = "person/preferredTitle", predicate = "http://www.w3.org/2006/vcard/ns#title")
+    @FieldType(type = "tokenized_string")
+    @FieldSource(template = "person/preferredTitle", predicate = "http://www.w3.org/2006/vcard/ns#title")
     private String preferredTitle;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
+    @FieldType(type = "nested_whole_strings")
     @NestedObject(properties = { @Reference(value = "positionType", key = "type"), @Reference(value = "positionOrganization", key = "organizations") })
-    @PropertySource(template = "person/position", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/position", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> positions;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/positionType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/positionType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> positionType;
 
     @Field
     @NestedMultiValuedProperty
-    @PropertyTarget(type = "nested_whole_strings")
+    @FieldType(type = "nested_whole_strings")
     @NestedObject(root = false, properties = { @Reference(value = "positionOrganizationParent", key = "parent") })
-    @PropertySource(template = "person/positionOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
+    @FieldSource(template = "person/positionOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private List<String> positionOrganization;
 
     @Field
     @NestedMultiValuedProperty
     @NestedObject(root = false)
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/positionOrganizationParent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/positionOrganizationParent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> positionOrganizationParent;
 
     @Field
-    @PropertyTarget(type = "tokenized_string", copyTo = "_text_")
-    @PropertySource(template = "person/overview", predicate = "http://vivoweb.org/ontology/core#overview")
+    @FieldType(type = "tokenized_string", copyTo = "_text_")
+    @FieldSource(template = "person/overview", predicate = "http://vivoweb.org/ontology/core#overview")
     private String overview;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_tokenized_strings", copyTo = { "_text_", "researchAreas_nested_facets" })
-    @PropertySource(template = "person/researchArea", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_tokenized_strings", copyTo = { "_text_", "researchAreas_nested_facets" })
+    @FieldSource(template = "person/researchArea", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> researchAreas;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/hrJobTitle", predicate = "http://vivoweb.org/ontology/core#hrJobTitle")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/hrJobTitle", predicate = "http://vivoweb.org/ontology/core#hrJobTitle")
     private String hrJobTitle;
 
     @Field
-    @PropertyTarget(type = "whole_strings")
-    @PropertySource(template = "person/keyword", predicate = "http://vivoweb.org/ontology/core#freetextKeyword")
+    @FieldType(type = "whole_strings")
+    @FieldSource(template = "person/keyword", predicate = "http://vivoweb.org/ontology/core#freetextKeyword")
     private List<String> keywords;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "headOfType", key = "type"), @Reference(value = "headOfOrganization", key = "organization"), @Reference(value = "headOfStartDate", key = "startDate"), @Reference(value = "headOfEndDate", key = "endDate") })
-    @PropertySource(template = "person/headOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/headOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> headOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/headOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/headOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> headOfType;
 
     @Field
     @NestedObject(root = false)
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/headOfOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/headOfOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> headOfOrganization;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/headOfStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/headOfStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> headOfStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/headOfEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/headOfEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> headOfEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "memberOfType", key = "type"), @Reference(value = "memberOfOrganization", key = "organization"), @Reference(value = "memberOfStartDate", key = "startDate"), @Reference(value = "memberOfEndDate", key = "endDate") })
-    @PropertySource(template = "person/memberOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/memberOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> memberOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/memberOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/memberOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> memberOfType;
 
     @Field
     @NestedObject(root = false)
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/memberOfOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/memberOfOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> memberOfOrganization;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/memberOfStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/memberOfStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> memberOfStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/memberOfEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/memberOfEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> memberOfEndDate;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/hasCollaborator", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/hasCollaborator", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> hasCollaborator;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "clinicalActivityType", key = "type"), @Reference(value = "clinicalActivityRole", key = "role"), @Reference(value = "clinicalActivityStartDate", key = "startDate"), @Reference(value = "clinicalActivityEndDate", key = "endDate") })
-    @PropertySource(template = "person/clinicalActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/clinicalActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> clinicalActivities;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/clinicalActivityType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/clinicalActivityType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> clinicalActivityType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/clinicalActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/clinicalActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> clinicalActivityRole;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/clinicalActivityStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/clinicalActivityStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> clinicalActivityStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/clinicalActivityEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/clinicalActivityEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> clinicalActivityEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "attendedEventType", key = "type"), @Reference(value = "attendedEventStartDate", key = "startDate"), @Reference(value = "attendedEventEndDate", key = "endDate") })
-    @PropertySource(template = "person/attendedEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/attendedEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> attendedEvents;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/attendedEventType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/attendedEventType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> attendedEventType;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/attendedEventStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/attendedEventStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> attendedEventStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/attendedEventEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/attendedEventEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> attendedEventEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "educationAndTrainingName", key = "name"), @Reference(value = "educationAndTrainingInfo", key = "info"), @Reference(value = "educationAndTrainingOrganization", key = "organization"), @Reference(value = "educationAndTrainingMajorField", key = "field"), @Reference(value = "educationAndTrainingDegreeAbbreviation", key = "abbreviation"), @Reference(value = "educationAndTrainingStartDate", key = "startDate"), @Reference(value = "educationAndTrainingEndDate", key = "endDate"), @Reference(value = "educationAndTrainingIsDateSuppressed", key = "isDateSuppressed") })
-    @PropertySource(template = "person/educationAndTraining", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldSource(template = "person/educationAndTraining", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> educationAndTraining;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/educationAndTrainingName", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/educationAndTrainingName", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> educationAndTrainingName;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/educationAndTrainingInfo", predicate = "http://vivoweb.org/ontology/core#supplementalInformation")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/educationAndTrainingInfo", predicate = "http://vivoweb.org/ontology/core#supplementalInformation")
     private List<String> educationAndTrainingInfo;
 
     @Field
     @NestedObject(root = false)
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/educationAndTrainingOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/educationAndTrainingOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> educationAndTrainingOrganization;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/educationAndTrainingMajorField", predicate = "http://vivoweb.org/ontology/core#majorField")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/educationAndTrainingMajorField", predicate = "http://vivoweb.org/ontology/core#majorField")
     private List<String> educationAndTrainingMajorField;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/educationAndTrainingDegreeAbbreviation", predicate = "http://vivoweb.org/ontology/core#abbreviation")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/educationAndTrainingDegreeAbbreviation", predicate = "http://vivoweb.org/ontology/core#abbreviation")
     private List<String> educationAndTrainingDegreeAbbreviation;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/educationAndTrainingStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/educationAndTrainingStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> educationAndTrainingStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/educationAndTrainingEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/educationAndTrainingEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> educationAndTrainingEndDate;
 
     @Field
-    @PropertyTarget(type="nested_whole_string", searchable = false)
-    @PropertySource(template= "person/educationAndTrainingIsDateSuppressed", predicate = "http://vivoweb.org/ontology/core#supplementalInformation")
+    @FieldType(type="nested_whole_string", searchable = false)
+    @FieldSource(template= "person/educationAndTrainingIsDateSuppressed", predicate = "http://vivoweb.org/ontology/core#supplementalInformation")
     private List<String> educationAndTrainingIsDateSuppressed;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/credentials", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/credentials", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> credentials;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "credentialEligibilityAttainedType", key = "type") })
-    @PropertySource(template = "person/credentialEligibilityAttained", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/credentialEligibilityAttained", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> credentialEligibilityAttained;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/credentialEligibilityAttainedType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/credentialEligibilityAttainedType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> credentialEligibilityAttainedType;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/awardAndHonor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/awardAndHonor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> awardsAndHonors;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "adviseeOfType", key = "type"), @Reference(value = "adviseeOfCandidacy", key = "candidacy"), @Reference(value = "adviseeOfStartDate", key = "startDate"), @Reference(value = "adviseeOfEndDate", key = "endDate") })
-    @PropertySource(template = "person/adviseeOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/adviseeOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> adviseeOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/adviseeOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/adviseeOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> adviseeOfType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/adviseeOfCandidacy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/adviseeOfCandidacy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> adviseeOfCandidacy;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/adviseeOfStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/adviseeOfStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> adviseeOfStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/adviseeOfEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/adviseeOfEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> adviseeOfEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_tokenized_strings", copyTo = "_text_")
+    @FieldType(type = "nested_tokenized_strings", copyTo = "_text_")
     @NestedObject(properties = { @Reference(value = "selectedPublicationType", key = "type"), @Reference(value = "selectedPublicationDate", key = "publicationDate"), @Reference(value = "selectedPublicationPublisher", key = "publisher"), @Reference(value = "selectedPublicationVenue", key = "venue"), @Reference(value = "selectedPublicationTag", key = "tags") })
-    @PropertySource(template = "person/selectedPublications", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/selectedPublications", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> publications;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/selectedPublicationType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/selectedPublicationType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> selectedPublicationType;
 
     @Field
-    @PropertyTarget(type = "nested_dates")
-    @PropertySource(template = "person/selectedPublicationDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates")
+    @FieldSource(template = "person/selectedPublicationDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> selectedPublicationDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/selectedPublicationPublisher", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/selectedPublicationPublisher", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private List<String> selectedPublicationPublisher;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/selectedPublicationVenue", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/selectedPublicationVenue", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private List<String> selectedPublicationVenue;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/selectedPublicationTag", predicate = "http://purl.obolibrary.org/obo/ARG_0000015")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/selectedPublicationTag", predicate = "http://purl.obolibrary.org/obo/ARG_0000015")
     private List<String> selectedPublicationTag;
 
     @Field
-    @PropertyTarget(type = "nested_tokenized_strings", copyTo = "_text_")
+    @FieldType(type = "nested_tokenized_strings", copyTo = "_text_")
     @NestedObject(properties = { @Reference(value = "creativeWorkType", key = "type") })
-    @PropertySource(template = "person/creativeWorks", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/creativeWorks", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> creativeWorks;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/creativeWorkType", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#subtype")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/creativeWorkType", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#subtype")
     private List<String> creativeWorkType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "collectionOrSeriesEditorForType", key = "type"), @Reference(value = "collectionOrSeriesEditorForRole", key = "role"), @Reference(value = "collectionOrSeriesEditorForStartDate", key = "startDate"), @Reference(value = "collectionOrSeriesEditorForEndDate", key = "endDate") })
-    @PropertySource(template = "person/collectionOrSeriesEditorFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/collectionOrSeriesEditorFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> collectionOrSeriesEditorFor;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/collectionOrSeriesEditorForType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/collectionOrSeriesEditorForType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> collectionOrSeriesEditorForType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/collectionOrSeriesEditorForRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/collectionOrSeriesEditorForRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> collectionOrSeriesEditorForRole;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/collectionOrSeriesEditorForStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/collectionOrSeriesEditorForStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> collectionOrSeriesEditorForStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/collectionOrSeriesEditorForEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/collectionOrSeriesEditorForEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> collectionOrSeriesEditorForEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "editorOfType", key = "type"), @Reference(value = "editorOfPublisher", key = "publisher"), @Reference(value = "editorOfPageStart", key = "pageStart"), @Reference(value = "editorOfPageEnd", key = "pageEnd"), @Reference(value = "editorOfDate", key = "date") })
-    @PropertySource(template = "person/editorOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/editorOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> editorOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/editorOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/editorOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> editorOfType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/editorOfPublisher", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/editorOfPublisher", predicate = "http://www.w3.org/2000/01/rdf-schema#label", unique = true)
     private List<String> editorOfPublisher;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/editorOfPageStart", predicate = "http://purl.org/ontology/bibo/pageStart")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/editorOfPageStart", predicate = "http://purl.org/ontology/bibo/pageStart")
     private List<String> editorOfPageStart;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/editorOfPageEnd", predicate = "http://purl.org/ontology/bibo/pageEnd")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/editorOfPageEnd", predicate = "http://purl.org/ontology/bibo/pageEnd")
     private List<String> editorOfPageEnd;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/editorOfDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/editorOfDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> editorOfDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "presentationType", key = "type"), @Reference(value = "presentationRole", key = "role"), @Reference(value = "presentationEvent", key = "event"), @Reference(value = "presentationStartDate", key = "startDate"), @Reference(value = "presentationEndDate", key = "endDate") })
-    @PropertySource(template = "person/presentation", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/presentation", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> presentations;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/presentationType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/presentationType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> presentationType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/presentationRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/presentationRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> presentationRole;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/presentationEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/presentationEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label", parse = true)
     private List<String> presentationEvent;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/presentationStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/presentationStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> presentationStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/presentationEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/presentationEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> presentationEndDate;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/featuredIn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/featuredIn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> featuredIn;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/assigneeForPatent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/assigneeForPatent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> assigneeForPatent;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/translatorOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/translatorOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> translatorOf;
 
     @Field
-    @PropertyTarget(type = "tokenized_string")
-    @PropertySource(template = "person/researchOverview", predicate = "http://vivoweb.org/ontology/core#researchOverview")
+    @FieldType(type = "tokenized_string")
+    @FieldSource(template = "person/researchOverview", predicate = "http://vivoweb.org/ontology/core#researchOverview")
     private String researchOverview;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/principalInvestigatorOn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/principalInvestigatorOn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> principalInvestigatorOn;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/coPrincipalInvestigatorOn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/coPrincipalInvestigatorOn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> coPrincipalInvestigatorOn;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "researcherOnAwardedBy", key = "awardedBy"), @Reference(value = "researcherOnRole", key = "role"), @Reference(value = "researcherOnStartDate", key = "startDate"), @Reference(value = "researcherOnEndDate", key = "endDate") })
-    @PropertySource(template = "person/researcherOn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/researcherOn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> researcherOn;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(root = false, properties = { @Reference(value = "researcherOnAwardedByPreferredLabel", key = "preferredLabel") })
-    @PropertySource(template = "person/researcherOnAwardedBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/researcherOnAwardedBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> researcherOnAwardedBy;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/researcherOnAwardedByPreferredLabel", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#awardedBy_label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/researcherOnAwardedByPreferredLabel", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#awardedBy_label")
     private List<String> researcherOnAwardedByPreferredLabel;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/researcherOnRole", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/researcherOnRole", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> researcherOnRole;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/researcherOnStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/researcherOnStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> researcherOnStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/researcherOnEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/researcherOnEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> researcherOnEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "otherResearchActivityRole", key = "role"), @Reference(value = "otherResearchActivityStartDate", key = "startDate"), @Reference(value = "otherResearchActivityEndDate", key = "endDate") })
-    @PropertySource(template = "person/otherResearchActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/otherResearchActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> otherResearchActivities;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/otherResearchActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/otherResearchActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> otherResearchActivityRole;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/otherResearchActivityStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/otherResearchActivityStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> otherResearchActivityStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/otherResearchActivityEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/otherResearchActivityEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> otherResearchActivityEndDate;
 
     @Field
-    @PropertyTarget(type = "tokenized_string")
-    @PropertySource(template = "person/teachingOverview", predicate = "http://vivoweb.org/ontology/core#teachingOverview")
+    @FieldType(type = "tokenized_string")
+    @FieldSource(template = "person/teachingOverview", predicate = "http://vivoweb.org/ontology/core#teachingOverview")
     private String teachingOverview;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "teachingActivityRole", key = "role") })
-    @PropertySource(template = "person/teachingActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/teachingActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> teachingActivities;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/teachingActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/teachingActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> teachingActivityRole;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/teachingMaterials", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/teachingMaterials", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> teachingMaterials;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "adviseeType", key = "type"), @Reference(value = "adviseeCandidacy", key = "candidacy"), @Reference(value = "adviseeStartDate", key = "startDate"), @Reference(value = "adviseeEndDate", key = "endDate") })
-    @PropertySource(template = "person/advisee", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/advisee", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> advisee;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/adviseeType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/adviseeType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> adviseeType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/adviseeCandidacy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/adviseeCandidacy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> adviseeCandidacy;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/adviseeStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/adviseeStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> adviseeStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/adviseeEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/adviseeEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> adviseeEndDate;
 
     @Field
-    @PropertyTarget(type = "tokenized_string")
-    @PropertySource(template = "person/outreachOverview", predicate = "http://vivoweb.org/ontology/core#outreachOverview")
+    @FieldType(type = "tokenized_string")
+    @FieldSource(template = "person/outreachOverview", predicate = "http://vivoweb.org/ontology/core#outreachOverview")
     private String outreachOverview;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "reviewerOfType", key = "type"), @Reference(value = "reviewerOfStartDate", key = "startDate"), @Reference(value = "reviewerOfEndDate", key = "endDate") })
-    @PropertySource(template = "person/reviewerOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/reviewerOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> reviewerOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/reviewerOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/reviewerOfType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> reviewerOfType;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/reviewerOfStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/reviewerOfStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> reviewerOfStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/reviewerOfEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/reviewerOfEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> reviewerOfEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "contactOrProvidorForServiceType", key = "type") })
-    @PropertySource(template = "person/contactOrProvidorForService", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/contactOrProvidorForService", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> contactOrProvidorForService;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/contactOrProvidorForServiceType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/contactOrProvidorForServiceType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> contactOrProvidorForServiceType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "organizerOfEventType", key = "type"), @Reference(value = "organizerOfEventStartDate", key = "startDate"), @Reference(value = "organizerOfEventEndDate", key = "endDate") })
-    @PropertySource(template = "person/organizerOfEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/organizerOfEvent", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> organizerOfEvent;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/organizerOfEventType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/organizerOfEventType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> organizerOfEventType;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/organizerOfEventStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/organizerOfEventStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> organizerOfEventStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/organizerOfEventEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/organizerOfEventEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> organizerOfEventEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "professionalServiceActivityType", key = "type"), @Reference(value = "professionalServiceActivityRole", key = "role"), @Reference(value = "professionalServiceActivityStartDate", key = "startDate"), @Reference(value = "professionalServiceActivityEndDate", key = "endDate") })
-    @PropertySource(template = "person/professionalServiceActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/professionalServiceActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> professionalServiceActivities;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/professionalServiceActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/professionalServiceActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> professionalServiceActivityRole;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/professionalServiceActivityType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/professionalServiceActivityType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> professionalServiceActivityType;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/professionalServiceActivityStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/professionalServiceActivityStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> professionalServiceActivityStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/professionalServiceActivityEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/professionalServiceActivityEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> professionalServiceActivityEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "outreachAndCommunityServiceActivityType", key = "type"), @Reference(value = "outreachAndCommunityServiceActivityRole", key = "role"), @Reference(value = "outreachAndCommunityServiceActivityStartDate", key = "startDate"), @Reference(value = "outreachAndCommunityServiceActivityEndDate", key = "endDate") })
-    @PropertySource(template = "person/outreachAndCommunityServiceActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/outreachAndCommunityServiceActivity", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> outreachAndCommunityServiceActivities;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/professionalServiceActivityType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/professionalServiceActivityType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> outreachAndCommunityServiceActivityType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/professionalServiceActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/professionalServiceActivityRole", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> outreachAndCommunityServiceActivityRole;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/professionalServiceActivityStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/professionalServiceActivityStartDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> outreachAndCommunityServiceActivityStartDate;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/professionalServiceActivityEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/professionalServiceActivityEndDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> outreachAndCommunityServiceActivityEndDate;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "performsTechniqueType", key = "type") })
-    @PropertySource(template = "person/performsTechnique", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/performsTechnique", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> performsTechnique;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/performsTechniqueType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/performsTechniqueType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> performsTechniqueType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "hasExpertiseInTechniqueType", key = "type") })
-    @PropertySource(template = "person/hasExpertiseInTechnique", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/hasExpertiseInTechnique", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> hasExpertiseInTechnique;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/hasExpertiseInTechniqueType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/hasExpertiseInTechniqueType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> hasExpertiseInTechniqueType;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/eraCommonsId", predicate = "http://vivoweb.org/ontology/core#eRACommonsId")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/eraCommonsId", predicate = "http://vivoweb.org/ontology/core#eRACommonsId")
     private String eraCommonsId;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/isiResearcherId", predicate = "http://vivoweb.org/ontology/core#researcherId")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/isiResearcherId", predicate = "http://vivoweb.org/ontology/core#researcherId")
     private String isiResearcherId;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/scopusId", predicate = "http://vivoweb.org/ontology/core#scopusId")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/scopusId", predicate = "http://vivoweb.org/ontology/core#scopusId")
     private String scopusId;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/healthCareProviderId", predicate = "http://purl.obolibrary.org/obo/ARG_0000197")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/healthCareProviderId", predicate = "http://purl.obolibrary.org/obo/ARG_0000197")
     private String healthCareProviderId;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/email", predicate = "http://www.w3.org/2006/vcard/ns#email")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/email", predicate = "http://www.w3.org/2006/vcard/ns#email")
     private String email;
 
     @Field
-    @PropertyTarget(type = "tokenized_string")
-    @PropertySource(template = "person/firstName", predicate = "http://www.w3.org/2006/vcard/ns#givenName")
+    @FieldType(type = "tokenized_string")
+    @FieldSource(template = "person/firstName", predicate = "http://www.w3.org/2006/vcard/ns#givenName")
     private String firstName;
 
     @Field
-    @PropertyTarget(type = "tokenized_string")
-    @PropertySource(template = "person/middleName", predicate = "http://www.w3.org/2006/vcard/ns#middleName")
+    @FieldType(type = "tokenized_string")
+    @FieldSource(template = "person/middleName", predicate = "http://www.w3.org/2006/vcard/ns#middleName")
     private String middleName;
 
     @Field
-    @PropertyTarget(type = "tokenized_string")
-    @PropertySource(template = "person/lastName", predicate = "http://www.w3.org/2006/vcard/ns#familyName")
+    @FieldType(type = "tokenized_string")
+    @FieldSource(template = "person/lastName", predicate = "http://www.w3.org/2006/vcard/ns#familyName")
     private String lastName;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/streetAddress", predicate = "http://www.w3.org/2006/vcard/ns#streetAddress")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/streetAddress", predicate = "http://www.w3.org/2006/vcard/ns#streetAddress")
     private String streetAddress;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/locality", predicate = "http://www.w3.org/2006/vcard/ns#locality")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/locality", predicate = "http://www.w3.org/2006/vcard/ns#locality")
     private String locality;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/region", predicate = "http://www.w3.org/2006/vcard/ns#region")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/region", predicate = "http://www.w3.org/2006/vcard/ns#region")
     private String region;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/postalCode", predicate = "http://www.w3.org/2006/vcard/ns#postalCode")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/postalCode", predicate = "http://www.w3.org/2006/vcard/ns#postalCode")
     private String postalCode;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/country", predicate = "http://www.w3.org/2006/vcard/ns#country")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/country", predicate = "http://www.w3.org/2006/vcard/ns#country")
     private String country;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/geographicLocation", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/geographicLocation", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String geographicLocation;
 
     @Field
-    @PropertyTarget(type = "whole_strings", searchable = false)
-    @PropertySource(template = "person/locatedInFacility", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "whole_strings", searchable = false)
+    @FieldSource(template = "person/locatedInFacility", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> locatedInFacility;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/fax", predicate = "http://www.w3.org/2006/vcard/ns#fax")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/fax", predicate = "http://www.w3.org/2006/vcard/ns#fax")
     private String fax;
 
     @Field
-    @PropertyTarget(type = "whole_strings")
-    @PropertySource(template = "person/organization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "whole_strings")
+    @FieldSource(template = "person/organization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> organizations;
 
     @Field
-    @PropertyTarget(type = "whole_strings")
-    @PropertySource(template = "person/school", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "whole_strings")
+    @FieldSource(template = "person/school", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> schools;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/isni", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#ISNI")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/isni", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#ISNI")
     private String isni;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/netid", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#NETID")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/netid", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#NETID")
     private String netid;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/researcherId", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#ResearcherId")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/researcherId", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#ResearcherId")
     private String researcherId;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/twitter", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#twitterID")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/twitter", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#twitterID")
     private String twitter;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/uid", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#UID")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/uid", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#UID")
     private String uid;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/uin", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#UIN")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/uin", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#UIN")
     private String uin;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "person/youtube", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#youtube")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "person/youtube", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#youtube")
     private String youtube;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/inTheNews", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/inTheNews", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> inTheNews;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/futureResearchIdeas", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/futureResearchIdeas", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> futureResearchIdeas;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "etdChairOfURL", key = "url"), @Reference(value = "etdChairOfPublicationDate", key = "publicationDate") })
-    @PropertySource(template = "person/etdChairOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "person/etdChairOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> etdChairOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "person/etdChairOfURL", predicate = "http://www.w3.org/2006/vcard/ns#url")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "person/etdChairOfURL", predicate = "http://www.w3.org/2006/vcard/ns#url")
     private List<String> etdChairOfURL;
 
     @Field
-    @PropertyTarget(type = "nested_dates", searchable = false)
-    @PropertySource(template = "person/etdChairOfPublicationDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates", searchable = false)
+    @FieldSource(template = "person/etdChairOfPublicationDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> etdChairOfPublicationDate;
 
     @Field
     @NestedObject(properties = { @Reference(value = "capstoneAdvisedOfURL", key = "url"), @Reference(value = "capstoneAdvisedOfPublicationDate", key = "publicationDate") })
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/capstoneAdvisedOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/capstoneAdvisedOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> capstoneAdvisedOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "person/capstoneAdvisedOfURL", predicate = "http://www.w3.org/2006/vcard/ns#url")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "person/capstoneAdvisedOfURL", predicate = "http://www.w3.org/2006/vcard/ns#url")
     private List<String> capstoneAdvisedOfURL;
 
     @Field
-    @PropertyTarget(type = "nested_dates")
-    @PropertySource(template = "person/capstoneAdvisedOfPublicationDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "nested_dates")
+    @FieldSource(template = "person/capstoneAdvisedOfPublicationDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private List<String> capstoneAdvisedOfPublicationDate;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/featuredProfileDisplay", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#FeaturedProfileDisplay")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/featuredProfileDisplay", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#FeaturedProfileDisplay")
     private String featuredProfileDisplay;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "person/publicationToInterfolio", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#PublicationToInterfolio")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "person/publicationToInterfolio", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#PublicationToInterfolio")
     private String publicationToInterfolio;
 
     public Person() {

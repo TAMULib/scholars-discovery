@@ -1,9 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Id;
@@ -14,32 +12,32 @@ import org.apache.solr.client.solrj.beans.Field;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 
 @MappedSuperclass
 public abstract class AbstractIndexDocument {
 
     @Id
     @Field
-    @PropertyTarget(required = true, readonly = true)
+    @FieldType(required = true, readonly = true)
     private String id;
 
     @Transient
     @Field
-    @PropertyTarget(type = "whole_strings")
-    @PropertySource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "whole_strings")
+    @FieldSource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> type;
 
     @Transient
     @Field("class")
     @JsonProperty("class")
-    @PropertyTarget(type = "string", value = "class", required = true)
+    @FieldType(type = "string", value = "class", required = true)
     private String clazz = this.getClass().getSimpleName();
 
     @Field
     @ElementCollection
-    @PropertyTarget(type = "strings")
+    @FieldType(type = "strings")
     private List<String> syncIds = new ArrayList<>();
 
     public String getId() {

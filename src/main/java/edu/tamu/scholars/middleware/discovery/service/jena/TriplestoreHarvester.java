@@ -29,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionSource;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.service.Harvester;
 import edu.tamu.scholars.middleware.service.TemplateService;
@@ -66,8 +66,8 @@ public class TriplestoreHarvester implements Harvester {
 
     public TriplestoreHarvester(Class<AbstractIndexDocument> type) {
         this.type = type;
-        this.propertySourceTypeOps = FieldUtils.getFieldsListWithAnnotation(type, PropertySource.class).stream().map(this::getTypeOp).collect(Collectors.toList());
-        this.indexedFields = FieldUtils.getFieldsListWithAnnotation(type, PropertyTarget.class);
+        this.propertySourceTypeOps = FieldUtils.getFieldsListWithAnnotation(type, FieldSource.class).stream().map(this::getTypeOp).collect(Collectors.toList());
+        this.indexedFields = FieldUtils.getFieldsListWithAnnotation(type, FieldType.class);
     }
 
     public Flux<AbstractIndexDocument> harvest() {
@@ -120,7 +120,7 @@ public class TriplestoreHarvester implements Harvester {
     private void lookupProperties(AbstractIndexDocument document, String subject) {
         propertySourceTypeOps.parallelStream().forEach(typeOp -> {
             try {
-                PropertySource source = typeOp.getPropertySource();
+                FieldSource source = typeOp.getPropertySource();
                 Model model = queryForModel(source, subject);
                 List<Object> values = lookupProperty(typeOp, source, model);
                 populate(document, typeOp.getField(), values);
@@ -134,7 +134,7 @@ public class TriplestoreHarvester implements Harvester {
         });
     }
 
-    private Model queryForModel(PropertySource source, String subject) {
+    private Model queryForModel(FieldSource source, String subject) {
         String query = templateService.templateSparql(source.template(), subject);
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("%s:\n%s", source.template(), query));
@@ -148,7 +148,7 @@ public class TriplestoreHarvester implements Harvester {
         }
     }
 
-    private List<Object> lookupProperty(TypeOp typeOp, PropertySource source, Model model) {
+    private List<Object> lookupProperty(TypeOp typeOp, FieldSource source, Model model) {
         List<Object> values = new ArrayList<>();
         ResIterator resources = model.listSubjects();
         while (resources.hasNext()) {
@@ -158,7 +158,7 @@ public class TriplestoreHarvester implements Harvester {
         return values;
     }
 
-    private List<Object> queryForProperty(TypeOp typeOp, PropertySource source, Model model, Resource resource) {
+    private List<Object> queryForProperty(TypeOp typeOp, FieldSource source, Model model, Resource resource) {
         List<Object> values = new ArrayList<>();
         StmtIterator statements;
         try {
@@ -237,7 +237,7 @@ public class TriplestoreHarvester implements Harvester {
     }
 
     private boolean isNestedField(Field field) {
-        return !field.getName().equals(ID) && field.getAnnotation(PropertyTarget.class).type().startsWith(NESTED);
+        return !field.getName().equals(ID) && field.getAnnotation(FieldType.class).type().startsWith(NESTED);
     }
 
     private void addSyncId(Set<String> syncIds, String value) {
@@ -289,25 +289,25 @@ public class TriplestoreHarvester implements Harvester {
 
         public Field getField();
 
-        public PropertySource getPropertySource();
+        public FieldSource getPropertySource();
 
     }
 
     private abstract class AbstractTypeOp implements TypeOp {
         private final Field field;
 
-        private final PropertySource source;
+        private final FieldSource source;
 
         public AbstractTypeOp(Field field) {
             this.field = field;
-            this.source = field.getAnnotation(PropertySource.class);
+            this.source = field.getAnnotation(FieldSource.class);
         }
 
         public Field getField() {
             return field;
         }
 
-        public PropertySource getPropertySource() {
+        public FieldSource getPropertySource() {
             return source;
         }
     }

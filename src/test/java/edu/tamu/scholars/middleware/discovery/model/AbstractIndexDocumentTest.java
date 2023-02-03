@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 
 @ExtendWith(SpringExtension.class)
 public abstract class AbstractIndexDocumentTest<D extends AbstractIndexDocument> {
@@ -43,7 +43,7 @@ public abstract class AbstractIndexDocumentTest<D extends AbstractIndexDocument>
         Set<String> set = new HashSet<String>(list);
 
         // NOTE: only gets field annotated with @Indexed, which is all fields of a AbstractSolrDocument
-        for (Field field : FieldUtils.getFieldsListWithAnnotation(clazz, PropertyTarget.class)) {
+        for (Field field : FieldUtils.getFieldsListWithAnnotation(clazz, FieldType.class)) {
             String property = field.getName();
             if (List.class.isAssignableFrom(field.getType())) {
                 MethodUtils.invokeMethod(document, true, setter(property), list);

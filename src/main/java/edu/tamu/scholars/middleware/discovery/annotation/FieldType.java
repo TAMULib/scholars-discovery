@@ -6,26 +6,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.ANNOTATION_TYPE })
-@Documented
-public @interface PropertyTarget {
+public @interface FieldType {
 
-	boolean readonly() default false;
+    boolean readonly() default false;
 
-	boolean stored() default true;
+    boolean stored() default true;
 
-	boolean searchable() default true;
+    boolean searchable() default true;
 
-	String type() default "";
+    String type() default "";
 
-	String[] copyTo() default {};
+    String[] copyTo() default {};
 
-	String defaultValue() default "";
+    String defaultValue() default "";
 
-	boolean required() default false;
+    boolean required() default false;
 
-	String name() default "";
+    String name() default "";
 
-	String value() default "";
+    String value() default "";
 }

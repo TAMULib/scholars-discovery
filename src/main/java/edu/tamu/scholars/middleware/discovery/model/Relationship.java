@@ -14,8 +14,8 @@ import edu.tamu.scholars.middleware.discovery.annotation.CollectionSource;
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 
 @JsonInclude(NON_EMPTY)
 @CollectionTarget(collection = CORE_NAME)
@@ -23,213 +23,213 @@ import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 public class Relationship extends Common {
 
     @Field
-    @PropertyTarget(type = "tokenized_string", copyTo = { "_text_", "title_sort" })
-    @PropertySource(template = "relationship/title", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "tokenized_string", copyTo = { "_text_", "title_sort" })
+    @FieldSource(template = "relationship/title", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String title;
 
     @Field("abstract")
     @JsonProperty("abstract")
-    @PropertyTarget(type = "whole_string", value = "abstract", copyTo = "_text_")
-    @PropertySource(template = "relationship/abstract", predicate = "http://purl.org/ontology/bibo/abstract")
+    @FieldType(type = "whole_string", value = "abstract", copyTo = "_text_")
+    @FieldSource(template = "relationship/abstract", predicate = "http://purl.org/ontology/bibo/abstract")
     private String abstractText;
 
     @Field
-    @PropertyTarget(type = "whole_string")
-    @PropertySource(template = "relationship/description", predicate = "http://vivoweb.org/ontology/core#description")
+    @FieldType(type = "whole_string")
+    @FieldSource(template = "relationship/description", predicate = "http://vivoweb.org/ontology/core#description")
     private String description;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/organization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/organization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> organization;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/receiptOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/receiptOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> receiptOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
+    @FieldType(type = "nested_whole_strings")
     @NestedObject(properties = { @Reference(value = "awardOrHonorForType", key = "type") })
-    @PropertySource(template = "relationship/awardOrHonorFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "relationship/awardOrHonorFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> awardOrHonorFor;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/awardOrHonorForType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/awardOrHonorForType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> awardOrHonorForType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
     @NestedObject(properties = { @Reference(value = "awardConferredByType", key = "type"), @Reference(value = "awardConferredByAbbreviation", key = "abbreviation"), @Reference(value = "awardConferredByPreferredLabel", key = "preferredLabel") })
-    @PropertySource(template = "relationship/awardConferredBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "relationship/awardConferredBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> awardConferredBy;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/awardConferredByType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/awardConferredByType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> awardConferredByType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
-    @PropertySource(template = "relationship/awardConferredByAbbreviation", predicate = "http://vivoweb.org/ontology/core#abbreviation")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldSource(template = "relationship/awardConferredByAbbreviation", predicate = "http://vivoweb.org/ontology/core#abbreviation")
     private List<String> awardConferredByAbbreviation;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
-    @PropertySource(template = "relationship/awardConferredByPreferredLabel", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#awardConferredBy_label")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldSource(template = "relationship/awardConferredByPreferredLabel", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#awardConferredBy_label")
     private List<String> awardConferredByPreferredLabel;
 
     @Field
-    @PropertyTarget(type = "nested_tokenized_strings", copyTo = { "_text_", "awardedBy_nested_facets" })
+    @FieldType(type = "nested_tokenized_strings", copyTo = { "_text_", "awardedBy_nested_facets" })
     @NestedObject(properties = { @Reference(value = "awardedByType", key = "type"), @Reference(value = "awardedByAbbreviation", key = "abbreviation"), @Reference(value = "awardedByPreferredLabel", key = "preferredLabel") })
-    @PropertySource(template = "relationship/awardedBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "relationship/awardedBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> awardedBy;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/awardedByType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/awardedByType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> awardedByType;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
-    @PropertySource(template = "relationship/awardedByAbbreviation", predicate = "http://vivoweb.org/ontology/core#abbreviation")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldSource(template = "relationship/awardedByAbbreviation", predicate = "http://vivoweb.org/ontology/core#abbreviation")
     private List<String> awardedByAbbreviation;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
-    @PropertySource(template = "relationship/awardedByPreferredLabel", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#awardedBy_label")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldSource(template = "relationship/awardedByPreferredLabel", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#awardedBy_label")
     private List<String> awardedByPreferredLabel;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "grantSubcontractedThroughType", key = "type") })
-    @PropertySource(template = "relationship/grantSubcontractedThrough", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "relationship/grantSubcontractedThrough", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> grantSubcontractedThrough;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/grantSubcontractedThroughType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/grantSubcontractedThroughType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> grantSubcontractedThroughType;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "relationship/administeredBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "relationship/administeredBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> administeredBy;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/subGrant", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/subGrant", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> subGrant;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/subGrantOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/subGrantOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> subGrantOf;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/providesFundingFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/providesFundingFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> providesFundingFor;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "relationship/totalAwardAmount", predicate = "http://vivoweb.org/ontology/core#totalAwardAmount")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "relationship/totalAwardAmount", predicate = "http://vivoweb.org/ontology/core#totalAwardAmount")
     private String totalAwardAmount;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "relationship/directCosts", predicate = "http://vivoweb.org/ontology/core#directCosts")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "relationship/directCosts", predicate = "http://vivoweb.org/ontology/core#directCosts")
     private String directCosts;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "relationship/sponsorAwardId", predicate = "http://vivoweb.org/ontology/core#sponsorAwardId")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "relationship/sponsorAwardId", predicate = "http://vivoweb.org/ontology/core#sponsorAwardId")
     private String sponsorAwardId;
 
     @Field
-    @PropertyTarget(type = "whole_string", searchable = false)
-    @PropertySource(template = "relationship/localAwardId", predicate = "http://vivoweb.org/ontology/core#localAwardId")
+    @FieldType(type = "whole_string", searchable = false)
+    @FieldSource(template = "relationship/localAwardId", predicate = "http://vivoweb.org/ontology/core#localAwardId")
     private String localAwardId;
 
     @Field
-    @PropertyTarget(type = "nested_tokenized_strings", copyTo = "_text_")
+    @FieldType(type = "nested_tokenized_strings", copyTo = "_text_")
     @NestedObject(properties = { @Reference(value = "contributorRole", key = "role") })
-    @PropertySource(template = "relationship/contributor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "relationship/contributor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> contributors;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "relationship/contributorRole", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "relationship/contributorRole", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> contributorRole;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
-    @PropertySource(template = "relationship/principalInvestigator", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldSource(template = "relationship/principalInvestigator", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> principalInvestigators;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
-    @PropertySource(template = "relationship/coPrincipalInvestigator", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldSource(template = "relationship/coPrincipalInvestigator", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> coPrincipalInvestigators;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/supportedPublicationOrOtherWork", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/supportedPublicationOrOtherWork", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> supportedPublicationOrOtherWork;
 
     @Field
-    @PropertyTarget(type = "pdate")
-    @PropertySource(template = "relationship/dateTimeIntervalStart", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "pdate")
+    @FieldSource(template = "relationship/dateTimeIntervalStart", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String dateTimeIntervalStart;
 
     @Field
-    @PropertyTarget(type = "pdate")
-    @PropertySource(template = "relationship/dateTimeIntervalEnd", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "pdate")
+    @FieldSource(template = "relationship/dateTimeIntervalEnd", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String dateTimeIntervalEnd;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "relationship/hasSubjectArea", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "relationship/hasSubjectArea", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> subjectAreas;
 
     @Field
-    @PropertyTarget(type = "pdate")
-    @PropertySource(template = "relationship/yearAwarded", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "pdate")
+    @FieldSource(template = "relationship/yearAwarded", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String yearAwarded;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/inheresIn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/inheresIn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> inheresIn;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/isSpecifiedOutputOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/isSpecifiedOutputOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> specifiedOutputOf;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/outputOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/outputOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> outputOf;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "relationship/participatesIn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "relationship/participatesIn", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> participatesIn;
 
     public Relationship() {

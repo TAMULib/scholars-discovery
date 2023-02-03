@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target(FIELD)
 @Retention(RUNTIME)
-public @interface PropertySource {
+public @interface FieldSource {
 
     String template();
 

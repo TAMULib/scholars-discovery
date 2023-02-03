@@ -34,7 +34,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedMultiValuedProperty;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 
 public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
@@ -58,7 +58,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
         Map<String, List<String>> content = document.getContent();
         jsonGenerator.writeObjectField(nameTransformer.transform(ID), document.getId());
         jsonGenerator.writeObjectField(nameTransformer.transform(CLASS), document.getClazz());
-        for (Field field : FieldUtils.getFieldsListWithAnnotation(type, PropertySource.class)) {
+        for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldSource.class)) {
             JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
             String name = nameTransformer.transform(jsonProperty != null ? jsonProperty.value() : field.getName());
             Object value = content.get(name);

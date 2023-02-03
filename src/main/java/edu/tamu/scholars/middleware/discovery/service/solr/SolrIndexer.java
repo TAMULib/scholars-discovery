@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.service.Indexer;
 
@@ -36,8 +36,8 @@ public class SolrIndexer implements Indexer {
 
     @Override
     public void init() {
-        for (Field field : FieldUtils.getFieldsListWithAnnotation(type, PropertyTarget.class)) {
-            PropertyTarget indexed = field.getAnnotation(PropertyTarget.class);
+        for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldType.class)) {
+            FieldType indexed = field.getAnnotation(FieldType.class);
 
             String name = StringUtils.isNotEmpty(indexed.value())
                 ? indexed.value()

@@ -14,8 +14,8 @@ import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedMultiValuedProperty;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertySource;
-import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 
 @JsonInclude(NON_EMPTY)
 @CollectionTarget(collection = CORE_NAME)
@@ -23,119 +23,119 @@ import edu.tamu.scholars.middleware.discovery.annotation.PropertyTarget;
 public class Concept extends Common {
 
     @Field
-    @PropertyTarget(type = "tokenized_string", copyTo = { "_text_", "name_sort" })
-    @PropertySource(template = "concept/name", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "tokenized_string", copyTo = { "_text_", "name_sort" })
+    @FieldSource(template = "concept/name", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String name;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "concept/associatedDepartment", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "concept/associatedDepartment", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> associatedDepartments;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
-    @PropertySource(template = "concept/researchAreaOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldSource(template = "concept/researchAreaOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> researchAreaOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", copyTo = "_text_")
+    @FieldType(type = "nested_whole_strings", copyTo = "_text_")
     @NestedObject(properties = { @Reference(value = "awardOrHonorForType", key = "type") })
-    @PropertySource(template = "concept/awardOrHonorFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "concept/awardOrHonorFor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> awardOrHonorFor;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "concept/awardOrHonorForType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "concept/awardOrHonorForType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> awardOrHonorForType;
 
     @Field
-    @PropertyTarget(type = "nested_tokenized_strings", copyTo = { "_text_", "awardConferredBy_nested_facets" })
+    @FieldType(type = "nested_tokenized_strings", copyTo = { "_text_", "awardConferredBy_nested_facets" })
     @NestedObject(properties = { @Reference(value = "awardConferredByType", key = "type") })
-    @PropertySource(template = "concept/awardConferredBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "concept/awardConferredBy", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> awardConferredBy;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "concept/awardConferredByType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "concept/awardConferredByType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> awardConferredByType;
 
     @Field
-    @PropertyTarget(type = "whole_strings", copyTo = "_text_")
-    @PropertySource(template = "concept/awardConferredByPreferredLabel", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#awardConferredBy_label")
+    @FieldType(type = "whole_strings", copyTo = "_text_")
+    @FieldSource(template = "concept/awardConferredByPreferredLabel", predicate = "http://vivo.library.tamu.edu/ontology/TAMU#awardConferredBy_label")
     private List<String> awardConferredByPreferredLabel;
 
     @Field
-    @PropertyTarget(type = "pdate")
-    @PropertySource(template = "concept/yearAwarded", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "pdate")
+    @FieldSource(template = "concept/yearAwarded", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String yearAwarded;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
+    @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = { @Reference(value = "receiptRecipientName", key = "recipientName") })
-    @PropertySource(template = "concept/receipts", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "concept/receipts", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> receipts;
 
     @Field
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "concept/receiptRecipientName", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "concept/receiptRecipientName", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> receiptRecipientName;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "concept/broaderConcept", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "concept/broaderConcept", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> broaderConcepts;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "concept/narrowerConcept", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "concept/narrowerConcept", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> narrowerConcepts;
 
     @Field
     @NestedObject
-    @PropertyTarget(type = "nested_whole_strings", searchable = false)
-    @PropertySource(template = "concept/relatedConcept", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "concept/relatedConcept", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> relatedConcepts;
 
     @Field
-    @PropertyTarget(type = "nested_tokenized_string", copyTo = { "_text_", "futureResearchIdeaOf_nested_facets" })
+    @FieldType(type = "nested_tokenized_string", copyTo = { "_text_", "futureResearchIdeaOf_nested_facets" })
     @NestedObject(properties = { @Reference(value = "futureResearchIdeaOfEmail", key = "email"), @Reference(value = "futureResearchIdeaOfTitle", key = "title"), @Reference(value = "futureResearchIdeaOfOrganization", key = "organizations") })
-    @PropertySource(template = "concept/futureResearchIdeaOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldSource(template = "concept/futureResearchIdeaOf", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String futureResearchIdeaOf;
 
     @Field
-    @PropertyTarget(type = "nested_whole_string")
-    @PropertySource(template = "concept/futureResearchIdeaOfEmail", predicate = "http://www.w3.org/2006/vcard/ns#email")
+    @FieldType(type = "nested_whole_string")
+    @FieldSource(template = "concept/futureResearchIdeaOfEmail", predicate = "http://www.w3.org/2006/vcard/ns#email")
     private String futureResearchIdeaOfEmail;
 
     @Field
-    @PropertyTarget(type = "nested_whole_string")
-    @PropertySource(template = "concept/futureResearchIdeaOfTitle", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_string")
+    @FieldSource(template = "concept/futureResearchIdeaOfTitle", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private String futureResearchIdeaOfTitle;
 
     @Field
     @NestedMultiValuedProperty
     @NestedObject(root = false)
-    @PropertyTarget(type = "nested_whole_strings")
-    @PropertySource(template = "concept/futureResearchIdeaOfOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "concept/futureResearchIdeaOfOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> futureResearchIdeaOfOrganization;
 
     @Field
-    @PropertyTarget(type = "whole_strings", copyTo = "_text_")
-    @PropertySource(template = "concept/keyword", predicate = "http://vivoweb.org/ontology/core#freetextKeyword")
+    @FieldType(type = "whole_strings", copyTo = "_text_")
+    @FieldSource(template = "concept/keyword", predicate = "http://vivoweb.org/ontology/core#freetextKeyword")
     private List<String> keywords;
 
     @Field
-    @PropertyTarget(type = "tokenized_string", copyTo = "_text_")
-    @PropertySource(template = "concept/description", predicate = "http://vivoweb.org/ontology/core#description")
+    @FieldType(type = "tokenized_string", copyTo = "_text_")
+    @FieldSource(template = "concept/description", predicate = "http://vivoweb.org/ontology/core#description")
     private String description;
 
     @Field
-    @PropertyTarget(type = "pdate")
-    @PropertySource(template = "concept/createdDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    @FieldType(type = "pdate")
+    @FieldSource(template = "concept/createdDate", predicate = "http://vivoweb.org/ontology/core#dateTime")
     private String createdDate;
 
     public Concept() {
