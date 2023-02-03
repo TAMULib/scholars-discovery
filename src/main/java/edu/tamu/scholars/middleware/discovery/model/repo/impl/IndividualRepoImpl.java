@@ -22,6 +22,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -120,32 +121,36 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public long count(String query, List<FilterArg> filters) {
-        SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+        SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
             .withFilters(filters);
 
-        return count(queryBuilder.query());
+        return count(builder.query());
     }
 
     @Override
     public List<Individual> findAll(List<FilterArg> filters) {
-        SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+        SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(filters);
 
-        return findAll(queryBuilder.query());
+        return findAll(builder.query());
     }
 
     @Override
     public List<Individual> findAll(List<FilterArg> filters, Sort sort) {
-        throw new UnsupportedOperationException();
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withFilters(filters)
+            .withSort(sort);
+
+        return findAll(builder.query());
     }
 
     @Override
     public Page<Individual> findAll(List<FilterArg> filters, Pageable page) {
-        SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+        SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(filters);
 
-        return findAll(queryBuilder.query(), page);
+        return findAll(builder.query(), page);
     }
 
     @Override
@@ -156,16 +161,17 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     @Override
     public List<Individual> findByType(String type, List<FilterArg> filters) {
         filters.add(FilterArg.of(TYPE, Optional.of(type), Optional.of(OpKey.EQUALS.getKey()), Optional.empty()));
+
         return findAll(filters);
     }
 
     @Override
     public List<Individual> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters) {
-        SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+        SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(filters)
             .withRows(limit);
 
-        return findAll(queryBuilder.query());
+        return findAll(builder.query());
     }
 
     @Override
@@ -245,15 +251,19 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findAll() {
-        SolrQuery query = new SolrQuery(DEFAULT_QUERY)
-                .setRows(Integer.MAX_VALUE);
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withRows(Integer.MAX_VALUE);
 
-        return findAll(query);
+        return findAll(builder.query());
     }
 
     @Override
     public List<Individual> findAll(Sort sort) {
-        throw new UnsupportedOperationException();
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withRows(Integer.MAX_VALUE)
+            .withSort(sort);
+
+        return findAll(builder.query());
     }
 
     @Override
@@ -262,7 +272,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             SolrDocumentList documents = solrClient.getById(CORE_NAME, IterableUtils.toList(ids));
 
             return solrClient.getBinder()
-                    .getBeans(Individual.class, documents);
+                .getBeans(Individual.class, documents);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -284,7 +294,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             SolrDocument document = solrClient.getById(CORE_NAME, id);
 
             return solrClient.getBinder()
-                    .getBean(Individual.class, document);
+                .getBean(Individual.class, document);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -292,12 +302,12 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public Page<Individual> findAll(Pageable pageable) {
-        // TODO: apply sorting
-        SolrQuery query = new SolrQuery(DEFAULT_QUERY)
-            .setRows(pageable.getPageSize())
-            .setStart((int) pageable.getOffset());
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withStart((int) pageable.getOffset())
+            .withRows(pageable.getPageSize())
+            .withSort(pageable.getSort());
 
-        return findAll(query, pageable);
+        return findAll(builder.query(), pageable);
     }
 
     @Override
@@ -332,8 +342,8 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     @Override
     public void deleteAll(Iterable<? extends Individual> entities) {
         List<String> ids = IterableUtils.toList(entities).stream()
-                .map(i -> i.getId())
-                .collect(Collectors.toList());
+            .map(i -> i.getId())
+            .collect(Collectors.toList());
         deleteAllById(ids);
     }
 
@@ -470,8 +480,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             this.query = new SolrQuery()
                 .setParam("defType", defType)
                 .setParam("q.op", defaultOperator)
-                .setQuery(DEFAULT_QUERY)
-                .setRows(10);
+                .setQuery(DEFAULT_QUERY);
         }
 
         public SolrQueryBuilder withQuery(String query) {
@@ -480,8 +489,22 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             return this;
         }
 
+        public SolrQueryBuilder withStart(int start) {
+            this.query.setStart(start);
+
+            return this;
+        }
+
         public SolrQueryBuilder withRows(int rows) {
             this.query.setRows(rows);
+
+            return this;
+        }
+
+        public SolrQueryBuilder withSort(Sort sort) {
+            sort.iterator().forEachRemaining(order -> {
+                this.query.setSort(order.getProperty(), order.getDirection().isAscending() ? ORDER.asc: ORDER.desc);
+            });
 
             return this;
         }
