@@ -61,9 +61,14 @@ public class IndividualSearchController implements RepresentationModelProcessor<
     // @formatter:on
 
     @GetMapping("/individual/search/recentlyUpdated")
-    public ResponseEntity<CollectionModel<IndividualResource>> recentlyUpdated(@RequestParam(value = "limit", defaultValue = "10") int limit, List<FilterArg> filters) {
+    // @formatter:off
+    public ResponseEntity<CollectionModel<IndividualResource>> recentlyUpdated(
+        @RequestParam(value = "limit", defaultValue = "10") int limit,
+        List<FilterArg> filters
+    ) {
         return ResponseEntity.ok(assembler.toCollectionModel(repo.findMostRecentlyUpdate(limit, filters)));
     }
+    // @formatter:on
 
     @Override
     public RepositorySearchesResource process(RepositorySearchesResource resource) {

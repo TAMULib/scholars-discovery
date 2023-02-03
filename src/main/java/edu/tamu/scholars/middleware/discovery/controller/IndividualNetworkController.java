@@ -24,6 +24,7 @@ public class IndividualNetworkController implements RepresentationModelProcessor
     private IndividualRepo repo;
 
     @GetMapping("/individual/{id}/network")
+    // @formatter:off
     public ResponseEntity<DataNetwork> network(
         @PathVariable String id,
         @RequestParam(name = "dateField", defaultValue = "publicationDate") String dateField,
@@ -32,6 +33,7 @@ public class IndividualNetworkController implements RepresentationModelProcessor
     ) {
         return ResponseEntity.ok(repo.getDataNetwork(DataNetworkDescriptor.of(id, dateField, dataFields, typeFilter)));
     }
+    // @formatter:on
 
     @Override
     public IndividualResource process(IndividualResource resource) {
