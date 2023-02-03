@@ -121,8 +121,8 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     @Override
     public long count(String query, List<FilterArg> filters) {
         SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
-            .addQuery(query)
-            .addFilters(filters);
+            .withQuery(query)
+            .withFilters(filters);
 
         return count(queryBuilder.query());
     }
@@ -130,7 +130,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     @Override
     public List<Individual> findAll(List<FilterArg> filters) {
         SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
-            .addFilters(filters);
+            .withFilters(filters);
 
         return findAll(queryBuilder.query());
     }
@@ -143,7 +143,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     @Override
     public Page<Individual> findAll(List<FilterArg> filters, Pageable page) {
         SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
-            .addFilters(filters);
+            .withFilters(filters);
 
         return findAll(queryBuilder.query(), page);
     }
@@ -161,12 +161,24 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters) {
-        throw new UnsupportedOperationException();
+        SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+            .withFilters(filters)
+            .withRows(limit);
+
+        return findAll(queryBuilder.query());
     }
 
     @Override
-    public FacetAndHighlightPage<Individual> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters,
-            List<BoostArg> boosts, HighlightArg highlight, Pageable page) {
+    // @formatter:off
+    public FacetAndHighlightPage<Individual> search(
+        QueryArg query,
+        List<FacetArg> facets,
+        List<FilterArg> filters,
+        List<BoostArg> boosts,
+        HighlightArg highlight,
+        Pageable page
+    ) {
+    // @formatter:on
         throw new UnsupportedOperationException();
     }
 
@@ -458,16 +470,23 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             this.query = new SolrQuery()
                 .setParam("defType", defType)
                 .setParam("q.op", defaultOperator)
-                .setQuery(DEFAULT_QUERY);
+                .setQuery(DEFAULT_QUERY)
+                .setRows(10);
         }
 
-        public SolrQueryBuilder addQuery(String query) {
+        public SolrQueryBuilder withQuery(String query) {
             this.query.setQuery(query);
 
             return this;
         }
 
-        public SolrQueryBuilder addFilters(List<FilterArg> filters) {
+        public SolrQueryBuilder withRows(int rows) {
+            this.query.setRows(rows);
+
+            return this;
+        }
+
+        public SolrQueryBuilder withFilters(List<FilterArg> filters) {
 
             filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
                 FilterArg firstOne = filterList.get(0);
