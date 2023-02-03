@@ -1,14 +1,17 @@
 package edu.tamu.scholars.middleware.discovery.model.repo.impl;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_TEMPLATE;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -19,10 +22,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -154,15 +158,15 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     }
 
     @Override
-    public List<Individual> findMostRecentlyUpdate(Integer limit) {
-        return findMostRecentlyUpdate(limit, new ArrayList<FilterArg>());
-    }
-
-    @Override
     public List<Individual> findByType(String type, List<FilterArg> filters) {
         filters.add(FilterArg.of(TYPE, Optional.of(type), Optional.of(OpKey.EQUALS.getKey()), Optional.empty()));
 
         return findAll(filters);
+    }
+
+    @Override
+    public List<Individual> findMostRecentlyUpdate(Integer limit) {
+        return findMostRecentlyUpdate(limit, new ArrayList<FilterArg>());
     }
 
     @Override
@@ -483,6 +487,33 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
                 .setQuery(DEFAULT_QUERY);
         }
 
+        public SolrQueryBuilder withQuery(QueryArg query) {
+
+            if (StringUtils.isNotEmpty(query.getDefaultField())) {
+                this.query.setParam("df", query.getDefaultField());
+            }
+    
+            if (StringUtils.isNotEmpty(query.getMinimumShouldMatch())) {
+                this.query.setParam("mm", query.getMinimumShouldMatch());
+            }
+    
+            if (StringUtils.isNotEmpty(query.getQueryField())) {
+                this.query.setParam("qf", query.getQueryField());
+            }
+    
+            if (StringUtils.isNotEmpty(query.getBoostQuery())) {
+                this.query.setParam("bq", query.getBoostQuery());
+            }
+    
+            if (StringUtils.isNotEmpty(query.getFields())) {
+                String fields = String.join(REQUEST_PARAM_DELIMETER, ID, CLASS, query.getFields());
+                String fl = String.join(REQUEST_PARAM_DELIMETER, Arrays.stream(fields.split(REQUEST_PARAM_DELIMETER)).collect(Collectors.toSet()));
+                this.query.setParam("fl", fl);
+            }
+
+            return withQuery(query.getExpression());
+        }
+
         public SolrQueryBuilder withQuery(String query) {
             this.query.setQuery(query);
 
@@ -524,6 +555,29 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
                 }
                 this.query.addFilterQuery(filterQuery.toString());
             });
+
+            return this;
+        }
+
+        public SolrQueryBuilder withFacets(List<FacetArg> facets) {
+
+            facets.forEach(facet -> {
+
+            });
+
+            return this;
+        }
+
+        public SolrQueryBuilder withBoosts(List<BoostArg> boosts) {
+
+            boosts.forEach(boost -> {
+
+            });
+
+            return this;
+        }
+
+        public SolrQueryBuilder withHighlight(HighlightArg highlight) {
 
             return this;
         }
