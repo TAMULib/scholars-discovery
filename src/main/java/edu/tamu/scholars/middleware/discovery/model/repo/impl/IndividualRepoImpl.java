@@ -189,11 +189,25 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
         Pageable page
     ) {
     // @formatter:on
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withQuery(query)
+            .withFacets(facets)
+            .withFilters(filters)
+            .withBoosts(boosts)
+            .withHighlight(highlight)
+            .withPage(page);
+
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Cursor<Individual> stream(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort) {
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withQuery(query)
+            .withFilters(filters)
+            .withBoosts(boosts)
+            .withSort(sort);
+
         throw new UnsupportedOperationException();
     }
 
@@ -492,19 +506,19 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             if (StringUtils.isNotEmpty(query.getDefaultField())) {
                 this.query.setParam("df", query.getDefaultField());
             }
-    
+
             if (StringUtils.isNotEmpty(query.getMinimumShouldMatch())) {
                 this.query.setParam("mm", query.getMinimumShouldMatch());
             }
-    
+
             if (StringUtils.isNotEmpty(query.getQueryField())) {
                 this.query.setParam("qf", query.getQueryField());
             }
-    
+
             if (StringUtils.isNotEmpty(query.getBoostQuery())) {
                 this.query.setParam("bq", query.getBoostQuery());
             }
-    
+
             if (StringUtils.isNotEmpty(query.getFields())) {
                 String fields = String.join(REQUEST_PARAM_DELIMETER, ID, CLASS, query.getFields());
                 String fl = String.join(REQUEST_PARAM_DELIMETER, Arrays.stream(fields.split(REQUEST_PARAM_DELIMETER)).collect(Collectors.toSet()));
@@ -518,6 +532,12 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             this.query.setQuery(query);
 
             return this;
+        }
+
+        public SolrQueryBuilder withPage(Pageable page) {
+            return withStart((int) page.getOffset())
+                .withRows(page.getPageSize())
+                .withSort(page.getSort());
         }
 
         public SolrQueryBuilder withStart(int start) {
@@ -562,22 +582,47 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
         public SolrQueryBuilder withFacets(List<FacetArg> facets) {
 
             facets.forEach(facet -> {
-
+                String name = facet.getCommand();
+                switch (facet.getType()) {
+                    case NUMBER_RANGE:
+                        Integer rangeStart = Integer.parseInt(facet.getRangeStart());
+                        Integer rangeEnd = Integer.parseInt(facet.getRangeEnd());
+                        Integer rangeGap = Integer.parseInt(facet.getRangeGap());
+                        this.query.addNumericRangeFacet(name, rangeStart, rangeEnd, rangeGap);
+                        break;
+                    default:
+                        this.query.addFacetField(name);
+                        break;
+                }
             });
+
+            if (!facets.isEmpty()) {
+                // NOTE: other possible; method, minCount, missing, and prefix
+                this.query.setFacet(true);
+                this.query.setFacetLimit(-1);
+                this.query.setFacetMinCount(1);
+            }
 
             return this;
         }
 
         public SolrQueryBuilder withBoosts(List<BoostArg> boosts) {
 
-            boosts.forEach(boost -> {
-
-            });
-
             return this;
         }
 
         public SolrQueryBuilder withHighlight(HighlightArg highlight) {
+
+            for (String field : highlight.getFields()) {
+                this.query.addHighlightField(field);
+            }
+
+            if (highlight.getFields().length > 0) {
+                this.query.setHighlight(true);
+                this.query.setHighlightFragsize(0);
+                this.query.setHighlightSimplePre(highlight.getPrefix());
+                this.query.setHighlightSimplePre(highlight.getPostfix());
+            }
 
             return this;
         }
