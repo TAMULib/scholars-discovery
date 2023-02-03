@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile("test")
-public class SolrConfig {
+public class SolrTestConfig {
 
     private final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
     private final static String NODE_NAME = "discovery";

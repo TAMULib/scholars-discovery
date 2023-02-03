@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
-import edu.tamu.scholars.middleware.config.SolrConfig;
+import edu.tamu.scholars.middleware.config.SolrTestConfig;
 
-@ContextConfiguration(classes = SolrConfig.class)
+@ContextConfiguration(classes = SolrTestConfig.class)
 // @formatter:off
 @SpringBootTest(properties = {
     "spring.profiles.active=default",
