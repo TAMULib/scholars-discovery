@@ -3,6 +3,7 @@ package edu.tamu.scholars.middleware.discovery.model.repo.impl;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_TEMPLATE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -60,6 +62,9 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Value("${spring.data.solr.operator:AND}")
     private String defaultOperator;
+
+    @Value("${spring.data.solr.commitWithinMs:250}")
+    private int commitWithinMs;
 
     @Lazy
     @Autowired
@@ -115,12 +120,19 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public long count(String query, List<FilterArg> filters) {
-        return 0;
+        SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+            .addQuery(query)
+            .addFilters(filters);
+
+        return count(queryBuilder.query());
     }
 
     @Override
     public List<Individual> findAll(List<FilterArg> filters) {
-        throw new UnsupportedOperationException();
+        SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+            .addFilters(filters);
+
+        return findAll(queryBuilder.query());
     }
 
     @Override
@@ -130,7 +142,10 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public Page<Individual> findAll(List<FilterArg> filters, Pageable page) {
-        throw new UnsupportedOperationException();
+        SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+            .addFilters(filters);
+
+        return findAll(queryBuilder.query(), page);
     }
 
     @Override
@@ -150,7 +165,8 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     }
 
     @Override
-    public FacetAndHighlightPage<Individual> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<BoostArg> boosts, HighlightArg highlight, Pageable page) {
+    public FacetAndHighlightPage<Individual> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters,
+            List<BoostArg> boosts, HighlightArg highlight, Pageable page) {
         throw new UnsupportedOperationException();
     }
 
@@ -217,15 +233,10 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findAll() {
-        try {
-            SolrQuery query = new SolrQuery(DEFAULT_QUERY)
+        SolrQuery query = new SolrQuery(DEFAULT_QUERY)
                 .setRows(Integer.MAX_VALUE);
 
-            return solrClient.query(CORE_NAME, query)
-                .getBeans(Individual.class);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
+        return findAll(query);
     }
 
     @Override
@@ -239,7 +250,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             SolrDocumentList documents = solrClient.getById(CORE_NAME, IterableUtils.toList(ids));
 
             return solrClient.getBinder()
-                .getBeans(Individual.class, documents);
+                    .getBeans(Individual.class, documents);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -261,7 +272,7 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             SolrDocument document = solrClient.getById(CORE_NAME, id);
 
             return solrClient.getBinder()
-                .getBean(Individual.class, document);
+                    .getBean(Individual.class, document);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -269,20 +280,12 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     @Override
     public Page<Individual> findAll(Pageable pageable) {
-        try {
-            SolrQuery query = new SolrQuery(DEFAULT_QUERY)
-                .setRows(pageable.getPageSize())
-                .setStart((int) pageable.getOffset());
-            // TODO: apply sorting
-            SolrDocumentList documents = solrClient.query(CORE_NAME, query)
-                .getResults();
-            List<Individual> individuals = solrClient.getBinder()
-                .getBeans(Individual.class, documents);
+        // TODO: apply sorting
+        SolrQuery query = new SolrQuery(DEFAULT_QUERY)
+            .setRows(pageable.getPageSize())
+            .setStart((int) pageable.getOffset());
 
-            return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
+        return findAll(query, pageable);
     }
 
     @Override
@@ -317,8 +320,8 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
     @Override
     public void deleteAll(Iterable<? extends Individual> entities) {
         List<String> ids = IterableUtils.toList(entities).stream()
-            .map(i -> i.getId())
-            .collect(Collectors.toList());
+                .map(i -> i.getId())
+                .collect(Collectors.toList());
         deleteAllById(ids);
     }
 
@@ -403,15 +406,37 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     private long count(String q) {
         SolrQuery query = new SolrQuery(q)
-            .setRows(0);
+                .setRows(0);
         return count(query);
     }
 
     private long count(SolrQuery query) {
         try {
             return solrClient.query(CORE_NAME, query)
-                .getResults()
-                .getNumFound();
+                    .getResults()
+                    .getNumFound();
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<Individual> findAll(SolrQuery query) {
+        try {
+            return solrClient.query(CORE_NAME, query)
+                    .getBeans(Individual.class);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Page<Individual> findAll(SolrQuery query, Pageable pageable) {
+        try {
+            SolrDocumentList documents = solrClient.query(CORE_NAME, query)
+                    .getResults();
+            List<Individual> individuals = solrClient.getBinder()
+                    .getBeans(Individual.class, documents);
+
+            return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -419,10 +444,154 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
 
     private List<String> getValues(SolrDocument document, List<String> dataFields) {
         return dataFields.stream()
-            .filter(v -> document.containsKey(v))
-            .flatMap(v -> document.getFieldValues(v).stream())
-            .map(v -> (String) v)
-            .collect(Collectors.toList());
+                .filter(v -> document.containsKey(v))
+                .flatMap(v -> document.getFieldValues(v).stream())
+                .map(v -> (String) v)
+                .collect(Collectors.toList());
+    }
+
+    private class SolrQueryBuilder {
+
+        private final SolrQuery query;
+
+        private SolrQueryBuilder() {
+            this.query = new SolrQuery()
+                .setParam("defType", defType)
+                .setParam("q.op", defaultOperator)
+                .setQuery(DEFAULT_QUERY);
+        }
+
+        public SolrQueryBuilder addQuery(String query) {
+            this.query.setQuery(query);
+
+            return this;
+        }
+
+        public SolrQueryBuilder addFilters(List<FilterArg> filters) {
+
+            filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
+                FilterArg firstOne = filterList.get(0);
+                StringBuilder filterQuery = new StringBuilder()
+                    .append(new FilterQueryBuilder(firstOne, false).build());
+                if (filterList.size() > 1) {
+                    // NOTE: filters grouped by field are AND together
+                    for (FilterArg arg : filterList.subList(1, filterList.size())) {
+                        filterQuery.append(" AND ")
+                            .append(new FilterQueryBuilder(arg, true).build());
+                    }
+                }
+                this.query.addFilterQuery(filterQuery.toString());
+            });
+
+            return this;
+        }
+
+        public SolrQuery query() {
+            return this.query;
+        }
+
+    }
+
+    public class FilterQueryBuilder {
+
+        private final FilterArg filter;
+
+        private final boolean skipTag;
+
+        public FilterQueryBuilder(FilterArg filter) {
+            this.filter = filter;
+            this.skipTag = false;
+        }
+
+        public FilterQueryBuilder(FilterArg filter, boolean skipTag) {
+            this.filter = filter;
+            this.skipTag = skipTag;
+        }
+
+        public String build() {
+            String field = skipTag ? filter.getField() : filter.getCommand();
+            String value = filter.getValue();
+
+            StringBuilder filterQuery = new StringBuilder()
+                .append(field)
+                .append(QUERY_DELIMETER);
+
+            switch (filter.getOpKey()) {
+                case BETWEEN:
+                    Matcher rangeMatcher = RANGE_PATTERN.matcher(value);
+                    if (rangeMatcher.matches()) {
+                        String start = rangeMatcher.group(1);
+                        String end = rangeMatcher.group(2);
+
+                        // NOTE: hard coded inclusive start exclusive end
+                        // criteria.between(start, end, true, false);
+                        filterQuery
+                            .append("[")
+                            .append(start)
+                            .append(" TO ")
+                            .append(end)
+                            .append("}");
+
+                        // NOTE: if date field, must be ISO format for Solr to recognize
+                        // https://lucene.apache.org/solr/7_5_0/solr-core/org/apache/solr/schema/DatePointField.html
+                        
+                    } else {
+                        // criteria.is(value);
+                        filterQuery
+                            .append("\"")
+                            .append(value)
+                            .append("\"");
+                    }
+                    break;
+                case ENDS_WITH:
+                    // criteria.endsWith(value);
+                    filterQuery
+                        .append(value)
+                        .append("}");
+                    break;
+                case EQUALS:
+                    // criteria.is(value);
+                    filterQuery
+                        .append("\"")
+                        .append(value)
+                        .append("\"");
+                    break;
+                case FUZZY:
+                    // NOTE: only supporting single-word terms and default edit distance of 2
+                    // criteria.fuzzy(value);
+                    filterQuery
+                        .append(value)
+                        .append("~");
+                    break;
+                case NOT_EQUALS:
+                    // criteria.is(value).not();
+                    filterQuery
+                        .append("!")
+                        .append("\"")
+                        .append(value)
+                        .append("\"");
+                    break;
+                case STARTS_WITH:
+                    // criteria.startsWith(value);
+                    filterQuery
+                        .append("{!")
+                        .append(value);
+                    break;
+                case CONTAINS:
+                    // criteria.contains(value);
+                case EXPRESSION:
+                    // criteria.expression(value);
+                case RAW:
+                    // criteria = new SimpleStringCriteria(String.format("%s:%s", field, value));
+                    filterQuery
+                        .append(value);
+                default:
+                    break;
+            }
+
+            return filterQuery.toString();
+        }
+
     }
 
 }

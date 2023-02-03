@@ -16,6 +16,8 @@ public class DiscoveryConstants {
 
     public static final String MOD_TIME = "modTime";
 
+    public static final String QUERY_DELIMETER = ":";
+
     public static final String QUERY_TEMPLATE = "%s:%s";
 
     public static final String DEFAULT_QUERY = String.format(QUERY_TEMPLATE, WILDCARD, WILDCARD);

@@ -11,7 +11,7 @@ import java.util.Map;
 import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
 
-// TOD: refactor to DataNetworkDescriptorArg and add argument resolver
+// TODO: refactor to DataNetworkDescriptorArg and add argument resolver
 public class DataNetworkDescriptor {
 
     private final String id;
