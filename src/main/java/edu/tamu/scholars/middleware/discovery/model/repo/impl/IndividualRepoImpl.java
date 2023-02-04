@@ -231,7 +231,12 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findByType(String type) {
-        throw new UnsupportedOperationException();
+    	FilterArg filter = FilterArg.of("type", Optional.of(type), Optional.empty(), Optional.empty());
+    	SolrQueryBuilder builder = new SolrQueryBuilder()
+    		.withFilters(Arrays.asList(filter))
+            .withRows(Integer.MAX_VALUE);
+
+        return findAll(builder.query());
     }
 
     @Override
@@ -241,12 +246,22 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findBySyncIds(String syncId) {
-        throw new UnsupportedOperationException();
+    	FilterArg filter = FilterArg.of("syncId", Optional.of(syncId), Optional.empty(), Optional.empty());
+    	SolrQueryBuilder builder = new SolrQueryBuilder()
+    		.withFilters(Arrays.asList(filter))
+            .withRows(Integer.MAX_VALUE);
+
+        return findAll(builder.query());
     }
 
     @Override
     public List<Individual> findBySyncIdsIn(List<String> syncIds) {
-        throw new UnsupportedOperationException();
+    	FilterArg filter = FilterArg.of("syncId", Optional.of(String.join(" OR ", syncIds)), Optional.empty(), Optional.empty());
+    	SolrQueryBuilder builder = new SolrQueryBuilder()
+    		.withFilters(Arrays.asList(filter))
+            .withRows(Integer.MAX_VALUE);
+
+        return findAll(builder.query());
     }
 
     @Override
