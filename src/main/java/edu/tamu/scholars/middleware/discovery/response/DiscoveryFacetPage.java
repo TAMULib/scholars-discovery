@@ -16,6 +16,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
@@ -70,7 +71,8 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                 int start = offset;
                 int end = offset + pageSize > entries.size() ? entries.size() : offset + pageSize;
 
-                Pageable pageable = PageRequest.of(totalPages, pageSize, null);
+                Sort sort = Sort.by(facetArgument.getSort().getDirection(), facetArgument.getSort().getProperty().toString());
+                Pageable pageable = PageRequest.of(totalPages, pageSize, sort);
 
                 facets.add(new Facet(findPath(name), DiscoveryPage.from(entries.subList(start, end), pageable, totalElements)));
             }

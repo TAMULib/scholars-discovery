@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,25 +44,26 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
 
     public static <T> List<Highlight> buildHighlights(QueryResponse response, HighlightArg highlightArg) {
         List<Highlight> highlights = new ArrayList<>();
-        
         Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
-        highlighting.entrySet().stream().filter(DiscoveryFacetAndHighlightPage::hasHighlights).forEach(hEntry -> {
-            String id = hEntry.getKey();
-            Map<String, List<Object>> snippets = new HashMap<>();
-            hEntry.getValue().entrySet().stream().filter(DiscoveryFacetAndHighlightPage::hasSnippets).forEach(sEntry -> {
-                snippets.put(findPath(sEntry.getKey()), sEntry.getValue().stream().map(s -> {
-                    Matcher matcher = REFERENCE_PATTERN.matcher(s);
-                    if (matcher.find()) {
-                        Map<String, String> value = new HashMap<>();
-                        value.put(DiscoveryConstants.ID, matcher.group(2));
-                        value.put(DiscoveryConstants.SNIPPET, matcher.group(1) + matcher.group(3));
-                        return value;
-                    }
-                    return s;
-                }).collect(Collectors.toList()));
+        if (Objects.nonNull(highlighting)) {
+        	highlighting.entrySet().stream().filter(DiscoveryFacetAndHighlightPage::hasHighlights).forEach(hEntry -> {
+                String id = hEntry.getKey();
+                Map<String, List<Object>> snippets = new HashMap<>();
+                hEntry.getValue().entrySet().stream().filter(DiscoveryFacetAndHighlightPage::hasSnippets).forEach(sEntry -> {
+                    snippets.put(findPath(sEntry.getKey()), sEntry.getValue().stream().map(s -> {
+                        Matcher matcher = REFERENCE_PATTERN.matcher(s);
+                        if (matcher.find()) {
+                            Map<String, String> value = new HashMap<>();
+                            value.put(DiscoveryConstants.ID, matcher.group(2));
+                            value.put(DiscoveryConstants.SNIPPET, matcher.group(1) + matcher.group(3));
+                            return value;
+                        }
+                        return s;
+                    }).collect(Collectors.toList()));
+                });
+                highlights.add(new Highlight(id, snippets));
             });
-            highlights.add(new Highlight(id, snippets));
-        });
+        }
 
         return highlights;
     }
