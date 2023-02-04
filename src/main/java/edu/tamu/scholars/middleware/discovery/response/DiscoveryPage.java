@@ -8,21 +8,21 @@ import org.springframework.data.domain.Pageable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({
-	"number",
-	"size",
-	"numberOfElements",
-	"first",
-	"last",
-	"pageable",
-	"sort",
-	"totalPages",
-	"totalElements"
+    "number",
+    "size",
+    "numberOfElements",
+    "first",
+    "last",
+    "pageable",
+    "sort",
+    "totalPages",
+    "totalElements"
 })
 public class DiscoveryPage<T> extends PageImpl<T> {
 
     private static final long serialVersionUID = -3738016109644028337L;
 
-	public DiscoveryPage(List<T> content, Pageable pageable, long total) {
+    public DiscoveryPage(List<T> content, Pageable pageable, long total) {
         super(content, pageable, total);
     }
 
@@ -31,10 +31,10 @@ public class DiscoveryPage<T> extends PageImpl<T> {
     }
 
     public static <T> DiscoveryPage<T> from(List<T> content, Pageable pageable, long total) {
-    	return new DiscoveryPage<T>(content, pageable, total);
+        return new DiscoveryPage<T>(content, pageable, total);
     }
 
-	public static class PageInfo {
+    public static class PageInfo {
 
         private final int size;
 

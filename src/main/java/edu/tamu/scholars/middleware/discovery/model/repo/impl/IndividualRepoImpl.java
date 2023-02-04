@@ -628,8 +628,12 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             if (highlight.getFields().length > 0) {
                 this.query.setHighlight(true);
                 this.query.setHighlightFragsize(0);
-                this.query.setHighlightSimplePre(highlight.getPrefix());
-                this.query.setHighlightSimplePre(highlight.getPostfix());
+                if (StringUtils.isNotEmpty(highlight.getPrefix())) {
+                	this.query.setHighlightSimplePre(highlight.getPrefix());
+                }
+                if (StringUtils.isNotEmpty(highlight.getPostfix())) {
+                	this.query.setHighlightSimplePost(highlight.getPostfix());
+                }
             }
 
             return this;

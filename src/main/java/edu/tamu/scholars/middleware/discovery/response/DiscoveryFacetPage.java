@@ -26,9 +26,9 @@ import edu.tamu.scholars.middleware.view.model.FacetSort;
 
 public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
-	private static final long serialVersionUID = 8673698977219588493L;
+    private static final long serialVersionUID = 8673698977219588493L;
 
-	private final List<Facet> facets;
+    private final List<Facet> facets;
 
     public DiscoveryFacetPage(List<T> content, Pageable pageable, long total, List<Facet> facets) {
         super(content, pageable, total);
@@ -36,7 +36,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
     }
 
     public static <T> DiscoveryFacetPage<T> from(QueryResponse response, Pageable pageable, List<FacetArg> facetArguments, Class<T> type) {
-    	List<T> documents = response.getBeans(type);
+        List<T> documents = response.getBeans(type);
         List<Facet> facets = buildFacets(response, facetArguments);
         SolrDocumentList results = response.getResults();
 

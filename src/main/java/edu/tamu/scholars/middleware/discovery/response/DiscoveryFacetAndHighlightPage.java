@@ -24,7 +24,7 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
 
     private static final long serialVersionUID = 1932430579005159735L;
 
-	private final static Pattern REFERENCE_PATTERN = Pattern.compile("^(.*?)::([\\w\\-\\:]*)(.*)$");
+    private final static Pattern REFERENCE_PATTERN = Pattern.compile("^(.*?)::([\\w\\-\\:]*)(.*)$");
 
     private final List<Highlight> highlights;
 
@@ -34,7 +34,7 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
     }
 
     public static <T> DiscoveryFacetAndHighlightPage<T> from(QueryResponse response, Pageable pageable, List<FacetArg> facetArguments, HighlightArg highlightArg, Class<T> type) {
-    	List<T> documents = response.getBeans(type);
+        List<T> documents = response.getBeans(type);
         List<Facet> facets = buildFacets(response, facetArguments);
         List<Highlight> highlights = buildHighlights(response, highlightArg);
         SolrDocumentList results = response.getResults();
