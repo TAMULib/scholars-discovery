@@ -677,7 +677,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                         String end = rangeMatcher.group(2);
 
                         // NOTE: hard coded inclusive start exclusive end
-                        // criteria.between(start, end, true, false);
                         filterQuery
                             .append("[")
                             .append(start)
@@ -689,7 +688,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                         // https://lucene.apache.org/solr/7_5_0/solr-core/org/apache/solr/schema/DatePointField.html
                         
                     } else {
-                        // criteria.is(value);
                         filterQuery
                             .append("\"")
                             .append(value)
@@ -697,13 +695,11 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                     }
                     break;
                 case ENDS_WITH:
-                    // criteria.endsWith(value);
                     filterQuery
                         .append(value)
                         .append("}");
                     break;
                 case EQUALS:
-                    // criteria.is(value);
                     filterQuery
                         .append("\"")
                         .append(value)
@@ -711,13 +707,11 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                     break;
                 case FUZZY:
                     // NOTE: only supporting single-word terms and default edit distance of 2
-                    // criteria.fuzzy(value);
                     filterQuery
                         .append(value)
                         .append("~");
                     break;
                 case NOT_EQUALS:
-                    // criteria.is(value).not();
                     filterQuery
                         .append("!")
                         .append("\"")
@@ -725,17 +719,13 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                         .append("\"");
                     break;
                 case STARTS_WITH:
-                    // criteria.startsWith(value);
                     filterQuery
                         .append("{!")
                         .append(value);
                     break;
                 case CONTAINS:
-                    // criteria.contains(value);
                 case EXPRESSION:
-                    // criteria.expression(value);
                 case RAW:
-                    // criteria = new SimpleStringCriteria(String.format("%s:%s", field, value));
                     filterQuery
                         .append(value);
                 default:
