@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -36,12 +35,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.DataNetworkDescriptor;
@@ -325,23 +322,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public Individual getOne(String id) {
-        return getById(id);
-    }
-
-    @Override
-    public Individual getById(String id) {
-        try {
-            SolrDocument document = solrClient.getById(CORE_NAME, id);
-
-            return solrClient.getBinder()
-                .getBean(Individual.class, document);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public Page<Individual> findAll(Pageable pageable) {
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withStart((int) pageable.getOffset())
@@ -398,71 +378,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public void flush() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual> S saveAndFlush(S entity) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual> List<S> saveAllAndFlush(Iterable<S> entities) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void deleteAllInBatch(Iterable<Individual> entities) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void deleteAllByIdInBatch(Iterable<String> ids) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void deleteAllInBatch() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual> Optional<S> findOne(Example<S> example) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual> List<S> findAll(Example<S> example) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual> List<S> findAll(Example<S> example, Sort sort) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual> Page<S> findAll(Example<S> example, Pageable pageable) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual> long count(Example<S> example) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual> boolean exists(Example<S> example) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Individual, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Class<Individual> type() {
         return Individual.class;
     }
@@ -478,6 +393,17 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             return solrClient.query(CORE_NAME, query)
                     .getResults()
                     .getNumFound();
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private Individual getById(String id) {
+        try {
+            SolrDocument document = solrClient.getById(CORE_NAME, id);
+
+            return solrClient.getBinder()
+                .getBean(Individual.class, document);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
