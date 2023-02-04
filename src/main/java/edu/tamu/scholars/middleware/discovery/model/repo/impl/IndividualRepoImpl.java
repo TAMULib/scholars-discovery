@@ -56,9 +56,9 @@ import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighligh
 import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.shared.Cursor;
 
-public class SolrIndividualRepoImpl implements IndexDocumentRepo<Individual> {
+public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SolrIndividualRepoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(IndividualRepoImpl.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
 
