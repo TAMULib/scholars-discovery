@@ -52,7 +52,7 @@ import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndexDocumentRepo;
 import edu.tamu.scholars.middleware.discovery.response.DataNetwork;
-import edu.tamu.scholars.middleware.discovery.response.internal.FacetAndHighlightPage;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.shared.Cursor;
 
@@ -180,7 +180,7 @@ public class SolrIndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     @Override
     // @formatter:off
-    public FacetAndHighlightPage<Individual> search(
+    public DiscoveryFacetAndHighlightPage<Individual> search(
         QueryArg query,
         List<FacetArg> facets,
         List<FilterArg> filters,
@@ -200,7 +200,7 @@ public class SolrIndividualRepoImpl implements IndexDocumentRepo<Individual> {
         try {
             QueryResponse response = solrClient.query(CORE_NAME, builder.query());
             
-            return null;
+            return DiscoveryFacetAndHighlightPage.from(response, page, facets, highlight, Individual.class);
             
             
         } catch (IOException | SolrServerException e) {

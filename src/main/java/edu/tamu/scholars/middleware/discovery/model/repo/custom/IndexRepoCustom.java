@@ -14,7 +14,7 @@ import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.response.DataNetwork;
-import edu.tamu.scholars.middleware.discovery.response.internal.FacetAndHighlightPage;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.shared.Cursor;
 
 public interface IndexRepoCustom<D extends AbstractIndexDocument> {
@@ -35,7 +35,7 @@ public interface IndexRepoCustom<D extends AbstractIndexDocument> {
 
     public List<D> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters);
 
-    public FacetAndHighlightPage<D> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<BoostArg> boosts, HighlightArg highlight, Pageable page);
+    public DiscoveryFacetAndHighlightPage<D> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<BoostArg> boosts, HighlightArg highlight, Pageable page);
 
     public Cursor<D> stream(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort);
 

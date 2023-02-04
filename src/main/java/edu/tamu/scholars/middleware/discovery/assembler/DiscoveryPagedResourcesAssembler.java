@@ -1,9 +1,5 @@
 package edu.tamu.scholars.middleware.discovery.assembler;
 
-import static edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage.buildHighlights;
-import static edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetPage.buildFacets;
-import static edu.tamu.scholars.middleware.discovery.utility.ArgumentUtility.getFacetArguments;
-import static edu.tamu.scholars.middleware.discovery.utility.ArgumentUtility.getHightlightArgument;
 import static org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS;
 import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
 
@@ -22,10 +18,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage.Highlight;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetPage.Facet;
-import edu.tamu.scholars.middleware.discovery.response.internal.FacetAndHighlightPage;
-import edu.tamu.scholars.middleware.discovery.response.internal.FacetPage;
 
 @Service
 @Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
@@ -39,13 +35,14 @@ public class DiscoveryPagedResourcesAssembler<T> extends PagedResourcesAssembler
     }
 
     @Override
+    // TODO: determine if this is even needed
     protected <R extends RepresentationModel<?>, S> PagedModel<R> createPagedModel(List<R> resources, PagedModel.PageMetadata metadata, Page<S> page) {
         PagedModel<R> pagedResource = super.createPagedModel(resources, metadata, page);
-        if (page instanceof FacetAndHighlightPage) {
-            return new FacetAndHightlightPagedResource<R, S>(pagedResource, (FacetAndHighlightPage<S>) page, request);
+        if (page instanceof DiscoveryFacetAndHighlightPage) {
+            return new FacetAndHightlightPagedResource<R, S>(pagedResource, (DiscoveryFacetAndHighlightPage<S>) page, request);
         }
-        if (page instanceof FacetPage) {
-            return new FacetPagedResource<R, S>(pagedResource, (FacetPage<S>) page, request);
+        if (page instanceof DiscoveryFacetPage) {
+            return new FacetPagedResource<R, S>(pagedResource, (DiscoveryFacetPage<S>) page, request);
         }
         return pagedResource;
     }
@@ -54,9 +51,9 @@ public class DiscoveryPagedResourcesAssembler<T> extends PagedResourcesAssembler
 
         private final List<Facet> facets;
 
-        FacetPagedResource(PagedModel<R> pagedResources, FacetPage<S> facetPage, HttpServletRequest request) {
+        FacetPagedResource(PagedModel<R> pagedResources, DiscoveryFacetPage<S> facetPage, HttpServletRequest request) {
             super(pagedResources.getContent(), pagedResources.getMetadata(), pagedResources.getLinks());
-            this.facets = buildFacets(facetPage, getFacetArguments(request));
+            this.facets = facetPage.getFacets();
         }
 
         public List<Facet> getFacets() {
@@ -71,11 +68,10 @@ public class DiscoveryPagedResourcesAssembler<T> extends PagedResourcesAssembler
 
         private final List<Highlight> highlights;
 
-        @SuppressWarnings("unchecked")
-        FacetAndHightlightPagedResource(PagedModel<R> pagedResources, FacetAndHighlightPage<S> facetAndHighlightPage, HttpServletRequest request) {
+        FacetAndHightlightPagedResource(PagedModel<R> pagedResources, DiscoveryFacetAndHighlightPage<S> facetAndHighlightPage, HttpServletRequest request) {
             super(pagedResources.getContent(), pagedResources.getMetadata(), pagedResources.getLinks());
-            this.facets = buildFacets((FacetPage<S>) facetAndHighlightPage, getFacetArguments(request));
-            this.highlights = buildHighlights(facetAndHighlightPage, getHightlightArgument(request));
+            this.facets = facetAndHighlightPage.getFacets();
+            this.highlights = facetAndHighlightPage.getHighlights();
         }
 
         public List<Facet> getFacets() {
