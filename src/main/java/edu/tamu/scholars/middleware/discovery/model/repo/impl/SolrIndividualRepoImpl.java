@@ -50,15 +50,15 @@ import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
-import edu.tamu.scholars.middleware.discovery.model.repo.SolrDocumentRepo;
+import edu.tamu.scholars.middleware.discovery.model.repo.IndexDocumentRepo;
 import edu.tamu.scholars.middleware.discovery.response.DataNetwork;
 import edu.tamu.scholars.middleware.discovery.response.internal.FacetAndHighlightPage;
 import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.shared.Cursor;
 
-public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
+public class SolrIndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
-    private static final Logger logger = LoggerFactory.getLogger(IndividualRepoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SolrIndividualRepoImpl.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
 
@@ -197,7 +197,15 @@ public class IndividualRepoImpl implements SolrDocumentRepo<Individual> {
             .withHighlight(highlight)
             .withPage(page);
 
-        throw new UnsupportedOperationException();
+        try {
+            QueryResponse response = solrClient.query(CORE_NAME, builder.query());
+            
+            return null;
+            
+            
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
