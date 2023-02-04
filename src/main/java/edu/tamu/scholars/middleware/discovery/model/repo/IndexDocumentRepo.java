@@ -6,10 +6,10 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
-import edu.tamu.scholars.middleware.discovery.model.repo.custom.IndexRepoCustom;
+import edu.tamu.scholars.middleware.discovery.model.repo.custom.IndexDocumentRepoCustom;
 
 @NoRepositoryBean
-public interface IndexDocumentRepo<D extends AbstractIndexDocument> extends IndexCrudRepository<D, String>, IndexRepoCustom<D> {
+public interface IndexDocumentRepo<D extends AbstractIndexDocument> extends IndexCrudRepository<D, String>, IndexDocumentRepoCustom<D> {
 
     @Override
     @RestResource(exported = false)

@@ -17,7 +17,7 @@ import edu.tamu.scholars.middleware.discovery.response.DataNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.shared.Cursor;
 
-public interface IndexRepoCustom<D extends AbstractIndexDocument> {
+public interface IndexDocumentRepoCustom<D extends AbstractIndexDocument> {
 
     public DataNetwork getDataNetwork(DataNetworkDescriptor coDataRequest);
 
