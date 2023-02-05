@@ -23,8 +23,8 @@ public abstract class AbstractIndexDocument {
     @FieldType(required = true, readonly = true)
     private String id;
 
-    @Transient
     @Field
+    @ElementCollection
     @FieldType(type = "whole_strings")
     @FieldSource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> type;

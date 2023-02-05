@@ -11,8 +11,8 @@ import java.util.Map;
 import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
 
-// TODO: refactor to DataNetworkDescriptorArg and add argument resolver
-public class DataNetworkDescriptor {
+// TODO: refactor to DiscoveryNetworkDescriptorArg and add argument resolver
+public class DiscoveryNetworkDescriptor {
 
     private final String id;
 
@@ -22,7 +22,7 @@ public class DataNetworkDescriptor {
 
     private final String typeFilter;
 
-    private DataNetworkDescriptor(String id, String dateField, List<String> dataFields, String typeFilter) {
+    private DiscoveryNetworkDescriptor(String id, String dateField, List<String> dataFields, String typeFilter) {
         super();
         this.id = id;
         this.dateField = dateField;
@@ -72,8 +72,8 @@ public class DataNetworkDescriptor {
         return new MapSolrParams(queryParamMap);
     }
 
-    public static DataNetworkDescriptor of(String id, String dateField, List<String> dataFields, String typeFilter) {
-        return new DataNetworkDescriptor(id, dateField, dataFields, typeFilter);
+    public static DiscoveryNetworkDescriptor of(String id, String dateField, List<String> dataFields, String typeFilter) {
+        return new DiscoveryNetworkDescriptor(id, dateField, dataFields, typeFilter);
     }
 
 }

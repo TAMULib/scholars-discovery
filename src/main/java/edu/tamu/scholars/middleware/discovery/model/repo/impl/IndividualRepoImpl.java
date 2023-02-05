@@ -41,14 +41,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
-import edu.tamu.scholars.middleware.discovery.argument.DataNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndexDocumentRepo;
-import edu.tamu.scholars.middleware.discovery.response.DataNetwork;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.shared.Cursor;
@@ -73,51 +73,141 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     private SolrClient solrClient;
 
     @Override
-    public DataNetwork getDataNetwork(DataNetworkDescriptor dataNetworkDescriptor) {
-        final String id = dataNetworkDescriptor.getId();
-        final DataNetwork dataNetwork = DataNetwork.to(id);
+    public <S extends Individual> S save(S document) {
+        return save(document, commitWithinMs);
+    }
 
+    @Override
+    public void delete(Individual document) {
+        deleteById(document.getId());
+    }
+
+    @Override
+    public long count() {
+        return count(DEFAULT_QUERY);
+    }
+
+    @Override
+    public List<Individual> findAll() {
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withRows(Integer.MAX_VALUE);
+
+        return findAll(builder.query());
+    }
+
+    @Override
+    public List<Individual> findAll(Sort sort) {
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withRows(Integer.MAX_VALUE)
+            .withSort(sort);
+
+        return findAll(builder.query());
+    }
+
+    @Override
+    public List<Individual> findAllById(Iterable<String> ids) {
         try {
-            final SolrParams queryParams = dataNetworkDescriptor.getSolrParams();
+            SolrDocumentList documents = solrClient.getById(CORE_NAME, IterableUtils.toList(ids));
 
-            final QueryResponse response = solrClient.query(CORE_NAME, queryParams);
-
-            final SolrDocumentList documents = response.getResults();
-
-            final String dateField = dataNetworkDescriptor.getDateField();
-
-            for (SolrDocument document : documents) {
-                if (document.containsKey(dateField)) {
-                    Date publicationDate = ((Date) document.getFieldValue(dateField));
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(publicationDate);
-                    dataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
-                }
-                List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
-
-                String iid = (String) document.getFieldValue(ID);
-
-                for (String v1 : values) {
-                    dataNetwork.index(v1);
-
-                    if (!v1.endsWith(id)) {
-                        dataNetwork.countLink(v1);
-                    }
-                    for (String v2 : values) {
-                        // prefer id as source
-                        if (v2.endsWith(id)) {
-                            dataNetwork.map(iid, v2, v1);
-                        } else {
-                            dataNetwork.map(iid, v1, v2);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Failed to build data network!", e);
+            return solrClient.getBinder()
+                .getBeans(Individual.class, documents);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
         }
+    }
 
-        return dataNetwork;
+    @Override
+    public <S extends Individual> List<S> saveAll(Iterable<S> entities) {
+        return IterableUtils.toList(saveAll(entities, commitWithinMs));
+    }
+
+    @Override
+    public Page<Individual> findAll(Pageable pageable) {
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withPage(pageable);
+
+        return findAll(builder.query(), pageable);
+    }
+
+    @Override
+    public Optional<Individual> findById(String id) {
+        return Optional.ofNullable(getById(id));
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        return count(String.format(QUERY_TEMPLATE, ID, id)) == 1;
+    }
+
+    @Override
+    public void deleteById(String id) {
+        try {
+            solrClient.deleteById(CORE_NAME, id, commitWithinMs);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void deleteAllById(Iterable<? extends String> ids) {
+        try {
+            solrClient.deleteById(CORE_NAME, IterableUtils.toList((Iterable<String>) ids), commitWithinMs);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends Individual> entities) {
+        List<String> ids = IterableUtils.toList(entities).stream()
+            .map(i -> i.getId())
+            .collect(Collectors.toList());
+        deleteAllById(ids);
+    }
+
+    @Override
+    public void deleteAll() {
+        try {
+            solrClient.deleteByQuery(CORE_NAME, DEFAULT_QUERY, commitWithinMs);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Individual> findByType(String type) {
+        FilterArg filter = FilterArg.of("type", Optional.of(type), Optional.empty(), Optional.empty());
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withFilters(Arrays.asList(filter))
+            .withRows(Integer.MAX_VALUE);
+
+        return findAll(builder.query());
+    }
+
+    @Override
+    public List<Individual> findByIdIn(List<String> ids) {
+        return findAllById(ids);
+    }
+
+    @Override
+    public List<Individual> findBySyncIds(String syncId) {
+        FilterArg filter = FilterArg.of("syncId", Optional.of(syncId), Optional.empty(), Optional.empty());
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withFilters(Arrays.asList(filter))
+            .withRows(Integer.MAX_VALUE);
+
+        return findAll(builder.query());
+    }
+
+    @Override
+    public List<Individual> findBySyncIdsIn(List<String> syncIds) {
+        FilterArg filter = FilterArg.of("syncId", Optional.of(String.join(" OR ", syncIds)), Optional.empty(), Optional.empty());
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withFilters(Arrays.asList(filter))
+            .withRows(Integer.MAX_VALUE);
+
+        return findAll(builder.query());
     }
 
     @Override
@@ -217,169 +307,51 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public <S extends Individual> S save(S document) {
-        return save(document, 250);
-    }
+    public DiscoveryNetwork getDiscoveryNetwork(DiscoveryNetworkDescriptor dataNetworkDescriptor) {
+        final String id = dataNetworkDescriptor.getId();
+        final DiscoveryNetwork dataNetwork = DiscoveryNetwork.to(id);
 
-    @Override
-    public void delete(Individual document) {
-        deleteById(document.getId());
-    }
-
-    @Override
-    public List<Individual> findByType(String type) {
-    	FilterArg filter = FilterArg.of("type", Optional.of(type), Optional.empty(), Optional.empty());
-    	SolrQueryBuilder builder = new SolrQueryBuilder()
-    		.withFilters(Arrays.asList(filter))
-            .withRows(Integer.MAX_VALUE);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public List<Individual> findByIdIn(List<String> ids) {
-        return findAllById(ids);
-    }
-
-    @Override
-    public List<Individual> findBySyncIds(String syncId) {
-    	FilterArg filter = FilterArg.of("syncId", Optional.of(syncId), Optional.empty(), Optional.empty());
-    	SolrQueryBuilder builder = new SolrQueryBuilder()
-    		.withFilters(Arrays.asList(filter))
-            .withRows(Integer.MAX_VALUE);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public List<Individual> findBySyncIdsIn(List<String> syncIds) {
-    	FilterArg filter = FilterArg.of("syncId", Optional.of(String.join(" OR ", syncIds)), Optional.empty(), Optional.empty());
-    	SolrQueryBuilder builder = new SolrQueryBuilder()
-    		.withFilters(Arrays.asList(filter))
-            .withRows(Integer.MAX_VALUE);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public <S extends Individual> S save(S entity, int commitWithinMs) {
         try {
-            solrClient.addBean(CORE_NAME, entity, commitWithinMs);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            final SolrParams queryParams = dataNetworkDescriptor.getSolrParams();
+
+            final QueryResponse response = solrClient.query(CORE_NAME, queryParams);
+
+            final SolrDocumentList documents = response.getResults();
+
+            final String dateField = dataNetworkDescriptor.getDateField();
+
+            for (SolrDocument document : documents) {
+                if (document.containsKey(dateField)) {
+                    Date publicationDate = ((Date) document.getFieldValue(dateField));
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(publicationDate);
+                    dataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
+                }
+                List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
+
+                String iid = (String) document.getFieldValue(ID);
+
+                for (String v1 : values) {
+                    dataNetwork.index(v1);
+
+                    if (!v1.endsWith(id)) {
+                        dataNetwork.countLink(v1);
+                    }
+                    for (String v2 : values) {
+                        // prefer id as source
+                        if (v2.endsWith(id)) {
+                            dataNetwork.map(iid, v2, v1);
+                        } else {
+                            dataNetwork.map(iid, v1, v2);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to build data network!", e);
         }
-        return entity;
-    }
 
-    @Override
-    public <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, int commitWithinMs) {
-        List<S> individuals = IterableUtils.toList(entities);
-        try {
-            solrClient.addBeans(CORE_NAME, individuals, commitWithinMs);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-        return entities;
-    }
-
-    @Override
-    public long count() {
-        return count(DEFAULT_QUERY);
-    }
-
-    @Override
-    public List<Individual> findAll() {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withRows(Integer.MAX_VALUE);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public List<Individual> findAll(Sort sort) {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withRows(Integer.MAX_VALUE)
-            .withSort(sort);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public List<Individual> findAllById(Iterable<String> ids) {
-        try {
-            SolrDocumentList documents = solrClient.getById(CORE_NAME, IterableUtils.toList(ids));
-
-            return solrClient.getBinder()
-                .getBeans(Individual.class, documents);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public <S extends Individual> List<S> saveAll(Iterable<S> entities) {
-        return IterableUtils.toList(saveAll(entities, 250));
-    }
-
-    @Override
-    public Page<Individual> findAll(Pageable pageable) {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withStart((int) pageable.getOffset())
-            .withRows(pageable.getPageSize())
-            .withSort(pageable.getSort());
-
-        return findAll(builder.query(), pageable);
-    }
-
-    @Override
-    public Optional<Individual> findById(String id) {
-        return Optional.ofNullable(getById(id));
-    }
-
-    @Override
-    public boolean existsById(String id) {
-        return count(String.format(QUERY_TEMPLATE, ID, id)) == 1;
-    }
-
-    @Override
-    public void deleteById(String id) {
-        try {
-            solrClient.deleteById(CORE_NAME, id, 250);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void deleteAllById(Iterable<? extends String> ids) {
-        try {
-            solrClient.deleteById(CORE_NAME, IterableUtils.toList((Iterable<String>) ids), 250);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void deleteAll(Iterable<? extends Individual> entities) {
-        List<String> ids = IterableUtils.toList(entities).stream()
-            .map(i -> i.getId())
-            .collect(Collectors.toList());
-        deleteAllById(ids);
-    }
-
-    @Override
-    public void deleteAll() {
-        try {
-            solrClient.deleteByQuery(CORE_NAME, DEFAULT_QUERY, 250);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Class<Individual> type() {
-        return Individual.class;
+        return dataNetwork;
     }
 
     private long count(String q) {
@@ -429,6 +401,25 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private <S extends Individual> S save(S entity, int commitWithinMs) {
+        try {
+            solrClient.addBean(CORE_NAME, entity, commitWithinMs);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+        return entity;
+    }
+
+    private <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, int commitWithinMs) {
+        List<S> individuals = IterableUtils.toList(entities);
+        try {
+            solrClient.addBeans(CORE_NAME, individuals, commitWithinMs);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+        return entities;
     }
 
     private List<String> getValues(SolrDocument document, List<String> dataFields) {

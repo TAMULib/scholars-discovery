@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DataNetwork {
+public class DiscoveryNetwork {
 
     private final String id;
 
@@ -24,7 +24,7 @@ public class DataNetwork {
 
     private final List<DirectedData> data;
 
-    private DataNetwork(String id) {
+    private DiscoveryNetwork(String id) {
         this.id = id;
         lookup = new HashMap<>();
         linkCounts = new HashMap<>();
@@ -105,8 +105,8 @@ public class DataNetwork {
         this.data.add(new DirectedData(id, sId, tId));
     }
 
-    public static DataNetwork to(String id) {
-        return new DataNetwork(id);
+    public static DiscoveryNetwork to(String id) {
+        return new DiscoveryNetwork(id);
     }
 
     public class DirectedData {

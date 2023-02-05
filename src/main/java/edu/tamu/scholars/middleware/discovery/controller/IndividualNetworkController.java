@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import edu.tamu.scholars.middleware.discovery.argument.DataNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.discovery.resource.IndividualResource;
-import edu.tamu.scholars.middleware.discovery.response.DataNetwork;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 
 @RepositoryRestController
 public class IndividualNetworkController implements RepresentationModelProcessor<IndividualResource> {
@@ -25,13 +25,13 @@ public class IndividualNetworkController implements RepresentationModelProcessor
 
     @GetMapping("/individual/{id}/network")
     // @formatter:off
-    public ResponseEntity<DataNetwork> network(
+    public ResponseEntity<DiscoveryNetwork> network(
         @PathVariable String id,
         @RequestParam(name = "dateField", defaultValue = "publicationDate") String dateField,
         @RequestParam(name = "dataFields", defaultValue = "authors") List<String> dataFields,
         @RequestParam(name = "typeFilter", defaultValue = "class:Document") String typeFilter
     ) {
-        return ResponseEntity.ok(repo.getDataNetwork(DataNetworkDescriptor.of(id, dateField, dataFields, typeFilter)));
+        return ResponseEntity.ok(repo.getDiscoveryNetwork(DiscoveryNetworkDescriptor.of(id, dateField, dataFields, typeFilter)));
     }
     // @formatter:on
 

@@ -7,19 +7,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
-import edu.tamu.scholars.middleware.discovery.argument.DataNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
-import edu.tamu.scholars.middleware.discovery.response.DataNetwork;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.shared.Cursor;
 
 public interface IndexDocumentRepoCustom<D extends AbstractIndexDocument> {
-
-    public DataNetwork getDataNetwork(DataNetworkDescriptor coDataRequest);
 
     public long count(String query, List<FilterArg> filters);
 
@@ -39,6 +37,6 @@ public interface IndexDocumentRepoCustom<D extends AbstractIndexDocument> {
 
     public Cursor<D> stream(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort);
 
-    public Class<D> type();
+    public DiscoveryNetwork getDiscoveryNetwork(DiscoveryNetworkDescriptor dataNetworkDescriptor);
 
 }
