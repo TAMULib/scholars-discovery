@@ -104,10 +104,10 @@ public class CsvExporter implements Exporter {
     }
 
     private String serialize(Object obj) {
-    	String value = String.valueOf(obj);
+        String value = String.valueOf(obj);
         return value.contains(NESTED_DELIMITER)
-    		? value.substring(0, value.indexOf(NESTED_DELIMITER))
-			: value;
+            ? value.substring(0, value.indexOf(NESTED_DELIMITER))
+            : value;
     }
 
 }

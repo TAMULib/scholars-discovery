@@ -94,8 +94,6 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
 
                         @SuppressWarnings("unchecked")
                         List<String> values = (List<String>) value;
-                        
-                        System.out.println("\n\n" + values + "\n\n");
 
                         if (List.class.isAssignableFrom(field.getType())) {
                             jsonGenerator.writeObjectField(name, values);

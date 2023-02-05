@@ -314,51 +314,49 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         CompletableFuture<Iterator<Individual>> future = new CompletableFuture<>();
 
         CompletableFuture.runAsync(() -> {
-        	
-        	try {
+            try {
                 solrClient.queryAndStreamResponse(CORE_NAME, builder.query(), new StreamingResponseCallback() {
 
-                	private final AtomicBoolean streaming = new AtomicBoolean(false);
-                	private final AtomicLong remaining = new AtomicLong(0);
-                	private final BlockingQueue<Individual> queue = new LinkedBlockingQueue<>();
+                    private final AtomicBoolean streaming = new AtomicBoolean(false);
+                    private final AtomicLong remaining = new AtomicLong(0);
+                    private final BlockingQueue<Individual> queue = new LinkedBlockingQueue<>();
 
-    				@Override
-    				public void streamSolrDocument(SolrDocument doc) {
-    					queue.add(binder.getBean(Individual.class, doc));
-    					if (remaining.decrementAndGet() <= 0) {
-    						streaming.set(false);
-    					}
-    				}
+                    @Override
+                    public void streamSolrDocument(SolrDocument doc) {
+                        queue.add(binder.getBean(Individual.class, doc));
+                        if (remaining.decrementAndGet() <= 0) {
+                            streaming.set(false);
+                        }
+                    }
 
-    				@Override
-    				public void streamDocListInfo(long numFound, long start, Float maxScore) {
-    					streaming.set(true);
-    					remaining.set(numFound);
+                    @Override
+                    public void streamDocListInfo(long numFound, long start, Float maxScore) {
+                        streaming.set(true);
+                        remaining.set(numFound);
 
-    					future.complete(new Iterator<Individual>() {
+                        future.complete(new Iterator<Individual>() {
 
-							@Override
-							public boolean hasNext() {
-								return streaming.get() || !queue.isEmpty();
-							}
+                            @Override
+                            public boolean hasNext() {
+                                return streaming.get() || !queue.isEmpty();
+                            }
 
-							@Override
-							public Individual next() {
-								try {
-									return queue.take();
-								} catch (InterruptedException e) {
-									throw new RuntimeException(e);
-								}
-							}
+                            @Override
+                            public Individual next() {
+                                try {
+                                    return queue.take();
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
 
-				        });
-    				}
+                        });
+                    }
 
                 });
             } catch (IOException | SolrServerException e) {
                 throw new RuntimeException(e);
             }
-        	
         });
 
         return future;
