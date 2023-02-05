@@ -55,7 +55,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
     @Override
     public void serialize(Individual document, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
         Class<?> type = getDiscoveryDocumentTypeByName(document.getClazz());
-        Map<String, List<String>> content = document.getContent();
+        Map<String, List<Object>> content = document.getContent();
         jsonGenerator.writeObjectField(nameTransformer.transform(ID), document.getId());
         jsonGenerator.writeObjectField(nameTransformer.transform(CLASS), document.getClazz());
         for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldSource.class)) {
@@ -94,6 +94,8 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
 
                         @SuppressWarnings("unchecked")
                         List<String> values = (List<String>) value;
+                        
+                        System.out.println("\n\n" + values + "\n\n");
 
                         if (List.class.isAssignableFrom(field.getType())) {
                             jsonGenerator.writeObjectField(name, values);
@@ -106,7 +108,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
         }
     }
 
-    private ObjectNode processValue(Map<String, List<String>> content, Class<?> type, Field field, String[] vParts, int index) {
+    private ObjectNode processValue(Map<String, List<Object>> content, Class<?> type, Field field, String[] vParts, int index) {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         NestedObject nestedObject = field.getAnnotation(NestedObject.class);
         if (nestedObject != null) {
@@ -117,7 +119,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
         return node;
     }
 
-    private void processNestedObject(Map<String, List<String>> content, Class<?> type, NestedObject nestedObject, ObjectNode node, String[] vParts, int depth) {
+    private void processNestedObject(Map<String, List<Object>> content, Class<?> type, NestedObject nestedObject, ObjectNode node, String[] vParts, int depth) {
         for (Reference reference : nestedObject.properties()) {
             String ref = reference.value();
             Field nestedField = FieldUtils.getField(type, ref, true);

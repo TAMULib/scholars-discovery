@@ -14,8 +14,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,6 +32,8 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.StreamingResponseCallback;
+import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -48,10 +56,9 @@ import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndexDocumentRepo;
-import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.model.OpKey;
-import edu.tamu.scholars.middleware.shared.Cursor;
 
 public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
@@ -286,24 +293,75 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
         try {
             QueryResponse response = solrClient.query(CORE_NAME, builder.query());
-            
+
             return DiscoveryFacetAndHighlightPage.from(response, page, facets, highlight, Individual.class);
-            
-            
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Cursor<Individual> stream(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort) {
+    public CompletableFuture<Iterator<Individual>> export(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort) {
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
             .withFilters(filters)
             .withBoosts(boosts)
-            .withSort(sort);
+            .withSort(sort)
+            .withRows(Integer.MAX_VALUE);
 
-        throw new UnsupportedOperationException();
+        DocumentObjectBinder binder = solrClient.getBinder();
+        
+        CompletableFuture<Iterator<Individual>> future = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+        	
+        	try {
+                solrClient.queryAndStreamResponse(CORE_NAME, builder.query(), new StreamingResponseCallback() {
+
+                	private final AtomicBoolean streaming = new AtomicBoolean(false);
+                	private final AtomicLong remaining = new AtomicLong(0);
+                	private final BlockingQueue<Individual> queue = new LinkedBlockingQueue<>();
+
+    				@Override
+    				public void streamSolrDocument(SolrDocument doc) {
+    					queue.add(binder.getBean(Individual.class, doc));
+    					if (remaining.decrementAndGet() <= 0) {
+    						streaming.set(false);
+    					}
+    				}
+
+    				@Override
+    				public void streamDocListInfo(long numFound, long start, Float maxScore) {
+    					streaming.set(true);
+    					remaining.set(numFound);
+
+    					future.complete(new Iterator<Individual>() {
+
+							@Override
+							public boolean hasNext() {
+								return streaming.get() || !queue.isEmpty();
+							}
+
+							@Override
+							public Individual next() {
+								try {
+									return queue.take();
+								} catch (InterruptedException e) {
+									throw new RuntimeException(e);
+								}
+							}
+
+				        });
+    				}
+
+                });
+            } catch (IOException | SolrServerException e) {
+                throw new RuntimeException(e);
+            }
+        	
+        });
+
+        return future;
     }
 
     @Override

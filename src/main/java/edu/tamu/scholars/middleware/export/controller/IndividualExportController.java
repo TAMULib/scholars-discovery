@@ -2,6 +2,7 @@ package edu.tamu.scholars.middleware.export.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -47,12 +48,12 @@ public class IndividualExportController implements RepresentationModelProcessor<
         List<FilterArg> filters,
         List<BoostArg> boosts,
         List<ExportArg> export
-    ) throws UnknownExporterTypeException {
+    ) throws UnknownExporterTypeException, InterruptedException, ExecutionException {
         Exporter exporter = exporterRegistry.getExporter(type);
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition("export"))
             .header(HttpHeaders.CONTENT_TYPE, exporter.contentType())
-            .body(exporter.streamSolrResponse(repo.stream(query, filters, boosts, sort), export));
+            .body(exporter.streamSolrResponse(repo.export(query, filters, boosts, sort).get(), export));
     }
     // @formatter:on
 

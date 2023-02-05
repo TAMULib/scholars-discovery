@@ -4,6 +4,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_D
 
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,7 +20,6 @@ import edu.tamu.scholars.middleware.config.model.ExportConfig;
 import edu.tamu.scholars.middleware.discovery.exception.InvalidValuePathException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.export.argument.ExportArg;
-import edu.tamu.scholars.middleware.shared.Cursor;
 
 @Service
 public class CsvExporter implements Exporter {
@@ -51,7 +51,7 @@ public class CsvExporter implements Exporter {
     }
 
     @Override
-    public StreamingResponseBody streamSolrResponse(Cursor<Individual> cursor, List<ExportArg> export) {
+    public StreamingResponseBody streamSolrResponse(Iterator<Individual> cursor, List<ExportArg> export) {
         return outputStream -> {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
             String[] headers = getColumnHeaders(export);
@@ -71,7 +71,6 @@ public class CsvExporter implements Exporter {
                 e.printStackTrace();
             } finally {
                 outputStreamWriter.close();
-                cursor.close();
             }
         };
     }
@@ -85,7 +84,7 @@ public class CsvExporter implements Exporter {
     }
 
     private List<Object> getRow(Individual document, List<String> properties) throws InvalidValuePathException, IllegalArgumentException, IllegalAccessException {
-        Map<String, List<String>> content = document.getContent();
+        Map<String, List<Object>> content = document.getContent();
         List<Object> row = new ArrayList<Object>();
         for (String property : properties) {
             if (property.equals(config.getIndividualKey())) {
@@ -94,18 +93,21 @@ public class CsvExporter implements Exporter {
             }
             String value = StringUtils.EMPTY;
             if (content.containsKey(property)) {
-                List<String> values = content.get(property);
+                List<Object> values = content.get(property);
                 if (values.size() > 0) {
-                    value = String.join(DELIMITER, values.stream().map(this::removeNestedIdentifiers).collect(Collectors.toList()));
+                    value = String.join(DELIMITER, values.stream().map(this::serialize).collect(Collectors.toList()));
                 }
             }
-            row.add(removeNestedIdentifiers(value));
+            row.add(serialize(value));
         }
         return row;
     }
 
-    private String removeNestedIdentifiers(String value) {
-        return value.contains(NESTED_DELIMITER) ? value.substring(0, value.indexOf(NESTED_DELIMITER)) : value;
+    private String serialize(Object obj) {
+    	String value = String.valueOf(obj);
+        return value.contains(NESTED_DELIMITER)
+    		? value.substring(0, value.indexOf(NESTED_DELIMITER))
+			: value;
     }
 
 }

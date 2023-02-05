@@ -18,17 +18,17 @@ public class Individual extends AbstractIndexDocument {
 
     @Field("*")
     @Transient
-    private Map<String, List<String>> content;
+    private Map<String, List<Object>> content;
 
     public Individual() {
 
     }
 
-    public Map<String, List<String>> getContent() {
+    public Map<String, List<Object>> getContent() {
         return content;
     }
 
-    public void setContent(Map<String, List<String>> content) {
+    public void setContent(Map<String, List<Object>> content) {
         this.content = content;
     }
 
