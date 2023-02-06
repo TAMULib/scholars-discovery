@@ -219,8 +219,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     @Override
     public long count(String query, List<FilterArg> filters) {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withQuery(query)
+        SolrQueryBuilder builder = new SolrQueryBuilder(query)
             .withFilters(filters);
 
         return count(builder.query());
@@ -491,10 +490,14 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         private final SolrQuery query;
 
         private SolrQueryBuilder() {
+            this(DEFAULT_QUERY);
+        }
+
+        private SolrQueryBuilder(String query) {
             this.query = new SolrQuery()
                 .setParam("defType", defType)
                 .setParam("q.op", defaultOperator)
-                .setQuery(DEFAULT_QUERY);
+                .setQuery(query);
         }
 
         public SolrQueryBuilder withQuery(QueryArg query) {
@@ -521,11 +524,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                 this.query.setParam("fl", fl);
             }
 
-            return withQuery(query.getExpression());
-        }
-
-        public SolrQueryBuilder withQuery(String query) {
-            this.query.setQuery(query);
+            this.query.setQuery(query.getExpression());
 
             return this;
         }
@@ -550,14 +549,13 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
         public SolrQueryBuilder withSort(Sort sort) {
             sort.iterator().forEachRemaining(order -> {
-                this.query.setSort(order.getProperty(), order.getDirection().isAscending() ? ORDER.asc: ORDER.desc);
+                this.query.addSort(order.getProperty(), order.getDirection().isAscending() ? ORDER.asc: ORDER.desc);
             });
 
             return this;
         }
 
         public SolrQueryBuilder withFilters(List<FilterArg> filters) {
-
             filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
                 FilterArg firstOne = filterList.get(0);
                 StringBuilder filterQuery = new StringBuilder()
@@ -576,7 +574,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         }
 
         public SolrQueryBuilder withFacets(List<FacetArg> facets) {
-
             facets.forEach(facet -> {
                 String name = facet.getCommand();
                 switch (facet.getType()) {
@@ -603,6 +600,22 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         }
 
         public SolrQueryBuilder withBoosts(List<BoostArg> boosts) {
+            final String query = this.query.getQuery();
+            StringBuilder boostedQuery = new StringBuilder(query);
+            boosts.forEach(boost -> {
+                boostedQuery.append(" OR ")
+                    .append("(")
+                    .append(boost.getField())
+                    .append(":")
+                    .append("(")
+                    .append(query)
+                    .append(")")
+                    .append("^")
+                    .append(boost.getValue())
+                    .append(")");
+            });
+
+            this.query.setQuery(boostedQuery.toString());
 
             return this;
         }
@@ -617,10 +630,10 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                 this.query.setHighlight(true);
                 this.query.setHighlightFragsize(0);
                 if (StringUtils.isNotEmpty(highlight.getPrefix())) {
-                	this.query.setHighlightSimplePre(highlight.getPrefix());
+                    this.query.setHighlightSimplePre(highlight.getPrefix());
                 }
                 if (StringUtils.isNotEmpty(highlight.getPostfix())) {
-                	this.query.setHighlightSimplePost(highlight.getPostfix());
+                    this.query.setHighlightSimplePost(highlight.getPostfix());
                 }
             }
 
