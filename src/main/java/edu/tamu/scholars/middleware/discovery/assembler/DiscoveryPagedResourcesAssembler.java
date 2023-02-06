@@ -35,7 +35,6 @@ public class DiscoveryPagedResourcesAssembler<T> extends PagedResourcesAssembler
     }
 
     @Override
-    // TODO: determine if this is even needed
     protected <R extends RepresentationModel<?>, S> PagedModel<R> createPagedModel(List<R> resources, PagedModel.PageMetadata metadata, Page<S> page) {
         PagedModel<R> pagedResource = super.createPagedModel(resources, metadata, page);
         if (page instanceof DiscoveryFacetAndHighlightPage) {
