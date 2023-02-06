@@ -3,44 +3,41 @@ package edu.tamu.scholars.middleware.config;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.core.NodeConfig;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.junit.Rule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.images.builder.ImageFromDockerfile;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Configuration
 @Profile("test")
+@Testcontainers
 public class SolrTestConfig {
 
-    private final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
-    private final static String NODE_NAME = "discovery";
+    @Rule
+    public GenericContainer solrContainer = new GenericContainer(
+        new ImageFromDockerfile()
+            .withFileFromFile("configsets/scholars-discovery/conf", new File("solr/configsets/scholars-discovery/conf"))
+            .withFileFromFile("setup.sh", new File("solr/setup.sh"))
+            .withFileFromFile("Dockerfile", new File("solr/Dockerfile")))
+                .withExposedPorts(8983)
+                .waitingFor(Wait.forHttp("/solr/scholars-discovery/select")
+                    .forStatusCode(200));
 
     @Bean
     public SolrClient solrServer() throws Exception {
-        final File solrDir = new File("solr");
-        final File solrHome = SOLR_HOME.toFile();
+        solrContainer.start();
 
-        if (solrHome.exists()) {
-            FileUtils.deleteDirectory(solrHome);
-        }
-
-        FileUtils.copyDirectory(solrDir, solrHome);
-
-        System.setProperty("solr.install.dir", SOLR_HOME.toFile().getAbsolutePath());
-
-        final Path solrConfigSetsPath = SOLR_HOME.resolve("configsets");
-
-        final NodeConfig config = new NodeConfig.NodeConfigBuilder(NODE_NAME, SOLR_HOME)
-                .setConfigSetBaseDirectory(solrConfigSetsPath.toFile().getAbsolutePath())
-                .build();
-
-        return new EmbeddedSolrServer(config, CORE_NAME);
+        return new Http2SolrClient.Builder(
+            String.format("http://%s:%s/solr", solrContainer.getHost(), solrContainer.getMappedPort(8983))
+        ).build();
     }
 
 }

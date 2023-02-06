@@ -1,6 +1,5 @@
 package edu.tamu.scholars.middleware.discovery;
 
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 import static edu.tamu.scholars.middleware.discovery.utility.DiscoveryUtility.getDiscoveryDocumentTypeByName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
@@ -50,27 +48,12 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @BeforeAll
     public void setup() throws SolrServerException, IOException {
-        createCore();
         createDocuments();
     }
 
     @AfterAll
     public void cleanup() throws SolrServerException, IOException {
         deleteDocuments();
-        deleteCore();
-    }
-
-    private void createCore() throws SolrServerException, IOException {
-        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-        createRequest.setCoreName(CORE_NAME);
-        createRequest.setConfigSet(CORE_NAME);
-        solrClient.request(createRequest);
-    }
-
-    private void deleteCore() throws SolrServerException, IOException {
-        CoreAdminRequest.Unload unloadRequest = new CoreAdminRequest.Unload(true);
-        unloadRequest.setCoreName(CORE_NAME);
-        solrClient.request(unloadRequest);
     }
 
     private void createDocuments() throws IOException, SolrServerException {
