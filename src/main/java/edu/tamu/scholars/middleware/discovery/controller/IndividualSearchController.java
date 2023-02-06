@@ -18,6 +18,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,6 +47,31 @@ public class IndividualSearchController implements RepresentationModelProcessor<
     @Autowired
     private DiscoveryPagedResourcesAssembler<Individual> discoveryPagedResourcesAssembler;
 
+    @GetMapping("/individual/search/findByIdIn")
+    public ResponseEntity<CollectionModel<IndividualResource>> findByIdIn(@RequestParam(required = true) List<String> ids) {
+        return ResponseEntity.ok(assembler.toCollectionModel(repo.findByIdIn(ids)));
+    }
+
+    @GetMapping("/individual/search/findByType")
+    public ResponseEntity<CollectionModel<IndividualResource>> findByType(@RequestParam(required = true) String type) {
+        return ResponseEntity.ok(assembler.toCollectionModel(repo.findByType(type)));
+    }
+
+    @GetMapping(value = "/individual/search/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Count> count(@RequestParam(value = "query", required = false, defaultValue = "*:*") String query, List<FilterArg> filters) {
+        return ResponseEntity.ok(new Count(repo.count(query, filters)));
+    }
+
+    @GetMapping("/individual/search/recentlyUpdated")
+    // @formatter:off
+    public ResponseEntity<CollectionModel<IndividualResource>> recentlyUpdated(
+        @RequestParam(value = "limit", defaultValue = "10") int limit,
+        List<FilterArg> filters
+    ) {
+        return ResponseEntity.ok(assembler.toCollectionModel(repo.findMostRecentlyUpdate(limit, filters)));
+    }
+    // @formatter:on
+
     @GetMapping("/individual/search/advanced")
     // @formatter:off
     public ResponseEntity<PagedModel<IndividualResource>> search(
@@ -60,19 +86,35 @@ public class IndividualSearchController implements RepresentationModelProcessor<
     }
     // @formatter:on
 
-    @GetMapping("/individual/search/recentlyUpdated")
-    // @formatter:off
-    public ResponseEntity<CollectionModel<IndividualResource>> recentlyUpdated(
-        @RequestParam(value = "limit", defaultValue = "10") int limit,
-        List<FilterArg> filters
-    ) {
-        return ResponseEntity.ok(assembler.toCollectionModel(repo.findMostRecentlyUpdate(limit, filters)));
-    }
-    // @formatter:on
-
     @Override
     public RepositorySearchesResource process(RepositorySearchesResource resource) {
         if (Individual.class.equals(resource.getDomainType())) {
+            resource.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder
+                    .methodOn(IndividualSearchController.class)
+                    .findByIdIn(new ArrayList<String>())
+            ).withRel("findByIdIn").withTitle("Search by ids"));
+
+            resource.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder
+                    .methodOn(IndividualSearchController.class)
+                    .findByType("Person")
+            ).withRel("findByType").withTitle("Search by type"));
+
+            resource.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder
+                    .methodOn(IndividualSearchController.class)
+                    .count(
+                        DiscoveryConstants.DEFAULT_QUERY,
+                        new ArrayList<FilterArg>()
+                    )
+            ).withRel("count").withTitle("Count Query"));
+
+            resource.add(linkTo(methodOn(IndividualSearchController.class).recentlyUpdated(
+                10,
+                new ArrayList<FilterArg>()
+            )).withRel("recentlyUpdated").withTitle("Recently Updated Query"));
+
             resource.add(linkTo(methodOn(IndividualSearchController.class).search(
                 QueryArg.of(
                     Optional.of(DiscoveryConstants.DEFAULT_QUERY),
@@ -88,22 +130,22 @@ public class IndividualSearchController implements RepresentationModelProcessor<
                 HighlightArg.of(new String[] {}, Optional.empty(), Optional.empty()),
                 PageRequest.of(0, 10)
             )).withRel("advanced").withTitle("Advanced Search"));
-
-            resource.add(WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder
-                .methodOn(IndividualCountController.class)
-                .count(
-                    DiscoveryConstants.DEFAULT_QUERY,
-                    new ArrayList<FilterArg>()
-                )
-            ).withRel("count").withTitle("Count Query"));
-
-            resource.add(linkTo(methodOn(IndividualSearchController.class).recentlyUpdated(
-                10,
-                new ArrayList<FilterArg>()
-            )).withRel("recentlyUpdated").withTitle("Recently Updated Query"));
         }
         return resource;
+    }
+
+    class Count {
+
+        private final long value;
+
+        public Count(long value) {
+            this.value = value;
+        }
+
+        public long getValue() {
+            return value;
+        }
+
     }
 
 }

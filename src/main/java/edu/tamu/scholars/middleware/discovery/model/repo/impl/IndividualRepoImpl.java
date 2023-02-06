@@ -7,10 +7,8 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_TEMPLATE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,7 +56,6 @@ import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndexDocumentRepo;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
-import edu.tamu.scholars.middleware.model.OpKey;
 
 public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
@@ -198,68 +195,11 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public List<Individual> findBySyncIds(String syncId) {
-        FilterArg filter = FilterArg.of("syncId", Optional.of(syncId), Optional.empty(), Optional.empty());
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withFilters(Arrays.asList(filter))
-            .withRows(Integer.MAX_VALUE);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public List<Individual> findBySyncIdsIn(List<String> syncIds) {
-        FilterArg filter = FilterArg.of("syncId", Optional.of(String.join(" OR ", syncIds)), Optional.empty(), Optional.empty());
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withFilters(Arrays.asList(filter))
-            .withRows(Integer.MAX_VALUE);
-
-        return findAll(builder.query());
-    }
-
-    @Override
     public long count(String query, List<FilterArg> filters) {
         SolrQueryBuilder builder = new SolrQueryBuilder(query)
             .withFilters(filters);
 
         return count(builder.query());
-    }
-
-    @Override
-    public List<Individual> findAll(List<FilterArg> filters) {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withFilters(filters);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public List<Individual> findAll(List<FilterArg> filters, Sort sort) {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withFilters(filters)
-            .withSort(sort);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public Page<Individual> findAll(List<FilterArg> filters, Pageable page) {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withFilters(filters);
-
-        return findAll(builder.query(), page);
-    }
-
-    @Override
-    public List<Individual> findByType(String type, List<FilterArg> filters) {
-        filters.add(FilterArg.of(TYPE, Optional.of(type), Optional.of(OpKey.EQUALS.getKey()), Optional.empty()));
-
-        return findAll(filters);
-    }
-
-    @Override
-    public List<Individual> findMostRecentlyUpdate(Integer limit) {
-        return findMostRecentlyUpdate(limit, new ArrayList<FilterArg>());
     }
 
     @Override

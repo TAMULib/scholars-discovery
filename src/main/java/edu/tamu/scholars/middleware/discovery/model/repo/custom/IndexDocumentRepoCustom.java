@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -21,17 +20,11 @@ import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 
 public interface IndexDocumentRepoCustom<D extends AbstractIndexDocument> {
 
+    public List<D> findByType(String type);
+
+    public List<D> findByIdIn(List<String> ids);
+
     public long count(String query, List<FilterArg> filters);
-
-    public List<D> findAll(List<FilterArg> filters);
-
-    public List<D> findAll(List<FilterArg> filters, Sort sort);
-
-    public Page<D> findAll(List<FilterArg> filters, Pageable page);
-
-    public List<D> findByType(String type, List<FilterArg> filters);
-
-    public List<D> findMostRecentlyUpdate(Integer limit);
 
     public List<D> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters);
 
