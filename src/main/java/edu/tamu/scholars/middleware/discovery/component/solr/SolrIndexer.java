@@ -1,4 +1,4 @@
-package edu.tamu.scholars.middleware.discovery.service.solr;
+package edu.tamu.scholars.middleware.discovery.component.solr;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 import static edu.tamu.scholars.middleware.discovery.service.IndexService.CREATED_FIELDS;
@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
+import edu.tamu.scholars.middleware.discovery.component.Indexer;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
-import edu.tamu.scholars.middleware.discovery.service.Indexer;
 
 public class SolrIndexer implements Indexer {
 
