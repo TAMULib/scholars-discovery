@@ -69,16 +69,19 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Value("${spring.data.solr.operator:AND}")
     private String defaultOperator;
 
-    @Value("${spring.data.solr.commitWithinMs:250}")
-    private int commitWithinMs;
-
     @Lazy
     @Autowired
     private SolrClient solrClient;
 
     @Override
     public <S extends Individual> S save(S document) {
-        return save(document, commitWithinMs);
+        try {
+            solrClient.addBean(CORE_NAME, document);
+            solrClient.commit(CORE_NAME);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+        return document;
     }
 
     @Override
@@ -121,8 +124,15 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public <S extends Individual> List<S> saveAll(Iterable<S> entities) {
-        return IterableUtils.toList(saveAll(entities, commitWithinMs));
+    public <S extends Individual> Iterable<S> saveAll(Iterable<S> documents) {
+        List<S> individuals = IterableUtils.toList(documents);
+        try {
+            solrClient.addBeans(CORE_NAME, individuals);
+            solrClient.commit(CORE_NAME);
+        } catch (IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+        return documents;
     }
 
     @Override
@@ -146,7 +156,8 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Override
     public void deleteById(String id) {
         try {
-            solrClient.deleteById(CORE_NAME, id, commitWithinMs);
+            solrClient.deleteById(CORE_NAME, id);
+            solrClient.commit(CORE_NAME);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -156,15 +167,16 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Override
     public void deleteAllById(Iterable<? extends String> ids) {
         try {
-            solrClient.deleteById(CORE_NAME, IterableUtils.toList((Iterable<String>) ids), commitWithinMs);
+            solrClient.deleteById(CORE_NAME, IterableUtils.toList((Iterable<String>) ids));
+            solrClient.commit(CORE_NAME);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void deleteAll(Iterable<? extends Individual> entities) {
-        List<String> ids = IterableUtils.toList(entities).stream()
+    public void deleteAll(Iterable<? extends Individual> documents) {
+        List<String> ids = IterableUtils.toList(documents).stream()
             .map(i -> i.getId())
             .collect(Collectors.toList());
         deleteAllById(ids);
@@ -173,7 +185,8 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Override
     public void deleteAll() {
         try {
-            solrClient.deleteByQuery(CORE_NAME, DEFAULT_QUERY, commitWithinMs);
+            solrClient.deleteByQuery(CORE_NAME, DEFAULT_QUERY);
+            solrClient.commit(CORE_NAME);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -351,15 +364,16 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     private long count(String q) {
         SolrQuery query = new SolrQuery(q)
-                .setRows(0);
+            .setRows(0);
+
         return count(query);
     }
 
     private long count(SolrQuery query) {
         try {
             return solrClient.query(CORE_NAME, query)
-                    .getResults()
-                    .getNumFound();
+                .getResults()
+                .getNumFound();
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -379,7 +393,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     private List<Individual> findAll(SolrQuery query) {
         try {
             return solrClient.query(CORE_NAME, query)
-                    .getBeans(Individual.class);
+                .getBeans(Individual.class);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -387,10 +401,8 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     private Page<Individual> findAll(SolrQuery query, Pageable pageable) {
         try {
-            SolrDocumentList documents = solrClient.query(CORE_NAME, query)
-                    .getResults();
-            List<Individual> individuals = solrClient.getBinder()
-                    .getBeans(Individual.class, documents);
+            SolrDocumentList documents = solrClient.query(CORE_NAME, query).getResults();
+            List<Individual> individuals = solrClient.getBinder().getBeans(Individual.class, documents);
 
             return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());
         } catch (IOException | SolrServerException e) {
@@ -398,31 +410,12 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         }
     }
 
-    private <S extends Individual> S save(S entity, int commitWithinMs) {
-        try {
-            solrClient.addBean(CORE_NAME, entity, commitWithinMs);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-        return entity;
-    }
-
-    private <S extends Individual> Iterable<S> saveAll(Iterable<S> entities, int commitWithinMs) {
-        List<S> individuals = IterableUtils.toList(entities);
-        try {
-            solrClient.addBeans(CORE_NAME, individuals, commitWithinMs);
-        } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-        return entities;
-    }
-
     private List<String> getValues(SolrDocument document, List<String> dataFields) {
         return dataFields.stream()
-                .filter(v -> document.containsKey(v))
-                .flatMap(v -> document.getFieldValues(v).stream())
-                .map(v -> (String) v)
-                .collect(Collectors.toList());
+            .filter(v -> document.containsKey(v))
+            .flatMap(v -> document.getFieldValues(v).stream())
+            .map(v -> (String) v)
+            .collect(Collectors.toList());
     }
 
     private class SolrQueryBuilder {

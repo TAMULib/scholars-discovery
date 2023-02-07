@@ -24,7 +24,7 @@ import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 public class SolrIndexer implements Indexer {
 
     private static final Logger logger = LoggerFactory.getLogger(SolrIndexer.class);
- 
+
     @Autowired
     private SolrClient solrClient;
 
@@ -82,7 +82,8 @@ public class SolrIndexer implements Indexer {
     @Override
     public void index(Collection<AbstractIndexDocument> documents) {
         try {
-            solrClient.addBeans(CORE_NAME, documents, 250);
+            solrClient.addBeans(CORE_NAME, documents);
+            solrClient.commit(CORE_NAME);
             logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
         } catch (Exception e) {
             logger.warn("Failed to save batch. Attempting individually.", e);
@@ -93,7 +94,8 @@ public class SolrIndexer implements Indexer {
     @Override
     public void index(AbstractIndexDocument document) {
         try {
-            solrClient.addBean(CORE_NAME, document, 250);
+            solrClient.addBean(CORE_NAME, document);
+            solrClient.commit(CORE_NAME);
             logger.info(String.format("Saved %s with id %s", name(), document.getId()));
         } catch (Exception e) {
             logger.warn(String.format("Failed to save document with id %s", document.getId()), e);

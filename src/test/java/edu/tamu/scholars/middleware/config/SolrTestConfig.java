@@ -1,12 +1,9 @@
 package edu.tamu.scholars.middleware.config;
 
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
-
 import java.io.File;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
-import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.junit.Rule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +14,8 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Configuration
-@Profile("test")
 @Testcontainers
+@Profile("test")
 public class SolrTestConfig {
 
     @Rule
