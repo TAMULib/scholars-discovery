@@ -53,13 +53,11 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
             if (Objects.nonNull(facetField) && !facetField.getValues().isEmpty()) {
 
-                // @formatter:off
                 List<FacetEntry> entries = facetField.getValues().parallelStream()
                     .map(entry -> new FacetEntry(entry.getName(), entry.getCount()))
                     .collect(Collectors.toMap(FacetEntry::getValueKey, fe -> fe, FacetEntry::merge)).values().parallelStream()
                     .sorted(FacetEntryComparator.of(facetArgument.getSort()))
                     .collect(Collectors.toList());
-                // @formatter:on
 
                 int pageSize = facetArgument.getPageSize();
                 int pageNumber = facetArgument.getPageNumber();

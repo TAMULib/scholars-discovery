@@ -1,15 +1,14 @@
 package edu.tamu.scholars.middleware.export.controller;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.data.web.SortDefault;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpHeaders;
@@ -19,13 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
-import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
-import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.discovery.resource.IndividualResource;
-import edu.tamu.scholars.middleware.export.argument.ExportArg;
 import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
 import edu.tamu.scholars.middleware.export.service.Exporter;
 import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
@@ -39,26 +34,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
     @Autowired
     private ExporterRegistry exporterRegistry;
 
-    @GetMapping("/individual/search/export")
-    // @formatter:off
-    public ResponseEntity<StreamingResponseBody> export(
-        @RequestParam(value = "type", required = false, defaultValue = "csv") String type,
-        QueryArg query,
-        @SortDefault Sort sort,
-        List<FilterArg> filters,
-        List<BoostArg> boosts,
-        List<ExportArg> export
-    ) throws UnknownExporterTypeException, InterruptedException, ExecutionException {
-        Exporter exporter = exporterRegistry.getExporter(type);
-        return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition("export"))
-            .header(HttpHeaders.CONTENT_TYPE, exporter.contentType())
-            .body(exporter.streamSolrResponse(repo.export(query, filters, boosts, sort).get(), export));
-    }
-    // @formatter:on
-
     @GetMapping("/individual/{id}/export")
-    // @formatter:off
     public ResponseEntity<StreamingResponseBody> export(
         @PathVariable String id,
         @RequestParam(value = "type", required = false, defaultValue = "docx") String type,
@@ -75,20 +51,15 @@ public class IndividualExportController implements RepresentationModelProcessor<
         }
         throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
     }
-    // @formatter:on
 
     @Override
     public IndividualResource process(IndividualResource resource) {
         try {
-            // @formatter:off
-            resource.add(
-                WebMvcLinkBuilder.linkTo(
-                  WebMvcLinkBuilder
-                    .methodOn(this.getClass())
-                    .export(resource.getContent().getId(), "docx", "Export Name")
-                ).withRel("export")
-            );
-            // @formatter:on
+            resource.add(linkTo(methodOn(this.getClass()).export(
+                resource.getContent().getId(),
+                "docx",
+                "Export Name"
+            )).withRel("export").withTitle("Individual export"));
         } catch (UnknownExporterTypeException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }

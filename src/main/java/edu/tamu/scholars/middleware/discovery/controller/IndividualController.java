@@ -1,12 +1,14 @@
 package edu.tamu.scholars.middleware.discovery.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +26,6 @@ public class IndividualController implements RepresentationModelProcessor<Indivi
     private IndividualRepo repo;
 
     @GetMapping("/individual/{id}/network")
-    // @formatter:off
     public ResponseEntity<DiscoveryNetwork> network(
         @PathVariable String id,
         @RequestParam(name = "dateField", defaultValue = "publicationDate") String dateField,
@@ -33,25 +34,16 @@ public class IndividualController implements RepresentationModelProcessor<Indivi
     ) {
         return ResponseEntity.ok(repo.getDiscoveryNetwork(DiscoveryNetworkDescriptor.of(id, dateField, dataFields, typeFilter)));
     }
-    // @formatter:on
 
     @Override
     public IndividualResource process(IndividualResource resource) {
         try {
-            // @formatter:off
-            resource.add(
-                WebMvcLinkBuilder.linkTo(
-                  WebMvcLinkBuilder
-                    .methodOn(this.getClass())
-                    .network(
-                        resource.getContent().getId(),
-                        "publicationDate",
-                        Arrays.asList("authors"),
-                        "class:Document"
-                    )
-                ).withRel("network")
-            );
-            // @formatter:on
+            resource.add(linkTo(methodOn(this.getClass()).network(
+                resource.getContent().getId(),
+                "publicationDate",
+                Arrays.asList("authors"),
+                "class:Document"
+            )).withRel("network").withTitle("Individual discovery netowrk"));
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

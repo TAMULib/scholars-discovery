@@ -71,13 +71,11 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
                             @SuppressWarnings("unchecked")
                             List<String> values = (List<String>) value;
 
-                            // @formatter:off
                             ArrayNode array = values.parallelStream()
                                 .map(v -> v.split(NESTED_DELIMITER))
                                 .filter(vParts -> vParts.length > 1)
                                 .map(vParts -> processValue(content, type, field, vParts, 1))
                                 .collect(new JsonNodeArrayNodeCollector());
-                            // @formatter:on
 
                             if (array.size() > 0) {
                                 jsonGenerator.writeObjectField(name, array);
@@ -135,7 +133,6 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
 
                         ArrayNode array;
 
-                        // @formatter:off
                         if (strip(nestedValues.get(0)).split(NESTED_DELIMITER).length > depth) {
                             array = nestedValues.parallelStream()
                                 .filter(nv -> isProperty(vParts, nv))
@@ -147,7 +144,6 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
                                 .map(nv -> strip(nv).split(NESTED_DELIMITER)[0])
                                 .collect(new StringArrayNodeCollector());
                         }
-                        // @formatter:on
 
                         if (array.size() > 0) {
                             if (multiValued) {

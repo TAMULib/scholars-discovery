@@ -62,17 +62,14 @@ public class IndividualSearchController implements RepresentationModelProcessor<
     }
 
     @GetMapping("/individual/search/recentlyUpdated")
-    // @formatter:off
     public ResponseEntity<CollectionModel<IndividualResource>> recentlyUpdated(
         @RequestParam(value = "limit", defaultValue = "10") int limit,
         List<FilterArg> filters
     ) {
         return ResponseEntity.ok(assembler.toCollectionModel(repo.findMostRecentlyUpdate(limit, filters)));
     }
-    // @formatter:on
 
     @GetMapping("/individual/search/advanced")
-    // @formatter:off
     public ResponseEntity<PagedModel<IndividualResource>> search(
         QueryArg query,
         List<FacetArg> facets,
@@ -83,7 +80,6 @@ public class IndividualSearchController implements RepresentationModelProcessor<
     ) {
         return ResponseEntity.ok(discoveryPagedResourcesAssembler.toModel(repo.search(query, facets, filters, boosts, highlight, page), assembler));
     }
-    // @formatter:on
 
     @Override
     public RepositorySearchesResource process(RepositorySearchesResource resource) {
@@ -99,12 +95,12 @@ public class IndividualSearchController implements RepresentationModelProcessor<
             resource.add(linkTo(methodOn(this.getClass()).count(
                 DiscoveryConstants.DEFAULT_QUERY,
                 new ArrayList<FilterArg>()
-            )).withRel("count").withTitle("Count Query"));
+            )).withRel("count").withTitle("Count query"));
 
             resource.add(linkTo(methodOn(this.getClass()).recentlyUpdated(
                 10,
                 new ArrayList<FilterArg>()
-            )).withRel("recentlyUpdated").withTitle("Recently Updated Query"));
+            )).withRel("recentlyUpdated").withTitle("Recently updated query"));
 
             resource.add(linkTo(methodOn(this.getClass()).search(
                 QueryArg.of(
@@ -120,7 +116,7 @@ public class IndividualSearchController implements RepresentationModelProcessor<
                 new ArrayList<BoostArg>(),
                 HighlightArg.of(new String[] {}, Optional.empty(), Optional.empty()),
                 PageRequest.of(0, 10)
-            )).withRel("advanced").withTitle("Advanced Search"));
+            )).withRel("advanced").withTitle("Advanced search"));
         }
         return resource;
     }

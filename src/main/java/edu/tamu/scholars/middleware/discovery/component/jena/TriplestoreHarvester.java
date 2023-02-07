@@ -79,12 +79,10 @@ public class TriplestoreHarvester implements Harvester {
         QueryExecution queryExecution = triplestore.createQueryExecution(query);
         Iterator<Triple> tripleIterator = queryExecution.execConstructTriples();
         Iterable<Triple> triples = () -> tripleIterator;
-        // @formatter:off
         return Flux.fromIterable(triples)
             .map(this::subject)
             .map(this::harvest)
             .doFinally(onFinally -> queryExecution.close());
-        // @formatter:on
     }
 
     public AbstractIndexDocument harvest(String subject) {

@@ -225,7 +225,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    // @formatter:off
     public DiscoveryFacetAndHighlightPage<Individual> search(
         QueryArg query,
         List<FacetArg> facets,
@@ -234,7 +233,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         HighlightArg highlight,
         Pageable page
     ) {
-    // @formatter:on
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
             .withFacets(facets)
