@@ -17,7 +17,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,11 +55,6 @@ public class IndividualSearchController implements RepresentationModelProcessor<
         return ResponseEntity.ok(assembler.toCollectionModel(repo.findByType(type)));
     }
 
-    @GetMapping(value = "/individual/search/count", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Count> count(@RequestParam(value = "query", required = false, defaultValue = "*:*") String query, List<FilterArg> filters) {
-        return ResponseEntity.ok(new Count(repo.count(query, filters)));
-    }
-
     @GetMapping("/individual/search/recentlyUpdated")
     public ResponseEntity<CollectionModel<IndividualResource>> recentlyUpdated(
         @RequestParam(value = "limit", defaultValue = "10") int limit,
@@ -84,6 +78,11 @@ public class IndividualSearchController implements RepresentationModelProcessor<
     @Override
     public RepositorySearchesResource process(RepositorySearchesResource resource) {
         if (Individual.class.equals(resource.getDomainType())) {
+            resource.add(linkTo(methodOn(IndividualSearchCountController.class).count(
+                DiscoveryConstants.DEFAULT_QUERY,
+                new ArrayList<FilterArg>()
+            )).withRel("count").withTitle("Count query"));
+
             resource.add(linkTo(methodOn(this.getClass()).findByIdIn(
                 new ArrayList<String>()
             )).withRel("findByIdIn").withTitle("Search by ids"));
@@ -91,11 +90,6 @@ public class IndividualSearchController implements RepresentationModelProcessor<
             resource.add(linkTo(methodOn(this.getClass()).findByType(
                 "Person"
             )).withRel("findByType").withTitle("Search by type"));
-
-            resource.add(linkTo(methodOn(this.getClass()).count(
-                DiscoveryConstants.DEFAULT_QUERY,
-                new ArrayList<FilterArg>()
-            )).withRel("count").withTitle("Count query"));
 
             resource.add(linkTo(methodOn(this.getClass()).recentlyUpdated(
                 10,

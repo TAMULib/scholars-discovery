@@ -160,7 +160,7 @@ public abstract class AbstractSolrDocumentControllerTest<D extends AbstractIndex
     public void testSearchSolrDocumentsCount() throws Exception {
         // @formatter:off
         mockMvc.perform(get("/individual/search/count")
-            .param("q", "*:*")
+            .param("query", "*:*")
             .param("filters", "class")
             .param("class.filter", getType().getSimpleName()))
                 .andExpect(status().isOk())
@@ -170,7 +170,7 @@ public abstract class AbstractSolrDocumentControllerTest<D extends AbstractIndex
                     document(
                         getDocPath() + "/search/count",
                         requestParameters(
-                            parameterWithName("q").description("The search query."),
+                            parameterWithName("query").description("The search query."),
                             parameterWithName("filters").description("The filter fields."),
                             parameterWithName("class.filter").description("Class filter value.")
                         ),

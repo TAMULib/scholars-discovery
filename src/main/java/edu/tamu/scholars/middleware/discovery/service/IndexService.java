@@ -56,7 +56,12 @@ public class IndexService {
     }
 
     @PostConstruct
-    public void indexOnStartup() {
+    public void startup() {
+    	logger.info("Initializing index fields...");
+        indexers.stream().forEach(indexer -> {
+            logger.info(String.format("Initializing %s fields.", indexer.type().getSimpleName()));
+            indexer.init();
+        });
         if (indexOnStartup) {
             threadPoolTaskScheduler.schedule(new Runnable() {
 
@@ -71,11 +76,6 @@ public class IndexService {
 
     @Scheduled(cron = "${middleware.index.cron}", zone = "${middleware.index.zone}")
     public void index() {
-        logger.info("Initializing index fields...");
-        indexers.stream().forEach(indexer -> {
-            logger.info(String.format("Initializing %s fields.", indexer.type().getSimpleName()));
-            indexer.init();
-        });
         if (indexing.compareAndSet(false, true)) {
             triplestore.init();
             Instant start = Instant.now();

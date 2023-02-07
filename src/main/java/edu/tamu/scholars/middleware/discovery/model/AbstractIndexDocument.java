@@ -3,7 +3,6 @@ package edu.tamu.scholars.middleware.discovery.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -23,20 +22,20 @@ public abstract class AbstractIndexDocument {
     @FieldType(required = true, readonly = true)
     private String id;
 
+    @Transient
     @Field
-    @ElementCollection
     @FieldType(type = "whole_strings")
     @FieldSource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> type;
 
     @Transient
-    @Field("class")
     @JsonProperty("class")
+    @Field("class")
     @FieldType(type = "string", value = "class", required = true)
     private String clazz = this.getClass().getSimpleName();
 
+    @Transient
     @Field
-    @ElementCollection
     @FieldType(type = "strings")
     private List<String> syncIds = new ArrayList<>();
 

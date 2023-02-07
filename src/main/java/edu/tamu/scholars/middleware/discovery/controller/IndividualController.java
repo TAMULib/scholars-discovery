@@ -43,7 +43,7 @@ public class IndividualController implements RepresentationModelProcessor<Indivi
                 "publicationDate",
                 Arrays.asList("authors"),
                 "class:Document"
-            )).withRel("network").withTitle("Individual discovery netowrk"));
+            )).withRel("network").withTitle("Individual discovery network"));
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
