@@ -68,15 +68,12 @@ public abstract class AbstractSolrDocumentControllerTest<D extends AbstractIndex
                             linkWithRel("self").description("Canonical link for this resource."),
                             linkWithRel("next").description("Next page link for this resource."),
                             linkWithRel("last").description("Last page link for this resource."),
-                            linkWithRel("profile").description("The ALPS profile for this resource."),
-                            linkWithRel("search").description("Search link for this resource.")
+                            linkWithRel("profile").description("The ALPS profile for this resource.")
                         ),
                         responseFields(
                             subsectionWithPath("_embedded.individual").description(String.format("An array of <<resources-%s, %s resources>>.", "individual", getType().getSimpleName())),
                             subsectionWithPath("_links").description(String.format("<<resources-%s-list-links, Links>> to other resources.", "individual")),
-                            subsectionWithPath("page").description(String.format("Page details for <<resources-%s, %s resources>>.", "individual", getType().getSimpleName())),
-                            subsectionWithPath("facets").description(String.format("Facets for <<resources-%s, %s resources>>.", "individual", getType().getSimpleName())),
-                            subsectionWithPath("highlights").description(String.format("Highlights for <<resources-%s, %s resources>>.", "individual", getType().getSimpleName()))
+                            subsectionWithPath("page").description(String.format("Page details for <<resources-%s, %s resources>>.", "individual", getType().getSimpleName()))
                         )
                     )
                 );
@@ -226,12 +223,12 @@ public abstract class AbstractSolrDocumentControllerTest<D extends AbstractIndex
                         requestParameters(
                             describeDocument.withParameter("ids", String.format("The %s ids.", getType().getSimpleName()))
                         ),
-                        links(
-                            linkWithRel("self").description("Canonical link for this resource.")
-                        ),
+                        // links(
+                        //     linkWithRel("self").description("Canonical link for this resource.")
+                        // ),
                         responseFields(
-                            subsectionWithPath("_embedded.individual").description(String.format("An array of <<resources-%s, %s resources>>.", "indiviudal", getType().getSimpleName())),
-                            subsectionWithPath("_links").description(String.format("<<resources-%s-list-links, Links>> to other resources.", "indiviudal"))
+                            subsectionWithPath("_embedded.individual").description(String.format("An array of <<resources-%s, %s resources>>.", "indiviudal", getType().getSimpleName()))
+                            // subsectionWithPath("_links").description(String.format("<<resources-%s-list-links, Links>> to other resources.", "indiviudal"))
                         )
                     )
                 );

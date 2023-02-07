@@ -57,7 +57,7 @@ public class IndexService {
 
     @PostConstruct
     public void startup() {
-    	logger.info("Initializing index fields...");
+        logger.info("Initializing index fields...");
         indexers.stream().forEach(indexer -> {
             logger.info(String.format("Initializing %s fields.", indexer.type().getSimpleName()));
             indexer.init();
