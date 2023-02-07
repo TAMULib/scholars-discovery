@@ -32,7 +32,7 @@ public class IndividualController implements RepresentationModelProcessor<Indivi
         @RequestParam(name = "dataFields", defaultValue = "authors") List<String> dataFields,
         @RequestParam(name = "typeFilter", defaultValue = "class:Document") String typeFilter
     ) {
-        return ResponseEntity.ok(repo.getDiscoveryNetwork(DiscoveryNetworkDescriptor.of(id, dateField, dataFields, typeFilter)));
+        return ResponseEntity.ok(repo.network(DiscoveryNetworkDescriptor.of(id, dateField, dataFields, typeFilter)));
     }
 
     @Override

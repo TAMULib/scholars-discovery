@@ -4,6 +4,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_TEMPLATE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
@@ -45,6 +46,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
@@ -219,6 +221,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     public List<Individual> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters) {
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(filters)
+            .withSort(Sort.by(Direction.DESC, MOD_TIME))
             .withRows(limit);
 
         return findAll(builder.query());
@@ -313,7 +316,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public DiscoveryNetwork getDiscoveryNetwork(DiscoveryNetworkDescriptor dataNetworkDescriptor) {
+    public DiscoveryNetwork network(DiscoveryNetworkDescriptor dataNetworkDescriptor) {
         final String id = dataNetworkDescriptor.getId();
         final DiscoveryNetwork dataNetwork = DiscoveryNetwork.to(id);
 
@@ -376,7 +379,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             throw new RuntimeException(e);
         }
     }
-    
+
     private Individual getById(String id) {
         try {
             SolrDocument document = solrClient.getById(CORE_NAME, id);

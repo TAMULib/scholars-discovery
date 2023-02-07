@@ -32,6 +32,6 @@ public interface IndexDocumentRepoCustom<D extends AbstractIndexDocument> {
 
     public CompletableFuture<Iterator<Individual>> export(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort);
 
-    public DiscoveryNetwork getDiscoveryNetwork(DiscoveryNetworkDescriptor dataNetworkDescriptor);
+    public DiscoveryNetwork network(DiscoveryNetworkDescriptor dataNetworkDescriptor);
 
 }

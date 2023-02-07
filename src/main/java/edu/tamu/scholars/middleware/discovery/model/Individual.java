@@ -16,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(NON_EMPTY)
 public class Individual extends AbstractIndexDocument {
 
-    @Field("*")
     @Transient
+    @Field("*")
     private Map<String, List<Object>> content;
 
     public Individual() {
