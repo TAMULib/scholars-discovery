@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.common.SolrInputDocument;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -77,13 +80,21 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     private void createDocuments() throws IOException, SolrServerException {
          assertEquals(0, repo.count());
+         DocumentObjectBinder binder = solrClient.getBinder();
          ObjectMapper objectMapper = new ObjectMapper();
          List<File> mockFiles = getMockFiles();
          for (File file : mockFiles) {
              JsonNode mockDocumentNode = objectMapper.readTree(file);
              String name = mockDocumentNode.get("class").asText();
              Class<?> type = getDiscoveryDocumentTypeByName(name);
-             solrClient.addBean(getCollection(), objectMapper.convertValue(mockDocumentNode, type));
+             SolrInputDocument document = binder.toSolrInputDocument(objectMapper.convertValue(mockDocumentNode, type));
+             // NOTE: the null values must be removed, until https://issues.apache.org/jira/browse/SOLR-15112 is resolved
+             for (String fieldName : new ArrayList<>(document.getFieldNames())) {
+                 if (document.getField(fieldName).getValue() == null) {
+                     document.removeField(fieldName);
+                 }
+             }
+             solrClient.add(getCollection(), document);
              if (type.equals(getType())) {
                  @SuppressWarnings("unchecked")
                  D mockDocument = (D) objectMapper.readValue(file, getType());

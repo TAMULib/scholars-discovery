@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 public class SolrTestConfig {
 
-    private final static Path SOLR_HOME = Paths.get("test-solr").toAbsolutePath();
+    private final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
 
     private CoreContainer cores = null;
 
