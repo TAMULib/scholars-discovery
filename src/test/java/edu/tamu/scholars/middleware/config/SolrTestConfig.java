@@ -24,7 +24,8 @@ public class SolrTestConfig {
             .withFileFromFile("Dockerfile", new File("solr/Dockerfile")))
                 .withExposedPorts(8983)
                 .waitingFor(Wait.forHttp("/solr/scholars-discovery/select")
-                    .forStatusCode(200));
+                    .forStatusCode(200))
+                        .withReuse(false);
 
     @Bean
     public SolrClient solrServer() throws Exception {
