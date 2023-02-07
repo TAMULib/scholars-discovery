@@ -284,7 +284,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
                     @Override
                     public void streamDocListInfo(long numFound, long start, Float maxScore) {
-                        streaming.set(true);
+                        streaming.set(numFound > 0);
                         remaining.set(numFound);
 
                         future.complete(new Iterator<Individual>() {

@@ -20,16 +20,19 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.tamu.scholars.middleware.config.SolrTestConfig;
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import io.micrometer.core.instrument.util.StringUtils;
 
+@Import(SolrTestConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractIndexDocument> {
 
