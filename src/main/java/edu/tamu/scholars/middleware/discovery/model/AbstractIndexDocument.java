@@ -23,16 +23,16 @@ public abstract class AbstractIndexDocument {
     private String id;
 
     @Transient
-    @Field
-    @FieldType(type = "whole_strings")
-    @FieldSource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
-    private List<String> type;
-
-    @Transient
     @JsonProperty("class")
     @Field("class")
     @FieldType(type = "string", value = "class", required = true)
     private String clazz = this.getClass().getSimpleName();
+
+    @Transient
+    @Field
+    @FieldType(type = "whole_strings")
+    @FieldSource(template = "common/type", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    private List<String> type;
 
     @Transient
     @Field
@@ -47,20 +47,20 @@ public abstract class AbstractIndexDocument {
         this.id = id;
     }
 
-    public List<String> getType() {
-        return type;
-    }
-
-    public void setType(List<String> type) {
-        this.type = type;
-    }
-
     public String getClazz() {
         return clazz;
     }
 
     public void setClazz(String clazz) {
         this.clazz = clazz;
+    }
+
+    public List<String> getType() {
+        return type;
+    }
+
+    public void setType(List<String> type) {
+        this.type = type;
     }
 
     public List<String> getSyncIds() {
