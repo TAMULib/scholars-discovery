@@ -18,7 +18,7 @@ import edu.tamu.scholars.middleware.discovery.resource.IndividualResource;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 
 @RepositoryRestController
-public class IndividualNetworkController implements RepresentationModelProcessor<IndividualResource> {
+public class IndividualController implements RepresentationModelProcessor<IndividualResource> {
 
     @Autowired
     private IndividualRepo repo;
