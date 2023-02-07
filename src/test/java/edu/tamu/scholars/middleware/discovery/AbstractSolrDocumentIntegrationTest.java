@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
@@ -31,7 +32,6 @@ import edu.tamu.scholars.middleware.config.SolrTestConfig;
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
-import io.micrometer.core.instrument.util.StringUtils;
 
 @Import(SolrTestConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -52,13 +52,27 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @BeforeAll
     public void setup() throws SolrServerException, IOException {
-        CoreAdminRequest.reloadCore(getCollection(), solrClient);
+        createCore();
         createDocuments();
     }
 
     @AfterAll
     public void cleanup() throws SolrServerException, IOException {
         deleteDocuments();
+        deleteCore();
+    }
+
+    private void createCore() throws SolrServerException, IOException {
+        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+        createRequest.setCoreName(getCollection());
+        createRequest.setConfigSet(getCollection());
+        solrClient.request(createRequest);
+    }
+
+    private void deleteCore() throws SolrServerException, IOException {
+        CoreAdminRequest.Unload unloadRequest = new CoreAdminRequest.Unload(true);
+        unloadRequest.setCoreName(getCollection());
+        solrClient.request(unloadRequest);
     }
 
     private void createDocuments() throws IOException, SolrServerException {
@@ -69,7 +83,7 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
              JsonNode mockDocumentNode = objectMapper.readTree(file);
              String name = mockDocumentNode.get("class").asText();
              Class<?> type = getDiscoveryDocumentTypeByName(name);
-             solrClient.addBean(getCollection(), objectMapper.readValue(file, type));
+             solrClient.addBean(getCollection(), objectMapper.convertValue(mockDocumentNode, type));
              if (type.equals(getType())) {
                  @SuppressWarnings("unchecked")
                  D mockDocument = (D) objectMapper.readValue(file, getType());

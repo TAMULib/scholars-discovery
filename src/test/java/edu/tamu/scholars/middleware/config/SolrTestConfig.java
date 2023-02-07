@@ -1,39 +1,42 @@
 package edu.tamu.scholars.middleware.config;
 
-import java.io.File;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
-import org.junit.Rule;
+import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
+import org.apache.solr.core.CoreContainer;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.images.builder.ImageFromDockerfile;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
 @TestConfiguration
 public class SolrTestConfig {
 
-    @Rule
-    public GenericContainer solrContainer = new GenericContainer(
-        new ImageFromDockerfile()
-            .withFileFromFile("configsets/scholars-discovery/conf", new File("solr/configsets/scholars-discovery/conf"))
-            .withFileFromFile("setup.sh", new File("solr/setup.sh"))
-            .withFileFromFile("Dockerfile", new File("solr/Dockerfile")))
-                .withExposedPorts(8983)
-                .waitingFor(Wait.forHttp("/solr/scholars-discovery/select")
-                    .forStatusCode(200))
-                        .withReuse(false);
+    private final static Path SOLR_HOME = Paths.get("test-solr").toAbsolutePath();
+
+    private CoreContainer cores = null;
 
     @Bean
     public SolrClient solrServer() throws Exception {
-        solrContainer.start();
+        final File solrDir = new File("solr");
+        final File solrHome = SOLR_HOME.toFile();
 
-        return new Http2SolrClient.Builder(
-            String.format("http://%s:%s/solr", solrContainer.getHost(), solrContainer.getMappedPort(8983))
-        ).build();
+        if (solrHome.exists()) {
+            FileUtils.deleteDirectory(solrHome);
+        }
+
+        FileUtils.copyDirectory(solrDir, solrHome);
+
+        System.setProperty("solr.solr.home", SOLR_HOME.toString());
+        System.setProperty("solr.install.dir", SOLR_HOME.toString());
+
+        cores = CoreContainer.createAndLoad(SOLR_HOME);
+
+        return new EmbeddedSolrServer(cores, CORE_NAME);
     }
 
 }
