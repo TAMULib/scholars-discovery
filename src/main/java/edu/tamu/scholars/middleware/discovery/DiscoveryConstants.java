@@ -32,6 +32,6 @@ public class DiscoveryConstants {
 
     public static final String PARENTHESES_TEMPLATE = "(%s)";
     
-    public static final String CORE_NAME = "scholars-discovery";
+    public static final String COLLECTION = "scholars-discovery";
 
 }

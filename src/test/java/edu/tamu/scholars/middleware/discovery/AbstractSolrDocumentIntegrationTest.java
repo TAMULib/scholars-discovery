@@ -122,7 +122,7 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     private String getCollection() {
         CollectionTarget solrDocument = getType().getAnnotation(CollectionTarget.class);
-        String collection = solrDocument.collection();
+        String collection = solrDocument.name();
         assertTrue(StringUtils.isNotEmpty(collection));
         return collection;
     }

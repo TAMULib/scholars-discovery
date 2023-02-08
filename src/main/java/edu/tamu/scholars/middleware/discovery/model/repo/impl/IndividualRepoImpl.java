@@ -1,7 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.model.repo.impl;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
@@ -78,8 +78,8 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Override
     public <S extends Individual> S save(S document) {
         try {
-            solrClient.addBean(CORE_NAME, document);
-            solrClient.commit(CORE_NAME);
+            solrClient.addBean(COLLECTION, document);
+            solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +116,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Override
     public List<Individual> findAllById(Iterable<String> ids) {
         try {
-            SolrDocumentList documents = solrClient.getById(CORE_NAME, IterableUtils.toList(ids));
+            SolrDocumentList documents = solrClient.getById(COLLECTION, IterableUtils.toList(ids));
 
             return solrClient.getBinder()
                 .getBeans(Individual.class, documents);
@@ -129,8 +129,8 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     public <S extends Individual> Iterable<S> saveAll(Iterable<S> documents) {
         List<S> individuals = IterableUtils.toList(documents);
         try {
-            solrClient.addBeans(CORE_NAME, individuals);
-            solrClient.commit(CORE_NAME);
+            solrClient.addBeans(COLLECTION, individuals);
+            solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -158,8 +158,8 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Override
     public void deleteById(String id) {
         try {
-            solrClient.deleteById(CORE_NAME, id);
-            solrClient.commit(CORE_NAME);
+            solrClient.deleteById(COLLECTION, id);
+            solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -169,8 +169,8 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Override
     public void deleteAllById(Iterable<? extends String> ids) {
         try {
-            solrClient.deleteById(CORE_NAME, IterableUtils.toList((Iterable<String>) ids));
-            solrClient.commit(CORE_NAME);
+            solrClient.deleteById(COLLECTION, IterableUtils.toList((Iterable<String>) ids));
+            solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -187,8 +187,8 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
     @Override
     public void deleteAll() {
         try {
-            solrClient.deleteByQuery(CORE_NAME, DEFAULT_QUERY);
-            solrClient.commit(CORE_NAME);
+            solrClient.deleteByQuery(COLLECTION, DEFAULT_QUERY);
+            solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
@@ -245,7 +245,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             .withPage(page);
 
         try {
-            QueryResponse response = solrClient.query(CORE_NAME, builder.query());
+            QueryResponse response = solrClient.query(COLLECTION, builder.query());
 
             return DiscoveryFacetAndHighlightPage.from(response, page, facets, highlight, Individual.class);
         } catch (IOException | SolrServerException e) {
@@ -266,7 +266,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
         CompletableFuture.runAsync(() -> {
             try {
-                solrClient.queryAndStreamResponse(CORE_NAME, builder.query(), new StreamingResponseCallback() {
+                solrClient.queryAndStreamResponse(COLLECTION, builder.query(), new StreamingResponseCallback() {
 
                     private final AtomicBoolean streaming = new AtomicBoolean(false);
                     private final AtomicLong remaining = new AtomicLong(0);
@@ -329,7 +329,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         try {
             final SolrParams queryParams = dataNetworkDescriptor.getSolrParams();
 
-            final QueryResponse response = solrClient.query(CORE_NAME, queryParams);
+            final QueryResponse response = solrClient.query(COLLECTION, queryParams);
 
             final SolrDocumentList documents = response.getResults();
 
@@ -378,7 +378,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     private long count(SolrQuery query) {
         try {
-            return solrClient.query(CORE_NAME, query)
+            return solrClient.query(COLLECTION, query)
                 .getResults()
                 .getNumFound();
         } catch (IOException | SolrServerException e) {
@@ -388,7 +388,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     private Individual getById(String id) {
         try {
-            SolrDocument document = solrClient.getById(CORE_NAME, id);
+            SolrDocument document = solrClient.getById(COLLECTION, id);
 
             return solrClient.getBinder()
                 .getBean(Individual.class, document);
@@ -399,7 +399,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     private List<Individual> findAll(SolrQuery query) {
         try {
-            return solrClient.query(CORE_NAME, query)
+            return solrClient.query(COLLECTION, query)
                 .getBeans(Individual.class);
         } catch (IOException | SolrServerException e) {
             throw new RuntimeException(e);
@@ -408,7 +408,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     private Page<Individual> findAll(SolrQuery query, Pageable pageable) {
         try {
-            SolrDocumentList documents = solrClient.query(CORE_NAME, query).getResults();
+            SolrDocumentList documents = solrClient.query(COLLECTION, query).getResults();
             List<Individual> individuals = solrClient.getBinder().getBeans(Individual.class, documents);
 
             return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());

@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.config;
 
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -36,7 +36,7 @@ public class SolrTestConfig {
 
         cores = CoreContainer.createAndLoad(SOLR_HOME);
 
-        return new EmbeddedSolrServer(cores, CORE_NAME);
+        return new EmbeddedSolrServer(cores, COLLECTION);
     }
 
 }

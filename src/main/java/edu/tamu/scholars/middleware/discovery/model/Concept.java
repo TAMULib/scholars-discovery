@@ -1,7 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.model;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 
 @JsonInclude(NON_EMPTY)
-@CollectionTarget(collection = CORE_NAME)
+@CollectionTarget(name = COLLECTION)
 @CollectionSource(name = "concepts", predicate = "http://www.w3.org/2004/02/skos/core#Concept")
 public class Concept extends Common {
 

@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.component.solr;
 
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CORE_NAME;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 import static edu.tamu.scholars.middleware.discovery.service.IndexService.CREATED_FIELDS;
 
 import java.lang.reflect.Field;
@@ -61,7 +61,7 @@ public class SolrIndexer implements Indexer {
 
                 try {
                     SchemaRequest.AddField addFieldRequest = new SchemaRequest.AddField(fieldAttributes);
-                    addFieldRequest.process(solrClient, CORE_NAME);
+                    addFieldRequest.process(solrClient, COLLECTION);
                 } catch (Exception e) {
                     logger.debug("Failed to add field", e);
                 }
@@ -69,7 +69,7 @@ public class SolrIndexer implements Indexer {
                 if (indexed.copyTo().length > 0) {
                     try {
                         SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(indexed.copyTo()));
-                        addCopyFieldRequest.process(solrClient, CORE_NAME);
+                        addCopyFieldRequest.process(solrClient, COLLECTION);
                     } catch (Exception e) {
                         logger.debug("Failed to add copy field", e);
                     }
@@ -81,8 +81,8 @@ public class SolrIndexer implements Indexer {
     @Override
     public void index(Collection<AbstractIndexDocument> documents) {
         try {
-            solrClient.addBeans(CORE_NAME, documents);
-            solrClient.commit(CORE_NAME);
+            solrClient.addBeans(COLLECTION, documents);
+            solrClient.commit(COLLECTION);
             logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
         } catch (Exception e) {
             logger.warn("Failed to save batch. Attempting individually.", e);
@@ -93,8 +93,8 @@ public class SolrIndexer implements Indexer {
     @Override
     public void index(AbstractIndexDocument document) {
         try {
-            solrClient.addBean(CORE_NAME, document);
-            solrClient.commit(CORE_NAME);
+            solrClient.addBean(COLLECTION, document);
+            solrClient.commit(COLLECTION);
             logger.info(String.format("Saved %s with id %s", name(), document.getId()));
         } catch (Exception e) {
             logger.warn(String.format("Failed to save document with id %s", document.getId()), e);
@@ -104,7 +104,7 @@ public class SolrIndexer implements Indexer {
     @Override
     public void optimize() {
         try {
-            solrClient.optimize(CORE_NAME);
+            solrClient.optimize(COLLECTION);
         } catch (Exception e) {
             logger.warn(String.format("Failed to optimize index"), e);
         }
