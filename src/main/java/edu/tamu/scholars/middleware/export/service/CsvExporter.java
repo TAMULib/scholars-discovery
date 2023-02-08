@@ -4,6 +4,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_D
 
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public class CsvExporter implements Exporter {
     }
 
     private List<Object> getRow(Individual document, List<String> properties) throws InvalidValuePathException, IllegalArgumentException, IllegalAccessException {
-        Map<String, List<Object>> content = document.getContent();
+        Map<String, Collection<Object>> content = document.getContent();
         List<Object> row = new ArrayList<Object>();
         for (String property : properties) {
             if (property.equals(config.getIndividualKey())) {
@@ -93,7 +94,7 @@ public class CsvExporter implements Exporter {
             }
             String value = StringUtils.EMPTY;
             if (content.containsKey(property)) {
-                List<Object> values = content.get(property);
+            	Collection<Object> values = content.get(property);
                 if (values.size() > 0) {
                     value = String.join(DELIMITER, values.stream().map(this::serialize).collect(Collectors.toList()));
                 }

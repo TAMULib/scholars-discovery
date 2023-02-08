@@ -8,6 +8,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_TEMPLATE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,7 +33,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.StreamingResponseCallback;
-import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -262,8 +262,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             .withSort(sort)
             .withRows(Integer.MAX_VALUE);
 
-        DocumentObjectBinder binder = solrClient.getBinder();
-        
         CompletableFuture<Iterator<Individual>> future = new CompletableFuture<>();
 
         CompletableFuture.runAsync(() -> {
@@ -276,7 +274,15 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
                     @Override
                     public void streamSolrDocument(SolrDocument doc) {
-                        queue.add(binder.getBean(Individual.class, doc));
+                    	Individual individual = new Individual();
+
+                    	individual.setContent(doc.getFieldValuesMap());
+                    	individual.setId(doc.getFieldValue(ID).toString());
+                    	individual.setClazz(doc.getFieldValue(CLASS).toString());
+                    	individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
+
+                    	queue.add(individual);
+
                         if (remaining.decrementAndGet() <= 0) {
                             streaming.set(false);
                         }
