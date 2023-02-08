@@ -223,12 +223,8 @@ public abstract class AbstractSolrDocumentControllerTest<D extends AbstractIndex
                         requestParameters(
                             describeDocument.withParameter("ids", String.format("The %s ids.", getType().getSimpleName()))
                         ),
-                        // links(
-                        //     linkWithRel("self").description("Canonical link for this resource.")
-                        // ),
                         responseFields(
                             subsectionWithPath("_embedded.individual").description(String.format("An array of <<resources-%s, %s resources>>.", "indiviudal", getType().getSimpleName()))
-                            // subsectionWithPath("_links").description(String.format("<<resources-%s-list-links, Links>> to other resources.", "indiviudal"))
                         )
                     )
                 );
