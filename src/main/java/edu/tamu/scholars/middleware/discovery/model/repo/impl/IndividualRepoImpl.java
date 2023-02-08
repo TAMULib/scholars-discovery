@@ -267,21 +267,41 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
         CompletableFuture.runAsync(() -> {
             try {
                 solrClient.queryAndStreamResponse(COLLECTION, builder.query(), new StreamingResponseCallback() {
-
+                    private final AtomicBoolean initialized = new AtomicBoolean(false);
                     private final AtomicBoolean streaming = new AtomicBoolean(false);
                     private final AtomicLong remaining = new AtomicLong(0);
                     private final BlockingQueue<Individual> queue = new LinkedBlockingQueue<>();
 
                     @Override
                     public void streamSolrDocument(SolrDocument doc) {
-                    	Individual individual = new Individual();
+                        Individual individual = new Individual();
 
-                    	individual.setContent(doc.getFieldValuesMap());
-                    	individual.setId(doc.getFieldValue(ID).toString());
-                    	individual.setClazz(doc.getFieldValue(CLASS).toString());
-                    	individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
+                        individual.setContent(doc.getFieldValuesMap());
+                        individual.setId(doc.getFieldValue(ID).toString());
+                        individual.setClazz(doc.getFieldValue(CLASS).toString());
+                        individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
 
-                    	queue.add(individual);
+                        queue.add(individual);
+
+                        if (initialized.compareAndSet(false, true)) {
+                            future.complete(new Iterator<Individual>() {
+
+                                @Override
+                                public boolean hasNext() {
+                                    return streaming.get() || !queue.isEmpty();
+                                }
+
+                                @Override
+                                public Individual next() {
+                                    try {
+                                        return queue.take();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+
+                            });
+                        }
 
                         if (remaining.decrementAndGet() <= 0) {
                             streaming.set(false);
@@ -292,24 +312,6 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                     public void streamDocListInfo(long numFound, long start, Float maxScore) {
                         streaming.set(numFound > 0);
                         remaining.set(numFound);
-
-                        future.complete(new Iterator<Individual>() {
-
-                            @Override
-                            public boolean hasNext() {
-                                return streaming.get() || !queue.isEmpty();
-                            }
-
-                            @Override
-                            public Individual next() {
-                                try {
-                                    return queue.take();
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-
-                        });
                     }
 
                 });
