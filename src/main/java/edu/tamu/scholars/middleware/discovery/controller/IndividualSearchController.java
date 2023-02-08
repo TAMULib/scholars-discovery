@@ -1,5 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.controller;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -21,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
@@ -70,7 +71,7 @@ public class IndividualSearchController implements RepresentationModelProcessor<
         List<FilterArg> filters,
         List<BoostArg> boosts,
         HighlightArg highlight,
-        @PageableDefault(page = 0, size = 10, sort = "id", direction = ASC) Pageable page
+        @PageableDefault(page = 0, size = 10, sort = ID, direction = ASC) Pageable page
     ) {
         return ResponseEntity.ok(discoveryPagedResourcesAssembler.toModel(repo.search(query, facets, filters, boosts, highlight, page), assembler));
     }
@@ -79,7 +80,7 @@ public class IndividualSearchController implements RepresentationModelProcessor<
     public RepositorySearchesResource process(RepositorySearchesResource resource) {
         if (Individual.class.equals(resource.getDomainType())) {
             resource.add(linkTo(methodOn(IndividualSearchCountController.class).count(
-                DiscoveryConstants.DEFAULT_QUERY,
+                DEFAULT_QUERY,
                 new ArrayList<FilterArg>()
             )).withRel("count").withTitle("Count query"));
 
@@ -98,7 +99,7 @@ public class IndividualSearchController implements RepresentationModelProcessor<
 
             resource.add(linkTo(methodOn(this.getClass()).search(
                 QueryArg.of(
-                    Optional.of(DiscoveryConstants.DEFAULT_QUERY),
+                    Optional.of(DEFAULT_QUERY),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),

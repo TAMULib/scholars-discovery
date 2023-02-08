@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.export.controller;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
@@ -63,7 +63,7 @@ public class IndividualSearchExportController implements RepresentationModelProc
                 resource.add(linkTo(methodOn(this.getClass()).export(
                     "csv",
                     QueryArg.of(
-                        Optional.of(DiscoveryConstants.DEFAULT_QUERY),
+                        Optional.of(DEFAULT_QUERY),
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
