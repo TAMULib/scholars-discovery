@@ -52,7 +52,7 @@ public class CsvExporter implements Exporter {
     }
 
     @Override
-    public StreamingResponseBody streamSolrResponse(Iterator<Individual> cursor, List<ExportArg> export) {
+    public StreamingResponseBody streamSolrResponse(Iterator<Individual> documents, List<ExportArg> export) {
         return outputStream -> {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
             String[] headers = getColumnHeaders(export);
@@ -61,8 +61,8 @@ public class CsvExporter implements Exporter {
                 .setHeader(headers)
                 .build();
             try (CSVPrinter printer = new CSVPrinter(outputStreamWriter, format)) {
-                while (cursor.hasNext()) {
-                    Individual document = cursor.next();
+                while (documents.hasNext()) {
+                    Individual document = documents.next();
                     List<String> properties = export.stream().map(e -> e.getField()).collect(Collectors.toList());
                     List<Object> row = getRow(document, properties);
                     printer.printRecord(row.toArray(new Object[row.size()]));

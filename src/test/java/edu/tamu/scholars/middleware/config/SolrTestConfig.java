@@ -18,8 +18,6 @@ public class SolrTestConfig {
 
     private final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
 
-    private CoreContainer cores = null;
-
     @Bean
     public SolrClient solrServer() throws Exception {
         final File solrDir = new File("solr");
@@ -34,7 +32,7 @@ public class SolrTestConfig {
         System.setProperty("solr.solr.home", SOLR_HOME.toString());
         System.setProperty("solr.install.dir", SOLR_HOME.toString());
 
-        cores = CoreContainer.createAndLoad(SOLR_HOME);
+        CoreContainer cores = CoreContainer.createAndLoad(SOLR_HOME);
 
         return new EmbeddedSolrServer(cores, COLLECTION);
     }
