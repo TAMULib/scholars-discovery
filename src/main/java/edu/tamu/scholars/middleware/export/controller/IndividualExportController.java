@@ -57,7 +57,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
             resource.add(linkTo(methodOn(this.getClass()).export(
                 resource.getContent().getId(),
                 "docx",
-                "Export Name"
+                "Profile Summary"
             )).withRel("export").withTitle("Individual export"));
         } catch (UnknownExporterTypeException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
