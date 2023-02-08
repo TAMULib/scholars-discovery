@@ -198,7 +198,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findByType(String type) {
-        FilterArg filter = FilterArg.of("type", Optional.of(type), Optional.empty(), Optional.empty());
+        FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty());
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(Arrays.asList(filter))
             .withRows(Integer.MAX_VALUE);
