@@ -46,7 +46,7 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
         List<Highlight> highlights = new ArrayList<>();
         Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
         if (Objects.nonNull(highlighting)) {
-        	highlighting.entrySet().stream().filter(DiscoveryFacetAndHighlightPage::hasHighlights).forEach(hEntry -> {
+            highlighting.entrySet().stream().filter(DiscoveryFacetAndHighlightPage::hasHighlights).forEach(hEntry -> {
                 String id = hEntry.getKey();
                 Map<String, List<Object>> snippets = new HashMap<>();
                 hEntry.getValue().entrySet().stream().filter(DiscoveryFacetAndHighlightPage::hasSnippets).forEach(sEntry -> {

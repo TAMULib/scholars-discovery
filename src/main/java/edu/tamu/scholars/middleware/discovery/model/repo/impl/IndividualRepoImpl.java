@@ -54,11 +54,13 @@ import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
+import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndexDocumentRepo;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 
+// TODO: use message translation for exception responses
 public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
     private static final Logger logger = LoggerFactory.getLogger(IndividualRepoImpl.class);
@@ -81,7 +83,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             solrClient.addBean(COLLECTION, document);
             solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to save document", e);
         }
         return document;
     }
@@ -121,7 +123,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             return solrClient.getBinder()
                 .getBeans(Individual.class, documents);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to find documents from ids", e);
         }
     }
 
@@ -132,7 +134,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             solrClient.addBeans(COLLECTION, individuals);
             solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to save documents", e);
         }
         return documents;
     }
@@ -161,7 +163,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             solrClient.deleteById(COLLECTION, id);
             solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to delete document by id", e);
         }
     }
 
@@ -172,7 +174,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             solrClient.deleteById(COLLECTION, IterableUtils.toList((Iterable<String>) ids));
             solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to delete documents for ids", e);
         }
     }
 
@@ -190,7 +192,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             solrClient.deleteByQuery(COLLECTION, DEFAULT_QUERY);
             solrClient.commit(COLLECTION);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to delete all documents", e);
         }
     }
 
@@ -249,7 +251,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
             return DiscoveryFacetAndHighlightPage.from(response, page, facets, highlight, Individual.class);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to search documents", e);
         }
     }
 
@@ -296,7 +298,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                                     try {
                                         return queue.take();
                                     } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
+                                        throw new SolrRequestException("Failed to stream documents", e);
                                     }
                                 }
 
@@ -316,7 +318,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
                 });
             } catch (IOException | SolrServerException e) {
-                throw new RuntimeException(e);
+                throw new SolrRequestException("Failed to stream documents", e);
             }
         });
 
@@ -384,7 +386,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
                 .getResults()
                 .getNumFound();
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to count documents", e);
         }
     }
 
@@ -395,7 +397,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             return solrClient.getBinder()
                 .getBean(Individual.class, document);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to get document by id", e);
         }
     }
 
@@ -404,7 +406,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
             return solrClient.query(COLLECTION, query)
                 .getBeans(Individual.class);
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to query documents", e);
         }
     }
 
@@ -415,7 +417,7 @@ public class IndividualRepoImpl implements IndexDocumentRepo<Individual> {
 
             return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());
         } catch (IOException | SolrServerException e) {
-            throw new RuntimeException(e);
+            throw new SolrRequestException("Failed to query documents", e);
         }
     }
 

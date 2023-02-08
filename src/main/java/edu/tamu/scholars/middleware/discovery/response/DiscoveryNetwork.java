@@ -42,20 +42,20 @@ public class DiscoveryNetwork {
 
     public Map<String, Integer> getLinkCounts() {
         return linkCounts.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
     public Map<String, Integer> getYearCounts() {
         return yearCounts.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+            .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
     public List<DirectedData> getData() {
         return data.stream()
-                .sorted(Comparator.comparingInt(DirectedData::getCount).reversed())
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparingInt(DirectedData::getCount).reversed())
+            .collect(Collectors.toList());
     }
 
     public void index(String value) {
@@ -96,7 +96,7 @@ public class DiscoveryNetwork {
         for (DirectedData dd : this.data) {
             // count either direction
             if ((dd.getSource().equals(sId) && dd.getTarget().equals(tId)) ||
-                    (dd.getSource().equals(tId) && dd.getTarget().equals(sId))) {
+                (dd.getSource().equals(tId) && dd.getTarget().equals(sId))) {
                 dd.add(id);
                 return;
             }
