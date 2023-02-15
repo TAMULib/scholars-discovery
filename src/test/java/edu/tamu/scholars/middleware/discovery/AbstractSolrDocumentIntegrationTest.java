@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
