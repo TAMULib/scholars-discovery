@@ -17,7 +17,7 @@ public interface Exporter {
 
     public String contentType();
 
-    default public StreamingResponseBody streamSolrResponse(Iterator<Individual> cursor, List<ExportArg> export) {
+    default public StreamingResponseBody streamIndividuals(Iterator<Individual> cursor, List<ExportArg> export) {
         throw new UnsupportedExporterTypeException(String.format("%s exporter does not support export field exports", type()));
     }
 

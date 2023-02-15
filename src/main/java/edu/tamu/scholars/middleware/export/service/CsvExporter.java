@@ -52,7 +52,7 @@ public class CsvExporter implements Exporter {
     }
 
     @Override
-    public StreamingResponseBody streamSolrResponse(Iterator<Individual> documents, List<ExportArg> export) {
+    public StreamingResponseBody streamIndividuals(Iterator<Individual> documents, List<ExportArg> export) {
         return outputStream -> {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
             String[] headers = getColumnHeaders(export);
