@@ -6,7 +6,6 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_TEMPLATE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
@@ -26,7 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -78,82 +76,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     private SolrClient solrClient;
 
     @Override
-    public <S extends Individual> S save(S document) {
-        try {
-            solrClient.addBean(COLLECTION, document);
-            solrClient.commit(COLLECTION);
-        } catch (IOException | SolrServerException e) {
-            throw new SolrRequestException("Failed to save document", e);
-        }
-        return document;
-    }
-
-    @Override
-    public <S extends Individual> Iterable<S> saveAll(Iterable<S> documents) {
-        List<S> individuals = IterableUtils.toList(documents);
-        try {
-            solrClient.addBeans(COLLECTION, individuals);
-            solrClient.commit(COLLECTION);
-        } catch (IOException | SolrServerException e) {
-            throw new SolrRequestException("Failed to save documents", e);
-        }
-        return documents;
-    }
-
-    @Override
-    public void delete(Individual document) {
-        deleteById(document.getId());
-    }
-
-    @Override
-    public void deleteById(String id) {
-        try {
-            solrClient.deleteById(COLLECTION, id);
-            solrClient.commit(COLLECTION);
-        } catch (IOException | SolrServerException e) {
-            throw new SolrRequestException("Failed to delete document by id", e);
-        }
-    }
-
-    @Override
-    public void deleteAllById(Iterable<String> ids) {
-        try {
-            solrClient.deleteById(COLLECTION, IterableUtils.toList((Iterable<String>) ids));
-            solrClient.commit(COLLECTION);
-        } catch (IOException | SolrServerException e) {
-            throw new SolrRequestException("Failed to delete documents for ids", e);
-        }
-    }
-
-    @Override
-    public void deleteAll(Iterable<? extends Individual> documents) {
-        List<String> ids = IterableUtils.toList(documents).stream()
-            .map(i -> i.getId())
-            .collect(Collectors.toList());
-        deleteAllById(ids);
-    }
-
-    @Override
-    public void deleteAll() {
-        try {
-            solrClient.deleteByQuery(COLLECTION, DEFAULT_QUERY);
-            solrClient.commit(COLLECTION);
-        } catch (IOException | SolrServerException e) {
-            throw new SolrRequestException("Failed to delete all documents", e);
-        }
-    }
-
-    @Override
-    public boolean existsById(String id) {
-        return count(String.format(QUERY_TEMPLATE, ID, id)) == 1;
-    }
-
-    @Override
-    public long count() {
-        return count(DEFAULT_QUERY);
-    }
-
-    @Override
     public long count(String query, List<FilterArg> filters) {
         SolrQueryBuilder builder = new SolrQueryBuilder(query)
             .withFilters(filters);
@@ -167,40 +89,11 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public List<Individual> findAll() {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withRows(Integer.MAX_VALUE);
-
-        return findAll(builder.query());
-    }
-
-    @Override
-    public List<Individual> findAll(Sort sort) {
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withRows(Integer.MAX_VALUE)
-            .withSort(sort);
-
-        return findAll(builder.query());
-    }
-
-    @Override
     public Page<Individual> findAll(Pageable pageable) {
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withPage(pageable);
 
         return findAll(builder.query(), pageable);
-    }
-
-    @Override
-    public List<Individual> findAllById(Iterable<String> ids) {
-        try {
-            SolrDocumentList documents = solrClient.getById(COLLECTION, IterableUtils.toList(ids));
-
-            return solrClient.getBinder()
-                .getBeans(Individual.class, documents);
-        } catch (IOException | SolrServerException e) {
-            throw new SolrRequestException("Failed to find documents from ids", e);
-        }
     }
 
     @Override
@@ -215,7 +108,14 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findByIdIn(List<String> ids) {
-        return findAllById(ids);
+        try {
+            SolrDocumentList documents = solrClient.getById(COLLECTION, ids);
+
+            return solrClient.getBinder()
+                .getBeans(Individual.class, documents);
+        } catch (IOException | SolrServerException e) {
+            throw new SolrRequestException("Failed to find documents from ids", e);
+        }
     }
 
     @Override
@@ -372,12 +272,12 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         return dataNetwork;
     }
 
-    private long count(String q) {
-        SolrQuery query = new SolrQuery(q)
-            .setRows(0);
+    // private long count(String q) {
+    //     SolrQuery query = new SolrQuery(q)
+    //         .setRows(0);
 
-        return count(query);
-    }
+    //     return count(query);
+    // }
 
     private long count(SolrQuery query) {
         try {

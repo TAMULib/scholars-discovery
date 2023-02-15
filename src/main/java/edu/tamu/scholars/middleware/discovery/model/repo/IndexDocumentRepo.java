@@ -21,35 +21,11 @@ import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 
 public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
 
-    public <S extends D> S save(S document);
-
-    public <S extends D> Iterable<S> saveAll(Iterable<S> documents);
-
-    public void delete(D document);
-
-    public void deleteById(String id);
-
-    public void deleteAllById(Iterable<String> ids);
-
-    public void deleteAll(Iterable<? extends D> documents);
-
-    public void deleteAll();
-
-    public boolean existsById(String id);
-
-    public long count();
-
     public long count(String query, List<FilterArg> filters);
 
     public Optional<D> findById(String id);
 
-    public List<D> findAll();
-
-    public List<D> findAll(Sort sort);
-
     public Page<D> findAll(Pageable pageable);
-
-    public List<D> findAllById(Iterable<String> ids);
 
     public List<D> findByType(String type);
 
