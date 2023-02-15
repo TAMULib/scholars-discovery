@@ -1,9 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.model.repo;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +16,7 @@ import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
+import reactor.core.publisher.Flux;
 
 public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
 
@@ -35,7 +34,7 @@ public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
 
     public DiscoveryFacetAndHighlightPage<D> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<BoostArg> boosts, HighlightArg highlight, Pageable page);
 
-    public CompletableFuture<Iterator<D>> export(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort);
+    public Flux<D> export(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort);
 
     public DiscoveryNetwork network(DiscoveryNetworkDescriptor dataNetworkDescriptor);
 

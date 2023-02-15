@@ -13,13 +13,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +52,7 @@ import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
+import reactor.core.publisher.Flux;
 
 @Service
 public class IndividualRepo implements IndexDocumentRepo<Individual> {
@@ -155,7 +151,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public CompletableFuture<Iterator<Individual>> export(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort) {
+    public Flux<Individual> export(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort) {
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
             .withFilters(filters)
@@ -163,15 +159,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             .withSort(sort)
             .withRows(Integer.MAX_VALUE);
 
-        CompletableFuture<Iterator<Individual>> future = new CompletableFuture<>();
-
-        CompletableFuture.runAsync(() -> {
+        return Flux.create(emitter -> {
             try {
                 solrClient.queryAndStreamResponse(COLLECTION, builder.query(), new StreamingResponseCallback() {
-                    private final AtomicBoolean initialized = new AtomicBoolean(false);
-                    private final AtomicBoolean streaming = new AtomicBoolean(false);
                     private final AtomicLong remaining = new AtomicLong(0);
-                    private final BlockingQueue<Individual> queue = new LinkedBlockingQueue<>();
 
                     @Override
                     public void streamSolrDocument(SolrDocument doc) {
@@ -182,37 +173,20 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                         individual.setClazz(doc.getFieldValue(CLASS).toString());
                         individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
 
-                        queue.add(individual);
+                        emitter.next(individual);
 
-                        if (initialized.compareAndSet(false, true)) {
-                            future.complete(new Iterator<Individual>() {
-
-                                @Override
-                                public boolean hasNext() {
-                                    return streaming.get() || !queue.isEmpty();
-                                }
-
-                                @Override
-                                public Individual next() {
-                                    try {
-                                        return queue.take();
-                                    } catch (InterruptedException e) {
-                                        throw new SolrRequestException("Failed to stream documents", e);
-                                    }
-                                }
-
-                            });
-                        }
-
-                        if (remaining.decrementAndGet() <= 0) {
-                            streaming.set(false);
+                        if (remaining.decrementAndGet() == 0) {
+                            emitter.complete();
                         }
                     }
 
                     @Override
                     public void streamDocListInfo(long numFound, long start, Float maxScore) {
-                        streaming.set(numFound > 0);
-                        remaining.set(numFound);
+                        if (numFound == 0) {
+                            emitter.complete();
+                        } else {
+                            remaining.set(numFound);
+                        }
                     }
 
                 });
@@ -220,8 +194,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 throw new SolrRequestException("Failed to stream documents", e);
             }
         });
-
-        return future;
     }
 
     @Override

@@ -53,7 +53,7 @@ public class IndividualSearchExportController implements RepresentationModelProc
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition("export"))
             .header(HttpHeaders.CONTENT_TYPE, exporter.contentType())
-            .body(exporter.streamIndividuals(repo.export(query, filters, boosts, sort).get(), export));
+            .body(exporter.streamIndividuals(repo.export(query, filters, boosts, sort), export));
     }
 
     @Override
