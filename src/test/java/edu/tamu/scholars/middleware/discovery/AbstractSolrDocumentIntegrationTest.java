@@ -26,18 +26,15 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.tamu.scholars.middleware.config.SolrTestConfig;
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 
-@Import(SolrTestConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractIndexDocument> {
 
@@ -56,14 +53,23 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @BeforeAll
     public void setup() throws SolrServerException, IOException {
-        createCore();
+        System.out.println("setup");
+        System.out.println("Creating documents");
         createDocuments();
     }
 
     @AfterAll
     public void cleanup() throws SolrServerException, IOException {
+        System.out.println("cleanup");
+        System.out.println("Deleting documents");
         deleteDocuments();
+        System.out.println("Deleting core");
         deleteCore();
+        System.out.println("Creating core");
+        createCore();
+        System.out.println("Ahhhhhhh, leave it in a startable state. Nice. Feels right. :)");
+        System.out.println("Sure hope these tests don't clear the Solr core I just indexed.");
+        System.out.println("Don't forget to change Solr URL for production.");
     }
 
     private void createCore() throws SolrServerException, IOException {

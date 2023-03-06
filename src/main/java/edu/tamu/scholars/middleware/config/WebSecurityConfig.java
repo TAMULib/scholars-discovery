@@ -10,8 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -19,21 +17,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.scholars.middleware.auth.config.TokenConfig;
 import edu.tamu.scholars.middleware.auth.handler.CustomAccessDeniedExceptionHandler;
@@ -45,8 +45,8 @@ import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class WebSecurityConfig {
 
     @Value("${spring.profiles.active:default}")
     private String profile;
@@ -126,8 +126,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return bean;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         if (enableH2Console()) {
             // NOTE: permit all access to h2console
             http
@@ -139,7 +139,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
                 .expressionHandler(securityExpressionHandler)
 
-                .antMatchers(PATCH,
+                .requestMatchers(PATCH,
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
@@ -147,51 +147,51 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/users/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(POST,
+                .requestMatchers(POST,
                     "/registration")
                     .permitAll()
 
-                .antMatchers(POST,
+                .requestMatchers(POST,
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(POST, "/users/{id}")
+                .requestMatchers(POST, "/users/{id}")
                     .denyAll()
 
-                .antMatchers(PUT, "/registration")
+                .requestMatchers(PUT, "/registration")
                     .permitAll()
 
-                .antMatchers(PUT,
+                .requestMatchers(PUT,
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(PUT, "/users/{id}")
+                .requestMatchers(PUT, "/users/{id}")
                     .denyAll()
 
-                .antMatchers(GET, "/user")
+                .requestMatchers(GET, "/user")
                     .hasRole("USER")
 
-                .antMatchers(GET,
+                .requestMatchers(GET,
                     "/users",
                     "/users/{id}",
                     "/themes",
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(DELETE,
+                .requestMatchers(DELETE,
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(DELETE, "/users/{id}")
+                .requestMatchers(DELETE, "/users/{id}")
                     .hasRole("SUPER_ADMIN")
 
                 .anyRequest()
@@ -220,6 +220,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .csrf()
                     .disable();
+        return http.build();
     }
 
     private CustomAuthenticationSuccessHandler authenticationSuccessHandler() {

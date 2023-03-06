@@ -59,9 +59,7 @@ Solr is configured via ```spring.data.solr```.
 3. Clone this project
 4. Build and Run the provided Solr application
 ```bash
-   cd scholars-discovery/solr
-   docker build --tag=scholars/solr .
-   docker run -d -p 8983:8983 scholars/solr
+   cd solr && docker build --tag=scholars/solr . && docker run -d -p 8983:8983 scholars/solr && cd ..
 ```
 5. Build and Run the application
 ```bash

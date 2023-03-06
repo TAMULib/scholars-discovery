@@ -3,10 +3,10 @@ package edu.tamu.scholars.middleware.view.model;
 import static edu.tamu.scholars.middleware.view.model.FacetType.STRING;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

@@ -7,7 +7,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.EXPORT_I
 
 import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;

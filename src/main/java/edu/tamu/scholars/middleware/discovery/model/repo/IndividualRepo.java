@@ -244,13 +244,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         return dataNetwork;
     }
 
-    // private long count(String q) {
-    //     SolrQuery query = new SolrQuery(q)
-    //         .setRows(0);
-
-    //     return count(query);
-    // }
-
     private long count(SolrQuery query) {
         try {
             return solrClient.query(COLLECTION, query)

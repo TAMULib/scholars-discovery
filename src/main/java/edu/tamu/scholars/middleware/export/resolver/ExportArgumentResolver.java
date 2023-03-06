@@ -2,7 +2,7 @@ package edu.tamu.scholars.middleware.export.resolver;
 
 import static edu.tamu.scholars.middleware.export.utility.ArgumentUtility.getExportArguments;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;

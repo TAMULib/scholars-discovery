@@ -3,10 +3,10 @@ package edu.tamu.scholars.middleware.view.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.Min;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.Min;
 
 @MappedSuperclass
 public abstract class FieldView extends View {
