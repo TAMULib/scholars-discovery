@@ -57,7 +57,7 @@ import reactor.core.publisher.Flux;
 @Service
 public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
-  private static final Logger logger = LoggerFactory.getLogger(IndividualRepo.class);
+    private static final Logger logger = LoggerFactory.getLogger(IndividualRepo.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
 
@@ -212,11 +212,49 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             for (SolrDocument document : documents) {
                 if (document.containsKey(dateField)) {
-                    Date publicationDate = ((Date) document.getFieldValue(dateField));
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(publicationDate);
-                    dataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
+
+                    Object doc = document.getFieldValue(dateField);
+
+                    try {
+
+                        // casting as date
+                        Date publicationDate = (Date) doc;
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(publicationDate);
+
+                        String year = String.valueOf(calendar.get(Calendar.YEAR));
+
+                        dataNetwork.countYear(year);
+
+                    } catch (Exception e1) {
+
+                        // ISO standard, year comes first, no negatives
+
+                        logger.debug(String.format("%s: %s", "RAW OBJECT", doc));
+
+                        logger.debug(String.format("%s: %s", "RAW OBJECT CLASS", doc.getClass()));
+                        logger.debug(String.format("%s: %s", "RAW OBJECT CLASS SIMPLE NAME", doc.getClass().getSimpleName()));
+
+                        try {
+                            // casting to string
+                            String rawDate = (String) doc;
+
+                            logger.debug(String.format("%s: %s", "RAW DATE", rawDate));
+
+                            if (rawDate.length() >= 4) {
+                                String year = rawDate.substring(0, 4);
+                                // parse int
+                                Integer.parseInt(year);
+                                dataNetwork.countYear(year);
+                            }
+
+                        } catch (Exception e2) {
+                            // do nothing
+                        }
+                    }
                 }
+
                 List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
 
                 String iid = (String) document.getFieldValue(ID);
@@ -243,13 +281,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         return dataNetwork;
     }
-
-    // private long count(String q) {
-    //     SolrQuery query = new SolrQuery(q)
-    //         .setRows(0);
-
-    //     return count(query);
-    // }
 
     private long count(SolrQuery query) {
         try {
