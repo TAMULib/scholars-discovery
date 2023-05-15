@@ -212,12 +212,8 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             for (SolrDocument document : documents) {
                 if (document.containsKey(dateField)) {
-
                     Object doc = document.getFieldValue(dateField);
-
                     try {
-
-                        // casting as date
                         Date publicationDate = (Date) doc;
 
                         Calendar calendar = Calendar.getInstance();
@@ -229,22 +225,11 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
                     } catch (Exception e1) {
 
-                        // ISO standard, year comes first, no negatives
-
-                        logger.debug(String.format("%s: %s", "RAW OBJECT", doc));
-
-                        logger.debug(String.format("%s: %s", "RAW OBJECT CLASS", doc.getClass()));
-                        logger.debug(String.format("%s: %s", "RAW OBJECT CLASS SIMPLE NAME", doc.getClass().getSimpleName()));
-
                         try {
-                            // casting to string
                             String rawDate = (String) doc;
-
-                            logger.debug(String.format("%s: %s", "RAW DATE", rawDate));
 
                             if (rawDate.length() >= 4) {
                                 String year = rawDate.substring(0, 4);
-                                // parse int
                                 Integer.parseInt(year);
                                 dataNetwork.countYear(year);
                             }
