@@ -212,9 +212,9 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             for (SolrDocument document : documents) {
                 if (document.containsKey(dateField)) {
-                    Object doc = document.getFieldValue(dateField);
+                    Object dateFieldFromDocument = document.getFieldValue(dateField);
                     try {
-                        Date publicationDate = (Date) doc;
+                        Date publicationDate = (Date) dateFieldFromDocument;
 
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(publicationDate);
@@ -226,7 +226,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                     } catch (Exception e1) {
 
                         try {
-                            String rawDate = (String) doc;
+                            String rawDate = (String) dateFieldFromDocument;
 
                             if (rawDate.length() >= 4) {
                                 String year = rawDate.substring(0, 4);
