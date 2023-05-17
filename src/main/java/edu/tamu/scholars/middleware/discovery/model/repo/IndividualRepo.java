@@ -8,7 +8,6 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
-import static edu.tamu.scholars.middleware.utility.DateFormatUtility.parseOutYear;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -53,6 +52,8 @@ import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
+import edu.tamu.scholars.middleware.utility.DateFormatUtility;
+
 import reactor.core.publisher.Flux;
 
 @Service
@@ -246,27 +247,27 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     private boolean validateAndCountDateField(DiscoveryNetwork dataNetwork, Object dateFieldFromDocument) {
-        try {
+        String year = null;
+        if (dateFieldFromDocument instanceof Date) {
             Date publicationDate = (Date) dateFieldFromDocument;
-
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(publicationDate);
-
-            String year = String.valueOf(calendar.get(Calendar.YEAR));
-
-            // redundant statement in stack
-            dataNetwork.countYear(year);
-        } catch (Exception e1) {
+            year = String.valueOf(calendar.get(Calendar.YEAR));
+        } else if (dateFieldFromDocument instanceof String) {
             try {
-                String year = parseOutYear((String) dateFieldFromDocument);
-
-                dataNetwork.countYear(year);
-
-            } catch (Exception e2) {
-                return false;
+                year = DateFormatUtility.parseOutYear((String) dateFieldFromDocument);
+            } catch (Exception e) {
+                // do nothing, not success return false
             }
         }
-        return true;
+
+        boolean success = year != null;
+
+        if (success) {
+            dataNetwork.countYear(year);
+        }
+
+        return success;
     }
 
     private long count(SolrQuery query) {
