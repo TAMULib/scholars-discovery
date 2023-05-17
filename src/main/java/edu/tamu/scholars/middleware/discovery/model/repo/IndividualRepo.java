@@ -57,7 +57,7 @@ import reactor.core.publisher.Flux;
 @Service
 public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
-  private static final Logger logger = LoggerFactory.getLogger(IndividualRepo.class);
+    private static final Logger logger = LoggerFactory.getLogger(IndividualRepo.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
 
@@ -244,13 +244,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         return dataNetwork;
     }
 
-    // private long count(String q) {
-    //     SolrQuery query = new SolrQuery(q)
-    //         .setRows(0);
-
-    //     return count(query);
-    // }
-
     private long count(SolrQuery query) {
         try {
             return solrClient.query(COLLECTION, query)
@@ -373,8 +366,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         public SolrQueryBuilder withFilters(List<FilterArg> filters) {
             filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
                 FilterArg firstOne = filterList.get(0);
+
                 StringBuilder filterQuery = new StringBuilder()
                     .append(new FilterQueryBuilder(firstOne, false).build());
+
                 if (filterList.size() > 1) {
                     // NOTE: filters grouped by field are AND together
                     for (FilterArg arg : filterList.subList(1, filterList.size())) {
@@ -456,6 +451,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
 
         public SolrQuery query() {
+            logger.debug(this.query.toString());
             return this.query;
         }
 
@@ -535,8 +531,11 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                     break;
                 case STARTS_WITH:
                     filterQuery
-                        .append("{!")
-                        .append(value);
+                        .append("{!edismax qf=")
+                        .append(field)
+                        .append("}")
+                        .append(value)
+                        .append("*");
                     break;
                 case CONTAINS:
                 case EXPRESSION:
