@@ -8,6 +8,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
+import static edu.tamu.scholars.middleware.utility.DateFormatUtility.parseOutYear;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -211,33 +212,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             final String dateField = dataNetworkDescriptor.getDateField();
 
             for (SolrDocument document : documents) {
+                boolean hasValidDate = false;
                 if (document.containsKey(dateField)) {
                     Object dateFieldFromDocument = document.getFieldValue(dateField);
-                    try {
-                        Date publicationDate = (Date) dateFieldFromDocument;
-
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(publicationDate);
-
-                        String year = String.valueOf(calendar.get(Calendar.YEAR));
-
-                        dataNetwork.countYear(year);
-
-                    } catch (Exception e1) {
-
-                        try {
-                            String rawDate = (String) dateFieldFromDocument;
-
-                            if (rawDate.length() >= 4) {
-                                String year = rawDate.substring(0, 4);
-                                Integer.parseInt(year);
-                                dataNetwork.countYear(year);
-                            }
-
-                        } catch (Exception e2) {
-                            // do nothing
-                        }
-                    }
+                    hasValidDate = validateAndCountDateField(dataNetwork, dateFieldFromDocument);
                 }
 
                 List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
@@ -265,6 +243,30 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
 
         return dataNetwork;
+    }
+
+    private boolean validateAndCountDateField(DiscoveryNetwork dataNetwork, Object dateFieldFromDocument) {
+        try {
+            Date publicationDate = (Date) dateFieldFromDocument;
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(publicationDate);
+
+            String year = String.valueOf(calendar.get(Calendar.YEAR));
+
+            // redundant statement in stack
+            dataNetwork.countYear(year);
+        } catch (Exception e1) {
+            try {
+                String year = parseOutYear((String) dateFieldFromDocument);
+
+                dataNetwork.countYear(year);
+
+            } catch (Exception e2) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private long count(SolrQuery query) {
