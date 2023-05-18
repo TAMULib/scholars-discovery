@@ -30,8 +30,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jena.version>3.17.0</jena.version>
-    <solr.version>9.1.1</solr.version>
-    <jetty.version>9.4.19.v20190610</jetty.version> <!-- runtime matches compile time in solr dependencies -->
+    <solr.version>9.2.1</solr.version>
+    <jetty.version>11.0.15</jetty.version> <!-- runtime matches compile time in solr dependencies -->
     <slf4j.version>2.0.6</slf4j.version>
   </properties>
 
@@ -180,6 +180,15 @@
           <groupId>commons-lang</groupId>
           <artifactId>commons-lang</artifactId>
         </exclusion>
+
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-server</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -294,7 +303,17 @@
           <groupId>ch.qos.logback</groupId>
           <artifactId>logback-classic</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.12.2</version>
     </dependency>
 
     <dependency>
