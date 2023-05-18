@@ -22,8 +22,14 @@ jobs:
         architecture: x64
         cache: 'maven'
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
     - name: Start Scholars Discovery Solr Cloud
-      run: docker-compose -f "docker-compose.yml" up -d --build
+      run: docker-compose -f "solr-cloud-docker-compose.yml" up -d --build
 
     - name: Tests with Coveralls coverage report
       run: mvn clean test jacoco:report coveralls:report -DdryRun=true
