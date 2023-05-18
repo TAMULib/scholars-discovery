@@ -11,8 +11,6 @@ public class TriplestoreConfig {
 
     private String layoutType = "layout2/hash";
 
-    private String databaseType = "MySQL";
-
     private String datasourceUrl;
 
     private String username;
@@ -53,14 +51,6 @@ public class TriplestoreConfig {
 
     public void setLayoutType(String layoutType) {
         this.layoutType = layoutType;
-    }
-
-    public String getDatabaseType() {
-        return databaseType;
-    }
-
-    public void setDatabaseType(String databaseType) {
-        this.databaseType = databaseType;
     }
 
     public String getDatasourceUrl() {

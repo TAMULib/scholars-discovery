@@ -5,7 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
@@ -54,11 +54,14 @@ public class IndividualExportController implements RepresentationModelProcessor<
     @Override
     public IndividualModel process(IndividualModel resource) {
         try {
-            resource.add(linkTo(methodOn(this.getClass()).export(
-                resource.getContent().getId(),
-                "docx",
-                "Profile Summary"
-            )).withRel("export").withTitle("Individual export"));
+            Optional<Individual> content = Optional.ofNullable(resource.getContent());
+            if (content.isPresent()) {
+                resource.add(linkTo(methodOn(this.getClass()).export(
+                    content.get().getId(),
+                    "docx",
+                    "Profile Summary"
+                )).withRel("export").withTitle("Individual export"));
+            }
         } catch (UnknownExporterTypeException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }

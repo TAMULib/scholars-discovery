@@ -8,8 +8,8 @@ import java.text.Normalizer;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import edu.tamu.scholars.middleware.service.SDBTriplestore;
+import edu.tamu.scholars.middleware.service.SparqlHttpTriplestore;
 import edu.tamu.scholars.middleware.service.TDBTriplestore;
 
 @ExtendWith(SpringExtension.class)
@@ -23,7 +23,6 @@ public class TriplestoreConfigTest {
         assertEquals(TDBTriplestore.class, triplestoreConfig.getType());
         assertEquals("triplestore", triplestoreConfig.getDirectory());
         assertEquals("layout2/hash", triplestoreConfig.getLayoutType());
-        assertEquals("MySQL", triplestoreConfig.getDatabaseType());
         assertNull(triplestoreConfig.getDatasourceUrl());
         assertNull(triplestoreConfig.getUsername());
         assertNull(triplestoreConfig.getPassword());
@@ -36,14 +35,12 @@ public class TriplestoreConfigTest {
     @Test
     public void testGettersAndSetters() {
         TriplestoreConfig triplestoreConfig = new TriplestoreConfig();
-        triplestoreConfig.setType(SDBTriplestore.class);
-        assertEquals(SDBTriplestore.class, triplestoreConfig.getType());
+        triplestoreConfig.setType(SparqlHttpTriplestore.class);
+        assertEquals(SparqlHttpTriplestore.class, triplestoreConfig.getType());
         triplestoreConfig.setDirectory("vivo_data");
         assertEquals("vivo_data", triplestoreConfig.getDirectory());
         triplestoreConfig.setLayoutType("layout/hash");
         assertEquals("layout/hash", triplestoreConfig.getLayoutType());
-        triplestoreConfig.setDatabaseType("PostgreSQL");
-        assertEquals("PostgreSQL", triplestoreConfig.getDatabaseType());
         triplestoreConfig.setDatasourceUrl("jdbc://localhost:6541/test");
         assertEquals("jdbc://localhost:6541/test", triplestoreConfig.getDatasourceUrl());
         triplestoreConfig.setUsername("username");

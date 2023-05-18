@@ -81,7 +81,7 @@ logging:
         web: INFO
 
 server:
-  max-http-header-size: 16384
+  # max-http-header-size: 16384
   port: 9001
   servlet:
     contextPath:
@@ -114,7 +114,7 @@ spring:
       path: /h2console
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=LEGACY;NON_KEYWORDS=VALUE
     username: scholars
     password: scholars
   jpa:
@@ -124,6 +124,8 @@ spring:
     open-in-view: false
     properties:
       hibernate:
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions: true
         enable_lazy_load_no_trans: true
         auto_close_session: true
         show_sql: false
