@@ -58,25 +58,13 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
         } catch(Exception e) {
             // do nothing
         }
+  
         createDocuments();
     }
 
     @AfterAll
     public void cleanup() throws SolrServerException, IOException {
         deleteDocuments();
-    }
-
-    private void createCore() throws SolrServerException, IOException {
-        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-        createRequest.setCoreName(getCollection());
-        createRequest.setConfigSet(getCollection());
-        solrClient.request(createRequest);
-    }
-
-    private void deleteCore() throws SolrServerException, IOException {
-        CoreAdminRequest.Unload unloadRequest = new CoreAdminRequest.Unload(true);
-        unloadRequest.setCoreName(getCollection());
-        solrClient.request(unloadRequest);
     }
 
     private void createDocuments() throws SolrServerException, IOException {
