@@ -52,11 +52,10 @@ The application can be configured to harvest and index on startup, ```middleware
 
 Solr is configured via ```spring.data.solr```.
 
-## Installation instructions
+## Development
 
 1. [Install](https://maven.apache.org/install.html) Maven
-2. Clone this project
-3.  [Install](https://solr.apache.org/downloads.html) Solr application and run
+2. [Install](https://solr.apache.org/downloads.html) Solr application and run
 
     ```bash
     solr -e cloud
@@ -64,10 +63,9 @@ Solr is configured via ```spring.data.solr```.
 
     or
 
-    [Install](https://docs.docker.com/install/) Docker
+   [Install](https://docs.docker.com/install/) Docker
 
     ```bash
-    cd scholars-discovery/solr
     docker-compose up
     ```
 
