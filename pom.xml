@@ -404,6 +404,20 @@
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
         <version>4.3.0</version>
+        <dependencies>
+          <!--
+          <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+          </dependency>
+          -->
+          <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.0</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <repoToken/>
         </configuration>
