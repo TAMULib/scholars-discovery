@@ -25,16 +25,8 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Build solr docker
-      uses: docker/build-push-action@v4
-      with:
-        context: ./solr/
-        file: ./solr/Dockerfile
-        tag: scholars/solr
-        push: false
-
-    - name: Start Scholars Discovery Solr Instance
-      run: docker run -d -p 8983:8983 scholars/solr 
+    - name: Start Scholars Discovery Solr Cloud
+      run: docker-compose up
 
     - name: Tests with Coveralls coverage report
       run: mvn clean test jacoco:report coveralls:report -DdryRun=true
