@@ -53,32 +53,17 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @BeforeAll
     public void setup() throws SolrServerException, IOException {
-        System.out.println("setup");
-
         try {
-            System.out.println("Clearing index");
             deleteDocuments();
         } catch(Exception e) {
-            System.out.println(String.format("Failed deleting documents\n%s", e.getMessage()));
+            // do nothing
         }
-
-        try {
-            System.out.println("Clearing collections");
-            deleteCore();
-        } catch(Exception e) {
-            System.out.println(String.format("Failed deleting documents\n%s", e.getMessage()));
-        }
-
-        System.out.println("Initializing collection");
-        createCore();
-
-        System.out.println("Initializing index");
         createDocuments();
     }
 
     @AfterAll
     public void cleanup() throws SolrServerException, IOException {
-        System.out.println("cleanup");
+        deleteDocuments();
     }
 
     private void createCore() throws SolrServerException, IOException {
