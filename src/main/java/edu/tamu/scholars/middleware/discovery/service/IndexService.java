@@ -1,14 +1,35 @@
 package edu.tamu.scholars.middleware.discovery.service;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.compressors.CompressorOutputStream;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.solr.client.solrj.request.CollectionAdminRequest;
+import org.apache.solr.client.solrj.request.ConfigSetAdminRequest;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +37,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.Resource;
+import org.springframework.util.ResourceUtils;
 
 import edu.tamu.scholars.middleware.discovery.component.Harvester;
 import edu.tamu.scholars.middleware.discovery.component.Indexer;
@@ -39,8 +62,14 @@ public class IndexService {
     @Value("${middleware.index.batchSize:10000}")
     private int indexBatchSize;
 
+    @Value("classpath:/solr/conf")
+    private Resource configset;
+
     @Autowired
     private List<Harvester> harvesters;
+
+    @Autowired
+    private SolrClient solrClient;
 
     @Autowired
     private List<Indexer> indexers;
@@ -57,6 +86,15 @@ public class IndexService {
 
     @PostConstruct
     public void startup() {
+
+        logger.info("Creating index...");
+        try {
+            createIndex();
+        } catch(Exception e) {
+            // implement robust init exception handling
+            e.printStackTrace();
+        }
+
         logger.info("Initializing index fields...");
         indexers.stream().forEach(indexer -> {
             logger.info(String.format("Initializing %s fields.", indexer.type().getSimpleName()));
@@ -103,6 +141,108 @@ public class IndexService {
         } else {
             logger.info("Already indexing. Waiting for next schedule.");
         }
+    }
+
+    private void createIndex() throws IOException, SolrServerException {
+        logger.info("Zipping configset");
+        File zipFile = zipConfigset();
+
+        try {
+            logger.info("Uploading configset");
+            ConfigSetAdminRequest.Upload uploadConfigsetRequest = new ConfigSetAdminRequest.Upload()
+                .setConfigSetName(COLLECTION)
+                .setCleanup(true)
+                .setOverwrite(true)
+                .setUploadFile(zipFile, "application/zip");
+
+            uploadConfigsetRequest.process(solrClient);
+        } catch(SolrServerException e) {
+            // already exists
+            // e.printStackTrace();
+            logger.info("config set already exists");
+        }
+
+
+        try {
+            logger.info("Creating collection");
+            // https://javadoc.io/static/org.apache.solr/solr-solrj/9.0.0/org/apache/solr/client/solrj/request/CollectionAdminRequest.Create.html
+            // see fluid setters and polymorphic createCollection methods
+            // String collection, int numShards, int numReplicas
+            CollectionAdminRequest.Create createCollectionRequest = CollectionAdminRequest.createCollection(COLLECTION, 1, 1);
+
+            createCollectionRequest.process(solrClient);
+        } catch(SolrServerException e) {
+            // already exists
+            // e.printStackTrace();
+            logger.info("collection already exists");
+        }
+    }
+
+    private File zipConfigset() throws FileNotFoundException, IOException {
+        File zipFile = File.createTempFile("configset", ".zip");
+
+        System.out.println(zipFile.getAbsolutePath());
+
+        try (
+            FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
+            ZipOutputStream zos = new ZipOutputStream(fos);
+        ) {
+            File solrConfigSet = configset.getFile();
+            if (solrConfigSet.isDirectory()) {
+                for (File file : solrConfigSet.listFiles()) {
+                    if (file.isDirectory()) {
+                        zipDirectory(zos, file, file.getName());
+                    } else {
+                        zipFile(zos, file);
+                    }
+                }
+            }
+        }
+
+        return zipFile;
+    }
+
+    private void zipDirectory(ZipOutputStream zos, File directory, String dirEntryParent) throws FileNotFoundException, IOException {
+        for (File file : directory.listFiles()) {
+            
+            if (file.isHidden()) {
+                throw new RuntimeException("Attempting to access hidden file: " + file.getName());
+            }
+
+            String path = dirEntryParent + File.separator + file.getName();
+            if (file.isDirectory()) {
+                zipDirectory(zos, file, path);
+                continue;
+            }
+
+            zos.putNextEntry(new ZipEntry(path));
+
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            long bytesRead = 0;
+            byte[] bytesIn = new byte[1024];
+            int read = 0;
+            while ((read = bis.read(bytesIn)) != -1) {
+                zos.write(bytesIn, 0, read);
+                bytesRead += read;
+            }
+
+            zos.closeEntry();
+        }
+    }
+
+    private void zipFile(ZipOutputStream zos, File file) throws FileNotFoundException, IOException {
+        zos.putNextEntry(new ZipEntry(file.getName()));
+
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        long bytesRead = 0;
+        byte[] bytesIn = new byte[1024];
+        int read = 0;
+        while ((read = bis.read(bytesIn)) != -1) {
+            zos.write(bytesIn, 0, read);
+            bytesRead += read;
+        }
+
+        zos.closeEntry();
     }
 
 }

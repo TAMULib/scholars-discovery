@@ -13,12 +13,12 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class UserControllerTest extends UserIntegrationTest {
                     .andDo(
                         document(
                             "users/directory",
-                            requestParameters(
+                            queryParameters(
                                 parameterWithName("page").description("The page number."),
                                 parameterWithName("size").description("The page size."),
                                 parameterWithName("sort").description("The page sort.")
@@ -92,7 +92,7 @@ public class UserControllerTest extends UserIntegrationTest {
                     pathParameters(
                         describeUser.withParameter("id", "The User ID.")
                     ),
-                    requestParameters(
+                    queryParameters(
                         describeUser.withParameter("firstName", "The first name of the user.").optional(),
                         describeUser.withParameter("lastName", "The last name of the user.").optional(),
                         describeUser.withParameter("email", "The e-mail address of the user.").optional(),
@@ -247,9 +247,9 @@ public class UserControllerTest extends UserIntegrationTest {
         // @formatter:on
     }
 
-    private Cookie login(User user) throws Exception {
+    private Cookie[] login(User user) throws Exception {
         MvcResult result = mockMvc.perform(post("/login").param("username", user.getEmail()).param("password", "HelloWorld123!")).andReturn();
-        return result.getResponse().getCookie("SESSION");
+        return new  Cookie[] { result.getResponse().getCookie("SESSION") };
     }
 
 }

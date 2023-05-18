@@ -17,6 +17,8 @@ public class IndexConfig {
 
     private int batchSize = 10000;
 
+    private boolean resumeIndividually = true;
+
     public String getCron() {
         return cron;
     }
@@ -55,6 +57,14 @@ public class IndexConfig {
 
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public boolean getResumeIndividually() {
+        return resumeIndividually;
+    }
+
+    public void setResumeIndiviudally(boolean resumeIndividually) {
+        this.resumeIndividually = resumeIndividually;
     }
 
 }

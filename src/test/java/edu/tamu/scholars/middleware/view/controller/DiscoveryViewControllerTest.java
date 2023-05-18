@@ -17,12 +17,12 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -164,7 +164,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
                             pathParameters(
                                 describeDiscoveryView.withParameter("id", "The Discovery View id.")
                             ),
-                            requestParameters(
+                            queryParameters(
                                 describeDiscoveryView.withParameter("id", "The Discovery View id.").optional(),
                                 describeDiscoveryView.withParameter("name", "The name of the Discovery View.").optional(),
                                 describeDiscoveryView.withParameter("layout", "The layout of the Discovery View.").optional(),
@@ -265,7 +265,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
                 .andDo(
                     document(
                         "discoveryViews/directory",
-                        requestParameters(
+                        queryParameters(
                             parameterWithName("page").description("The page number."),
                             parameterWithName("size").description("The page size."),
                             parameterWithName("sort").description("The page sort.")

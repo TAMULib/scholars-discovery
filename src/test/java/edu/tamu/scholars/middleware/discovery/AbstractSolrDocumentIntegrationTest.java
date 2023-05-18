@@ -26,18 +26,15 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.tamu.scholars.middleware.config.SolrTestConfig;
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 
-@Import(SolrTestConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractIndexDocument> {
 
@@ -56,14 +53,32 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @BeforeAll
     public void setup() throws SolrServerException, IOException {
+        System.out.println("setup");
+
+        try {
+            System.out.println("Clearing index");
+            deleteDocuments();
+        } catch(Exception e) {
+            System.out.println(String.format("Failed deleting documents\n%s", e.getMessage()));
+        }
+
+        try {
+            System.out.println("Clearing collections");
+            deleteCore();
+        } catch(Exception e) {
+            System.out.println(String.format("Failed deleting documents\n%s", e.getMessage()));
+        }
+
+        System.out.println("Initializing collection");
         createCore();
+
+        System.out.println("Initializing index");
         createDocuments();
     }
 
     @AfterAll
     public void cleanup() throws SolrServerException, IOException {
-        deleteDocuments();
-        deleteCore();
+        System.out.println("cleanup");
     }
 
     private void createCore() throws SolrServerException, IOException {

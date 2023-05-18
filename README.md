@@ -55,15 +55,23 @@ Solr is configured via ```spring.data.solr```.
 ## Installation instructions
 
 1. [Install](https://maven.apache.org/install.html) Maven
-2. [Install](https://docs.docker.com/install/) Docker
-3. Clone this project
-4. Build and Run the provided Solr application
-```bash
-   cd scholars-discovery/solr
-   docker build --tag=scholars/solr .
-   docker run -d -p 8983:8983 scholars/solr
-```
-5. Build and Run the application
+2. Clone this project
+3.  [Install](https://solr.apache.org/downloads.html) Solr application and run
+
+    ```bash
+    solr -e cloud
+    ```
+
+    or
+
+    [Install](https://docs.docker.com/install/) Docker
+
+    ```bash
+    cd scholars-discovery/solr
+    docker-compose up
+    ```
+
+4. Build and Run the application
 ```bash
    mvn clean install
    mvn spring-boot:run

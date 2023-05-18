@@ -6,7 +6,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -67,7 +67,7 @@ public abstract class AbstractSolrDocumentExportControllerTest<D extends Abstrac
             .andDo(
                 document(
                     getDocPath() + "/search/export",
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("query").description("The search query"),
                         parameterWithName("type").description("The search export format type"),
                         parameterWithName("filters").description("The filter fields."),
@@ -112,7 +112,7 @@ public abstract class AbstractSolrDocumentExportControllerTest<D extends Abstrac
                     pathParameters(
                         parameterWithName("id").description("The individual id")
                     ),
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("type").description("The individual export format type"),
                         parameterWithName("name").description("The individual export view name")
                     )

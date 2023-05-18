@@ -33,7 +33,7 @@ public class TDBTriplestore implements Triplestore {
     @Override
     public void init() {
         Instant start = Instant.now();
-        logger.info(String.format("Intializing %s", config.getType().getSimpleName()));
+        logger.info(String.format("Initializing %s", config.getType().getSimpleName()));
         // TODO: handle missing configurations
         TDB.getContext().setTrue(TDB.symUnionDefaultGraph);
         dataset = TDBFactory.createDataset(config.getDirectory());

@@ -2,7 +2,7 @@ package edu.tamu.scholars.middleware.discovery.resolver;
 
 import static edu.tamu.scholars.middleware.discovery.utility.ArgumentUtility.getFacetArguments;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;

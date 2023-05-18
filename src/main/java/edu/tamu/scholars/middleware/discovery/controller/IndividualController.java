@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -96,12 +96,15 @@ public class IndividualController implements RepresentationModelProcessor<Indivi
     @Override
     public IndividualModel process(IndividualModel resource) {
         try {
-            resource.add(linkTo(methodOn(this.getClass()).network(
-                resource.getContent().getId(),
-                "publicationDate",
-                Arrays.asList("authors"),
-                "class:Document"
-            )).withRel("network").withTitle("Individual discovery network"));
+            Optional<Individual> content = Optional.ofNullable(resource.getContent());
+            if (content.isPresent()) {
+                resource.add(linkTo(methodOn(this.getClass()).network(
+                    content.get().getId(),
+                    "publicationDate",
+                    Arrays.asList("authors"),
+                    "class:Document"
+                )).withRel("network").withTitle("Individual discovery network"));
+            }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
