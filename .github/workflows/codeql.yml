@@ -2,9 +2,9 @@
 
 on:
   push:
-    branches: [ "tamu-main", "210-upgrade" ]
+    branches: [ "tamu-main" ]
   pull_request:
-    branches: [ "tamu-main", "may-2023-sprint-staging" ]
+    branches: [ "tamu-main" ]
   schedule:
     - cron: '0 0 * * 0'
 
