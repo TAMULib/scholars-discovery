@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        runs-on: [macos-latest]
+        runs-on: [ubuntu-latest]
         java-version: [17]
 
     runs-on: ${{ matrix.runs-on }}
