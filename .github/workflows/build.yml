@@ -1,12 +1,12 @@
 name: "Build"
 
-on: [push, pull_request, workflow_dispatch]
+on: [pull_request, workflow_dispatch]
 
 jobs:
   build:
     strategy:
       matrix:
-        runs-on: [ubuntu-latest]
+        runs-on: [windows-latest]
         java-version: [17]
 
     runs-on: ${{ matrix.runs-on }}
