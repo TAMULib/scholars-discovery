@@ -112,6 +112,8 @@
       valuePath: positionOrganization
     - columnHeader: Individual
       valuePath: individual
+    - columnHeader: ORCID
+      valuePath: orcidId
 
 - name: Research Overview
   layout: LIST
