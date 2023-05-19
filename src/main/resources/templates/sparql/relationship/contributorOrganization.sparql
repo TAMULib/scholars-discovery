@@ -1,0 +1,14 @@
+PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+CONSTRUCT {
+    ?organization rdfs:label ?labelWithIds .
+} WHERE {
+    <{{uri}}> vivo:relates ?relates ; a vivo:Grant .
+    ?relates obo:RO_0000052 ?contributor ; a vivo:ResearcherRole .
+    ?contributor vivo:relatedBy ?position ; a vivo:Position  .
+    ?position vivo:relates ?organization ; a foaf:Organization .
+    ?organization rdfs:label ?label .
+    BIND( CONCAT( STR(?label), REPLACE(STR(?contributor), "(^.*/)", "::") ) AS ?labelWithIds ) .
+}

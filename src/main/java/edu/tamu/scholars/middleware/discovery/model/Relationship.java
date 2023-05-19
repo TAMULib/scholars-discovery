@@ -160,7 +160,7 @@ public class Relationship extends Common {
 
     @Field
     @FieldType(type = "nested_tokenized_strings", copyTo = "_text_")
-    @NestedObject(properties = { @Reference(value = "contributorRole", key = "role") })
+    @NestedObject(properties = { @Reference(value = "contributorRole", key = "role"), @Reference(value = "contributorOrganization", key = "organization") })
     @FieldSource(template = "relationship/contributor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> contributors;
 
@@ -168,6 +168,11 @@ public class Relationship extends Common {
     @FieldType(type = "nested_whole_strings")
     @FieldSource(template = "relationship/contributorRole", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> contributorRole;
+
+    @Field
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(template = "relationship/contributorOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
+    private List<String> contributorOrganization;
 
     @Field
     @NestedObject
@@ -450,6 +455,14 @@ public class Relationship extends Common {
 
     public void setContributorRole(List<String> contributorRole) {
         this.contributorRole = contributorRole;
+    }
+
+    public List<String> getContributorOrganization() {
+        return contributorOrganization;
+    }
+
+    public void setContributorOrganization(List<String> contributorOrganization) {
+        this.contributorOrganization = contributorOrganization;
     }
 
     public List<String> getPrincipalInvestigators() {

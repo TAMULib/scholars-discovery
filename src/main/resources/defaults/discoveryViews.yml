@@ -381,6 +381,14 @@
       pageSize: 10
       collapsed: true
       hidden: false
+    - name: Contributor Organization
+      field: contributorOrganization
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      collapsed: true
+      hidden: false
     - name: Awarded By
       field: awardedBy_nested_facets
       type: STRING
