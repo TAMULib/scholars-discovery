@@ -56,18 +56,32 @@ Solr is configured via ```spring.data.solr```.
 
 1. [Install](https://maven.apache.org/install.html) Maven
 2. [Install](https://solr.apache.org/downloads.html) Solr application and run
-```bash
-solr -e cloud
-```
+
+   ```bash
+   solr -e cloud
+   ```
+
+   or
+
+   [Install](https://www.docker.com/) Docker
+
+   ```bash
+   docker-compose up -f "solr-cloud-docker-compose.yml"
+   ```
+
 3. Build and Run the application
-```bash
-   mvn clean install
-   mvn spring-boot:run
-```
+
+   ```bash
+      mvn clean install
+      mvn spring-boot:run
+   ```
+
    - Note: Custom application configuration can be achieved by providing a location and an optional profile, such as:
-```bash
-   mvn spring-boot:run -Dspring-boot.run.profiles=dev -Dspring-boot.run.config.location=/some/directory/
-```
+
+   ```bash
+      mvn spring-boot:run -Dspring-boot.run.profiles=dev -Dspring-boot.run.config.location=/some/directory/
+   ```
+
    - ..where an `application-dev.yml` exists in the `/some/location/` directory
 
 ## Docker Deployment
