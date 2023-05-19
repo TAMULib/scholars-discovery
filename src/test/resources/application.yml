@@ -29,6 +29,7 @@ middleware:
     zone: America/Chicago
     onStartup: false
     batchSize: 1000
+    removeOnStartup: true
     resumeIndiviudally: true
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore

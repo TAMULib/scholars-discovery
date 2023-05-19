@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
 
+import edu.tamu.scholars.middleware.config.model.IndexConfig;
 import edu.tamu.scholars.middleware.discovery.component.Harvester;
 import edu.tamu.scholars.middleware.discovery.component.Indexer;
 import edu.tamu.scholars.middleware.service.Triplestore;
@@ -53,14 +54,8 @@ public class IndexService {
 
     public static final List<String> CREATED_FIELDS = new CopyOnWriteArrayList<String>();
 
-    @Value("${middleware.index.onStartup:false}")
-    private boolean indexOnStartup;
-
-    @Value("${middleware.index.onStartupDelay:10000}")
-    private int indexOnStartupDelay;
-
-    @Value("${middleware.index.batchSize:10000}")
-    private int indexBatchSize;
+    @Autowired
+    private IndexConfig indexConfig;
 
     @Value("classpath:/solr/conf")
     private Resource configset;
@@ -87,20 +82,30 @@ public class IndexService {
     @PostConstruct
     public void startup() {
 
-        logger.info("Creating index...");
+        if (indexConfig.getRemoveOnStartup()) {
+            logger.info("Remove collection...");
+            try {
+                removeCollection();
+            } catch(Exception e) {
+                // implement robust init exception handling
+                e.printStackTrace();
+            }
+        }
+
+        logger.info("Creating collection...");
         try {
-            createIndex();
+            createCollection();
         } catch(Exception e) {
             // implement robust init exception handling
             e.printStackTrace();
         }
 
-        logger.info("Initializing index fields...");
+        logger.info("Initializing collection fields...");
         indexers.stream().forEach(indexer -> {
             logger.info(String.format("Initializing %s fields.", indexer.type().getSimpleName()));
             indexer.init();
         });
-        if (indexOnStartup) {
+        if (indexConfig.isOnStartup()) {
             threadPoolTaskScheduler.schedule(new Runnable() {
 
                 @Override
@@ -108,7 +113,7 @@ public class IndexService {
                     index();
                 }
 
-            }, new Date(System.currentTimeMillis() + indexOnStartupDelay));
+            }, new Date(System.currentTimeMillis() + indexConfig.getOnStartupDelay()));
         }
     }
 
@@ -121,7 +126,7 @@ public class IndexService {
             harvesters.parallelStream().forEach(harvester -> {
                 logger.info(String.format("Indexing %s documents.", harvester.type().getSimpleName()));
                 if (indexers.stream().anyMatch(indexer -> indexer.type().equals(harvester.type()))) {
-                    harvester.harvest().buffer(indexBatchSize).subscribe(batch -> {
+                    harvester.harvest().buffer(indexConfig.getBatchSize()).subscribe(batch -> {
                         indexers.parallelStream().filter(indexer -> indexer.type().equals(harvester.type())).forEach(indexer -> {
                             indexer.index(batch);
                         });
@@ -143,12 +148,26 @@ public class IndexService {
         }
     }
 
-    private void createIndex() throws IOException, SolrServerException {
-        logger.info("Zipping configset");
+    private void removeCollection() throws IOException, SolrServerException {
+        try {
+            logger.info("Removing collection {}", COLLECTION);
+            CollectionAdminRequest.Delete deleteCollectionRequest = CollectionAdminRequest.deleteCollection(COLLECTION);
+
+            deleteCollectionRequest.process(solrClient);
+        } catch(SolrServerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createCollection() throws IOException, SolrServerException {
+
+        // maybe separate zip and upload configset and layer in logic
+
+        logger.info("Zipping configset for collection {}", COLLECTION);
         File zipFile = zipConfigset();
 
         try {
-            logger.info("Uploading configset");
+            logger.info("Uploading configset for collection {}", COLLECTION);
             ConfigSetAdminRequest.Upload uploadConfigsetRequest = new ConfigSetAdminRequest.Upload()
                 .setConfigSetName(COLLECTION)
                 .setCleanup(true)
@@ -157,31 +176,21 @@ public class IndexService {
 
             uploadConfigsetRequest.process(solrClient);
         } catch(SolrServerException e) {
-            // already exists
-            // e.printStackTrace();
-            logger.info("config set already exists");
+            e.printStackTrace();
         }
 
-
         try {
-            logger.info("Creating collection");
-            // https://javadoc.io/static/org.apache.solr/solr-solrj/9.0.0/org/apache/solr/client/solrj/request/CollectionAdminRequest.Create.html
-            // see fluid setters and polymorphic createCollection methods
-            // String collection, int numShards, int numReplicas
+            logger.info("Creating collection {}", COLLECTION);
             CollectionAdminRequest.Create createCollectionRequest = CollectionAdminRequest.createCollection(COLLECTION, 1, 1);
 
             createCollectionRequest.process(solrClient);
         } catch(SolrServerException e) {
-            // already exists
-            // e.printStackTrace();
-            logger.info("collection already exists");
+            e.printStackTrace();
         }
     }
 
     private File zipConfigset() throws FileNotFoundException, IOException {
         File zipFile = File.createTempFile("configset", ".zip");
-
-        System.out.println(zipFile.getAbsolutePath());
 
         try (
             FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());

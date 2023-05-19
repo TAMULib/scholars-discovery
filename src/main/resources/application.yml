@@ -30,6 +30,7 @@ middleware:
     onStartup: true
     onStartupDelay: 10000
     batchSize: 10000
+    removeOnStartup: true
     resumeIndiviudally: true
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore

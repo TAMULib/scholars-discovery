@@ -17,6 +17,8 @@ public class IndexConfig {
 
     private int batchSize = 10000;
 
+    private boolean removeOnStartup = true;
+
     private boolean resumeIndividually = true;
 
     public String getCron() {
@@ -57,6 +59,14 @@ public class IndexConfig {
 
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public boolean getRemoveOnStartup() {
+        return removeOnStartup;
+    }
+
+    public void setRemoveOnStartup(boolean removeOnStartup) {
+        this.removeOnStartup = removeOnStartup;
     }
 
     public boolean getResumeIndividually() {
