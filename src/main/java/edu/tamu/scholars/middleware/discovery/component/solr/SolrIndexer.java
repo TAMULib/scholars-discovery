@@ -121,6 +121,7 @@ public class SolrIndexer implements Indexer {
             }
         } catch (Exception e) {
             logger.warn(format("Failed to commit individual %s %s of batch %s %s", document.getId(), name(), batchId, individualCounter));
+            logger.info(format("Caused by %s", e.getMessage()));
         }
     }
 
