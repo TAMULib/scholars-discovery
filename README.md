@@ -66,13 +66,30 @@ Solr is configured via ```spring.data.solr```.
    [Install](https://www.docker.com/) Docker
 
    ```bash
-   docker-compose up -f "solr-cloud-docker-compose.yml"
+   docker-compose up
    ```
 
-3. Build and Run the application
+3. Run tests
 
    ```bash
+      mvn clean test
+   ```
+
+3. Package application in target
+
+    ```bash
+      mvn clean package
+   ```
+
+3. Install application in local m2
+
+    ```bash
       mvn clean install
+   ```
+
+3. Run the application for development
+
+   ```bash
       mvn spring-boot:run
    ```
 

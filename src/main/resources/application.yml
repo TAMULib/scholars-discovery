@@ -27,11 +27,11 @@ middleware:
   index:
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    onStartup: true
+    onStartup: false
     onStartupDelay: 10000
     batchSize: 10000
     removeOnStartup: true
-    resumeIndiviudally: true
+    resumeIndiviudally: false
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore
     directory: triplestore
@@ -61,6 +61,13 @@ middleware:
   export:
     individualKey: individual
     individualBaseUri: ${ui.url}/display
+
+  exec-config:
+    corePoolSize: 16
+    maxPoolSize: 128
+    queueCapacity: 64
+    threadNamePrefix: "async-task-executor-"
+    asyncRequestTimeout: 900000
 
 vivo:
   email: vivo_root@school.edu
@@ -169,7 +176,7 @@ management:
     enabled-by-default: false
     web:
       exposure:
-        include: health, info
+        include: health, info, mappings
   endpoint:
     health:
       enabled: true

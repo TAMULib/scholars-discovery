@@ -1,23 +1,24 @@
 /*
- * Copyright 2012-2022 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2012-2022 the original author or authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      https://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.springframework.data.rest.webmvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -32,63 +33,77 @@ import edu.tamu.scholars.middleware.discovery.resolver.HighlightArgumentResolver
 import edu.tamu.scholars.middleware.discovery.resolver.QueryArgumentResolver;
 import edu.tamu.scholars.middleware.export.resolver.ExportArgumentResolver;
 
+import edu.tamu.scholars.middleware.config.external.RepositoryRestThreadExecConfig;
+
 /**
- * {@link RequestMappingHandlerAdapter} implementation that adds a couple argument resolvers for controller method
- * parameters used in the REST exporter controller. Also only looks for handler methods in the Spring Data REST provided
- * controller classes to help isolate this handler adapter from other handler adapters the user might have configured in
- * their Spring MVC context.
- *
- * @author Jon Brisbin
- * @author Oliver Gierke
- */
+* {@link RequestMappingHandlerAdapter} implementation that adds a couple argument resolvers for controller method
+* parameters used in the REST exporter controller. Also only looks for handler methods in the Spring Data REST provided
+* controller classes to help isolate this handler adapter from other handler adapters the user might have configured in
+* their Spring MVC context.
+*
+* @author Jon Brisbin
+* @author Oliver Gierke
+*/
+// MODIFICATION SPECIFICATIONS:
+// 1. add thread pool task executor
+// 2. register argument resolvers
+// 3. configure thread pool
 public class RepositoryRestHandlerAdapter extends RequestMappingHandlerAdapter {
 
-	private final List<HandlerMethodArgumentResolver> argumentResolvers;
+    private final List<HandlerMethodArgumentResolver> argumentResolvers;
 
-	// MODIFIED: added to afford non default async thread executor
-	private final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    // MODIFIED: added to afford non default async thread executor
+    private final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
-	/**
-	 * Creates a new {@link RepositoryRestHandlerAdapter} using the given {@link HandlerMethodArgumentResolver}s.
-	 *
-	 * @param argumentResolvers must not be {@literal null}.
-	 */
-	public RepositoryRestHandlerAdapter(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		this.argumentResolvers = new ArrayList<>(argumentResolvers);
-		// MODIFIED: custom argument resolvers
-		this.argumentResolvers.add(new QueryArgumentResolver());
-		this.argumentResolvers.add(new FilterArgumentResolver());
-		this.argumentResolvers.add(new FacetArgumentResolver());
-		this.argumentResolvers.add(new BoostArgumentResolver());
-		this.argumentResolvers.add(new HighlightArgumentResolver());
-		this.argumentResolvers.add(new ExportArgumentResolver());
+    //attempting to autoconfigure to coordinate threads per type of request
+    private RepositoryRestThreadExecConfig execConfig;
 
-		// MODIFIED: custom thread executor settings
-		executor.setCorePoolSize(16);
-		executor.setMaxPoolSize(128);
-		executor.setQueueCapacity(64);
-		executor.setThreadNamePrefix("async-task-executor-");
-		executor.initialize();
-		setAsyncRequestTimeout(900000);
-		setTaskExecutor(executor);
-	}
+    /**
+     * Creates a new {@link RepositoryRestHandlerAdapter} using the given {@link HandlerMethodArgumentResolver}s.
+     *
+     * @param argumentResolvers must not be {@literal null}.
+     */
+    public RepositoryRestHandlerAdapter(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        this.argumentResolvers = new ArrayList<>(argumentResolvers);
 
-	@Override
-	public void afterPropertiesSet() {
-		setCustomArgumentResolvers(argumentResolvers);
-		super.afterPropertiesSet();
-	}
+        // 1. MODIFIED: custom argument resolvers
+        this.argumentResolvers.add(new QueryArgumentResolver());
+        this.argumentResolvers.add(new FilterArgumentResolver());
+        this.argumentResolvers.add(new FacetArgumentResolver());
+        this.argumentResolvers.add(new BoostArgumentResolver());
+        this.argumentResolvers.add(new HighlightArgumentResolver());
+        this.argumentResolvers.add(new ExportArgumentResolver());
 
-	@Override
-	public int getOrder() {
-		return Ordered.HIGHEST_PRECEDENCE;
-	}
+        // 2. MODIFIED: custom thread executor settings
+        execConfig = new RepositoryRestThreadExecConfig();
+        executor.setCorePoolSize(execConfig.getCorePoolSize());         // 16
+        executor.setMaxPoolSize(execConfig.getMaxPoolSize());           // 128
+        executor.setQueueCapacity(execConfig.getQueueCapacity());       // 64
+        executor.setThreadNamePrefix(execConfig.getThreadNamePrefix()); // "async-task-executor-"
 
-	@Override
-	protected boolean supportsInternal(HandlerMethod handlerMethod) {
+        executor.initialize();
 
-		Class<?> controllerType = handlerMethod.getBeanType();
+        setAsyncRequestTimeout(execConfig.getAsyncRequestTimeout()); // 900000
+        setTaskExecutor(executor);
+    }
 
-		return AnnotationUtils.findAnnotation(controllerType, BasePathAwareController.class) != null;
-	}
+    @Override
+    public void afterPropertiesSet() {
+        setCustomArgumentResolvers(argumentResolvers);
+        super.afterPropertiesSet();
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
+
+    @Override
+    protected boolean supportsInternal(HandlerMethod handlerMethod) {
+
+        Class<?> controllerType = handlerMethod.getBeanType();
+
+        return AnnotationUtils.findAnnotation(controllerType, BasePathAwareController.class) != null;
+    }
+
 }

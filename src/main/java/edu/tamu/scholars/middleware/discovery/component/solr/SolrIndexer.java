@@ -3,8 +3,6 @@ package edu.tamu.scholars.middleware.discovery.component.solr;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 import static edu.tamu.scholars.middleware.discovery.service.IndexService.CREATED_FIELDS;
 
-import static java.lang.String.format;
-
 import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Arrays;
@@ -15,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ public class SolrIndexer implements Indexer {
                 ? indexed.value()
                 : field.getName();
 
-            if (!indexed.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
+            if (!CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
                 Map<String, Object> fieldAttributes = new HashMap<String,Object>();
 
                 fieldAttributes.put("type", indexed.type());
@@ -71,18 +70,21 @@ public class SolrIndexer implements Indexer {
                 fieldAttributes.put("name", name);
 
                 try {
+                    logger.info("Attempting to add field {} with type {} to collection {}", name, indexed.type(), COLLECTION);
                     SchemaRequest.AddField addFieldRequest = new SchemaRequest.AddField(fieldAttributes);
-                    addFieldRequest.process(solrClient, COLLECTION);
-                    logger.info("Add field {} with type {} to collection {}", name, indexed.type(), COLLECTION);
+                    SolrResponse response = addFieldRequest.process(solrClient, COLLECTION);
+                    logger.info("Committed request to add field {} with type {} to collection {}", name, indexed.type(), COLLECTION);
+                    System.out.println("\n" + response + "\n");
                 } catch (Exception e) {
                     logger.debug("Failed to add field", e);
                 }
 
                 if (indexed.copyTo().length > 0) {
                     try {
+                        logger.info("Attempting to add copy fields {} from {} to collection {}", indexed.copyTo(), name, indexed.type(), COLLECTION);
                         SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(indexed.copyTo()));
-                        addCopyFieldRequest.process(solrClient, COLLECTION);
-                        logger.info("Add copy fields {} from {} to collection {}", indexed.copyTo(), name, indexed.type(), COLLECTION);
+                        SolrResponse response = addCopyFieldRequest.process(solrClient, COLLECTION);
+                        System.out.println("\n" + response + "\n");
                     } catch (Exception e) {
                         logger.debug("Failed to add copy field", e);
                     }
@@ -97,14 +99,17 @@ public class SolrIndexer implements Indexer {
         try {
             solrClient.addBeans(COLLECTION, documents);
             solrClient.commit(COLLECTION);
-            logger.info(format("Commit batch index %s %s %s", documents.size(), name(), batchId));
+            logger.info("Commit batch index {} {} {}", documents.size(), name(), batchId);
         } catch (Exception e) {
-            logger.error(format("Failed to batch commit %s %s %s", documents.size(), name(), batchId));
-            logger.info(format("Resuming %s", indexConfig.getResumeIndividually()));
+            logger.error("Failed to batch commit {} {} {}", documents.size(), name(), batchId);
+            
             if (indexConfig.getResumeIndividually()) {
+                logger.info("Resuming {}", indexConfig.getResumeIndividually());
                 logger.debug("Resolve stacktrace", e);
                 logger.info("Resuming individually");
                 documents.stream().forEach(this::index);
+            } else {
+                logger.info("Enable resuming individual `middleware.index.resumeIndiviudally: true`");
             }
         }
     }
@@ -118,12 +123,12 @@ public class SolrIndexer implements Indexer {
             solrClient.addBean(COLLECTION, document);
             solrClient.commit(COLLECTION);
             if (individualCounter % 100 == 0) { // scale down logging by 100 seems reasonable
-                logger.info(format("Saved %s with id %s", name(), document.getId()));
-                logger.info(format("Commit individual %s %s of batch %s %s", document.getId(), name(), batchId, individualCounter));
+                logger.info("Saved {} with id {}", name(), document.getId());
+                logger.info("Commit individual {} {} of batch {} {}", document.getId(), name(), batchId, individualCounter);
             }
         } catch (Exception e) {
-            logger.warn(format("Failed to commit individual %s %s of batch %s %s", document.getId(), name(), batchId, individualCounter));
-            logger.info(format("Caused by %s", e.getMessage()));
+            logger.warn("Failed to commit individual {} {} of batch {} {}", document.getId(), name(), batchId, individualCounter);
+            logger.info("Caused by {}", e.getMessage());
         }
     }
 
@@ -132,7 +137,7 @@ public class SolrIndexer implements Indexer {
         try {
             solrClient.optimize(COLLECTION);
         } catch (Exception e) {
-            logger.warn(format("Failed to optimize index"), e);
+            logger.warn("Failed to optimize index", e);
         }
     }
 

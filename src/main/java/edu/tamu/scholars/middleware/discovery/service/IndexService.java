@@ -83,28 +83,31 @@ public class IndexService {
     public void startup() {
 
         if (indexConfig.getRemoveOnStartup()) {
-            logger.info("Remove collection...");
             try {
                 removeCollection();
             } catch(Exception e) {
                 // implement robust init exception handling
+                // trace code back and change here with logging and such
                 e.printStackTrace();
             }
         }
 
-        logger.info("Creating collection...");
         try {
             createCollection();
         } catch(Exception e) {
             // implement robust init exception handling
+            // trace code back and change here with logging and such
             e.printStackTrace();
         }
 
-        logger.info("Initializing collection fields...");
-        indexers.stream().forEach(indexer -> {
-            logger.info(String.format("Initializing %s fields.", indexer.type().getSimpleName()));
+        logger.info("Initializing {} indexers...", indexers.size());
+
+        indexers.forEach(indexer -> {
+
+            logger.info("Initializing {} fields.", indexer.type().getSimpleName());
             indexer.init();
         });
+
         if (indexConfig.isOnStartup()) {
             threadPoolTaskScheduler.schedule(new Runnable() {
 
@@ -123,13 +126,19 @@ public class IndexService {
             triplestore.init();
             Instant start = Instant.now();
             logger.info("Indexing...");
+
             harvesters.parallelStream().forEach(harvester -> {
                 logger.info(String.format("Indexing %s documents.", harvester.type().getSimpleName()));
+
                 if (indexers.stream().anyMatch(indexer -> indexer.type().equals(harvester.type()))) {
-                    harvester.harvest().buffer(indexConfig.getBatchSize()).subscribe(batch -> {
-                        indexers.parallelStream().filter(indexer -> indexer.type().equals(harvester.type())).forEach(indexer -> {
-                            indexer.index(batch);
-                        });
+                    harvester.harvest()
+                        .buffer(indexConfig.getBatchSize())
+                        .subscribe(batch -> {
+
+                        indexers.parallelStream()
+                            .filter(indexer -> indexer.type().equals(harvester.type()))
+                            .forEach(indexer -> indexer.index(batch));
+
                     });
                 } else {
                     logger.warn(String.format("No indexer found for %s documents!", harvester.type().getSimpleName()));
