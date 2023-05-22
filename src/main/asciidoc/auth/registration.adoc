@@ -8,7 +8,7 @@ User is required to enter first name, last name and an email address to submit t
 This creates a new token and an email, using the email address provided in the registraion form, is sent to the user. A new user object is then created with a specific role assigned.
 Clicking on the email link will confirm the user's email provided.
 
-==== Request Parameters
+==== Query Parameters
 include::../{snippets}/registration/submit/request-fields.adoc[]
 
 ==== Sample Request
@@ -27,8 +27,8 @@ This endpoint requires a key string, (obtained when the user clicks on the email
 This key string constructs a token by obtaining user-specified extended information associated with the token, when it was first created.
 If the user is found and the token is not expired, a user object (as shown in "Sample Response") is returned.
 
-==== Request Parameters
-include::../{snippets}/registration/confirm/request-parameters.adoc[]
+==== Query Parameters
+include::../{snippets}/registration/confirm/query-parameters.adoc[]
 
 ==== Sample Request
 include::../{snippets}/registration/confirm/http-request.adoc[]
@@ -45,7 +45,7 @@ include::../{snippets}/registration/confirm/curl-request.adoc[]
 This endpoint requires the registration object.
 Once the user creates a new password and confirms it, the user object is constructed using the email from the registration object. If the account is found, then this endpoint will return a user with an enabled account.
 
-==== Request Parameters
+==== Query Parameters
 include::../{snippets}/registration/complete/request-fields.adoc[]
 
 ==== Sample Request

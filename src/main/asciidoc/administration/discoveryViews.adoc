@@ -4,10 +4,10 @@ This section describes about the discovery views of the application. This object
 
 ==== Directory
 
-This displays a list of all the discovery view objects based on parameters like page, size or sort feature based on name, collection etc as shown in *Request Parameters*.
+This displays a list of all the discovery view objects based on parameters like page, size or sort feature based on name, collection etc as shown in *Query Parameters*.
 
-===== Request Parameters
-include::../{snippets}/discoveryViews/directory/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/discoveryViews/directory/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/discoveryViews/directory/response-fields.adoc[]
@@ -82,8 +82,8 @@ This helps an admin user to partially update a discovery view. This process util
 ===== Path Parameters
 include::../{snippets}/discoveryViews/patch/path-parameters.adoc[]
 
-===== Request Parameters
-include::../{snippets}/discoveryViews/patch/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/discoveryViews/patch/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/discoveryViews/patch/response-fields.adoc[]

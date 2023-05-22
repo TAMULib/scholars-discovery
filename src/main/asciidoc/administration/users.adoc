@@ -4,10 +4,10 @@ This sections describes the list of users present in the system - faculty and no
 
 ==== Directory
 
-This displays a list of all the users based on parameters like page, size or sort feature based on name, organization etc as shown in *Request Parameters*.
+This displays a list of all the users based on parameters like page, size or sort feature based on name, organization etc as shown in *Query Parameters*.
 
-===== Request Parameters
-include::../{snippets}/users/directory/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/users/directory/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/users/directory/response-fields.adoc[]
@@ -63,8 +63,8 @@ An admin user can partially update specific fields in the user account by provid
 ===== Path Parameters
 include::../{snippets}/users/patch/path-parameters.adoc[]
 
-===== Request Parameters
-include::../{snippets}/users/patch/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/users/patch/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/users/patch/response-fields.adoc[]

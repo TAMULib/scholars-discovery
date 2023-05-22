@@ -5,10 +5,10 @@ The default theme view is seen in the *Sample Response*.
 
 ==== Directory
 
-This displays a list of all the theme objects based on parameters like page, size or sort feature based on name, organization etc as shown in *Request Parameters*.
+This displays a list of all the theme objects based on parameters like page, size or sort feature based on name, organization etc as shown in *Query Parameters*.
 
-===== Request Parameters
-include::../{snippets}/themes/directory/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/themes/directory/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/themes/directory/response-fields.adoc[]
@@ -37,7 +37,7 @@ include::../{snippets}/themes/active/curl-request.adoc[]
 
 ==== Create
 
-A theme is created by adding a fields like _name_, _organization_, _header_, _footer_ etc along with other styling variables as shown in the *Request Parameters*. A theme when created, by default, has the _active_ check set to false. This boolean flag, when checked will activate the specific theme.
+A theme is created by adding a fields like _name_, _organization_, _header_, _footer_ etc along with other styling variables as shown in the *Query Parameters*. A theme when created, by default, has the _active_ check set to false. This boolean flag, when checked will activate the specific theme.
 
 ===== Request Fields
 include::../{snippets}/themes/create/request-fields.adoc[]
@@ -96,8 +96,8 @@ This helps an admin user to partially update a theme. This process utilizes the 
 ===== Path Parameters
 include::../{snippets}/themes/patch/path-parameters.adoc[]
 
-===== Request Parameters
-include::../{snippets}/themes/patch/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/themes/patch/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/themes/patch/response-fields.adoc[]

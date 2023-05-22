@@ -4,10 +4,10 @@ This section describes about the display views of the application. This object i
 
 ==== Directory
 
-This displays a list of all the display view objects based on parameters like page, size or sort feature based on name, collection etc as shown in *Request Parameters*.
+This displays a list of all the display view objects based on parameters like page, size or sort feature based on name, collection etc as shown in *Query Parameters*.
 
-===== Request Parameters
-include::../{snippets}/displayViews/directory/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/displayViews/directory/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/displayViews/directory/response-fields.adoc[]
@@ -79,8 +79,8 @@ include::../{snippets}/displayViews/find-by-id/curl-request.adoc[]
 
 A user can find a display view by providing _displayView types_ as a request parameter. This returns a json response displaying the  *HttpStatus.OK(200)*  message along with the display view object as shown in the *Sample Response*.
 
-===== Request Parameters
-include::../{snippets}/displayViews/find-by-types-in/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/displayViews/find-by-types-in/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/displayViews/find-by-types-in/response-fields.adoc[]
@@ -101,8 +101,8 @@ This helps an admin user to partially update a display view. This process utiliz
 ===== Path Parameters
 include::../{snippets}/displayViews/patch/path-parameters.adoc[]
 
-===== Request Parameters
-include::../{snippets}/displayViews/patch/request-parameters.adoc[]
+===== Query Parameters
+include::../{snippets}/displayViews/patch/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/displayViews/patch/response-fields.adoc[]
