@@ -2,8 +2,8 @@
 
 This endpoint allows the registered user to log in using his/her username and password.
 
-=== Query Parameters
-include::../{snippets}/login/query-parameters.adoc[]
+=== Form Parameters
+include::../{snippets}/login/form-parameters.adoc[]
 
 === Response Fields
 include::../{snippets}/login/response-fields.adoc[]
