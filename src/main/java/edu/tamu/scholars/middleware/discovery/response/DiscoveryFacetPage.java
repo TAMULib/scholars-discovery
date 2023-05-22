@@ -60,6 +60,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                     .collect(Collectors.toList());
 
                 int pageSize = facetArgument.getPageSize();
+                // convert to zero-based numbering page number
                 int pageNumber = facetArgument.getPageNumber() - 1;
                 int offset = pageSize * pageNumber;
 
