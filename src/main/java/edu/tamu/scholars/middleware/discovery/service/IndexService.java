@@ -82,9 +82,9 @@ public class IndexService {
     @PostConstruct
     public void startup() {
 
-        if (indexConfig.getRemoveOnStartup()) {
+        if (indexConfig.getDeleteOnStartup()) {
             try {
-                removeCollection();
+                deleteCollection();
             } catch(Exception e) {
                 // implement robust init exception handling
                 // trace code back and change here with logging and such
@@ -92,23 +92,33 @@ public class IndexService {
             }
         }
 
-        try {
-            createCollection();
-        } catch(Exception e) {
-            // implement robust init exception handling
-            // trace code back and change here with logging and such
-            e.printStackTrace();
+        if (indexConfig.getUploadConfigsetOnStartup()) {
+            try {
+                uploadConfigset();
+            } catch(Exception e) {
+                // implement robust init exception handling
+                // trace code back and change here with logging and such
+                e.printStackTrace();
+            }
+        }
+
+        if (indexConfig.getCreateOnStartup()) {
+            try {
+                createCollection();
+            } catch(Exception e) {
+                // implement robust init exception handling
+                // trace code back and change here with logging and such
+                e.printStackTrace();
+            }
         }
 
         logger.info("Initializing {} indexers...", indexers.size());
-
         indexers.forEach(indexer -> {
-
             logger.info("Initializing {} fields.", indexer.type().getSimpleName());
             indexer.init();
         });
 
-        if (indexConfig.isOnStartup()) {
+        if (indexConfig.getOnStartup()) {
             threadPoolTaskScheduler.schedule(new Runnable() {
 
                 @Override
@@ -126,20 +136,14 @@ public class IndexService {
             triplestore.init();
             Instant start = Instant.now();
             logger.info("Indexing...");
-
             harvesters.parallelStream().forEach(harvester -> {
                 logger.info(String.format("Indexing %s documents.", harvester.type().getSimpleName()));
-
                 if (indexers.stream().anyMatch(indexer -> indexer.type().equals(harvester.type()))) {
                     harvester.harvest()
                         .buffer(indexConfig.getBatchSize())
-                        .subscribe(batch -> {
-
-                        indexers.parallelStream()
+                        .subscribe(batch -> indexers.parallelStream()
                             .filter(indexer -> indexer.type().equals(harvester.type()))
-                            .forEach(indexer -> indexer.index(batch));
-
-                    });
+                            .forEach(indexer -> indexer.index(batch)));
                 } else {
                     logger.warn(String.format("No indexer found for %s documents!", harvester.type().getSimpleName()));
                 }
@@ -157,45 +161,32 @@ public class IndexService {
         }
     }
 
-    private void removeCollection() throws IOException, SolrServerException {
-        try {
-            logger.info("Removing collection {}", COLLECTION);
-            CollectionAdminRequest.Delete deleteCollectionRequest = CollectionAdminRequest.deleteCollection(COLLECTION);
+    private void deleteCollection() throws IOException, SolrServerException {
+        logger.info("Removing collection {}", COLLECTION);
+        CollectionAdminRequest.Delete deleteCollectionRequest = CollectionAdminRequest.deleteCollection(COLLECTION);
 
-            deleteCollectionRequest.process(solrClient);
-        } catch(SolrServerException e) {
-            e.printStackTrace();
-        }
+        deleteCollectionRequest.process(solrClient);
     }
 
     private void createCollection() throws IOException, SolrServerException {
+        logger.info("Creating collection {}", COLLECTION);
+        CollectionAdminRequest.Create createCollectionRequest = CollectionAdminRequest.createCollection(COLLECTION, 1, 1);
 
-        // maybe separate zip and upload configset and layer in logic
+        createCollectionRequest.process(solrClient);
+    }
 
+    private void uploadConfigset() throws IOException, SolrServerException {
         logger.info("Zipping configset for collection {}", COLLECTION);
         File zipFile = zipConfigset();
 
-        try {
-            logger.info("Uploading configset for collection {}", COLLECTION);
-            ConfigSetAdminRequest.Upload uploadConfigsetRequest = new ConfigSetAdminRequest.Upload()
-                .setConfigSetName(COLLECTION)
-                .setCleanup(true)
-                .setOverwrite(true)
-                .setUploadFile(zipFile, "application/zip");
+        logger.info("Uploading configset for collection {}", COLLECTION);
+        ConfigSetAdminRequest.Upload uploadConfigsetRequest = new ConfigSetAdminRequest.Upload()
+            .setConfigSetName(COLLECTION)
+            .setCleanup(true)
+            .setOverwrite(true)
+            .setUploadFile(zipFile, "application/zip");
 
-            uploadConfigsetRequest.process(solrClient);
-        } catch(SolrServerException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            logger.info("Creating collection {}", COLLECTION);
-            CollectionAdminRequest.Create createCollectionRequest = CollectionAdminRequest.createCollection(COLLECTION, 1, 1);
-
-            createCollectionRequest.process(solrClient);
-        } catch(SolrServerException e) {
-            e.printStackTrace();
-        }
+        uploadConfigsetRequest.process(solrClient);
     }
 
     private File zipConfigset() throws FileNotFoundException, IOException {

@@ -5,7 +5,7 @@
 This provides a page of all the documents present in the system, based on the _request parameters_ as shown.
 
 ===== Request Parameters
-include::../{snippets}/documents/page/request-parameters.adoc[]
+include::../{snippets}/documents/page/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/documents/page/response-fields.adoc[]
@@ -40,7 +40,7 @@ include::../{snippets}/documents/findById/curl-request.adoc[]
 This will find a list of documents based on the _individual ids_ provided as a parameter as shown in *Request Parameters*. The json response will have the list of documents as shown in the *Sample Response*.
 
 ===== Request Parameters
-include::../{snippets}/documents/search/findByIdIn/request-parameters.adoc[]
+include::../{snippets}/documents/search/findByIdIn/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/documents/search/findByIdIn/http-request.adoc[]
@@ -56,7 +56,7 @@ include::../{snippets}/documents/search/findByIdIn/curl-request.adoc[]
 This search will return a json response listing all the documents, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/documents/search/advanced/request-parameters.adoc[]
+include::../{snippets}/documents/search/advanced/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/documents/search/advanced/response-fields.adoc[]
@@ -75,7 +75,7 @@ include::../{snippets}/documents/search/advanced/curl-request.adoc[]
 This export will return a stream of specified type containing the search results with the requested fields, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/documents/search/export/request-parameters.adoc[]
+include::../{snippets}/documents/search/export/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/documents/search/export/http-request.adoc[]
@@ -94,7 +94,7 @@ This export will return a stream of specified type containing the single page bu
 include::../{snippets}/documents/export/path-parameters.adoc[]
 
 ===== Request Parameters
-include::../{snippets}/documents/export/request-parameters.adoc[]
+include::../{snippets}/documents/export/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/documents/export/http-request.adoc[]
@@ -107,7 +107,7 @@ include::../{snippets}/documents/export/curl-request.adoc[]
 This count will return a json response containing the count, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/documents/search/count/request-parameters.adoc[]
+include::../{snippets}/documents/search/count/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/documents/search/count/response-fields.adoc[]
@@ -126,7 +126,7 @@ include::../{snippets}/documents/search/count/curl-request.adoc[]
 This will return a json response listing recently updated documents, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/documents/search/recentlyUpdated/request-parameters.adoc[]
+include::../{snippets}/documents/search/recentlyUpdated/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/documents/search/recentlyUpdated/response-fields.adoc[]

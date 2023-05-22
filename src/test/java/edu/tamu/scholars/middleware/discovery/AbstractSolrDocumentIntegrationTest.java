@@ -56,9 +56,8 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
         try {
             deleteDocuments();
         } catch(Exception e) {
-            // do nothing
+            // no-op
         }
-  
         createDocuments();
     }
 

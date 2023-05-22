@@ -74,7 +74,7 @@ public class SolrIndexer implements Indexer {
                     SchemaRequest.AddField addFieldRequest = new SchemaRequest.AddField(fieldAttributes);
                     SolrResponse response = addFieldRequest.process(solrClient, COLLECTION);
                     logger.info("Committed request to add field {} with type {} to collection {}", name, indexed.type(), COLLECTION);
-                    System.out.println("\n" + response + "\n");
+                    logger.info("Response status: {}", response.getResponse().get("status"));
                 } catch (Exception e) {
                     logger.debug("Failed to add field", e);
                 }
@@ -84,7 +84,8 @@ public class SolrIndexer implements Indexer {
                         logger.info("Attempting to add copy fields {} from {} to collection {}", indexed.copyTo(), name, indexed.type(), COLLECTION);
                         SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(indexed.copyTo()));
                         SolrResponse response = addCopyFieldRequest.process(solrClient, COLLECTION);
-                        System.out.println("\n" + response + "\n");
+                        logger.info("Committed request to add copy fields {} from {} to collection {}", indexed.copyTo(), name, indexed.type(), COLLECTION);
+                        logger.info("Response status: {}", response.getResponse().get("status"));
                     } catch (Exception e) {
                         logger.debug("Failed to add copy field", e);
                     }

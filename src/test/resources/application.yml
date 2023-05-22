@@ -27,9 +27,12 @@ middleware:
   index:
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    onStartup: false
+    onStartup: true
+    onStartupDelay: 10000
+    uploadConfigsetOnStartup: false
+    createOnStartup: false
+    deleteOnStartup: false
     batchSize: 1000
-    removeOnStartup: false
     resumeIndiviudally: true
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore

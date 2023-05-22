@@ -5,7 +5,7 @@
 This provides a page of all the persons present in the system, based on the _request parameters_ as shown.
 
 ===== Request Parameters
-include::../{snippets}/persons/page/request-parameters.adoc[]
+include::../{snippets}/persons/page/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/persons/page/response-fields.adoc[]
@@ -40,7 +40,7 @@ include::../{snippets}/persons/findById/curl-request.adoc[]
 This will find a list of persons based on the _individual ids_ provided as a parameter as shown in *Request Parameters*. The json response will have the list of persons as shown in the *Sample Response*.
 
 ===== Request Parameters
-include::../{snippets}/persons/search/findByIdIn/request-parameters.adoc[]
+include::../{snippets}/persons/search/findByIdIn/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/persons/search/findByIdIn/http-request.adoc[]
@@ -56,7 +56,7 @@ include::../{snippets}/persons/search/findByIdIn/curl-request.adoc[]
 This search will return a json response listing all the persons, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/persons/search/advanced/request-parameters.adoc[]
+include::../{snippets}/persons/search/advanced/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/persons/search/advanced/response-fields.adoc[]
@@ -75,7 +75,7 @@ include::../{snippets}/persons/search/advanced/curl-request.adoc[]
 This export will return a stream of specified type containing the search results with the requested fields, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/persons/search/export/request-parameters.adoc[]
+include::../{snippets}/persons/search/export/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/persons/search/export/http-request.adoc[]
@@ -94,7 +94,7 @@ This export will return a stream of specified type containing the single page bu
 include::../{snippets}/persons/export/path-parameters.adoc[]
 
 ===== Request Parameters
-include::../{snippets}/persons/export/request-parameters.adoc[]
+include::../{snippets}/persons/export/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/persons/export/http-request.adoc[]
@@ -107,7 +107,7 @@ include::../{snippets}/persons/export/curl-request.adoc[]
 This count will return a json response containing the count, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/persons/search/count/request-parameters.adoc[]
+include::../{snippets}/persons/search/count/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/persons/search/count/response-fields.adoc[]
@@ -126,7 +126,7 @@ include::../{snippets}/persons/search/count/curl-request.adoc[]
 This will return a json response listing recently updated persons, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/persons/search/recentlyUpdated/request-parameters.adoc[]
+include::../{snippets}/persons/search/recentlyUpdated/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/persons/search/recentlyUpdated/response-fields.adoc[]

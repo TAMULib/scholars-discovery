@@ -11,15 +11,19 @@ public class IndexConfig {
 
     private String zone = "America/Chicago";
 
-    private boolean onStartup = true;
+    private Boolean onStartup = true;
 
-    private int onStartupDelay = 10000;
+    private Integer onStartupDelay = 10000;
 
-    private int batchSize = 10000;
+    private Boolean uploadConfigsetOnStartup = true;
 
-    private boolean removeOnStartup = true;
+    private Boolean createOnStartup = true;
 
-    private boolean resumeIndividually = true;
+    private Boolean deleteOnStartup = true;
+
+    private Integer batchSize = 10000;
+
+    private Boolean resumeIndividually = true;
 
     public String getCron() {
         return cron;
@@ -37,43 +41,59 @@ public class IndexConfig {
         this.zone = zone;
     }
 
-    public boolean isOnStartup() {
+    public Boolean getOnStartup() {
         return onStartup;
     }
 
-    public void setOnStartup(boolean onStartup) {
+    public void setOnStartup(Boolean onStartup) {
         this.onStartup = onStartup;
     }
 
-    public int getOnStartupDelay() {
+    public Integer getOnStartupDelay() {
         return onStartupDelay;
     }
 
-    public void setOnStartupDelay(int onStartupDelay) {
+    public void setOnStartupDelay(Integer onStartupDelay) {
         this.onStartupDelay = onStartupDelay;
     }
 
-    public int getBatchSize() {
+    public Boolean getUploadConfigsetOnStartup() {
+        return uploadConfigsetOnStartup;
+    }
+
+    public void setUploadConfigsetOnStartup(Boolean uploadConfigsetOnStartup) {
+        this.uploadConfigsetOnStartup = uploadConfigsetOnStartup;
+    }
+
+    public Boolean getCreateOnStartup() {
+        return createOnStartup;
+    }
+
+    public void setCreateOnStartup(Boolean createOnStartup) {
+        this.createOnStartup = createOnStartup;
+    }
+
+    public Boolean getDeleteOnStartup() {
+        return deleteOnStartup;
+    }
+
+    public void setDeleteOnStartup(Boolean deleteOnStartup) {
+        this.deleteOnStartup = deleteOnStartup;
+    }
+
+    public Integer getBatchSize() {
         return batchSize;
     }
 
-    public void setBatchSize(int batchSize) {
+    public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;
     }
 
-    public boolean getRemoveOnStartup() {
-        return removeOnStartup;
-    }
-
-    public void setRemoveOnStartup(boolean removeOnStartup) {
-        this.removeOnStartup = removeOnStartup;
-    }
-
-    public boolean getResumeIndividually() {
+    public Boolean getResumeIndividually() {
         return resumeIndividually;
     }
 
-    public void setResumeIndiviudally(boolean resumeIndividually) {
+    public void setResumeIndividually(Boolean resumeIndividually) {
         this.resumeIndividually = resumeIndividually;
     }
 

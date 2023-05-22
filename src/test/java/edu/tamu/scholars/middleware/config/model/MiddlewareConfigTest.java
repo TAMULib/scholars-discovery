@@ -62,7 +62,7 @@ public class MiddlewareConfigTest {
         assertNotNull(indexConfig);
         assertEquals("0 0 0 * * SUN", indexConfig.getCron());
         assertEquals("America/Chicago", indexConfig.getZone());
-        assertEquals(true, indexConfig.isOnStartup());
+        assertEquals(true, indexConfig.getOnStartup());
         assertEquals(10000, indexConfig.getOnStartupDelay());
         assertEquals(10000, indexConfig.getBatchSize());
     }
@@ -134,7 +134,7 @@ public class MiddlewareConfigTest {
         IndexConfig indexConfig = middlewareConfig.getIndex();
         assertEquals("0 0 0 * * MON", indexConfig.getCron());
         assertEquals("America/Chicago", indexConfig.getZone());
-        assertEquals(false, indexConfig.isOnStartup());
+        assertEquals(false, indexConfig.getOnStartup());
         assertEquals(1000, indexConfig.getOnStartupDelay());
         assertEquals(25000, indexConfig.getBatchSize());
     }

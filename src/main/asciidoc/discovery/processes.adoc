@@ -5,7 +5,7 @@
 This provides a page of all the processes present in the system, based on the _request parameters_ as shown.
 
 ===== Request Parameters
-include::../{snippets}/processes/page/request-parameters.adoc[]
+include::../{snippets}/processes/page/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/processes/page/response-fields.adoc[]
@@ -40,7 +40,7 @@ include::../{snippets}/processes/findById/curl-request.adoc[]
 This will find a list of processes based on the _individual ids_ provided as a parameter as shown in *Request Parameters*. The json response will have the list of processes as shown in the *Sample Response*.
 
 ===== Request Parameters
-include::../{snippets}/processes/search/findByIdIn/request-parameters.adoc[]
+include::../{snippets}/processes/search/findByIdIn/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/processes/search/findByIdIn/http-request.adoc[]
@@ -56,7 +56,7 @@ include::../{snippets}/processes/search/findByIdIn/curl-request.adoc[]
 This search will return a json response listing all the processes, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/processes/search/advanced/request-parameters.adoc[]
+include::../{snippets}/processes/search/advanced/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/processes/search/advanced/response-fields.adoc[]
@@ -75,7 +75,7 @@ include::../{snippets}/processes/search/advanced/curl-request.adoc[]
 This export will return a stream of specified type containing the search results with the requested fields, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/processes/search/export/request-parameters.adoc[]
+include::../{snippets}/processes/search/export/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/processes/search/export/http-request.adoc[]
@@ -94,7 +94,7 @@ This export will return a stream of specified type containing the single page bu
 include::../{snippets}/processes/export/path-parameters.adoc[]
 
 ===== Request Parameters
-include::../{snippets}/processes/export/request-parameters.adoc[]
+include::../{snippets}/processes/export/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/processes/export/http-request.adoc[]
@@ -107,7 +107,7 @@ include::../{snippets}/processes/export/curl-request.adoc[]
 This count will return a json response containing the count, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/processes/search/count/request-parameters.adoc[]
+include::../{snippets}/processes/search/count/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/processes/search/count/response-fields.adoc[]
@@ -126,7 +126,7 @@ include::../{snippets}/processes/search/count/curl-request.adoc[]
 This will return a json response listing recently updated processes, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/processes/search/recentlyUpdated/request-parameters.adoc[]
+include::../{snippets}/processes/search/recentlyUpdated/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/processes/search/recentlyUpdated/response-fields.adoc[]

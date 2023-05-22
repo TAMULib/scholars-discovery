@@ -57,8 +57,11 @@ Solr is configured via ```spring.data.solr```.
 1. [Install](https://maven.apache.org/install.html) Maven
 2. [Install](https://solr.apache.org/downloads.html) Solr application and run
 
+    Start Solr and create `scholars-discovery` core.
+    
    ```bash
-   solr -e cloud
+   solr start -p 8983
+   solr create_core -c scholars-discovery -d src/main/resources/solr -p 8983
    ```
 
    or
@@ -66,7 +69,7 @@ Solr is configured via ```spring.data.solr```.
    [Install](https://www.docker.com/) Docker
 
    ```bash
-   docker-compose up
+   docker-compose up -d
    ```
 
 3. Run tests

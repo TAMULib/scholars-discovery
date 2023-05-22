@@ -5,7 +5,7 @@
 This provides a page of all the collections present in the system, based on the _request parameters_ as shown.
 
 ===== Request Parameters
-include::../{snippets}/collections/page/request-parameters.adoc[]
+include::../{snippets}/collections/page/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/collections/page/response-fields.adoc[]
@@ -40,7 +40,7 @@ include::../{snippets}/collections/findById/curl-request.adoc[]
 This will find a list of collections based on the _individual ids_ provided as a parameter as shown in *Request Parameters*. The json response will have the list of collections as shown in the *Sample Response*.
 
 ===== Request Parameters
-include::../{snippets}/collections/search/findByIdIn/request-parameters.adoc[]
+include::../{snippets}/collections/search/findByIdIn/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/collections/search/findByIdIn/http-request.adoc[]
@@ -56,7 +56,7 @@ include::../{snippets}/collections/search/findByIdIn/curl-request.adoc[]
 This search will return a json response listing all the collections, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/collections/search/advanced/request-parameters.adoc[]
+include::../{snippets}/collections/search/advanced/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/collections/search/advanced/response-fields.adoc[]
@@ -75,7 +75,7 @@ include::../{snippets}/collections/search/advanced/curl-request.adoc[]
 This export will return a stream of specified type containing the search results with the requested fields, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/collections/search/export/request-parameters.adoc[]
+include::../{snippets}/collections/search/export/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/collections/search/export/http-request.adoc[]
@@ -94,7 +94,7 @@ This export will return a stream of specified type containing the single page bu
 include::../{snippets}/collections/export/path-parameters.adoc[]
 
 ===== Request Parameters
-include::../{snippets}/collections/export/request-parameters.adoc[]
+include::../{snippets}/collections/export/query-parameters.adoc[]
 
 ===== Sample Request
 include::../{snippets}/collections/export/http-request.adoc[]
@@ -107,7 +107,7 @@ include::../{snippets}/collections/export/curl-request.adoc[]
 This count will return a json response containing the count, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/collections/search/count/request-parameters.adoc[]
+include::../{snippets}/collections/search/count/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/collections/search/count/response-fields.adoc[]
@@ -126,7 +126,7 @@ include::../{snippets}/collections/search/count/curl-request.adoc[]
 This will return a json response listing recently updated collections, based on the query parameters as shown in *Request Parameters*.
 
 ===== Request Parameters
-include::../{snippets}/collections/search/recentlyUpdated/request-parameters.adoc[]
+include::../{snippets}/collections/search/recentlyUpdated/query-parameters.adoc[]
 
 ===== Response Fields
 include::../{snippets}/collections/search/recentlyUpdated/response-fields.adoc[]

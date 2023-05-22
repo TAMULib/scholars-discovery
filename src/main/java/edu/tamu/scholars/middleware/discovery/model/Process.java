@@ -87,7 +87,7 @@ public class Process extends Common {
     private String dateTimePrecisionStart;
 
     @Field
-    @FieldType(type = "nested_whole_strings")
+    @FieldType(type = "nested_whole_string")
     @FieldSource(template = "process/dateTimePrecisionEnd", predicate = "http://vivoweb.org/ontology/core#dateTimePrecision", parse = true)
     private String dateTimePrecisionEnd;
 
