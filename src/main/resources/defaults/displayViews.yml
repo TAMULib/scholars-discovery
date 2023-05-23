@@ -820,6 +820,40 @@
     - Department
     - Library
     - University
+  exportViews:
+  - name: Department Personnel Summaries
+    contentTemplate: "defaults/displayViews/organizations/departmentPersonnelSummariesContentTemplate.html"
+    headerTemplate: "defaults/displayViews/organizations/departmentPersonnelSummariesHeaderTemplate.html"
+    multipleReference:
+      name: Personnel
+      field: people
+      order: 1
+      sort:
+      - field: name
+        direction: ASC
+    lazyReferences:
+      - publications
+      - awardsAndHonors
+    fieldViews:
+    - name: Publications
+      field: publications
+      order: 2
+      sort:
+        - field: title
+          direction: ASC
+        - field: publicationDate
+          direction: DESC
+          date: true
+      filters:
+        - field: type
+          value: AcademicArticle
+        - field: type
+          value: Book
+        - field: type
+          value: Chapter
+        - field: type
+          value: ConferencePaper
+
   mainContentTemplate: "defaults/displayViews/organizations/mainContentTemplate.html"
   asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
   asideLocation: RIGHT

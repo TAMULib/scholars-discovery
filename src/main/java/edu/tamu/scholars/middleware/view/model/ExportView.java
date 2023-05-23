@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -28,6 +29,9 @@ public class ExportView extends View {
 
     @Column(columnDefinition = "TEXT")
     private String headerTemplate;
+
+    @OneToOne(cascade = CascadeType.ALL, optional = true)
+    private ExportFieldView multipleReference;
 
     @ElementCollection
     private List<String> lazyReferences;
@@ -58,6 +62,14 @@ public class ExportView extends View {
 
     public void setHeaderTemplate(String headerTemplate) {
         this.headerTemplate = headerTemplate;
+    }
+
+    public ExportFieldView getMultipleReference() {
+        return multipleReference;
+    }
+
+    public void getMultipleReference(ExportFieldView multipleReference) {
+        this.multipleReference = multipleReference;
     }
 
     public List<String> getLazyReferences() {
