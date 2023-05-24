@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -192,7 +193,9 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                         individual.setContent(doc.getFieldValuesMap());
                         individual.setId(doc.getFieldValue(ID).toString());
                         individual.setClazz(doc.getFieldValue(CLASS).toString());
-                        individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
+                        if (Objects.nonNull(doc.getFieldValues(TYPE))) {
+                            individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
+                        }
 
                         emitter.next(individual);
 
