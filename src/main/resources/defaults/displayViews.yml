@@ -826,6 +826,9 @@
     - Department
     - Library
     - University
+  mainContentTemplate: "defaults/displayViews/organizations/mainContentTemplate.html"
+  asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
+  asideLocation: RIGHT
   exportViews:
   - name: Department Personnel Summaries
     contentTemplate: "defaults/displayViews/organizations/departmentPersonnelSummariesContentTemplate.html"
@@ -842,11 +845,11 @@
       field: publications
       order: 1
       sort:
-        - field: title
-          direction: ASC
         - field: publicationDate
           direction: DESC
           date: true
+        - field: title
+          direction: ASC
       filters:
         - field: type
           value: AcademicArticle
@@ -856,6 +859,9 @@
           value: Chapter
         - field: type
           value: ConferencePaper
+        - field: publicationDate
+          value: "[NOW-8YEARS TO NOW]"
+          opKey: EXPRESSION
     - name: Grants
       field: awardsAndHonors
       order: 2
@@ -867,10 +873,6 @@
         - field: class
           value: Relationship AND type:Grant
           opKey: EXPRESSION
-
-  mainContentTemplate: "defaults/displayViews/organizations/mainContentTemplate.html"
-  asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
-  asideLocation: RIGHT
   metaTemplates:
     title: "defaults/displayViews/organizations/meta/title.txt"
     description: "defaults/displayViews/organizations/meta/description.txt"

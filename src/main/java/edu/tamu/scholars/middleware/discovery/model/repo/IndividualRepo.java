@@ -10,6 +10,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +31,7 @@ import org.apache.solr.client.solrj.request.json.JsonQueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -322,6 +324,8 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         private final SolrQuery query;
 
+        private final List<String> filters;
+
         private SolrQueryBuilder() {
             this(DEFAULT_QUERY);
         }
@@ -331,6 +335,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .setParam("defType", defType)
                 .setParam("q.op", defaultOperator)
                 .setQuery(query);
+            this.filters = new ArrayList<>();
         }
 
         public SolrQueryBuilder withQuery(QueryArg query) {
@@ -400,6 +405,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                             .append(new FilterQueryBuilder(arg, true).build());
                     }
                 }
+                this.filters.add(filterQuery.toString());
                 this.query.addFilterQuery(filterQuery.toString());
             });
 
@@ -478,9 +484,30 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
 
         public JsonQueryRequest jsonQuery(List<String> ids) {
-            return new JsonQueryRequest()
-                .setQuery(this.query)
-                .setQuery(String.format("id:(%s)", String.join(" OR ", ids)));
+            final ModifiableSolrParams params = new ModifiableSolrParams();
+            params.set("q.op", defaultOperator);
+
+            JsonQueryRequest request = new JsonQueryRequest(params)
+                .setQuery(DEFAULT_QUERY)
+                .setLimit(Integer.MAX_VALUE);
+
+            String termFilter = String.format("{!terms f=id}:%s", String.join(",", ids)); 
+
+            request.withFilter(termFilter);
+
+            // there is variation of boolean logic for filtering
+            // for export filters grouped by field are OR'd together
+            for (String filter : this.filters) {
+                request.withFilter(filter.replace(" AND ", " OR "));
+            }
+
+            String sort = this.query.getSorts().stream()
+                .map(s -> String.format("%s %s", s.getItem(), s.getOrder().toString()))
+                .collect(Collectors.joining(","));
+
+            request.setSort(sort);
+
+            return request;
         }
 
     }
