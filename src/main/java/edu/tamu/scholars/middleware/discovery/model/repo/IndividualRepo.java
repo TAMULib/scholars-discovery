@@ -213,10 +213,9 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             final String dateField = dataNetworkDescriptor.getDateField();
 
             for (SolrDocument document : documents) {
-                boolean hasValidDate = false;
                 if (document.containsKey(dateField)) {
                     Object dateFieldFromDocument = document.getFieldValue(dateField);
-                    hasValidDate = validateAndCountDateField(dataNetwork, dateFieldFromDocument);
+                    validateAndCountDateField(dataNetwork, dateFieldFromDocument);
                 }
 
                 List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
