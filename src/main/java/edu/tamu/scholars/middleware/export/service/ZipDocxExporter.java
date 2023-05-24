@@ -110,7 +110,7 @@ public class ZipDocxExporter extends AbstractDocxExporter {
                 for (AbstractIndexDocument refDoc : referenceDocuments) {
                     final ObjectNode refNode = mapper.valueToTree(refDoc);
 
-                    File refDocFile = File.createTempFile(refDoc.getId(), ".docx");
+                    File refDocFile = File.createTempFile(String.format("%s-", refDoc.getId()), ".docx");
 
                     try {
                         final WordprocessingMLPackage pkg = WordprocessingMLPackage.createPackage();
