@@ -82,11 +82,12 @@ public class ZipDocxExporter extends AbstractDocxExporter {
 
             final ObjectNode node = mapper.valueToTree(document);
 
-            if (exportView.get().getMultipleReference() != null) {
+            Optional<ExportFieldView> multipleReference = Optional.ofNullable(exportView.get().getMultipleReference());
 
-                ExportFieldView multipleReference = exportView.get().getMultipleReference();
+            List<Individual> referenceDocuments = new ArrayList<>();
 
-                JsonNode reference = node.get(multipleReference.getField());
+            if (multipleReference.isPresent()) {
+                JsonNode reference = node.get(multipleReference.get().getField());
 
                 List<String> ids = new ArrayList<String>();
                 if (reference.isArray()) {
@@ -95,50 +96,50 @@ public class ZipDocxExporter extends AbstractDocxExporter {
                     ids.add(reference.get("id").asText());
                 }
 
-                List<Individual> referenceDocuments = fetchLazyReference(multipleReference, ids);
+                referenceDocuments.addAll(fetchLazyReference(multipleReference.get(), ids));
+            } else {
+                referenceDocuments.add(document);
+            }
 
-                File zipFile = File.createTempFile(document.getId(), ".zip");
+            File zipFile = File.createTempFile(document.getId(), ".zip");
 
-                try (
-                    FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
-                    ZipOutputStream zos = new ZipOutputStream(outputStream)
-                ) {
-                    for (AbstractIndexDocument refDoc : referenceDocuments) {
-                        final ObjectNode refNode = mapper.valueToTree(refDoc);
+            try (
+                FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
+                ZipOutputStream zos = new ZipOutputStream(outputStream)
+            ) {
+                for (AbstractIndexDocument refDoc : referenceDocuments) {
+                    final ObjectNode refNode = mapper.valueToTree(refDoc);
 
-                        File refDocFile = File.createTempFile(refDoc.getId(), ".docx");
+                    File refDocFile = File.createTempFile(refDoc.getId(), ".docx");
 
-                        try {
-                            final WordprocessingMLPackage pkg = WordprocessingMLPackage.createPackage();
-                            final MainDocumentPart mdp = pkg.getMainDocumentPart();
+                    try {
+                        final WordprocessingMLPackage pkg = WordprocessingMLPackage.createPackage();
+                        final MainDocumentPart mdp = pkg.getMainDocumentPart();
 
-                            final NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
-                            pkg.getMainDocumentPart().addTargetPart(ndp);
-                            ndp.unmarshalDefaultNumbering();
+                        final NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
+                        pkg.getMainDocumentPart().addTargetPart(ndp);
+                        ndp.unmarshalDefaultNumbering();
 
-                            ObjectNode json = processDocument(refNode, exportView.get());
+                        ObjectNode json = processDocument(refNode, exportView.get());
 
-                            String contentHtml = handlebarsService.template(exportView.get().getContentTemplate(), json);
+                        String contentHtml = handlebarsService.template(exportView.get().getContentTemplate(), json);
 
-                            String headerHtml = handlebarsService.template(exportView.get().getHeaderTemplate(), json);
+                        String headerHtml = handlebarsService.template(exportView.get().getHeaderTemplate(), json);
 
-                            addMargin(mdp);
+                        addMargin(mdp);
 
-                            createAndAddHeader(pkg, headerHtml);
+                        createAndAddHeader(pkg, headerHtml);
 
-                            addContent(mdp, contentHtml);
+                        addContent(mdp, contentHtml);
 
-                            pkg.save(refDocFile, Docx4J.FLAG_SAVE_ZIP_FILE);
+                        pkg.save(refDocFile, Docx4J.FLAG_SAVE_ZIP_FILE);
 
-                            zipFile(zos, refDocFile);
+                        zipFile(zos, refDocFile);
 
-                        } catch (IOException | JAXBException | Docx4JException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (IOException | JAXBException | Docx4JException e) {
+                        e.printStackTrace();
                     }
                 }
-            } else {
-                throw new ExportException("Zip docx exporter requires multipleReference");
             }
         };
     }

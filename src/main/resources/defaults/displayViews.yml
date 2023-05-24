@@ -77,6 +77,79 @@
           - field: class
             value: Relationship AND type:Grant
             opKey: EXPRESSION
+  exportViews:
+  - name: 5 Year Publications
+    contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    lazyReferences:
+    - name: Publications
+      field: publications
+      order: 1
+      sort:
+        - field: publicationDate
+          direction: DESC
+          date: true
+        - field: title
+          direction: ASC
+      filters:
+        - field: type
+          value: AcademicArticle
+        - field: type
+          value: Book
+        - field: type
+          value: Chapter
+        - field: type
+          value: ConferencePaper
+        - field: publicationDate
+          value: "[NOW-5YEARS TO NOW]"
+          opKey: EXPRESSION
+    - name: Grants
+      field: awardsAndHonors
+      order: 2
+      sort:
+        - field: yearAwarded
+          direction: DESC
+          date: true
+      filters:
+        - field: class
+          value: Relationship AND type:Grant
+          opKey: EXPRESSION
+  - name: 8 Year Publications
+    contentTemplate: "defaults/displayViews/persons/8YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    lazyReferences:
+    - name: Publications
+      field: publications
+      order: 1
+      sort:
+        - field: publicationDate
+          direction: DESC
+          date: true
+        - field: title
+          direction: ASC
+      filters:
+        - field: type
+          value: AcademicArticle
+        - field: type
+          value: Book
+        - field: type
+          value: Chapter
+        - field: type
+          value: ConferencePaper
+        - field: publicationDate
+          value: "[NOW-8YEARS TO NOW]"
+          opKey: EXPRESSION
+    - name: Grants
+      field: awardsAndHonors
+      order: 2
+      sort:
+        - field: yearAwarded
+          direction: DESC
+          date: true
+      filters:
+        - field: class
+          value: Relationship AND type:Grant
+          opKey: EXPRESSION
   metaTemplates:
     title: "defaults/displayViews/persons/meta/title.txt"
     description: "defaults/displayViews/persons/meta/description.txt"
@@ -830,9 +903,9 @@
   asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
   asideLocation: RIGHT
   exportViews:
-  - name: Department 5 Year Publications
+  - name: 5 Year Publications
     contentTemplate: "defaults/displayViews/organizations/department5YearPublicationsContentTemplate.html"
-    headerTemplate: "defaults/displayViews/organizations/defaultHeaderTemplate.html"
+    headerTemplate: "defaults/displayViews/organizations/emptyHeaderTemplate.html"
     multipleReference:
       name: Personnel
       field: people
@@ -873,9 +946,9 @@
         - field: class
           value: Relationship AND type:Grant
           opKey: EXPRESSION
-  - name: Department 8 Year Publications
+  - name: 8 Year Publications
     contentTemplate: "defaults/displayViews/organizations/department8YearPublicationsContentTemplate.html"
-    headerTemplate: "defaults/displayViews/organizations/defaultHeaderTemplate.html"
+    headerTemplate: "defaults/displayViews/organizations/emptyHeaderTemplate.html"
     multipleReference:
       name: Personnel
       field: people
