@@ -149,8 +149,7 @@ spring:
     #      starttls:
     #        enable: true
     #        required: true
-  profiles:
-    active: default
+  profiles: default, test, dev
   session:
     store-type: jdbc
     jdbc:
