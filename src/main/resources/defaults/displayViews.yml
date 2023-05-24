@@ -830,9 +830,52 @@
   asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
   asideLocation: RIGHT
   exportViews:
-  - name: Department Personnel Summaries
-    contentTemplate: "defaults/displayViews/organizations/departmentPersonnelSummariesContentTemplate.html"
-    headerTemplate: "defaults/displayViews/organizations/departmentPersonnelSummariesHeaderTemplate.html"
+  - name: Department 5 Year Publications
+    contentTemplate: "defaults/displayViews/organizations/department5YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/organizations/defaultHeaderTemplate.html"
+    multipleReference:
+      name: Personnel
+      field: people
+      order: 1
+      sort:
+      - field: name
+        direction: ASC
+    lazyReferences:
+    - name: Publications
+      field: publications
+      order: 1
+      sort:
+        - field: publicationDate
+          direction: DESC
+          date: true
+        - field: title
+          direction: ASC
+      filters:
+        - field: type
+          value: AcademicArticle
+        - field: type
+          value: Book
+        - field: type
+          value: Chapter
+        - field: type
+          value: ConferencePaper
+        - field: publicationDate
+          value: "[NOW-5YEARS TO NOW]"
+          opKey: EXPRESSION
+    - name: Grants
+      field: awardsAndHonors
+      order: 2
+      sort:
+        - field: yearAwarded
+          direction: DESC
+          date: true
+      filters:
+        - field: class
+          value: Relationship AND type:Grant
+          opKey: EXPRESSION
+  - name: Department 8 Year Publications
+    contentTemplate: "defaults/displayViews/organizations/department8YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/organizations/defaultHeaderTemplate.html"
     multipleReference:
       name: Personnel
       field: people
