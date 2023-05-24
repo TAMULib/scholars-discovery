@@ -24,8 +24,6 @@
     contentTemplate: "defaults/displayViews/persons/singlePageBioContentTemplate.html"
     headerTemplate: "defaults/displayViews/persons/singlePageBioHeaderTemplate.html"
     lazyReferences:
-      - publications
-    fieldViews:
       - name: Recent Publications
         field: publications
         order: 1
@@ -49,9 +47,6 @@
     contentTemplate: "defaults/displayViews/persons/profileSummaryContentTemplate.html"
     headerTemplate: "defaults/displayViews/persons/profileSummaryHeaderTemplate.html"
     lazyReferences:
-      - publications
-      - awardsAndHonors
-    fieldViews:
       - name: Recent Publications
         field: publications
         order: 1
@@ -71,6 +66,17 @@
             value: Chapter
           - field: type
             value: ConferencePaper
+      - name: Grants
+        field: awardsAndHonors
+        order: 2
+        sort:
+          - field: yearAwarded
+            direction: DESC
+            date: true
+        filters:
+          - field: class
+            value: Relationship AND type:Grant
+            opKey: EXPRESSION
   metaTemplates:
     title: "defaults/displayViews/persons/meta/title.txt"
     description: "defaults/displayViews/persons/meta/description.txt"
@@ -832,12 +838,9 @@
       - field: name
         direction: ASC
     lazyReferences:
-      - publications
-      - awardsAndHonors
-    fieldViews:
     - name: Publications
       field: publications
-      order: 2
+      order: 1
       sort:
         - field: title
           direction: ASC
@@ -853,6 +856,17 @@
           value: Chapter
         - field: type
           value: ConferencePaper
+    - name: Grants
+      field: awardsAndHonors
+      order: 2
+      sort:
+        - field: yearAwarded
+          direction: DESC
+          date: true
+      filters:
+        - field: class
+          value: Relationship AND type:Grant
+          opKey: EXPRESSION
 
   mainContentTemplate: "defaults/displayViews/organizations/mainContentTemplate.html"
   asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"

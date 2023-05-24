@@ -9,13 +9,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
@@ -23,12 +19,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.bind.JAXBException;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.apache.commons.lang3.math.NumberUtils;
 import org.docx4j.Docx4J;
 import org.docx4j.jaxb.Context;
 import org.docx4j.model.structure.SectionWrapper;
@@ -53,28 +43,29 @@ import org.docx4j.wml.SectPr;
 import org.docx4j.wml.SectPr.PgMar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.export.exception.ExportException;
 import edu.tamu.scholars.middleware.service.TemplateService;
-import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 import edu.tamu.scholars.middleware.view.model.DisplayView;
 import edu.tamu.scholars.middleware.view.model.ExportFieldView;
 import edu.tamu.scholars.middleware.view.model.ExportView;
-import edu.tamu.scholars.middleware.view.model.Filter;
 import edu.tamu.scholars.middleware.view.model.repo.DisplayViewRepo;
 
 @Service
 public class ZipDocxExporter implements Exporter {
-
-    private static final int MAX_DOCUMENT_BATCH_SIZE = 200;
-
-    private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
 
     private static final String TYPE = "zip";
 
@@ -156,7 +147,7 @@ public class ZipDocxExporter implements Exporter {
                     ids.add(reference.get("id").asText());
                 }
 
-                List<AbstractIndexDocument> referenceDocuments = fetchLazyReference(ids);
+                List<Individual> referenceDocuments = fetchLazyReference(multipleReference, ids);
 
                 File zipFile = File.createTempFile(document.getId(), ".zip");
 
@@ -204,186 +195,61 @@ public class ZipDocxExporter implements Exporter {
         };
     }
 
-    private void zipFile(ZipOutputStream zos, File file) throws FileNotFoundException, IOException {
+    private long zipFile(ZipOutputStream zos, File file) throws FileNotFoundException, IOException {
         zos.putNextEntry(new ZipEntry(file.getName()));
 
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         long bytesRead = 0;
-        byte[] bytesIn = new byte[1024];
-        int read = 0;
-        while ((read = bis.read(bytesIn)) != -1) {
-            zos.write(bytesIn, 0, read);
-            bytesRead += read;
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+            byte[] bytesIn = new byte[1024];
+            int read = 0;
+            while ((read = bis.read(bytesIn)) != -1) {
+                zos.write(bytesIn, 0, read);
+                bytesRead += read;
+            }
         }
-
         zos.closeEntry();
+
+        return bytesRead;
     }
 
-    // maybe rename method
     private <D extends AbstractIndexDocument> ObjectNode processDocument(ObjectNode node, ExportView view) {
         node.put("vivoUrl", vivoUrl);
         node.put("uiUrl", uiUrl);
-
         fetchLazyReferences(node, view.getLazyReferences());
-
-        // apply field value to fetched lazy reference
-        view.getFieldViews().forEach(fieldView -> {
-
-            filter(node, fieldView);
-
-            sort(node, fieldView);
-
-            limit(node, fieldView);
-        });
         return node;
     }
 
-    private void fetchLazyReferences(ObjectNode node, List<String> lazyReferences) {
+    private void fetchLazyReferences(ObjectNode node, List<ExportFieldView> lazyReferences) {
         lazyReferences
             .stream()
-            .filter(lr -> node.hasNonNull(lr))
+            .filter(lazyReference -> node.hasNonNull(lazyReference.getField()))
             .forEach(lazyReference -> {
-                JsonNode reference = node.get(lazyReference);
+                JsonNode reference = node.get(lazyReference.getField());
                 List<String> ids = new ArrayList<String>();
                 if (reference.isArray()) {
                     ids = StreamSupport.stream(reference.spliterator(), false).map(rn -> rn.get("id").asText()).collect(Collectors.toList());
                 } else {
                     ids.add(reference.get("id").asText());
                 }
-                ArrayNode references = node.putArray(lazyReference);
-                references.addAll((ArrayNode) mapper.valueToTree(fetchLazyReference(ids)));
+                ArrayNode references = node.putArray(lazyReference.getField());
+                references.addAll((ArrayNode) mapper.valueToTree(fetchLazyReference(lazyReference, ids)));
             });
     }
 
-    private List<AbstractIndexDocument> fetchLazyReference(List<String> ids) {
-        List<AbstractIndexDocument> documents = new ArrayList<AbstractIndexDocument>();
-        while (ids.size() >= MAX_DOCUMENT_BATCH_SIZE) {
-            documents.addAll(individualRepo.findByIdIn(ids.subList(0, MAX_DOCUMENT_BATCH_SIZE)));
-            ids = ids.subList(MAX_DOCUMENT_BATCH_SIZE, ids.size());
-        }
-        documents.addAll(individualRepo.findByIdIn(ids));
-        return documents;
-    }
+    private List<Individual> fetchLazyReference(ExportFieldView lazyReference, List<String> ids) {
 
-    // in memory filtering as already fetched all related individuals via lazy fetching
-    private void filter(ObjectNode node, ExportFieldView fieldView) {
-        String field = fieldView.getField();
-        List<JsonNode> filtered = node.has(field)
-            ? StreamSupport.stream(node.get(field).spliterator(), false)
-                .filter((n) -> {
-                    for (Filter filter : fieldView.getFilters()) { 
-                        // cleanup: return single streaming filter with inner switch
-                        switch (filter.getOpKey()) {
-                            case BETWEEN:
-                                // could sort first and stop search but then require break from iteration
-                                return StreamSupport.stream(n.get(filter.getField()).spliterator(), false)
-                                    .anyMatch((fn) -> {
+        List<FilterArg> filters = lazyReference.getFilters().stream().map(f -> {
+            return FilterArg.of(f.getField(), Optional.of(f.getValue()), Optional.of(f.getOpKey().getKey()), Optional.empty());
+        }).collect(Collectors.toList());
 
-                                        Matcher rangeMatcher = RANGE_PATTERN.matcher(filter.getValue());
-                                        if (rangeMatcher.matches()) {
-                                            String start = rangeMatcher.group(1);
-                                            String end = rangeMatcher.group(2);
+        Sort sort = Sort.by(
+            lazyReference.getSort().stream().map(s -> {
+                return Order.by(s.getField()).with(s.getDirection());
+            }).collect(Collectors.toList())
+        );
 
-                                            String v = fn.asText();
-
-                                            try {
-                                                ZonedDateTime zdtv = DateFormatUtility.parse(v);
-
-                                                ZonedDateTime zds = DateFormatUtility.parse(start);
-                                                ZonedDateTime zde = DateFormatUtility.parse(end);
-
-                                                return (zds.isBefore(zdtv) || zds.isEqual(zdtv)) && (zdtv.isBefore(zde) || zdtv.isEqual(zde));
-                                            } catch (ParseException pe) {
-                                                if (NumberUtils.isParsable(v)) {
-                                                    Double dv = Double.parseDouble(v);
-
-                                                    Double ds = Double.parseDouble(start);
-                                                    Double de = Double.parseDouble(end);
-
-                                                    return ds <= dv && dv <= de;
-                                                } else {
-                                                    return start.compareTo(v) <= 0 && v.compareTo(end) <= 0;
-                                                }
-                                            }
-
-                                        } else {
-                                            throw new RuntimeException("Not valid between filter");
-                                        }
-                                    });
-                            case CONTAINS:
-                                return StreamSupport.stream(n.get(filter.getField()).spliterator(), false)
-                                    .anyMatch((fn) -> fn.asText().contains(filter.getValue()));
-                            case STARTS_WITH:
-                                return StreamSupport.stream(n.get(filter.getField()).spliterator(), false)
-                                    .anyMatch((fn) -> fn.asText().startsWith(filter.getValue()));
-                            case ENDS_WITH:
-                                return StreamSupport.stream(n.get(filter.getField()).spliterator(), false)
-                                    .anyMatch((fn) -> fn.asText().endsWith(filter.getValue()));
-                            case FUZZY:
-                                throw new UnsupportedOperationException("FUZZY: In memory fuzzy filter not yet supported");
-                            case EXPRESSION:
-                                throw new UnsupportedOperationException("EXPRESSION: In memory expression filter not yet supported");
-                            case RAW:
-                                throw new UnsupportedOperationException("RAW: In memory raw filter not yet supported");
-                            case NOT_EQUALS:
-                                return StreamSupport.stream(n.get(filter.getField()).spliterator(), false)
-                                    .anyMatch((fn) -> !fn.asText().equals(filter.getValue()));
-                            case EQUALS:
-                            default:
-                                return StreamSupport.stream(n.get(filter.getField()).spliterator(), false)
-                                    .anyMatch((fn) -> fn.asText().equals(filter.getValue()));
-                        }
-                    }
-                    return false;
-                }).collect(Collectors.toList())
-            : new ArrayList<>();
-        ArrayNode references = node.putArray(field);
-        references.addAll(filtered);
-    }
-
-    private void sort(ObjectNode node, ExportFieldView fieldView) {
-        String field = fieldView.getField();
-        fieldView.getSort().forEach(sort -> {
-            List<JsonNode> sorted = node.has(field)
-                ? StreamSupport.stream(node.get(field).spliterator(), false)
-                    .sorted((sn1, sn2) -> {
-                        JsonNode jn1 = sn1.get(sort.getField());
-                        JsonNode jn2 = sn2.get(sort.getField());
-                        String n1 = jn1 != null ? jn1.asText() : "";
-                        String n2 = jn2 != null ? jn2.asText() : "";
-                        try {
-                            ZonedDateTime ld1 = DateFormatUtility.parse(n1);
-                            ZonedDateTime ld2 = DateFormatUtility.parse(n2);
-                            return sort.getDirection().equals(Direction.ASC) ? ld1.compareTo(ld2) : ld2.compareTo(ld1);
-                        } catch (ParseException pe) {
-                            if (NumberUtils.isParsable(n1) && NumberUtils.isParsable(n2)) {
-                                Double d1 = Double.parseDouble(n1);
-                                Double d2 = Double.parseDouble(n2);
-                                return sort.getDirection().equals(Direction.ASC) ? d1.compareTo(d2) : d2.compareTo(d1);
-                            } else {
-                                return sort.getDirection().equals(Direction.ASC) ? n1.compareTo(n2) : n2.compareTo(n1);
-                            }
-                        }
-
-                    }).collect(Collectors.toList())
-                : new ArrayList<>();
-            ArrayNode references = node.putArray(field);
-            references.addAll(sorted);
-        });
-    }
-
-    private void limit(ObjectNode node, ExportFieldView fieldView) {
-        String field = fieldView.getField();
-        List<JsonNode> limited = node.has(field)
-            ? StreamSupport.stream(node.get(field).spliterator(), false)
-                .limit(fieldView.getLimit())
-                    .collect(Collectors.toList())
-            : new ArrayList<>();
-        ArrayNode references = node.putArray(field);
-        references.addAll(limited);
-    }
-
-    
+        return individualRepo.findByIdIn(ids, filters, sort);
+    }    
 
     private void addMargin(final MainDocumentPart mainDocumentPart) {
         final Body body = mainDocumentPart.getJaxbElement().getBody();

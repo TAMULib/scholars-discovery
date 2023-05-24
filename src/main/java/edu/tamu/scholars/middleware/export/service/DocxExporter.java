@@ -3,8 +3,6 @@ package edu.tamu.scholars.middleware.export.service;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,12 +11,6 @@ import java.util.stream.StreamSupport;
 
 import javax.xml.bind.JAXBException;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.apache.commons.lang3.math.NumberUtils;
 import org.docx4j.jaxb.Context;
 import org.docx4j.model.structure.SectionWrapper;
 import org.docx4j.openpackaging.contenttype.ContentType;
@@ -42,26 +34,29 @@ import org.docx4j.wml.SectPr;
 import org.docx4j.wml.SectPr.PgMar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.export.exception.ExportException;
 import edu.tamu.scholars.middleware.service.TemplateService;
-import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 import edu.tamu.scholars.middleware.view.model.DisplayView;
 import edu.tamu.scholars.middleware.view.model.ExportFieldView;
 import edu.tamu.scholars.middleware.view.model.ExportView;
-import edu.tamu.scholars.middleware.view.model.Filter;
 import edu.tamu.scholars.middleware.view.model.repo.DisplayViewRepo;
 
 @Service
 public class DocxExporter implements Exporter {
-
-    private static final int MAX_DOCUMENT_BATCH_SIZE = 200;
 
     private static final String TYPE = "docx";
 
@@ -160,98 +155,39 @@ public class DocxExporter implements Exporter {
         node.put("vivoUrl", vivoUrl);
         node.put("uiUrl", uiUrl);
         fetchLazyReferences(node, view.getLazyReferences());
-        view.getFieldViews().forEach(fieldView -> {
-            filter(node, fieldView);
-            sort(node, fieldView);
-            limit(node, fieldView);
-        });
         return node;
     }
 
-    private void fetchLazyReferences(ObjectNode node, List<String> lazyReferences) {
+    private void fetchLazyReferences(ObjectNode node, List<ExportFieldView> lazyReferences) {
         lazyReferences
             .stream()
-            .filter(lr -> node.hasNonNull(lr))
+            .filter(lazyReference -> node.hasNonNull(lazyReference.getField()))
             .forEach(lazyReference -> {
-                JsonNode reference = node.get(lazyReference);
+                JsonNode reference = node.get(lazyReference.getField());
                 List<String> ids = new ArrayList<String>();
                 if (reference.isArray()) {
                     ids = StreamSupport.stream(reference.spliterator(), false).map(rn -> rn.get("id").asText()).collect(Collectors.toList());
                 } else {
                     ids.add(reference.get("id").asText());
                 }
-                ArrayNode references = node.putArray(lazyReference);
-                references.addAll((ArrayNode) mapper.valueToTree(fetchLazyReference(ids)));
+                ArrayNode references = node.putArray(lazyReference.getField());
+                references.addAll((ArrayNode) mapper.valueToTree(fetchLazyReference(lazyReference, ids)));
             });
     }
 
-    private List<AbstractIndexDocument> fetchLazyReference(List<String> ids) {
-        List<AbstractIndexDocument> documents = new ArrayList<AbstractIndexDocument>();
-        while (ids.size() >= MAX_DOCUMENT_BATCH_SIZE) {
-            documents.addAll(individualRepo.findByIdIn(ids.subList(0, MAX_DOCUMENT_BATCH_SIZE)));
-            ids = ids.subList(MAX_DOCUMENT_BATCH_SIZE, ids.size());
-        }
-        documents.addAll(individualRepo.findByIdIn(ids));
-        return documents;
-    }
+    private List<Individual> fetchLazyReference(ExportFieldView lazyReference, List<String> ids) {
 
-    private void sort(ObjectNode node, ExportFieldView fieldView) {
-        String field = fieldView.getField();
-        fieldView.getSort().forEach(sort -> {
-            List<JsonNode> sorted = node.has(field)
-                ? StreamSupport.stream(node.get(field).spliterator(), false)
-                    .sorted((sn1, sn2) -> {
-                        JsonNode jn1 = sn1.get(sort.getField());
-                        JsonNode jn2 = sn2.get(sort.getField());
-                        String n1 = jn1 != null ? jn1.asText() : "";
-                        String n2 = jn2 != null ? jn2.asText() : "";
-                        try {
-                            ZonedDateTime ld1 = DateFormatUtility.parse(n1);
-                            ZonedDateTime ld2 = DateFormatUtility.parse(n2);
-                            return sort.getDirection().equals(Direction.ASC) ? ld1.compareTo(ld2) : ld2.compareTo(ld1);
-                        } catch (ParseException pe) {
-                            if (NumberUtils.isParsable(n1) && NumberUtils.isParsable(n2)) {
-                                Double d1 = Double.parseDouble(n1);
-                                Double d2 = Double.parseDouble(n2);
-                                return sort.getDirection().equals(Direction.ASC) ? d1.compareTo(d2) : d2.compareTo(d1);
-                            } else {
-                                return sort.getDirection().equals(Direction.ASC) ? n1.compareTo(n2) : n2.compareTo(n1);
-                            }
-                        }
+        List<FilterArg> filters = lazyReference.getFilters().stream().map(f -> {
+            return FilterArg.of(f.getField(), Optional.of(f.getValue()), Optional.of(f.getOpKey().getKey()), Optional.empty());
+        }).collect(Collectors.toList());
 
-                    }).collect(Collectors.toList())
-                : new ArrayList<>();
-            ArrayNode references = node.putArray(field);
-            references.addAll(sorted);
-        });
-    }
+        Sort sort = Sort.by(
+            lazyReference.getSort().stream().map(s -> {
+                return Order.by(s.getField()).with(s.getDirection());
+            }).collect(Collectors.toList())
+        );
 
-    private void limit(ObjectNode node, ExportFieldView fieldView) {
-        String field = fieldView.getField();
-        List<JsonNode> limited = node.has(field)
-            ? StreamSupport.stream(node.get(field).spliterator(), false)
-                .limit(fieldView.getLimit())
-                    .collect(Collectors.toList())
-            : new ArrayList<>();
-        ArrayNode references = node.putArray(field);
-        references.addAll(limited);
-    }
-
-    private void filter(ObjectNode node, ExportFieldView fieldView) {
-        String field = fieldView.getField();
-        List<JsonNode> filtered = node.has(field)
-            ? StreamSupport.stream(node.get(field).spliterator(), false).filter((n) -> {
-                    for (Filter filter : fieldView.getFilters()) {
-                        if (StreamSupport.stream(n.get(filter.getField()).spliterator(), false)
-                                .anyMatch((fn) -> fn.asText().equals(filter.getValue()))) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }).collect(Collectors.toList())
-            : new ArrayList<>();
-        ArrayNode references = node.putArray(field);
-        references.addAll(filtered);
+        return individualRepo.findByIdIn(ids, filters, sort);
     }
 
     private void addMargin(final MainDocumentPart mainDocumentPart) {

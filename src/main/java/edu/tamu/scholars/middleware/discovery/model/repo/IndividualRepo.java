@@ -26,6 +26,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.StreamingResponseCallback;
+import org.apache.solr.client.solrj.request.json.JsonQueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -109,6 +110,23 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             return solrClient.getBinder()
                 .getBeans(Individual.class, documents);
+        } catch (IOException | SolrServerException e) {
+            throw new SolrRequestException("Failed to find documents from ids", e);
+        }
+    }
+
+    @Override
+    public List<Individual> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort) {
+        try {
+            SolrQueryBuilder builder = new SolrQueryBuilder()
+                .withFilters(filters)
+                .withSort(sort);
+
+            JsonQueryRequest jsonRequest = builder.jsonQuery(ids);
+
+            QueryResponse queryResponse = jsonRequest.process(solrClient, COLLECTION);
+
+            return queryResponse.getBeans(Individual.class);
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to find documents from ids", e);
         }
@@ -457,6 +475,12 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         public SolrQuery query() {
             return this.query;
+        }
+
+        public JsonQueryRequest jsonQuery(List<String> ids) {
+            return new JsonQueryRequest()
+                .setQuery(this.query)
+                .setQuery(String.format("id:(%s)", String.join(" OR ", ids)));
         }
 
     }
