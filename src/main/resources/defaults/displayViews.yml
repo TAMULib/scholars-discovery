@@ -904,8 +904,8 @@
   asideLocation: RIGHT
   exportViews:
   - name: 5 Year Publications
-    contentTemplate: "defaults/displayViews/organizations/department5YearPublicationsContentTemplate.html"
-    headerTemplate: "defaults/displayViews/organizations/emptyHeaderTemplate.html"
+    contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     multipleReference:
       name: Personnel
       field: people
@@ -947,8 +947,8 @@
           value: Relationship AND type:Grant
           opKey: EXPRESSION
   - name: 8 Year Publications
-    contentTemplate: "defaults/displayViews/organizations/department8YearPublicationsContentTemplate.html"
-    headerTemplate: "defaults/displayViews/organizations/emptyHeaderTemplate.html"
+    contentTemplate: "defaults/displayViews/persons/8YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     multipleReference:
       name: Personnel
       field: people
