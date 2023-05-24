@@ -29,11 +29,11 @@
         order: 1
         limit: 5
         sort:
-          - field: title
-            direction: ASC
           - field: publicationDate
             direction: DESC
             date: true
+          - field: title
+            direction: ASC
         filters:
           - field: type
             value: AcademicArticle
@@ -52,11 +52,11 @@
         order: 1
         limit: 10
         sort:
-          - field: title
-            direction: ASC
           - field: publicationDate
             direction: DESC
             date: true
+          - field: title
+            direction: ASC
         filters:
           - field: type
             value: AcademicArticle
