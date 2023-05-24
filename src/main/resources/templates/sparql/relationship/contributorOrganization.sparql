@@ -8,9 +8,12 @@ CONSTRUCT {
     ?organization rdfs:label ?labelWithIds .
 } WHERE {
     <{{uri}}> vivo:relates ?relates ; a vivo:Grant .
+    ?relates vitro:mostSpecificType ?mostSpecificType .
     ?relates obo:RO_0000052 ?contributor ; a vivo:ResearcherRole .
-    ?contributor vivo:relatedBy ?position ; a vivo:Position  .
-    ?position vivo:relates ?organization ; a foaf:Organization .
+    ?contributor vivo:relatedBy ?position .
+    ?position a vivo:Position  .
+    ?position vivo:relates ?organization .
+    ?organization a foaf:Organization .
     ?organization rdfs:label ?label .
     BIND( CONCAT( STR(?label), REPLACE(STR(?contributor), "(^.*/)", "::") ) AS ?labelWithIds ) .
 }
