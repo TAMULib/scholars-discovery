@@ -70,7 +70,7 @@
             {{#eachSplit streetAddress ";"}}
             <span>{{.}}</span><br />
             {{/eachSplit}}
-            <span>{{locality}}, {{region}} {{postalCode}}</span>
+            <span>{{#if locality }}{{locality}}, {{/if}}{{region}} {{postalCode}}</span>
           </div>
         </div>
       </td>
@@ -103,6 +103,7 @@
   </div>
   {{/if}}
 
+  {{#if educationAndTraining.length }}
   <div class="section">
     <div class="label">Education and Training</div>
     <ul>
@@ -120,6 +121,7 @@
       {{/eachSorted}}
     </ul>
   </div>
+  {{/if}}
 
   {{#if publications.length }}
   <div class="section">
