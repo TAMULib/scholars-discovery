@@ -30,7 +30,7 @@ public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
 
     public List<D> findByIdIn(List<String> ids);
 
-    public List<D> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort);
+    public List<D> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort, int limit);
 
     public List<D> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters);
 

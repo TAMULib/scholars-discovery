@@ -248,8 +248,10 @@ public class ZipDocxExporter implements Exporter {
             }).collect(Collectors.toList())
         );
 
-        return individualRepo.findByIdIn(ids, filters, sort);
-    }    
+        int limit = lazyReference.getLimit();
+
+        return individualRepo.findByIdIn(ids, filters, sort, limit);
+    }
 
     private void addMargin(final MainDocumentPart mainDocumentPart) {
         final Body body = mainDocumentPart.getJaxbElement().getBody();

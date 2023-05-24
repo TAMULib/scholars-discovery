@@ -118,11 +118,12 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public List<Individual> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort) {
+    public List<Individual> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort, int limit) {
         try {
             SolrQueryBuilder builder = new SolrQueryBuilder()
                 .withFilters(filters)
-                .withSort(sort);
+                .withSort(sort)
+                .withRows(limit);
 
             JsonQueryRequest jsonRequest = builder.jsonQuery(ids);
 
@@ -489,7 +490,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             JsonQueryRequest request = new JsonQueryRequest(params)
                 .setQuery(DEFAULT_QUERY)
-                .setLimit(Integer.MAX_VALUE);
+                .setLimit(this.query.getRows());
 
             String termFilter = String.format("{!terms f=id}:%s", String.join(",", ids)); 
 
