@@ -17,10 +17,6 @@ public class DateFormatUtility {
         "yyyy-MM-dd'T'HH:mm:ss'Z'"
     };
 
-    private DateFormatUtility() {
-
-    }
-
     public static ZonedDateTime parse(String value) throws ParseException {
         Locale locale = LocaleContextHolder.getLocale();
         Date date = DateUtils.parseDate(value, locale, datePatterns);
