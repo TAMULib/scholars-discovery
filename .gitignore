@@ -1,18 +1,4 @@
-/bin/
 /target/
-
-### H2 ###
-*.mv.db
-*.trace.db
-
-### Logs ###
-
-*.log*
-
-### Application Specific ###
-
-triplestore/
-logs/
 
 ### STS ###
 .apt_generated
@@ -38,6 +24,13 @@ logs/
 /nbdist/
 /.nb-gradle/
 
-### VSCode ###
+/bin/
 
-.vscode
+*.mv.db
+*.trace.db
+
+*.log*
+*~
+
+triplestore/
+logs/
