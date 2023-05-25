@@ -2,10 +2,7 @@ package edu.tamu.scholars.middleware.export.service;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.xml.bind.JAXBException;
@@ -32,6 +28,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.export.exception.ExportException;
+import edu.tamu.scholars.middleware.utility.ZipUtility;
 import edu.tamu.scholars.middleware.view.model.DisplayView;
 import edu.tamu.scholars.middleware.view.model.ExportFieldView;
 import edu.tamu.scholars.middleware.view.model.ExportView;
@@ -136,7 +133,7 @@ public class ZipDocxExporter extends AbstractDocxExporter {
 
                         pkg.save(refDocFile, Docx4J.FLAG_SAVE_ZIP_FILE);
 
-                        zipFile(zos, refDocFile);
+                        ZipUtility.zipFile(zos, refDocFile);
 
                     } catch (IOException | JAXBException | Docx4JException e) {
                         e.printStackTrace();
@@ -144,23 +141,6 @@ public class ZipDocxExporter extends AbstractDocxExporter {
                 }
             }
         };
-    }
-
-    private long zipFile(ZipOutputStream zos, File file) throws FileNotFoundException, IOException {
-        zos.putNextEntry(new ZipEntry(file.getName()));
-
-        long bytesRead = 0;
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-            byte[] bytesIn = new byte[1024];
-            int read = 0;
-            while ((read = bis.read(bytesIn)) != -1) {
-                zos.write(bytesIn, 0, read);
-                bytesRead += read;
-            }
-        }
-        zos.closeEntry();
-
-        return bytesRead;
     }
 
 }
