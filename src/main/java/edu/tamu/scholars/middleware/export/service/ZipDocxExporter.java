@@ -1,5 +1,7 @@
 package edu.tamu.scholars.middleware.export.service;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,9 +93,9 @@ public class ZipDocxExporter extends AbstractDocxExporter {
 
                 List<String> ids = new ArrayList<String>();
                 if (reference.isArray()) {
-                    ids = StreamSupport.stream(reference.spliterator(), false).map(rn -> rn.get("id").asText()).collect(Collectors.toList());
+                    ids = StreamSupport.stream(reference.spliterator(), false).map(rn -> rn.get(ID).asText()).collect(Collectors.toList());
                 } else {
-                    ids.add(reference.get("id").asText());
+                    ids.add(reference.get(ID).asText());
                 }
 
                 referenceDocuments.addAll(fetchLazyReference(multipleReference.get(), ids));
