@@ -594,7 +594,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                         .append(value);
                     break;
                 case CONTAINS:
-                    throw new UnsupportedOperationException("CONTAINS: Solr contains contains query not yet supported");
+                    throw new UnsupportedOperationException("CONTAINS: Solr contains query not yet supported");
                 case EXPRESSION:
                 case RAW:
                     filterQuery
