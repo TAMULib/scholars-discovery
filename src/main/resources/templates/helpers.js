@@ -1,3 +1,7 @@
+Handlebars.registerHelper('year', function () {
+    return Number(new Date().getUTCFullYear()).toString();
+});
+
 Handlebars.registerHelper('toYear', function (value) {
     if (value) {
         const date = new Date(value);

@@ -14,8 +14,16 @@ public class DateFormatUtility {
     private static final String[] datePatterns = {
         "yyyy",
         "E MMM dd HH:mm:ss z yyyy",
-        "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        "dd-MM-yy",
+        "MM-dd-yyyy",
+        "yyyy-MM-dd HH:mm:ss",
+        "EEEEE MMMMM yyyy HH:mm:ss.SSSZ"
     };
+
+    public static String parseOutYear(String value) throws ParseException {
+        return String.valueOf(parse(value).getYear());
+    }
 
     public static ZonedDateTime parse(String value) throws ParseException {
         Locale locale = LocaleContextHolder.getLocale();

@@ -354,11 +354,6 @@ public class ViewTestUtility {
         exportView.setContentTemplate("<html><body><span>Hello, Content!</span></body></html>");
         exportView.setHeaderTemplate("<html><body><span>Hello, Header!</span></body></html>");
 
-        List<String> lazyReferences = new ArrayList<String>();
-        lazyReferences.add("publications");
-
-        exportView.setLazyReferences(lazyReferences);
-
         List<ExportFieldView> fieldViews = new ArrayList<ExportFieldView>();
 
         ExportFieldView exportField = new ExportFieldView();
@@ -390,7 +385,7 @@ public class ViewTestUtility {
 
         fieldViews.add(exportField);
 
-        exportView.setFieldViews(fieldViews);
+        exportView.setLazyReferences(fieldViews);
 
         expoerViews.add(exportView);
 

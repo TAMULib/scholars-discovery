@@ -1,0 +1,19 @@
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+
+CONSTRUCT {
+    ?organization rdfs:label ?labelWithIds .
+} WHERE {
+    <{{uri}}> vivo:relates ?relates ; a vivo:Grant .
+    ?relates vitro:mostSpecificType ?mostSpecificType .
+    ?relates obo:RO_0000052 ?contributor ; a vivo:ResearcherRole .
+    ?contributor vivo:relatedBy ?position .
+    ?position a vivo:Position  .
+    ?position vivo:relates ?organization .
+    ?organization a foaf:Organization .
+    ?organization rdfs:label ?label .
+    BIND( CONCAT( STR(?label), REPLACE(STR(?contributor), "(^.*/)", "::") ) AS ?labelWithIds ) .
+}

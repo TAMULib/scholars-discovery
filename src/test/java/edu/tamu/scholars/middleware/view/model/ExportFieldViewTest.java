@@ -23,7 +23,7 @@ public class ExportFieldViewTest {
         assertNotNull(exportField.getSort());
         assertTrue(exportField.getFilters().isEmpty());
         assertTrue(exportField.getSort().isEmpty());
-        assertEquals(5, exportField.getLimit());
+        assertEquals(Integer.MAX_VALUE, exportField.getLimit());
     }
 
     @Test

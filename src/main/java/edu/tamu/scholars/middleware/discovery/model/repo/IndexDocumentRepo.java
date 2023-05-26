@@ -30,6 +30,8 @@ public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
 
     public List<D> findByIdIn(List<String> ids);
 
+    public List<D> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort, int limit);
+
     public List<D> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters);
 
     public DiscoveryFacetAndHighlightPage<D> search(QueryArg query, List<FacetArg> facets, List<FilterArg> filters, List<BoostArg> boosts, HighlightArg highlight, Pageable page);

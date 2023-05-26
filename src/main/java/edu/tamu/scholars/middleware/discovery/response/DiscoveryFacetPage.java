@@ -60,17 +60,20 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                     .collect(Collectors.toList());
 
                 int pageSize = facetArgument.getPageSize();
-                int pageNumber = facetArgument.getPageNumber();
-                int offset = pageSize * (pageNumber - 1);
+                // convert to zero-based numbering page number
+                int pageNumber = facetArgument.getPageNumber() - 1;
+                int offset = pageSize * pageNumber;
 
-                long totalElements = entries.size();
-                int totalPages = (int) Math.ceil((double) entries.size() / (double) pageSize);
+                int totalElements = (int) entries.size();
+                int totalPages = (int) Math.ceil((double) totalElements / (double) pageSize);
 
                 int start = offset;
-                int end = offset + pageSize > entries.size() ? entries.size() : offset + pageSize;
+
+                int end = offset + (pageSize > totalElements ? totalElements : offset + pageSize);
 
                 Sort sort = Sort.by(facetArgument.getSort().getDirection(), facetArgument.getSort().getProperty().toString());
-                Pageable pageable = PageRequest.of(totalPages, pageSize, sort);
+
+                Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
                 facets.add(new Facet(findPath(name), DiscoveryPage.from(entries.subList(start, end), pageable, totalElements)));
             }

@@ -24,18 +24,16 @@
     contentTemplate: "defaults/displayViews/persons/singlePageBioContentTemplate.html"
     headerTemplate: "defaults/displayViews/persons/singlePageBioHeaderTemplate.html"
     lazyReferences:
-      - publications
-    fieldViews:
       - name: Recent Publications
         field: publications
         order: 1
         limit: 5
         sort:
-          - field: title
-            direction: ASC
           - field: publicationDate
             direction: DESC
             date: true
+          - field: title
+            direction: ASC
         filters:
           - field: type
             value: AcademicArticle
@@ -49,19 +47,16 @@
     contentTemplate: "defaults/displayViews/persons/profileSummaryContentTemplate.html"
     headerTemplate: "defaults/displayViews/persons/profileSummaryHeaderTemplate.html"
     lazyReferences:
-      - publications
-      - awardsAndHonors
-    fieldViews:
       - name: Recent Publications
         field: publications
         order: 1
         limit: 10
         sort:
-          - field: title
-            direction: ASC
           - field: publicationDate
             direction: DESC
             date: true
+          - field: title
+            direction: ASC
         filters:
           - field: type
             value: AcademicArticle
@@ -71,6 +66,90 @@
             value: Chapter
           - field: type
             value: ConferencePaper
+      - name: Grants
+        field: awardsAndHonors
+        order: 2
+        sort:
+          - field: yearAwarded
+            direction: DESC
+            date: true
+        filters:
+          - field: class
+            value: Relationship AND type:Grant
+            opKey: EXPRESSION
+  exportViews:
+  - name: 5 Year Publications
+    contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    lazyReferences:
+    - name: Publications
+      field: publications
+      order: 1
+      sort:
+        - field: publicationDate
+          direction: DESC
+          date: true
+        - field: title
+          direction: ASC
+      filters:
+        - field: type
+          value: AcademicArticle
+        - field: type
+          value: Book
+        - field: type
+          value: Chapter
+        - field: type
+          value: ConferencePaper
+        - field: publicationDate
+          value: "[NOW-5YEARS TO NOW]"
+          opKey: EXPRESSION
+    - name: Grants
+      field: awardsAndHonors
+      order: 2
+      sort:
+        - field: yearAwarded
+          direction: DESC
+          date: true
+      filters:
+        - field: class
+          value: Relationship AND type:Grant
+          opKey: EXPRESSION
+  - name: 8 Year Publications
+    contentTemplate: "defaults/displayViews/persons/8YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    lazyReferences:
+    - name: Publications
+      field: publications
+      order: 1
+      sort:
+        - field: publicationDate
+          direction: DESC
+          date: true
+        - field: title
+          direction: ASC
+      filters:
+        - field: type
+          value: AcademicArticle
+        - field: type
+          value: Book
+        - field: type
+          value: Chapter
+        - field: type
+          value: ConferencePaper
+        - field: publicationDate
+          value: "[NOW-8YEARS TO NOW]"
+          opKey: EXPRESSION
+    - name: Grants
+      field: awardsAndHonors
+      order: 2
+      sort:
+        - field: yearAwarded
+          direction: DESC
+          date: true
+      filters:
+        - field: class
+          value: Relationship AND type:Grant
+          opKey: EXPRESSION
   metaTemplates:
     title: "defaults/displayViews/persons/meta/title.txt"
     description: "defaults/displayViews/persons/meta/description.txt"
@@ -823,6 +902,93 @@
   mainContentTemplate: "defaults/displayViews/organizations/mainContentTemplate.html"
   asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
   asideLocation: RIGHT
+  exportViews:
+  - name: 5 Year Publications
+    contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    multipleReference:
+      name: Personnel
+      field: people
+      order: 1
+      sort:
+      - field: name
+        direction: ASC
+    lazyReferences:
+    - name: Publications
+      field: publications
+      order: 1
+      sort:
+        - field: publicationDate
+          direction: DESC
+          date: true
+        - field: title
+          direction: ASC
+      filters:
+        - field: type
+          value: AcademicArticle
+        - field: type
+          value: Book
+        - field: type
+          value: Chapter
+        - field: type
+          value: ConferencePaper
+        - field: publicationDate
+          value: "[NOW-5YEARS TO NOW]"
+          opKey: EXPRESSION
+    - name: Grants
+      field: awardsAndHonors
+      order: 2
+      sort:
+        - field: yearAwarded
+          direction: DESC
+          date: true
+      filters:
+        - field: class
+          value: Relationship AND type:Grant
+          opKey: EXPRESSION
+  - name: 8 Year Publications
+    contentTemplate: "defaults/displayViews/persons/8YearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    multipleReference:
+      name: Personnel
+      field: people
+      order: 1
+      sort:
+      - field: name
+        direction: ASC
+    lazyReferences:
+    - name: Publications
+      field: publications
+      order: 1
+      sort:
+        - field: publicationDate
+          direction: DESC
+          date: true
+        - field: title
+          direction: ASC
+      filters:
+        - field: type
+          value: AcademicArticle
+        - field: type
+          value: Book
+        - field: type
+          value: Chapter
+        - field: type
+          value: ConferencePaper
+        - field: publicationDate
+          value: "[NOW-8YEARS TO NOW]"
+          opKey: EXPRESSION
+    - name: Grants
+      field: awardsAndHonors
+      order: 2
+      sort:
+        - field: yearAwarded
+          direction: DESC
+          date: true
+      filters:
+        - field: class
+          value: Relationship AND type:Grant
+          opKey: EXPRESSION
   metaTemplates:
     title: "defaults/displayViews/organizations/meta/title.txt"
     description: "defaults/displayViews/organizations/meta/description.txt"

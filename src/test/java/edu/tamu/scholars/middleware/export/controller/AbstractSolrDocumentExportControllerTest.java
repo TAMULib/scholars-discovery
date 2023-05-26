@@ -93,7 +93,7 @@ public abstract class AbstractSolrDocumentExportControllerTest<D extends Abstrac
         DisplayView mockDisplayView = getMockDisplayView();
         mockDisplayView.getExportViews().forEach(exportView -> {
             exportView.setLazyReferences(new ArrayList<>());
-            exportView.setFieldViews(new ArrayList<>());
+            exportView.setLazyReferences(new ArrayList<>());
         });
         Mockito.when(displayViewRepo.findByTypesIn(Mockito.<List<String>>any()))
             .thenReturn(Optional.of(mockDisplayView));

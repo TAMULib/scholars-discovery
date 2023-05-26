@@ -17,7 +17,7 @@ public class ExportFieldView extends FieldView {
 
     public ExportFieldView() {
         super();
-        limit = 5;
+        limit = Integer.MAX_VALUE;
     }
 
     public int getLimit() {

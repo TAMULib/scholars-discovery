@@ -20,7 +20,6 @@ public class ExportViewTest {
         ExportView export = new ExportView();
         assertNotNull(export);
         assertEquals(0, export.getLazyReferences().size());
-        assertEquals(0, export.getFieldViews().size());
     }
 
     @Test
@@ -35,13 +34,6 @@ public class ExportViewTest {
 
         export.setHeaderTemplate("<html><body><span>Hello, Header!</span></body></html>");
         assertEquals("<html><body><span>Hello, Header!</span></body></html>", export.getHeaderTemplate());
-
-        List<String> lazyReferences = new ArrayList<String>();
-        lazyReferences.add("publications");
-
-        export.setLazyReferences(lazyReferences);
-        assertEquals(1, export.getLazyReferences().size());
-        assertEquals("publications", export.getLazyReferences().get(0));
 
         List<ExportFieldView> fieldViews = new ArrayList<ExportFieldView>();
 
@@ -73,23 +65,23 @@ public class ExportViewTest {
 
         fieldViews.add(exportField);
 
-        export.setFieldViews(fieldViews);
+        export.setLazyReferences(fieldViews);
 
-        assertEquals(1, export.getFieldViews().size());
+        assertEquals(1, export.getLazyReferences().size());
 
-        assertEquals("Test", export.getFieldViews().get(0).getName());
-        assertEquals("publications", export.getFieldViews().get(0).getField());
+        assertEquals("Test", export.getLazyReferences().get(0).getName());
+        assertEquals("publications", export.getLazyReferences().get(0).getField());
 
-        assertEquals(1, export.getFieldViews().get(0).getFilters().size());
-        assertEquals("type", export.getFieldViews().get(0).getFilters().get(0).getField());
-        assertEquals("Test", export.getFieldViews().get(0).getFilters().get(0).getValue());
+        assertEquals(1, export.getLazyReferences().get(0).getFilters().size());
+        assertEquals("type", export.getLazyReferences().get(0).getFilters().get(0).getField());
+        assertEquals("Test", export.getLazyReferences().get(0).getFilters().get(0).getValue());
 
-        assertEquals(1, export.getFieldViews().get(0).getSort().size());
-        assertEquals("date", export.getFieldViews().get(0).getSort().get(0).getField());
-        assertEquals(Direction.DESC, export.getFieldViews().get(0).getSort().get(0).getDirection());
-        assertTrue(export.getFieldViews().get(0).getSort().get(0).isDate());
+        assertEquals(1, export.getLazyReferences().get(0).getSort().size());
+        assertEquals("date", export.getLazyReferences().get(0).getSort().get(0).getField());
+        assertEquals(Direction.DESC, export.getLazyReferences().get(0).getSort().get(0).getDirection());
+        assertTrue(export.getLazyReferences().get(0).getSort().get(0).isDate());
 
-        assertEquals(10, export.getFieldViews().get(0).getLimit());
+        assertEquals(10, export.getLazyReferences().get(0).getLimit());
     }
 
 }

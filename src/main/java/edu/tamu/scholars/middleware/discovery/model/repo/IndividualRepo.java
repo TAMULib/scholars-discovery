@@ -10,10 +10,12 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -26,9 +28,11 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.StreamingResponseCallback;
+import org.apache.solr.client.solrj.request.json.JsonQueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +56,14 @@ import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
+import edu.tamu.scholars.middleware.utility.DateFormatUtility;
+
 import reactor.core.publisher.Flux;
 
 @Service
 public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
-  private static final Logger logger = LoggerFactory.getLogger(IndividualRepo.class);
+    private static final Logger logger = LoggerFactory.getLogger(IndividualRepo.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
 
@@ -109,6 +115,24 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             return solrClient.getBinder()
                 .getBeans(Individual.class, documents);
+        } catch (IOException | SolrServerException e) {
+            throw new SolrRequestException("Failed to find documents from ids", e);
+        }
+    }
+
+    @Override
+    public List<Individual> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort, int limit) {
+        try {
+            SolrQueryBuilder builder = new SolrQueryBuilder()
+                .withFilters(filters)
+                .withSort(sort)
+                .withRows(limit);
+
+            JsonQueryRequest jsonRequest = builder.jsonQuery(ids);
+
+            QueryResponse queryResponse = jsonRequest.process(solrClient, COLLECTION);
+
+            return queryResponse.getBeans(Individual.class);
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to find documents from ids", e);
         }
@@ -171,7 +195,9 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                         individual.setContent(doc.getFieldValuesMap());
                         individual.setId(doc.getFieldValue(ID).toString());
                         individual.setClazz(doc.getFieldValue(CLASS).toString());
-                        individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
+                        if (Objects.nonNull(doc.getFieldValues(TYPE))) {
+                            individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
+                        }
 
                         emitter.next(individual);
 
@@ -212,11 +238,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             for (SolrDocument document : documents) {
                 if (document.containsKey(dateField)) {
-                    Date publicationDate = ((Date) document.getFieldValue(dateField));
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(publicationDate);
-                    dataNetwork.countYear(String.valueOf(calendar.get(Calendar.YEAR)));
+                    Object dateFieldFromDocument = document.getFieldValue(dateField);
+                    validateAndCountDateField(dataNetwork, dateFieldFromDocument);
                 }
+
                 List<String> values = getValues(document, dataNetworkDescriptor.getDataFields());
 
                 String iid = (String) document.getFieldValue(ID);
@@ -242,6 +267,30 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
 
         return dataNetwork;
+    }
+
+    private boolean validateAndCountDateField(DiscoveryNetwork dataNetwork, Object dateFieldFromDocument) {
+        String year = null;
+        if (dateFieldFromDocument instanceof Date) {
+            Date publicationDate = (Date) dateFieldFromDocument;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(publicationDate);
+            year = String.valueOf(calendar.get(Calendar.YEAR));
+        } else if (dateFieldFromDocument instanceof String) {
+            try {
+                year = DateFormatUtility.parseOutYear((String) dateFieldFromDocument);
+            } catch (Exception e) {
+                // do nothing, not success return false
+            }
+        }
+
+        boolean success = year != null;
+
+        if (success) {
+            dataNetwork.countYear(year);
+        }
+
+        return success;
     }
 
     private long count(SolrQuery query) {
@@ -297,6 +346,8 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         private final SolrQuery query;
 
+        private final List<String> filters;
+
         private SolrQueryBuilder() {
             this(DEFAULT_QUERY);
         }
@@ -306,6 +357,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .setParam("defType", defType)
                 .setParam("q.op", defaultOperator)
                 .setQuery(query);
+            this.filters = new ArrayList<>();
         }
 
         public SolrQueryBuilder withQuery(QueryArg query) {
@@ -366,8 +418,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         public SolrQueryBuilder withFilters(List<FilterArg> filters) {
             filters.stream().collect(Collectors.groupingBy(w -> w.getField())).forEach((field, filterList) -> {
                 FilterArg firstOne = filterList.get(0);
+
                 StringBuilder filterQuery = new StringBuilder()
                     .append(new FilterQueryBuilder(firstOne, false).build());
+
                 if (filterList.size() > 1) {
                     // NOTE: filters grouped by field are AND together
                     for (FilterArg arg : filterList.subList(1, filterList.size())) {
@@ -375,6 +429,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                             .append(new FilterQueryBuilder(arg, true).build());
                     }
                 }
+                this.filters.add(filterQuery.toString());
                 this.query.addFilterQuery(filterQuery.toString());
             });
 
@@ -449,7 +504,35 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
 
         public SolrQuery query() {
+            logger.debug(this.query.toString());
             return this.query;
+        }
+
+        public JsonQueryRequest jsonQuery(List<String> ids) {
+            final ModifiableSolrParams params = new ModifiableSolrParams();
+            params.set("q.op", defaultOperator);
+
+            JsonQueryRequest request = new JsonQueryRequest(params)
+                .setQuery(DEFAULT_QUERY)
+                .setLimit(this.query.getRows());
+
+            String termFilter = String.format("{!terms f=id}:%s", String.join(",", ids)); 
+
+            request.withFilter(termFilter);
+
+            // there is variation of boolean logic for filtering
+            // for export filters grouped by field are OR'd together
+            for (String filter : this.filters) {
+                request.withFilter(filter.replace(" AND ", " OR "));
+            }
+
+            String sort = this.query.getSorts().stream()
+                .map(s -> String.format("%s %s", s.getItem(), s.getOrder().toString()))
+                .collect(Collectors.joining(","));
+
+            request.setSort(sort);
+
+            return request;
         }
 
     }
@@ -528,10 +611,14 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                     break;
                 case STARTS_WITH:
                     filterQuery
-                        .append("{!")
-                        .append(value);
+                        .append("{!edismax qf=")
+                        .append(field)
+                        .append("}")
+                        .append(value)
+                        .append("*");
                     break;
                 case CONTAINS:
+                    throw new UnsupportedOperationException("CONTAINS: Solr contains query not yet supported");
                 case EXPRESSION:
                 case RAW:
                     filterQuery
