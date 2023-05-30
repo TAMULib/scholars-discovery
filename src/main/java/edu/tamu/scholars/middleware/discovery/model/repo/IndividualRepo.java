@@ -280,7 +280,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             try {
                 year = DateFormatUtility.parseOutYear((String) dateFieldFromDocument);
             } catch (Exception e) {
-                // do nothing, not success return false
+                logger.warn("Unable to format {}. {}", year, e.getMessage());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Unable to format date while building data network", e);
+                }
             }
         }
 
