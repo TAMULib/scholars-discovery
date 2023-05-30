@@ -15,17 +15,18 @@ public class DateFormatUtility {
         "yyyy",
         "E MMM dd HH:mm:ss z yyyy",
         "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        "yyyy-MM-dd'T'HH:mm:ss",
         "dd-MM-yy",
         "MM-dd-yyyy",
         "yyyy-MM-dd HH:mm:ss",
         "EEEEE MMMMM yyyy HH:mm:ss.SSSZ"
     };
 
-    public static String parseOutYear(String value) throws ParseException {
+    public static String parseOutYear(String value) throws IllegalArgumentException, ParseException {
         return String.valueOf(parse(value).getYear());
     }
 
-    public static ZonedDateTime parse(String value) throws ParseException {
+    public static ZonedDateTime parse(String value) throws IllegalArgumentException, ParseException {
         Locale locale = LocaleContextHolder.getLocale();
         Date date = DateUtils.parseDate(value, locale, datePatterns);
         return date.toInstant().atZone(ZoneId.systemDefault());
