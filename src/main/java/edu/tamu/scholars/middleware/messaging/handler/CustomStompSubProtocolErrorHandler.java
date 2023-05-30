@@ -12,9 +12,9 @@ public class CustomStompSubProtocolErrorHandler extends StompSubProtocolErrorHan
 
     @Override
     protected Message<byte[]> handleInternal(StompHeaderAccessor errorHeaderAccessor, byte[] errorPayload, @Nullable Throwable cause, @Nullable StompHeaderAccessor clientHeaderAccessor) {
-    	if (Objects.nonNull(clientHeaderAccessor)) {
-    		errorHeaderAccessor.setDestination(clientHeaderAccessor.getDestination());
-    	}
+        if (Objects.nonNull(clientHeaderAccessor)) {
+            errorHeaderAccessor.setDestination(clientHeaderAccessor.getDestination());
+        }
 
         return MessageBuilder.createMessage(errorPayload, errorHeaderAccessor.getMessageHeaders());
     }
