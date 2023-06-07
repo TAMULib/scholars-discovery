@@ -111,10 +111,14 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     @Override
     public List<Individual> findByIdIn(List<String> ids) {
         try {
-            SolrDocumentList documents = solrClient.getById(COLLECTION, ids);
+            SolrQueryBuilder builder = new SolrQueryBuilder()
+                .withRows(Integer.MAX_VALUE);
 
-            return solrClient.getBinder()
-                .getBeans(Individual.class, documents);
+            JsonQueryRequest jsonRequest = builder.jsonQuery(ids);
+
+            QueryResponse queryResponse = jsonRequest.process(solrClient, COLLECTION);
+
+            return queryResponse.getBeans(Individual.class);
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to find documents from ids", e);
         }
