@@ -46,6 +46,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import reactor.core.publisher.Flux;
+
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
@@ -57,8 +59,6 @@ import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
-
-import reactor.core.publisher.Flux;
 
 @Service
 public class IndividualRepo implements IndexDocumentRepo<Individual> {
@@ -110,18 +110,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findByIdIn(List<String> ids) {
-        try {
-            SolrQueryBuilder builder = new SolrQueryBuilder()
-                .withRows(Integer.MAX_VALUE);
-
-            JsonQueryRequest jsonRequest = builder.jsonQuery(ids);
-
-            QueryResponse queryResponse = jsonRequest.process(solrClient, COLLECTION);
-
-            return queryResponse.getBeans(Individual.class);
-        } catch (IOException | SolrServerException e) {
-            throw new SolrRequestException("Failed to find documents from ids", e);
-        }
+        return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), Integer.MAX_VALUE);
     }
 
     @Override
