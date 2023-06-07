@@ -1,6 +1,5 @@
 package edu.tamu.scholars.middleware.discovery.assembler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,9 +28,7 @@ public class IndividualResourceAssembler extends RepresentationModelAssemblerSup
 
     @Override
     public CollectionModel<IndividualModel> toCollectionModel(Iterable<? extends Individual> entities) {
-        List<String> ids = new ArrayList<>();
         List<IndividualModel> content = StreamUtils.createStreamFromIterator(entities.iterator())
-            .peek(entity -> ids.add(entity.getId()))
             .map(this::toModel)
             .collect(Collectors.toList());
 
