@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
@@ -16,6 +17,7 @@ import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
 import reactor.core.publisher.Flux;
 
 public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
@@ -39,5 +41,7 @@ public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
     public Flux<D> export(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort);
 
     public DiscoveryNetwork network(DiscoveryNetworkDescriptor dataNetworkDescriptor);
+
+    public DiscoveryResearchAge researcherAge(DiscoveryResearchAgeDescriptor researcherAgeDescriptor, QueryArg query, List<FilterArg> filters);
 
 }

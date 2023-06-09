@@ -10,6 +10,7 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -46,10 +47,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import reactor.core.publisher.Flux;
-
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
@@ -58,7 +58,10 @@ import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
+import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
+import reactor.core.publisher.Flux;
 
 @Service
 public class IndividualRepo implements IndexDocumentRepo<Individual> {
@@ -262,6 +265,71 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         return dataNetwork;
     }
 
+    @Override
+    public DiscoveryResearchAge researcherAge(DiscoveryResearchAgeDescriptor researcherAgeDescriptor, QueryArg query, List<FilterArg> filters) {
+        DiscoveryResearchAge researchAge = new DiscoveryResearchAge(researcherAgeDescriptor.getDateField());
+
+        String dateField = researcherAgeDescriptor.getDateField();
+
+        try {
+
+            List<String[]> facetQueries = new ArrayList<>();
+
+            int bound = researcherAgeDescriptor.getUpperLimitInYears() + researcherAgeDescriptor.getGroupingIntervalInYears();
+
+            int i = 0;
+            int prevStart = i;
+            int diffStart;
+            while (i <= bound) {
+                diffStart = i + 1;
+                if (i == 0) {
+                    // first
+                    facetQueries.add(new String[] {String.format("%s:{NOW-1YEAR/YEAR TO NOW/YEAR}", dateField), "Below 1"});
+                    prevStart = 1;
+                } else if (i >= bound) {
+                    // last
+                    diffStart = LocalDate.now().getYear();
+                    facetQueries.add(new String[] { String.format("%s:[NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), prevStart + " or Above" });
+                } else {
+                    // in between
+                    facetQueries.add(new String[] { String.format("%s:{NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), i + " TO " + (i + researcherAgeDescriptor.getGroupingIntervalInYears()) });
+                    prevStart = diffStart;
+                } 
+                i += researcherAgeDescriptor.getGroupingIntervalInYears();
+            }
+
+            SolrQueryBuilder builder = new SolrQueryBuilder()
+                .withQuery(query)
+                .withFilters(filters)
+                .withFacetQueries(facetQueries.stream().map(fql -> fql[0]).collect(Collectors.toList()))
+                .withSort(Sort.by(Direction.ASC, dateField))
+                .withRows(0);
+
+            QueryResponse response = solrClient.query(COLLECTION, builder.query());
+
+            long total = 0;
+            for (int j = 0; j < facetQueries.size(); j++) {
+                String[] fql = facetQueries.get(j);
+                int subtotal = response.getFacetQuery().get(fql[0]);
+
+                total += subtotal;
+
+                System.out.println(fql[0] + "::" + fql[1] + ": " + subtotal);
+
+                researchAge.add(fql[0], fql[1], subtotal);
+            }
+
+            System.out.println("\ntotal: " + total);
+            System.out.println("\nnumber found: " + response.getResults().getNumFound());
+
+            System.out.println("\npass: " + (total == response.getResults().getNumFound()) + " " + (response.getResults().getNumFound() - total));
+
+        } catch (Exception e) {
+            logger.error("Failed to gather researcher age analytics!", e);
+        }
+        return researchAge;
+    }
+
     private boolean validateAndCountDateField(DiscoveryNetwork dataNetwork, Object dateFieldFromDocument) {
         String year = null;
         if (dateFieldFromDocument instanceof Date) {
@@ -271,7 +339,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             year = String.valueOf(calendar.get(Calendar.YEAR));
         } else if (dateFieldFromDocument instanceof String) {
             try {
-                year = DateFormatUtility.parseOutYear((String) dateFieldFromDocument);
+                year = DateFormatUtility.parseYear((String) dateFieldFromDocument);
             } catch (Exception e) {
                 logger.warn("Unable to format {}. {}", year, e.getMessage());
                 if (logger.isDebugEnabled()) {
@@ -381,6 +449,23 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             }
 
             this.query.setQuery(query.getExpression());
+
+            return this;
+        }
+
+        public SolrQueryBuilder withDateRangeFacet(String field, Date start, Date end, String gap) {
+            // this.query.setParam("facet", true);
+            // this.query.addFacetQuery(facetQuery);
+
+
+            this.query.addDateRangeFacet(field, start, end, gap);
+
+            return this;
+        }
+
+        public SolrQueryBuilder withFacetQueries(List<String> facetQueries) {
+            this.query.setParam("facet", true);
+            facetQueries.forEach(facetQuery -> this.query.addFacetQuery(facetQuery));
 
             return this;
         }

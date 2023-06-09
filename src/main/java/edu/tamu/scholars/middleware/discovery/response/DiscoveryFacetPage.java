@@ -94,8 +94,8 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                 return facetSort.getDirection().equals(Direction.ASC) ? Long.compare(e1.count, e2.count) : Long.compare(e2.count, e1.count);
             }
             try {
-                ZonedDateTime ld1 = DateFormatUtility.parse(e1.value);
-                ZonedDateTime ld2 = DateFormatUtility.parse(e2.value);
+                ZonedDateTime ld1 = DateFormatUtility.parseZonedDateTime(e1.value);
+                ZonedDateTime ld2 = DateFormatUtility.parseZonedDateTime(e2.value);
                 return facetSort.getDirection().equals(Direction.ASC) ? ld1.compareTo(ld2) : ld2.compareTo(ld1);
             } catch (ParseException pe) {
                 if (NumberUtils.isParsable(e1.value) && NumberUtils.isParsable(e2.value)) {
@@ -156,7 +156,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
         public String getValueKey() {
             try {
-                ZonedDateTime date = DateFormatUtility.parse(value);
+                ZonedDateTime date = DateFormatUtility.parseZonedDateTime(value);
                 return String.valueOf(date.getYear());
             } catch (ParseException pe) {
                 return value;

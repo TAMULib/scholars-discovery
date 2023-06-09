@@ -22,14 +22,19 @@ public class DateFormatUtility {
         "EEEEE MMMMM yyyy HH:mm:ss.SSSZ"
     };
 
-    public static String parseOutYear(String value) throws IllegalArgumentException, ParseException {
-        return String.valueOf(parse(value).getYear());
+    public static String parseYear(String value) throws IllegalArgumentException, ParseException {
+        return String.valueOf(parseZonedDateTime(value).getYear());
     }
 
-    public static ZonedDateTime parse(String value) throws IllegalArgumentException, ParseException {
+    public static ZonedDateTime parseZonedDateTime(String value) throws IllegalArgumentException, ParseException {
+        return parseDate(value)
+            .toInstant()
+            .atZone(ZoneId.systemDefault());
+    }
+
+    public static Date parseDate(String value) throws IllegalArgumentException, ParseException {
         Locale locale = LocaleContextHolder.getLocale();
-        Date date = DateUtils.parseDate(value, locale, datePatterns);
-        return date.toInstant().atZone(ZoneId.systemDefault());
+        return DateUtils.parseDate(value, locale, datePatterns);
     }
 
 }
