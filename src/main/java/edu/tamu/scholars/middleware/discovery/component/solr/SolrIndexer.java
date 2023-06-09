@@ -85,7 +85,7 @@ public class SolrIndexer implements Indexer {
             solrClient.commit(COLLECTION);
             logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
         } catch (Exception e) {
-            logger.warn("Failed to save batch. Attempting individually.", e);
+            logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
             documents.stream().forEach(this::index);
         }
     }
@@ -97,7 +97,7 @@ public class SolrIndexer implements Indexer {
             solrClient.commit(COLLECTION);
             logger.info(String.format("Saved %s with id %s", name(), document.getId()));
         } catch (Exception e) {
-            logger.warn(String.format("Failed to save document with id %s", document.getId()), e);
+            logger.warn(String.format("Failed to save %s with id %s", name(), document.getId()), e);
         }
     }
 
