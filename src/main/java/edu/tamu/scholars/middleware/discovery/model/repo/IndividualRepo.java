@@ -453,16 +453,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             return this;
         }
 
-        public SolrQueryBuilder withDateRangeFacet(String field, Date start, Date end, String gap) {
-            // this.query.setParam("facet", true);
-            // this.query.addFacetQuery(facetQuery);
-
-
-            this.query.addDateRangeFacet(field, start, end, gap);
-
-            return this;
-        }
-
         public SolrQueryBuilder withFacetQueries(List<String> facetQueries) {
             this.query.setParam("facet", true);
             facetQueries.forEach(facetQuery -> this.query.addFacetQuery(facetQuery));
