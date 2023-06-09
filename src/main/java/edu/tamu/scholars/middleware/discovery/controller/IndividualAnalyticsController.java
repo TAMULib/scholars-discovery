@@ -25,7 +25,7 @@ public class IndividualAnalyticsController {
     @Autowired
     private IndividualRepo repo;
 
-    @GetMapping("/researcherAge")
+    @GetMapping("/researchAge")
     public ResponseEntity<DiscoveryResearchAge> researcherAge(
         QueryArg query,
         List<FilterArg> filters,
