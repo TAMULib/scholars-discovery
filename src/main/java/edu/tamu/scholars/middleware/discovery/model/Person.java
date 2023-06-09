@@ -308,6 +308,11 @@ public class Person extends Common {
     private List<String> publications;
 
     @Field
+    @FieldType(type = "pdates")
+    @FieldSource(template = "person/publicationDates", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    private List<String> publicationDates; // unassociated list of dates! grrr..... another concession 
+
+    @Field
     @FieldType(type = "nested_whole_strings")
     @FieldSource(template = "person/selectedPublicationType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
     private List<String> selectedPublicationType;
@@ -1302,6 +1307,14 @@ public class Person extends Common {
 
     public void setPublications(List<String> publications) {
         this.publications = publications;
+    }
+
+    public List<String> getPublicationDates() {
+        return publicationDates;
+    }
+
+    public void setPublicationDates(List<String> publicationDates) {
+        this.publicationDates = publicationDates;
     }
 
     public List<String> getSelectedPublicationType() {
