@@ -292,7 +292,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                     facetQueries.add(new String[] { String.format("%s:[NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), prevStart + " or Above" });
                 } else {
                     // in between
-                    facetQueries.add(new String[] { String.format("%s:{NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), prevStart + " TO " + (prevStart + researcherAgeDescriptor.getGroupingIntervalInYears() - 1) });
+                    facetQueries.add(new String[] { String.format("%s:{NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), prevStart + " to " + (prevStart + researcherAgeDescriptor.getGroupingIntervalInYears() - 1) });
                     prevStart = diffStart;
                 } 
                 i += researcherAgeDescriptor.getGroupingIntervalInYears();
