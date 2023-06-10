@@ -284,7 +284,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 diffStart = i + 1;
                 if (i == 0) {
                     // first
-                    facetQueries.add(new String[] {String.format("%s:{NOW-1YEAR/YEAR TO NOW/YEAR}", dateField), "Below 1"});
+                    facetQueries.add(new String[] { String.format("%s:{NOW-1YEAR/YEAR TO NOW/YEAR}", dateField), "Below 1" });
                     prevStart = 1;
                 } else if (i >= bound) {
                     // last
@@ -292,7 +292,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                     facetQueries.add(new String[] { String.format("%s:[NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), prevStart + " or Above" });
                 } else {
                     // in between
-                    facetQueries.add(new String[] { String.format("%s:{NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), i + " TO " + (i + researcherAgeDescriptor.getGroupingIntervalInYears()) });
+                    facetQueries.add(new String[] { String.format("%s:{NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), prevStart + " TO " + (prevStart + researcherAgeDescriptor.getGroupingIntervalInYears() - 1) });
                     prevStart = diffStart;
                 } 
                 i += researcherAgeDescriptor.getGroupingIntervalInYears();
