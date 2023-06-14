@@ -1,8 +1,13 @@
 package edu.tamu.scholars.middleware.utility;
 
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.Period;
+import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 
@@ -35,6 +40,18 @@ public class DateFormatUtility {
     public static Date parseDate(String value) throws IllegalArgumentException, ParseException {
         Locale locale = LocaleContextHolder.getLocale();
         return DateUtils.parseDate(value, locale, datePatterns);
+    }
+
+    public static int ageInYearsFromEpochSecond(long timestamp) {
+        return Period.between(
+            Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDate(),
+            Instant.now().atZone(ZoneId.systemDefault()).toLocalDate()   
+        ).getYears();
+    }
+
+    public static int getYear() {
+        return ZonedDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())
+            .getYear();
     }
 
 }

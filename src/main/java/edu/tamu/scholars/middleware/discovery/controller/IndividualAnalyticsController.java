@@ -30,6 +30,7 @@ public class IndividualAnalyticsController {
         QueryArg query,
         List<FilterArg> filters,
         @RequestParam(name = "dateField", defaultValue = "publicationDate") String dateField,
+        @RequestParam(name = "isMultivaluedField", defaultValue = "false") Boolean multivaluedField,
         @RequestParam(name = "upperLimitInYears", defaultValue = "40") Integer upperLimitInYears,
         @RequestParam(name = "groupingIntervalInYears", defaultValue = "5") Integer groupingIntervalInYears
 
@@ -40,7 +41,7 @@ public class IndividualAnalyticsController {
         } catch (JsonProcessingException e) {
 
         }
-        return ResponseEntity.ok(repo.researcherAge(DiscoveryResearchAgeDescriptor.of(dateField, upperLimitInYears, groupingIntervalInYears), query, filters));
+        return ResponseEntity.ok(repo.researcherAge(DiscoveryResearchAgeDescriptor.of(dateField, multivaluedField, upperLimitInYears, groupingIntervalInYears), query, filters));
     }
 
 }

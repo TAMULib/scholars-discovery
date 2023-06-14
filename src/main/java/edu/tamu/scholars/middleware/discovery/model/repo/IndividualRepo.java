@@ -59,7 +59,6 @@ import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
-import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 import reactor.core.publisher.Flux;
 
@@ -271,64 +270,63 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         String dateField = researcherAgeDescriptor.getDateField();
 
+        // same date range structure applied to both
+
+        List<String[]> facetQueries = researcherAgeDescriptor.getFacetQueries();
+
         try {
 
-            List<String[]> facetQueries = new ArrayList<>();
+            if (researcherAgeDescriptor.isMultivaluedField()) {
 
-            int bound = researcherAgeDescriptor.getUpperLimitInYears() + researcherAgeDescriptor.getGroupingIntervalInYears();
+                //////////////////////////////////////
+                // workaround for multivalued fields
+                // clips rows at max integer
+                //////////////////////////////////////
 
-            int i = 0;
-            int prevStart = i;
-            int diffStart;
-            while (i <= bound) {
-                diffStart = i + 1;
-                if (i == 0) {
-                    // first
-                    facetQueries.add(new String[] { String.format("%s:{NOW-1YEAR/YEAR TO NOW/YEAR}", dateField), "Below 1" });
-                    prevStart = 1;
-                } else if (i >= bound) {
-                    // last
-                    diffStart = LocalDate.now().getYear();
-                    facetQueries.add(new String[] { String.format("%s:[NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), prevStart + " or Above" });
-                } else {
-                    // in between
-                    facetQueries.add(new String[] { String.format("%s:{NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart), prevStart + " to " + (prevStart + researcherAgeDescriptor.getGroupingIntervalInYears() - 1) });
-                    prevStart = diffStart;
-                } 
-                i += researcherAgeDescriptor.getGroupingIntervalInYears();
+                // get count
+                long count = this.count(String.format("%s:*", dateField), filters);
+
+                System.out.println("\n\n" + count + "\n\n");
+
+                String ageField = String.format("field(%s,min)", dateField);
+
+                SolrQueryBuilder builder = new SolrQueryBuilder()
+                    .withQuery(query)
+                    .withField(ageField)
+                    .withFilters(filters)
+                    .withSort(Sort.by(Direction.ASC, dateField))
+                    .withRows((int) count);
+
+                QueryResponse response = solrClient.query(COLLECTION, builder.query());
+
+                SolrDocumentList results = response.getResults();
+
+                researchAge.from(ageField, results, facetQueries);
+            } else {
+
+                //////////////////////////////////////////////
+                // works as expected for singlevalued fields
+                //////////////////////////////////////////////
+
+                SolrQueryBuilder builder = new SolrQueryBuilder()
+                    .withQuery(query)
+                    .withFilters(filters)
+                    .withFacetQueries(facetQueries.stream().map(fql -> fql[0]).collect(Collectors.toList()))
+                    .withSort(Sort.by(Direction.ASC, dateField))
+                    .withRows(0);
+
+                QueryResponse response = solrClient.query(COLLECTION, builder.query());
+
+                researchAge.from(response.getFacetQuery(), facetQueries);
             }
-
-            SolrQueryBuilder builder = new SolrQueryBuilder()
-                .withQuery(query)
-                .withFilters(filters)
-                .withFacetQueries(facetQueries.stream().map(fql -> fql[0]).collect(Collectors.toList()))
-                .withSort(Sort.by(Direction.ASC, dateField))
-                .withRows(0);
-
-            QueryResponse response = solrClient.query(COLLECTION, builder.query());
-
-            long total = 0;
-            for (int j = 0; j < facetQueries.size(); j++) {
-                String[] fql = facetQueries.get(j);
-                int subtotal = response.getFacetQuery().get(fql[0]);
-
-                total += subtotal;
-
-                System.out.println(fql[0] + "::" + fql[1] + ": " + subtotal);
-
-                researchAge.add(fql[0], fql[1], subtotal);
-            }
-
-            System.out.println("\ntotal: " + total);
-            System.out.println("\nnumber found: " + response.getResults().getNumFound());
-
-            System.out.println("\npass: " + (total == response.getResults().getNumFound()) + " " + (response.getResults().getNumFound() - total));
 
         } catch (Exception e) {
             logger.error("Failed to gather researcher age analytics!", e);
         }
         return researchAge;
     }
+
+    
 
     private boolean validateAndCountDateField(DiscoveryNetwork dataNetwork, Object dateFieldFromDocument) {
         String year = null;
@@ -482,6 +480,12 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             sort.iterator().forEachRemaining(order -> {
                 this.query.addSort(order.getProperty(), order.getDirection().isAscending() ? ORDER.asc: ORDER.desc);
             });
+
+            return this;
+        }
+
+        public SolrQueryBuilder withField(String field) {
+            this.query.setParam("fl", field);
 
             return this;
         }
