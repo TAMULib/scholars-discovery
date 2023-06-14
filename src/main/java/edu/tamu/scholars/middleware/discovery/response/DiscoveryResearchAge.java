@@ -1,11 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.response;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor.LabeledRange;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 
 public class DiscoveryResearchAge {
@@ -41,60 +35,55 @@ public class DiscoveryResearchAge {
         }
     }
 
-    public void from(Map<String, Integer> facet, List<String[]> facetQueries) {
-        for (int j = 0; j < facetQueries.size(); j++) {
-            String[] fql = facetQueries.get(j);
-            int subtotal = facet.get(fql[0]);
+    public void from(DiscoveryResearchAgeDescriptor researcherAgeDescriptor, SolrDocumentList results) {
+        String dateField = researcherAgeDescriptor.getDateField();
+        String ageField = researcherAgeDescriptor.getAgeField();
 
-            System.out.println(fql[0] + "::" + fql[1] + ": " + subtotal);
+        List<LabeledRange> labeledRanges = researcherAgeDescriptor.getLabeledRanges();
 
-            add(fql[0], fql[1], subtotal);
-        }
-    }
-
-    public void from(String ageField, SolrDocumentList docs, List<String[]> facetQueries) {
-
-        System.out.println(ageField);
 
         AtomicInteger total = new AtomicInteger(0);
 
-        facetQueries.stream().forEach(fql -> {
+        labeledRanges.stream().forEach(lr -> {
 
             int subtotal = 0;
 
-            for (SolrDocument solrDoc : docs) {
+            for (SolrDocument solrDoc : results) {
                 long dateFromEpochInSeconds = (long) solrDoc.getFieldValue(ageField);
 
                 int age = DateFormatUtility.ageInYearsFromEpochSecond(dateFromEpochInSeconds);
 
                 boolean inRange = false;
 
-                String part = fql[2];
-                int from = Integer.parseInt(fql[3]);
-                int to = Integer.parseInt(fql[4]);
-
-                if (part.equals("first")) {
-                    inRange = age < to;
-                } else if (part.equals("last")) {
-                    inRange = age >= from;
+                if (lr.isFirst) {
+                    inRange = age < lr.to;
+                } else if (lr.isLast) {
+                    inRange = age >= lr.from;
                 } else {
                     // in between
-                    inRange = age > from && age <= to;
+                    inRange = age > lr.from && age <= lr.to;
                 }
 
                 if (inRange) {
-                    subtotal++;
+                    if (researcherAgeDescriptor.isMultivaluedField() && solrDoc.containsKey(dateField)) {
+                        Collection<Object> docs = solrDoc.getFieldValues(dateField);
+                        subtotal += docs.size();
+                    } else {
+                        subtotal++;
+                    }
                 }
             }
 
-            System.out.println(String.join(",", fql) + " = " + subtotal);
+            // System.out.println(String.join(",", fql) + " = " + subtotal);
 
             total.addAndGet(subtotal);
 
-            add(fql[0], fql[1], subtotal);
+            add(lr.range, lr.label, subtotal);
+
         });
 
         System.out.println(total);
+
     }
 
     public String getDateField() {

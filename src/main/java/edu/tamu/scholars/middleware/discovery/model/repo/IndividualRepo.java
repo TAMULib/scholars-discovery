@@ -10,7 +10,6 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.TYPE;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -56,6 +55,7 @@ import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
+import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo.FilterQueryBuilder;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
@@ -269,56 +269,30 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         DiscoveryResearchAge researchAge = new DiscoveryResearchAge(researcherAgeDescriptor.getDateField());
 
         String dateField = researcherAgeDescriptor.getDateField();
-
-        // same date range structure applied to both
-
-        List<String[]> facetQueries = researcherAgeDescriptor.getFacetQueries();
+        String ageField = researcherAgeDescriptor.getAgeField();
 
         try {
 
-            if (researcherAgeDescriptor.isMultivaluedField()) {
+            // get count
+            long count = this.count("*:*", filters);
 
-                //////////////////////////////////////
-                // workaround for multivalued fields
-                // clips rows at max integer
-                //////////////////////////////////////
+            System.out.println("\n\n" + count + "\n\n");
 
-                // get count
-                long count = this.count(String.format("%s:*", dateField), filters);
+            String field = researcherAgeDescriptor.isMultivaluedField()
+                ? String.format("%s,%s", dateField, ageField)
+                : ageField;
 
-                System.out.println("\n\n" + count + "\n\n");
+            SolrQueryBuilder builder = new SolrQueryBuilder()
+                .withQuery(query)
+                .withField(field)
+                .withFilters(filters)
+                .withRows((int) count);
 
-                String ageField = String.format("field(%s,min)", dateField);
+            QueryResponse response = solrClient.query(COLLECTION, builder.query());
 
-                SolrQueryBuilder builder = new SolrQueryBuilder()
-                    .withQuery(query)
-                    .withField(ageField)
-                    .withFilters(filters)
-                    .withSort(Sort.by(Direction.ASC, dateField))
-                    .withRows((int) count);
+            SolrDocumentList results = response.getResults();
 
-                QueryResponse response = solrClient.query(COLLECTION, builder.query());
-
-                SolrDocumentList results = response.getResults();
-
-                researchAge.from(ageField, results, facetQueries);
-            } else {
-
-                //////////////////////////////////////////////
-                // works as expected for singlevalued fields
-                //////////////////////////////////////////////
-
-                SolrQueryBuilder builder = new SolrQueryBuilder()
-                    .withQuery(query)
-                    .withFilters(filters)
-                    .withFacetQueries(facetQueries.stream().map(fql -> fql[0]).collect(Collectors.toList()))
-                    .withSort(Sort.by(Direction.ASC, dateField))
-                    .withRows(0);
-
-                QueryResponse response = solrClient.query(COLLECTION, builder.query());
-
-                researchAge.from(response.getFacetQuery(), facetQueries);
-            }
+            researchAge.from(researcherAgeDescriptor, results);
 
         } catch (Exception e) {
             logger.error("Failed to gather researcher age analytics!", e);
@@ -484,8 +458,8 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             return this;
         }
 
-        public SolrQueryBuilder withField(String field) {
-            this.query.setParam("fl", field);
+        public SolrQueryBuilder withField(String fl) {
+            this.query.setParam("fl", fl);
 
             return this;
         }

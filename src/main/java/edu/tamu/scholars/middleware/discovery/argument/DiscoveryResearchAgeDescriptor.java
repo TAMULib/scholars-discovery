@@ -16,11 +16,10 @@ public class DiscoveryResearchAgeDescriptor {
     private final Integer groupingIntervalInYears;
 
     private DiscoveryResearchAgeDescriptor(
-        String dateField,
-        Boolean multivaluedField,
-        Integer upperLimitInYears,
-        Integer groupingIntervalInYears
-    ) {
+            String dateField,
+            Boolean multivaluedField,
+            Integer upperLimitInYears,
+            Integer groupingIntervalInYears) {
         super();
         this.dateField = dateField;
         this.multivaluedField = multivaluedField;
@@ -30,6 +29,11 @@ public class DiscoveryResearchAgeDescriptor {
 
     public String getDateField() {
         return dateField;
+    }
+
+    public String getAgeField() {
+        // solr field function
+        return String.format("field(%s,min)", dateField);
     }
 
     public boolean isMultivaluedField() {
@@ -44,10 +48,18 @@ public class DiscoveryResearchAgeDescriptor {
         return groupingIntervalInYears;
     }
 
-    public List<String[]> getFacetQueries() {
-        List<String[]> facetQueries = new ArrayList<>();
+    public class LabeledRange {
+        public String label;
+        public int from;
+        public int to;
+        public String range;
+        public boolean isFirst;
+        public boolean isLast;
+    }
 
-        String dateField = getDateField();
+    public List<LabeledRange> getLabeledRanges() {
+        List<LabeledRange> labeledRanges = new ArrayList<>();
+
         int bound = getUpperLimitInYears() + getGroupingIntervalInYears();
 
         int i = 0;
@@ -57,53 +69,60 @@ public class DiscoveryResearchAgeDescriptor {
             diffStart = i + 1;
             if (i == 0) {
                 // first
-                facetQueries.add(new String[] {
-                    String.format("%s:{NOW-1YEAR/YEAR TO NOW/YEAR}", dateField),
-                    "Below 1",
-                    "first",
-                    String.valueOf(prevStart),
-                    String.valueOf(diffStart)
-                });
+
+                LabeledRange imf = new LabeledRange();
+                imf.label = "Below 1";
+                imf.range = "[0 TO 1}";
+                imf.from = 0;
+                imf.to = 1;
+                imf.isFirst = true;
+                imf.isLast = i == bound;
+
+                labeledRanges.add(imf);
                 prevStart = 1;
             } else if (i >= bound) {
                 // last
                 diffStart = LocalDate.now().getYear();
-                facetQueries.add(new String[] {
-                    String.format("%s:[NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart),
-                    prevStart + " or Above",
-                    "last",
-                    String.valueOf(prevStart),
-                    String.valueOf(diffStart)
-                });
+
+                LabeledRange imf = new LabeledRange();
+                imf.label = prevStart + " or Above";
+                imf.range = String.format("[%s TO %s]", prevStart, diffStart);
+                imf.from = prevStart;
+                imf.to = diffStart;
+                imf.isFirst = false;
+                imf.isLast = true;
+
+                labeledRanges.add(imf);
             } else {
                 // in between
-                facetQueries.add(new String[] {
-                    String.format("%s:{NOW-%sYEAR/YEAR TO NOW-%sYEAR/YEAR]", dateField, diffStart, prevStart),
-                    prevStart + " to " + (prevStart + getGroupingIntervalInYears() - 1),
-                    "in between",
-                    String.valueOf(prevStart),
-                    String.valueOf(diffStart)
-                });
+
+                LabeledRange imf = new LabeledRange();
+                imf.label = prevStart + " to " + (prevStart + getGroupingIntervalInYears() - 1);
+                imf.range = String.format("[%s TO %s]", prevStart, diffStart);
+                imf.from = prevStart;
+                imf.to = diffStart;
+                imf.isFirst = false;
+                imf.isLast = false;
+
+                labeledRanges.add(imf);
                 prevStart = diffStart;
             }
             i += getGroupingIntervalInYears();
         }
 
-        return facetQueries;
+        return labeledRanges;
     }
 
     public static DiscoveryResearchAgeDescriptor of(
-        String dateField,
-        Boolean multivaluedField,
-        Integer upperLimitInYears,
-        Integer groupingIntervalInYears
-    ) {
+            String dateField,
+            Boolean multivaluedField,
+            Integer upperLimitInYears,
+            Integer groupingIntervalInYears) {
         return new DiscoveryResearchAgeDescriptor(
-            dateField,
-            multivaluedField,
-            upperLimitInYears,
-            groupingIntervalInYears
-        );
+                dateField,
+                multivaluedField,
+                upperLimitInYears,
+                groupingIntervalInYears);
     }
 
 }
