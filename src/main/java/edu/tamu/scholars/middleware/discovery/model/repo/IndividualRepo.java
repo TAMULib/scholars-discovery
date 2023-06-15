@@ -278,7 +278,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             System.out.println("\n\n" + count + "\n\n");
 
-            String field = researcherAgeDescriptor.getAccumulateMinAge()
+            String field = researcherAgeDescriptor.getAccumulateMultivaluedDate()
                 ? String.format("%s,%s", dateField, ageField)
                 : ageField;
 

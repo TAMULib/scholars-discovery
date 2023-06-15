@@ -9,7 +9,7 @@ public class DiscoveryResearchAgeDescriptor {
 
     private final String dateField;
 
-    private final boolean accumulateMinAge;
+    private final boolean accumulateMultivaluedDate;
 
     private final Integer upperLimitInYears;
 
@@ -17,12 +17,12 @@ public class DiscoveryResearchAgeDescriptor {
 
     private DiscoveryResearchAgeDescriptor(
             String dateField,
-            Boolean accumulateMinAge,
+            Boolean accumulateMultivaluedDate,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
         super();
         this.dateField = dateField;
-        this.accumulateMinAge = accumulateMinAge;
+        this.accumulateMultivaluedDate = accumulateMultivaluedDate;
         this.upperLimitInYears = upperLimitInYears;
         this.groupingIntervalInYears = groupingIntervalInYears;
     }
@@ -36,8 +36,8 @@ public class DiscoveryResearchAgeDescriptor {
         return String.format("field(%s,min)", dateField);
     }
 
-    public boolean getAccumulateMinAge() {
-        return accumulateMinAge;
+    public boolean getAccumulateMultivaluedDate() {
+        return accumulateMultivaluedDate;
     }
 
     public Integer getUpperLimitInYears() {
@@ -69,15 +69,15 @@ public class DiscoveryResearchAgeDescriptor {
             nextStart = i + 1;
             if (i == 0) {
                 // first
-                LabeledRange lr = new LabeledRange();
-                lr.label = "Below 1";
-                lr.range = "[0 TO 1}";
-                lr.from = 0;
-                lr.to = 1;
-                lr.isFirst = true;
-                lr.isLast = i == bound;
+                LabeledRange fr = new LabeledRange();
+                fr.label = "Below 1";
+                fr.range = "[0 TO 1}";
+                fr.from = 0;
+                fr.to = 1;
+                fr.isFirst = true;
+                fr.isLast = i == bound;
 
-                labeledRanges.add(lr);
+                labeledRanges.add(fr);
                 prevStart = 1;
             } else if (i >= bound) {
                 // last
@@ -93,16 +93,16 @@ public class DiscoveryResearchAgeDescriptor {
 
                 labeledRanges.add(lr);
             } else {
-                // in between
-                LabeledRange lr = new LabeledRange();
-                lr.label = prevStart + " to " + (prevStart + getGroupingIntervalInYears() - 1);
-                lr.range = String.format("[%s TO %s}", prevStart, nextStart);
-                lr.from = prevStart;
-                lr.to = nextStart;
-                lr.isFirst = false;
-                lr.isLast = false;
+                // middle
+                LabeledRange mr = new LabeledRange();
+                mr.label = prevStart + " to " + (prevStart + getGroupingIntervalInYears() - 1);
+                mr.range = String.format("[%s TO %s}", prevStart, nextStart);
+                mr.from = prevStart;
+                mr.to = nextStart;
+                mr.isFirst = false;
+                mr.isLast = false;
 
-                labeledRanges.add(lr);
+                labeledRanges.add(mr);
                 prevStart = nextStart;
             }
             i += getGroupingIntervalInYears();
@@ -113,12 +113,12 @@ public class DiscoveryResearchAgeDescriptor {
 
     public static DiscoveryResearchAgeDescriptor of(
             String dateField,
-            Boolean accumulateMinAge,
+            Boolean accumulateMultivaluedDate,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
         return new DiscoveryResearchAgeDescriptor(
                 dateField,
-                accumulateMinAge,
+                accumulateMultivaluedDate,
                 upperLimitInYears,
                 groupingIntervalInYears);
     }
