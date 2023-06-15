@@ -64,48 +64,46 @@ public class DiscoveryResearchAgeDescriptor {
 
         int i = 0;
         int prevStart = i;
-        int diffStart;
+        int nextStart;
         while (i <= bound) {
-            diffStart = i + 1;
+            nextStart = i + 1;
             if (i == 0) {
                 // first
+                LabeledRange lr = new LabeledRange();
+                lr.label = "Below 1";
+                lr.range = "[0 TO 1}";
+                lr.from = 0;
+                lr.to = 1;
+                lr.isFirst = true;
+                lr.isLast = i == bound;
 
-                LabeledRange imf = new LabeledRange();
-                imf.label = "Below 1";
-                imf.range = "[0 TO 1}";
-                imf.from = 0;
-                imf.to = 1;
-                imf.isFirst = true;
-                imf.isLast = i == bound;
-
-                labeledRanges.add(imf);
+                labeledRanges.add(lr);
                 prevStart = 1;
             } else if (i >= bound) {
                 // last
-                diffStart = LocalDate.now().getYear();
+                nextStart = LocalDate.now().getYear();
 
-                LabeledRange imf = new LabeledRange();
-                imf.label = prevStart + " or Above";
-                imf.range = String.format("[%s TO %s]", prevStart, diffStart);
-                imf.from = prevStart;
-                imf.to = diffStart;
-                imf.isFirst = false;
-                imf.isLast = true;
+                LabeledRange lr = new LabeledRange();
+                lr.label = prevStart + " or Above";
+                lr.range = String.format("[%s TO %s]", prevStart, nextStart);
+                lr.from = prevStart;
+                lr.to = nextStart;
+                lr.isFirst = false;
+                lr.isLast = true;
 
-                labeledRanges.add(imf);
+                labeledRanges.add(lr);
             } else {
                 // in between
+                LabeledRange lr = new LabeledRange();
+                lr.label = prevStart + " to " + (prevStart + getGroupingIntervalInYears() - 1);
+                lr.range = String.format("[%s TO %s}", prevStart, nextStart);
+                lr.from = prevStart;
+                lr.to = nextStart;
+                lr.isFirst = false;
+                lr.isLast = false;
 
-                LabeledRange imf = new LabeledRange();
-                imf.label = prevStart + " to " + (prevStart + getGroupingIntervalInYears() - 1);
-                imf.range = String.format("[%s TO %s]", prevStart, diffStart);
-                imf.from = prevStart;
-                imf.to = diffStart;
-                imf.isFirst = false;
-                imf.isLast = false;
-
-                labeledRanges.add(imf);
-                prevStart = diffStart;
+                labeledRanges.add(lr);
+                prevStart = nextStart;
             }
             i += getGroupingIntervalInYears();
         }

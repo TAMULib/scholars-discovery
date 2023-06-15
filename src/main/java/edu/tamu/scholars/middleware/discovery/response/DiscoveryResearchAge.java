@@ -55,13 +55,15 @@ public class DiscoveryResearchAge {
 
                 boolean inRange = false;
 
+                // this in memory range faceting is a nuance
+                // please see DiscoveryResearchAgeDescriptor.getLabeledRanges
                 if (lr.isFirst) {
                     inRange = age < lr.to;
                 } else if (lr.isLast) {
                     inRange = age >= lr.from;
                 } else {
                     // in between
-                    inRange = age > lr.from && age <= lr.to;
+                    inRange = age >= lr.from && age < lr.to;
                 }
 
                 if (inRange) {
