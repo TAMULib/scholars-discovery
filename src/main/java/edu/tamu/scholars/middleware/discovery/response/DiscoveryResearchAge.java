@@ -67,7 +67,7 @@ public class DiscoveryResearchAge {
                 }
 
                 if (inRange) {
-                    if (researcherAgeDescriptor.isMultivaluedField() && solrDoc.containsKey(dateField)) {
+                    if (researcherAgeDescriptor.getAccumulateMinAge() && solrDoc.containsKey(dateField)) {
                         Collection<Object> docs = solrDoc.getFieldValues(dateField);
                         subtotal += docs.size();
                     } else {

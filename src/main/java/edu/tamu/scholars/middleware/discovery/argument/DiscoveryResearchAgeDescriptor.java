@@ -9,7 +9,7 @@ public class DiscoveryResearchAgeDescriptor {
 
     private final String dateField;
 
-    private final boolean multivaluedField;
+    private final boolean accumulateMinAge;
 
     private final Integer upperLimitInYears;
 
@@ -17,12 +17,12 @@ public class DiscoveryResearchAgeDescriptor {
 
     private DiscoveryResearchAgeDescriptor(
             String dateField,
-            Boolean multivaluedField,
+            Boolean accumulateMinAge,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
         super();
         this.dateField = dateField;
-        this.multivaluedField = multivaluedField;
+        this.accumulateMinAge = accumulateMinAge;
         this.upperLimitInYears = upperLimitInYears;
         this.groupingIntervalInYears = groupingIntervalInYears;
     }
@@ -36,8 +36,8 @@ public class DiscoveryResearchAgeDescriptor {
         return String.format("field(%s,min)", dateField);
     }
 
-    public boolean isMultivaluedField() {
-        return multivaluedField;
+    public boolean getAccumulateMinAge() {
+        return accumulateMinAge;
     }
 
     public Integer getUpperLimitInYears() {
@@ -113,12 +113,12 @@ public class DiscoveryResearchAgeDescriptor {
 
     public static DiscoveryResearchAgeDescriptor of(
             String dateField,
-            Boolean multivaluedField,
+            Boolean accumulateMinAge,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
         return new DiscoveryResearchAgeDescriptor(
                 dateField,
-                multivaluedField,
+                accumulateMinAge,
                 upperLimitInYears,
                 groupingIntervalInYears);
     }
