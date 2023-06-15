@@ -22,6 +22,8 @@ import reactor.core.publisher.Flux;
 
 public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
 
+    public long count(QueryArg query, List<FilterArg> filters);
+
     public long count(String query, List<FilterArg> filters);
 
     public Optional<D> findById(String id);

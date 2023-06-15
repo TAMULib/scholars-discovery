@@ -79,6 +79,15 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     private SolrClient solrClient;
 
     @Override
+    public long count(QueryArg query, List<FilterArg> filters) {
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withQuery(query)
+            .withFilters(filters);
+
+        return count(builder.query());
+    }
+
+    @Override
     public long count(String query, List<FilterArg> filters) {
         SolrQueryBuilder builder = new SolrQueryBuilder(query)
             .withFilters(filters);
@@ -273,9 +282,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         try {
 
             // get count
-            long count = this.count("*:*", filters);
-
-            System.out.println("\n\n" + count + "\n\n");
+            long count = this.count(query, filters);
 
             String fields = researcherAgeDescriptor.getAccumulateMultivaluedDate()
                 ? String.format("%s,%s", dateField, ageField)
