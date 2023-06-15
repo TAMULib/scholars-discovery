@@ -59,8 +59,6 @@ public class DiscoveryResearchAge {
 
                 boolean inRange = false;
 
-                // this in memory date range faceting is a nuance
-                // please see DiscoveryResearchAgeDescriptor.getLabeledRanges
                 if (lr.isFirst) {
                     inRange = age < lr.to;
                 } else if (lr.isLast) {
@@ -93,7 +91,6 @@ public class DiscoveryResearchAge {
         });
 
         System.out.println(total);
-
     }
 
     public String getLabel() {
