@@ -7,6 +7,8 @@ import java.util.List;
 // TODO: refactor to DiscoveryResearchAgeDescriptorArg and add argument resolver
 public class DiscoveryResearchAgeDescriptor {
 
+    private final String label;
+
     private final String dateField;
 
     private final boolean accumulateMultivaluedDate;
@@ -16,15 +18,21 @@ public class DiscoveryResearchAgeDescriptor {
     private final Integer groupingIntervalInYears;
 
     private DiscoveryResearchAgeDescriptor(
+            String label,
             String dateField,
             Boolean accumulateMultivaluedDate,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
         super();
+        this.label = label;
         this.dateField = dateField;
         this.accumulateMultivaluedDate = accumulateMultivaluedDate;
         this.upperLimitInYears = upperLimitInYears;
         this.groupingIntervalInYears = groupingIntervalInYears;
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public String getDateField() {
@@ -112,11 +120,13 @@ public class DiscoveryResearchAgeDescriptor {
     }
 
     public static DiscoveryResearchAgeDescriptor of(
+            String label,
             String dateField,
             Boolean accumulateMultivaluedDate,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
         return new DiscoveryResearchAgeDescriptor(
+                label,
                 dateField,
                 accumulateMultivaluedDate,
                 upperLimitInYears,

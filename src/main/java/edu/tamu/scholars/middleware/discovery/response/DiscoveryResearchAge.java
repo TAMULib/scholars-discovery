@@ -16,13 +16,16 @@ import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 
 public class DiscoveryResearchAge {
 
+    private final String label;
+
     private final String dateField;
 
     private final Map<String, String> ranges;
 
     private final List<AgeGroup> groups;
 
-    public DiscoveryResearchAge(String dateField) {
+    public DiscoveryResearchAge(String label, String dateField) {
+        this.label = label;
         this.dateField = dateField;
         this.ranges = new HashMap<>();
         this.groups = new ArrayList<>();
@@ -76,8 +79,6 @@ public class DiscoveryResearchAge {
                 }
             }
 
-            // System.out.println(String.join(",", fql) + " = " + subtotal);
-
             total.addAndGet(subtotal);
 
             add(lr.range, lr.label, subtotal);
@@ -86,6 +87,10 @@ public class DiscoveryResearchAge {
 
         System.out.println(total);
 
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public String getDateField() {
@@ -100,8 +105,8 @@ public class DiscoveryResearchAge {
         return groups;
     }
 
-    public static DiscoveryResearchAge create(String dateField) {
-        return new DiscoveryResearchAge(dateField);
+    public static DiscoveryResearchAge create(String label, String dateField) {
+        return new DiscoveryResearchAge(label, dateField);
     }
 
     public class AgeGroup {

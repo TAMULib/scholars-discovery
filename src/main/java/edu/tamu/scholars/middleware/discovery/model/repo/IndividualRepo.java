@@ -55,7 +55,6 @@ import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
-import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo.FilterQueryBuilder;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
@@ -266,7 +265,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public DiscoveryResearchAge researcherAge(DiscoveryResearchAgeDescriptor researcherAgeDescriptor, QueryArg query, List<FilterArg> filters) {
-        DiscoveryResearchAge researchAge = new DiscoveryResearchAge(researcherAgeDescriptor.getDateField());
+        DiscoveryResearchAge researchAge = new DiscoveryResearchAge(researcherAgeDescriptor.getLabel(), researcherAgeDescriptor.getDateField());
 
         String dateField = researcherAgeDescriptor.getDateField();
         String ageField = researcherAgeDescriptor.getAgeField();
@@ -278,13 +277,13 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             System.out.println("\n\n" + count + "\n\n");
 
-            String field = researcherAgeDescriptor.getAccumulateMultivaluedDate()
+            String fields = researcherAgeDescriptor.getAccumulateMultivaluedDate()
                 ? String.format("%s,%s", dateField, ageField)
                 : ageField;
 
             SolrQueryBuilder builder = new SolrQueryBuilder()
                 .withQuery(query)
-                .withField(field)
+                .withFields(fields)
                 .withFilters(filters)
                 .withRows((int) count);
 
@@ -425,13 +424,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             return this;
         }
 
-        public SolrQueryBuilder withFacetQueries(List<String> facetQueries) {
-            this.query.setParam("facet", true);
-            facetQueries.forEach(facetQuery -> this.query.addFacetQuery(facetQuery));
-
-            return this;
-        }
-
         public SolrQueryBuilder withPage(Pageable page) {
             return withStart((int) page.getOffset())
                 .withRows(page.getPageSize())
@@ -458,7 +450,13 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             return this;
         }
 
-        public SolrQueryBuilder withField(String fl) {
+        /**
+         * Overriding fields set with query.
+         * 
+         * @param fl Solr fl query parameter
+         * @return this
+         */
+        public SolrQueryBuilder withFields(String fl) {
             this.query.setParam("fl", fl);
 
             return this;
