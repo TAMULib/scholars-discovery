@@ -65,6 +65,7 @@ public class DiscoveryResearchAgeDescriptor {
     }
 
     public class LabeledRange {
+        public int index;
         public String label;
         public int from;
         public int to;
@@ -78,7 +79,7 @@ public class DiscoveryResearchAgeDescriptor {
 
         int bound = getUpperLimitInYears() + getGroupingIntervalInYears();
 
-        int i = 0;
+        int i = 0, o = 0;
         int prevStart = i;
         int nextStart;
         while (i <= bound) {
@@ -86,6 +87,7 @@ public class DiscoveryResearchAgeDescriptor {
             if (i == 0) {
                 // first
                 LabeledRange fr = new LabeledRange();
+                fr.index = o;
                 fr.label = "Below 1";
                 fr.range = "[0 TO 1}";
                 fr.from = 0;
@@ -100,6 +102,7 @@ public class DiscoveryResearchAgeDescriptor {
                 nextStart = LocalDate.now().getYear();
 
                 LabeledRange lr = new LabeledRange();
+                lr.index = o;
                 lr.label = prevStart + " or Above";
                 lr.range = String.format("[%s TO %s]", prevStart, nextStart);
                 lr.from = prevStart;
@@ -111,6 +114,7 @@ public class DiscoveryResearchAgeDescriptor {
             } else {
                 // middle
                 LabeledRange mr = new LabeledRange();
+                mr.index = o;
                 mr.label = prevStart + " to " + (prevStart + getGroupingIntervalInYears() - 1);
                 mr.range = String.format("[%s TO %s}", prevStart, nextStart);
                 mr.from = prevStart;
@@ -121,6 +125,7 @@ public class DiscoveryResearchAgeDescriptor {
                 labeledRanges.add(mr);
                 prevStart = nextStart;
             }
+            o++;
             i += getGroupingIntervalInYears();
         }
 

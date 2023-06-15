@@ -292,6 +292,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .withQuery(query)
                 .withFields(fields)
                 .withFilters(filters)
+                .withSort(Sort.by(Direction.ASC, ageField))
                 .withRows((int) count);
 
             QueryResponse response = solrClient.query(COLLECTION, builder.query());

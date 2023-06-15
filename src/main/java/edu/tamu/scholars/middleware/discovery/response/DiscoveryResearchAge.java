@@ -2,10 +2,12 @@ package edu.tamu.scholars.middleware.discovery.response;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -24,6 +26,10 @@ public class DiscoveryResearchAge {
 
     private final List<AgeGroup> groups;
 
+    private double mean;
+
+    private int median;
+
     public DiscoveryResearchAge(String label, String dateField) {
         this.label = label;
         this.dateField = dateField;
@@ -31,10 +37,10 @@ public class DiscoveryResearchAge {
         this.groups = new ArrayList<>();
     }
 
-    private void add(String range, String label, Integer value) {
+    private synchronized void add(Integer index, String range, String label, Integer value) {
         if (!ranges.containsKey(label)) {
             ranges.put(label, range);
-            groups.add(new AgeGroup(label, value));
+            groups.add(new AgeGroup(index, label, value));
         }
     }
 
@@ -44,9 +50,10 @@ public class DiscoveryResearchAge {
 
         List<LabeledRange> labeledRanges = researcherAgeDescriptor.getLabeledRanges();
 
+        AtomicInteger sum = new AtomicInteger(0);
         AtomicInteger total = new AtomicInteger(0);
 
-        labeledRanges.stream().forEach(lr -> {
+        labeledRanges.parallelStream().forEach(lr -> {
 
             int subtotal = 0;
 
@@ -60,6 +67,7 @@ public class DiscoveryResearchAge {
                 boolean inRange = false;
 
                 if (lr.isFirst) {
+                    sum.getAndAdd(age);
                     inRange = age < lr.to;
                 } else if (lr.isLast) {
                     inRange = age >= lr.from;
@@ -73,7 +81,6 @@ public class DiscoveryResearchAge {
                         subtotal += docs.size();
 
                         set.add(docs.size());
-
                     } else {
                         subtotal++;
                     }
@@ -86,11 +93,12 @@ public class DiscoveryResearchAge {
                 ? subtotal / set.size()
                 : subtotal;
 
-            add(lr.range, lr.label, value);
+            add(lr.index, lr.range, lr.label, value);
 
         });
 
-        System.out.println(total);
+        this.mean = sum.get() / results.size();
+        this.median = DateUtility.ageInYearsFromEpochSecond((long) results.get(results.size() / 2).getFieldValue(ageField));
     }
 
     public String getLabel() {
@@ -106,7 +114,23 @@ public class DiscoveryResearchAge {
     }
 
     public List<AgeGroup> getGroups() {
-        return groups;
+        // NOTE: sorting on serialization in response
+        return groups.stream().sorted(new Comparator<AgeGroup>() {
+
+            @Override
+            public int compare(AgeGroup o1, AgeGroup o2) {
+                return o1.getIndex().compareTo(o2.getIndex());
+            }
+            
+        }).collect(Collectors.toList());
+    }
+
+    public double getMean() {
+        return this.mean;
+    }
+
+    public int getMedian() {
+        return this.median;
     }
 
     public static DiscoveryResearchAge create(String label, String dateField) {
@@ -114,11 +138,16 @@ public class DiscoveryResearchAge {
     }
 
     public class AgeGroup {
+        private final Integer index;
         private final String label;
         private final Integer value;
-        private AgeGroup(String label, Integer value) {
+        private AgeGroup(Integer index, String label, Integer value) {
+            this.index = index;
             this.label = label;
             this.value = value;
+        }
+        public Integer getIndex() {
+            return index;
         }
         public String getLabel() {
             return label;
