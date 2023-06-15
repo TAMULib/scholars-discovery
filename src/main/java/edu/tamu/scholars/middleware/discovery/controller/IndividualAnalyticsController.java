@@ -29,10 +29,12 @@ public class IndividualAnalyticsController {
         @RequestParam(name = "label", defaultValue = "Research") String label,
         @RequestParam(name = "dateField", defaultValue = "publicationDate") String dateField,
         @RequestParam(name = "accumulateMultivaluedDate", defaultValue = "false") Boolean accumulateMultivaluedDate,
+        // use case: average number of publications out of set of people in age group
+        @RequestParam(name = "averageOverInterval", defaultValue = "false") Boolean averageOverInterval,
         @RequestParam(name = "upperLimitInYears", defaultValue = "40") Integer upperLimitInYears,
         @RequestParam(name = "groupingIntervalInYears", defaultValue = "5") Integer groupingIntervalInYears) {
 
-        return ResponseEntity.ok(repo.researcherAge(DiscoveryResearchAgeDescriptor.of(label, dateField, accumulateMultivaluedDate, upperLimitInYears, groupingIntervalInYears), query, filters));
+        return ResponseEntity.ok(repo.researcherAge(DiscoveryResearchAgeDescriptor.of(label, dateField, accumulateMultivaluedDate, averageOverInterval, upperLimitInYears, groupingIntervalInYears), query, filters));
     }
 
 }

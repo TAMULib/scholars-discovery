@@ -12,7 +12,7 @@ import org.apache.solr.common.SolrDocumentList;
 
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor.LabeledRange;
-import edu.tamu.scholars.middleware.utility.DateFormatUtility;
+import edu.tamu.scholars.middleware.discovery.utility.DateUtility;
 
 public class DiscoveryResearchAge {
 
@@ -44,28 +44,28 @@ public class DiscoveryResearchAge {
 
         List<LabeledRange> labeledRanges = researcherAgeDescriptor.getLabeledRanges();
 
-
         AtomicInteger total = new AtomicInteger(0);
 
         labeledRanges.stream().forEach(lr -> {
 
             int subtotal = 0;
 
+            List<Integer> set = new ArrayList<>();
+
             for (SolrDocument solrDoc : results) {
                 long dateFromEpochInSeconds = (long) solrDoc.getFieldValue(ageField);
 
-                int age = DateFormatUtility.ageInYearsFromEpochSecond(dateFromEpochInSeconds);
+                int age = DateUtility.ageInYearsFromEpochSecond(dateFromEpochInSeconds);
 
                 boolean inRange = false;
 
-                // this in memory range faceting is a nuance
+                // this in memory date range faceting is a nuance
                 // please see DiscoveryResearchAgeDescriptor.getLabeledRanges
                 if (lr.isFirst) {
                     inRange = age < lr.to;
                 } else if (lr.isLast) {
                     inRange = age >= lr.from;
                 } else {
-                    // in between
                     inRange = age >= lr.from && age < lr.to;
                 }
 
@@ -73,6 +73,9 @@ public class DiscoveryResearchAge {
                     if (researcherAgeDescriptor.getAccumulateMultivaluedDate() && solrDoc.containsKey(dateField)) {
                         Collection<Object> docs = solrDoc.getFieldValues(dateField);
                         subtotal += docs.size();
+
+                        set.add(docs.size());
+
                     } else {
                         subtotal++;
                     }
@@ -81,7 +84,11 @@ public class DiscoveryResearchAge {
 
             total.addAndGet(subtotal);
 
-            add(lr.range, lr.label, subtotal);
+            Integer value = researcherAgeDescriptor.getAverageOverInterval()
+                ? subtotal / set.size()
+                : subtotal;
+
+            add(lr.range, lr.label, value);
 
         });
 

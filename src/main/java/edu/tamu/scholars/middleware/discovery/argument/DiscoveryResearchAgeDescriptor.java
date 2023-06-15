@@ -13,6 +13,8 @@ public class DiscoveryResearchAgeDescriptor {
 
     private final boolean accumulateMultivaluedDate;
 
+    private final boolean averageOverInterval;
+
     private final Integer upperLimitInYears;
 
     private final Integer groupingIntervalInYears;
@@ -21,12 +23,14 @@ public class DiscoveryResearchAgeDescriptor {
             String label,
             String dateField,
             Boolean accumulateMultivaluedDate,
+            Boolean averageOverInterval,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
         super();
         this.label = label;
         this.dateField = dateField;
         this.accumulateMultivaluedDate = accumulateMultivaluedDate;
+        this.averageOverInterval = averageOverInterval;
         this.upperLimitInYears = upperLimitInYears;
         this.groupingIntervalInYears = groupingIntervalInYears;
     }
@@ -46,6 +50,10 @@ public class DiscoveryResearchAgeDescriptor {
 
     public boolean getAccumulateMultivaluedDate() {
         return accumulateMultivaluedDate;
+    }
+
+    public boolean getAverageOverInterval() {
+        return averageOverInterval;
     }
 
     public Integer getUpperLimitInYears() {
@@ -123,12 +131,14 @@ public class DiscoveryResearchAgeDescriptor {
             String label,
             String dateField,
             Boolean accumulateMultivaluedDate,
+            Boolean averageOverInterval,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
         return new DiscoveryResearchAgeDescriptor(
                 label,
                 dateField,
                 accumulateMultivaluedDate,
+                averageOverInterval,
                 upperLimitInYears,
                 groupingIntervalInYears);
     }
