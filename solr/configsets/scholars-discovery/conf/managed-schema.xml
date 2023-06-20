@@ -214,7 +214,7 @@
     </fieldType>
 
     <!-- Scholars whole string sort type  -->
-    <fieldType name="whole_string_sort" class="solr.SortableTextField" positionIncrementGap="100" multiValued="true">
+    <fieldType name="whole_string_sort" class="solr.SortableTextField" positionIncrementGap="100" multiValued="false">
       <analyzer type="index">
         <tokenizer name="keyword"/>
         <filter name="stop" ignoreCase="true" words="stopwords.txt" />
