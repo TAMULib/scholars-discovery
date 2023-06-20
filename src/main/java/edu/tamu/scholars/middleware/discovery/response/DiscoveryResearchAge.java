@@ -89,7 +89,7 @@ public class DiscoveryResearchAge {
 
             total.addAndGet(subtotal);
 
-            Integer value = researcherAgeDescriptor.getAverageOverInterval()
+            Integer value = researcherAgeDescriptor.getAverageOverInterval() && set.size() > 0
                 ? subtotal / set.size()
                 : subtotal;
 
