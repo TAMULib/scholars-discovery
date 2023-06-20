@@ -310,7 +310,7 @@ public class Person extends Common {
     @Field
     @FieldType(type = "pdates")
     @FieldSource(template = "person/publicationDates", predicate = "http://vivoweb.org/ontology/core#dateTime")
-    private List<String> publicationDates; // unassociated list of dates! grrr..... another concession 
+    private List<String> publicationDates; // duplicate of selectedPublicationDate without encoded reference to publication
 
     @Field
     @FieldType(type = "nested_whole_strings")
