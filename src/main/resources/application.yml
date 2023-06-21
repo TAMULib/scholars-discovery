@@ -2,6 +2,8 @@ ui:
   url: http://localhost:4200
 
 middleware:
+  # must end with forward-slash
+  assets-location: classpath:/assets/
   load-defaults: true
   update-defaults: true
   allowed-origins:

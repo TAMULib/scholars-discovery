@@ -13,12 +13,12 @@ public class Common extends AbstractIndexDocument {
 
     @Field
     @FieldType(type = "whole_string", searchable = false)
-    @FieldSource(template = "common/image", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl", relative = true)
+    @FieldSource(template = "common/image", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl")
     private String image;
 
     @Field
     @FieldType(type = "whole_string", searchable = false)
-    @FieldSource(template = "common/thumbnail", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl", relative = true)
+    @FieldSource(template = "common/thumbnail", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl")
     private String thumbnail;
 
     @Field

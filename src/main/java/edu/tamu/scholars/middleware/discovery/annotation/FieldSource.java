@@ -21,8 +21,6 @@ public @interface FieldSource {
 
     boolean unique() default false;
 
-    boolean relative() default false;
-
     boolean split() default false;
 
 }

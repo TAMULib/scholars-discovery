@@ -12,6 +12,8 @@ import edu.tamu.scholars.middleware.auth.config.AuthConfig;
 @ConfigurationProperties(prefix = "middleware")
 public class MiddlewareConfig {
 
+    private String assetsLocation = "classpath:assets";
+
     private boolean loadDefaults = true;
 
     private boolean updateDefaults = false;
@@ -36,6 +38,14 @@ public class MiddlewareConfig {
 
     public MiddlewareConfig() {
         this.allowedOrigins.add("http://localhost:4200");
+    }
+
+    public String getAssetsLocation() {
+        return assetsLocation;
+    }
+
+    public void setAssetsLocation(String assetsLocation) {
+        this.assetsLocation = assetsLocation;
     }
 
     public boolean isLoadDefaults() {

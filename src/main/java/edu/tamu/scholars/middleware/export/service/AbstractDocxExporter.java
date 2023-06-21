@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.export.service;
 
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
 
 import org.docx4j.jaxb.Context;
@@ -39,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.web.util.UriComponents;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,6 +75,9 @@ public abstract class AbstractDocxExporter implements Exporter {
     @Autowired
     protected ObjectMapper mapper;
 
+    @Autowired
+    private ServletContext context;
+
     @Value("${vivo.base-url:http://localhost:8080/vivo}")
     protected String vivoUrl;
 
@@ -102,6 +108,12 @@ public abstract class AbstractDocxExporter implements Exporter {
     }
 
     protected <D extends AbstractIndexDocument> ObjectNode processDocument(final ObjectNode node, ExportView view) {
+        final UriComponents uriComponents = fromCurrentRequest()
+            .replacePath(context.getContextPath())
+            .replaceQuery(null)
+            .build();
+        final String serviceUrl = uriComponents.toUriString();
+        node.put("serviceUrl", serviceUrl);
         node.put("vivoUrl", vivoUrl);
         node.put("uiUrl", uiUrl);
         fetchAndAttachLazyReferences(node, view.getLazyReferences());
