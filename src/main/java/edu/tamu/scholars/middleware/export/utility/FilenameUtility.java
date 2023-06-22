@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.helper.IndividualHelper;
 
@@ -19,6 +20,10 @@ public class FilenameUtility {
 
     public static String normalizeExportFilename(String label) {
         return prefixWithTimestampAfterUnderscore(localizeWhileUnderscoreReplaceSpaceWithUnderscore(label));
+    }
+
+    public static String normalizeExportFilename(AbstractIndexDocument refDoc) {
+        return normalizeExportFilename((Individual) refDoc);
     }
 
     public static String normalizeExportFilename(Individual individual) {
