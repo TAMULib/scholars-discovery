@@ -23,6 +23,7 @@ import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
 import edu.tamu.scholars.middleware.export.service.Exporter;
 import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
+import edu.tamu.scholars.middleware.export.utility.FilenameUtility;
 
 @RestController
 public class IndividualExportController implements RepresentationModelProcessor<IndividualModel> {
@@ -44,7 +45,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
             Individual document = individual.get();
             Exporter exporter = exporterRegistry.getExporter(type);
             return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition(id))
+                .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.exportTransform(document)))
                 .header(HttpHeaders.CONTENT_TYPE, exporter.contentType())
                 .body(exporter.streamIndividual(document, name));
         }

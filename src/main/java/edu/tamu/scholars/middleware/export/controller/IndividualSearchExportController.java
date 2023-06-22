@@ -30,6 +30,7 @@ import edu.tamu.scholars.middleware.export.argument.ExportArg;
 import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
 import edu.tamu.scholars.middleware.export.service.Exporter;
 import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
+import edu.tamu.scholars.middleware.export.utility.FilenameUtility;
 
 @RestController
 public class IndividualSearchExportController implements RepresentationModelProcessor<RepositorySearchesResource> {
@@ -42,6 +43,7 @@ public class IndividualSearchExportController implements RepresentationModelProc
 
     @GetMapping("/individual/search/export")
     public ResponseEntity<StreamingResponseBody> export(
+        @RequestParam(value = "view", required = false, defaultValue = "People") String view,
         @RequestParam(value = "type", required = false, defaultValue = "csv") String type,
         QueryArg query,
         @SortDefault Sort sort,
@@ -51,7 +53,7 @@ public class IndividualSearchExportController implements RepresentationModelProc
     ) throws UnknownExporterTypeException, InterruptedException, ExecutionException {
         Exporter exporter = exporterRegistry.getExporter(type);
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition("export"))
+            .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.exportTransform(view)))
             .header(HttpHeaders.CONTENT_TYPE, exporter.contentType())
             .body(exporter.streamIndividuals(repo.export(query, filters, boosts, sort), export));
     }
@@ -61,6 +63,7 @@ public class IndividualSearchExportController implements RepresentationModelProc
         if (Individual.class.equals(resource.getDomainType())) {
             try {
                 resource.add(linkTo(methodOn(this.getClass()).export(
+                    "People",
                     "csv",
                     QueryArg.of(
                         Optional.of(DEFAULT_QUERY),
