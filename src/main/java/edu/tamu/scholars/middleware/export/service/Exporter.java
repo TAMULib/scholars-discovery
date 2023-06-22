@@ -21,7 +21,7 @@ public interface Exporter {
         throw new UnsupportedExporterTypeException(String.format("%s exporter does not support export field exports", type()));
     }
 
-    default public StreamingResponseBody streamIndividual(Individual entity, String name) {
+    default public StreamingResponseBody streamIndividual(Individual individual, String name) {
         throw new UnsupportedExporterTypeException(String.format("%s exporter does not support individual templated exports", type()));
     }
 
