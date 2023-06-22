@@ -21,7 +21,6 @@ public class IndividualHelper {
 
         String clazz = individual.getClazz();
 
-        // Would be nice to use getters of domain class. Have to configure an object mapper or define serializer for Map<String, Collection<Object>>.
         if (clazz.equals(Organization.class.getSimpleName())) {
             label.append(cm.getValue("name"))
                 .append("_");
