@@ -10,7 +10,6 @@ import edu.tamu.scholars.middleware.discovery.model.helper.IndividualHelper;
 
 public class FilenameUtility {
 
-    // non global constants
     private final static String SPACE = " ";
     private final static String UNDERSCORE = "_";
 
@@ -18,21 +17,21 @@ public class FilenameUtility {
 
     }
 
-    public static String exportTransform(String type) {
-        return temporalize(mechanize(type));
+    public static String normalizeExportFilename(String label) {
+        return prefixWithTimestampAfterUnderscore(localizeWhileUnderscoreReplaceSpaceWithUnderscore(label));
     }
 
-    public static String exportTransform(Individual individual) {
-        return mechanize(IndividualHelper.as(individual).getLabel());
+    public static String normalizeExportFilename(Individual individual) {
+        return localizeWhileUnderscoreReplaceSpaceWithUnderscore(IndividualHelper.as(individual).getLabel());
     }
 
-    private static String mechanize(String value) {
+    private static String localizeWhileUnderscoreReplaceSpaceWithUnderscore(String value) {
         Locale locale = LocaleContextHolder.getLocale();
         return value.toLowerCase(locale)
             .replace(SPACE, UNDERSCORE);
     }
 
-    private static String temporalize(String value) {
+    private static String prefixWithTimestampAfterUnderscore(String value) {
         return String.format("%s_%s", value, String.valueOf(new Date().getTime()));
     }
 

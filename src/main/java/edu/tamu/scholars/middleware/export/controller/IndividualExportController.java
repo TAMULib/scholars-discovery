@@ -45,7 +45,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
             Individual document = individual.get();
             Exporter exporter = exporterRegistry.getExporter(type);
             return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.exportTransform(document)))
+                .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.normalizeExportFilename(document)))
                 .header(HttpHeaders.CONTENT_TYPE, exporter.contentType())
                 .body(exporter.streamIndividual(document, name));
         }

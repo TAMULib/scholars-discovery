@@ -53,7 +53,7 @@ public class IndividualSearchExportController implements RepresentationModelProc
     ) throws UnknownExporterTypeException, InterruptedException, ExecutionException {
         Exporter exporter = exporterRegistry.getExporter(type);
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.exportTransform(view)))
+            .header(HttpHeaders.CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.normalizeExportFilename(view)))
             .header(HttpHeaders.CONTENT_TYPE, exporter.contentType())
             .body(exporter.streamIndividuals(repo.export(query, filters, boosts, sort), export));
     }
