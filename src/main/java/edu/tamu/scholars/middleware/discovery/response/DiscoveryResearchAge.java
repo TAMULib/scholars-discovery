@@ -97,7 +97,7 @@ public class DiscoveryResearchAge {
 
         });
 
-        this.mean = sum.get() / results.size();
+        this.mean = results.size() > 0 ? sum.get() / results.size() : 0;
         this.median = DateUtility.ageInYearsFromEpochSecond((long) results.get(results.size() / 2).getFieldValue(ageField));
     }
 
