@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.argument;
 
-// TODO: refactor to DiscoveryQuantityDistributionDescriptor and add argument resolver
+// TODO: refactor to DiscoveryQuantityDistributionDescriptorArg and add argument resolver
 public class DiscoveryQuantityDistributionDescriptor {
 
     private final String label;
