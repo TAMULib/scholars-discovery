@@ -48,6 +48,7 @@ import org.springframework.stereotype.Service;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryQuantityDistributionDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
@@ -57,6 +58,7 @@ import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryQuantityDistribution;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 import reactor.core.publisher.Flux;
@@ -307,7 +309,42 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         return researchAge;
     }
 
-    
+    @Override
+    public DiscoveryQuantityDistribution quantityDistribution(DiscoveryQuantityDistributionDescriptor quantityDistributionDescriptor, QueryArg query, List<FilterArg> filters) {
+        DiscoveryQuantityDistribution quantityDistribution = DiscoveryQuantityDistribution.from(quantityDistributionDescriptor);
+
+        String field = quantityDistributionDescriptor.getField();
+
+        List<FacetArg> facets = new ArrayList<FacetArg>() {{
+            add(FacetArg.of(
+                field, 
+                Optional.of("COUNT,DESC"),
+                Optional.of(String.valueOf(Integer.MAX_VALUE)),
+                Optional.empty(),
+                Optional.of("STRING"),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()
+            ));
+        }};
+
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withQuery(query)
+            .withFacets(facets)
+            .withFilters(filters)
+            .withRows(0);
+
+        try {
+            QueryResponse response = solrClient.query(COLLECTION, builder.query());
+
+            quantityDistribution.parse(response);
+        } catch (IOException | SolrServerException e) {
+            throw new SolrRequestException("Failed to lookup distribution", e);
+        }
+
+        return quantityDistribution;
+    }
 
     private boolean validateAndCountDateField(DiscoveryNetwork dataNetwork, Object dateFieldFromDocument) {
         String year = null;

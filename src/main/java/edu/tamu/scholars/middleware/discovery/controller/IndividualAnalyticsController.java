@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryQuantityDistributionDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryQuantityDistribution;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
 
 @RestController
@@ -37,6 +39,16 @@ public class IndividualAnalyticsController {
         @RequestParam(name = "groupingIntervalInYears", defaultValue = "5") Integer groupingIntervalInYears) {
 
         return ResponseEntity.ok(repo.researcherAge(DiscoveryResearchAgeDescriptor.of(label, dateField, accumulateMultivaluedDate, averageOverInterval, upperLimitInYears, groupingIntervalInYears), query, filters));
+    }
+
+    @GetMapping("/quantityDistribution")
+    public ResponseEntity<DiscoveryQuantityDistribution> quantityDistribution(
+        QueryArg query,
+        List<FilterArg> filters,
+        @RequestParam(name = "label", defaultValue = "UN SDG") String label,
+        @RequestParam(name = "field", defaultValue = "tags") String field) {
+
+        return ResponseEntity.ok(repo.quantityDistribution(DiscoveryQuantityDistributionDescriptor.of(label, field), query, filters));
     }
 
 }
