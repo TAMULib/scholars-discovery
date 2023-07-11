@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.springframework.data.util.Pair;
 
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryQuantityDistributionDescriptor;
 
