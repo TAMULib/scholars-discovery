@@ -1,0 +1,5 @@
+---
+- name: Test
+  layout: CONTAINER
+  templates:
+    default: "defaults/analyticViews/test/default.html"
