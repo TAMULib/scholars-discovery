@@ -38,6 +38,22 @@ Here is a list of some dependencies used:
 
 The basic Spring Boot application configuration can be found at [src/main/resources/application.yml](https://github.com/vivo-community/scholars-discovery/blob/master/src/main/resources/application.yml). Here you be able to configure basic server and spring configuration as well as custom configuration for Scholars Discovery. There are several configuration POJOs to represent configurations. They can be found in [src/main/java/edu/tamu/scholars/middleware/config/model](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/config/model), and [src/main/java/edu/tamu/scholars/middleware/auth/config](https://github.com/vivo-community/scholars-discovery/tree/master/src/main/java/edu/tamu/scholars/middleware/auth/config).
 
+## Assets
+
+Assets are hosted at `/file/:id/:filename` and configured location `middleware.assets-location`.
+
+Tested options are
+
+Assets stored in src/main/resources/assets
+```
+middleware.assets-location: classpath:/assets
+```
+
+Assets stored in externally
+```
+middleware.assets-location: file:/scholars/assets
+```
+
 ### Harvesting
 
 Harvesting can be configured via ```middleware.harvesters``` and represented with [HarvesterConfig](https://github.com/vivo-community/scholars-discovery/blob/master/src/main/java/edu/tamu/scholars/middleware/config/model/HarvesterConfig.java). For each harvester, a bean will be created in which specifies the type of harvester and which document types it maps to. The reference implementation is the local triplestore harvester.
@@ -59,9 +75,7 @@ Solr is configured via ```spring.data.solr```.
 3. Start Solr
 
 ```bash
-   cd solr
-   docker build --tag=scholars/solr .
-   docker run -d -p 8983:8983 scholars/solr
+   cd solr && docker build --tag=scholars/solr . && docker run -d -p 8983:8983 scholars/solr && cd ..
 ```
 
 5. Build and Run the application
