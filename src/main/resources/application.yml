@@ -2,7 +2,10 @@ ui:
   url: http://localhost:4200
 
 middleware:
+  ## copy a~n to src/main/resources/assets/a~n
   assets-location: classpath:/assets
+  ## works in Windows and expected to work on Linux
+  # assets-location: file:/Users/wwelling/Development/scholars/scholars-discovery/assets
   load-defaults: true
   update-defaults: true
   allowed-origins:
