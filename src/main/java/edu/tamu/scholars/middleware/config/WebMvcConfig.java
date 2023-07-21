@@ -71,6 +71,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         location = new FileUrlResource(resourcePath);
                     }
 
+                    if (!location.getFile().exists()) {
+                        location = null;
+                    }
+
                     return location;
                 }
 
