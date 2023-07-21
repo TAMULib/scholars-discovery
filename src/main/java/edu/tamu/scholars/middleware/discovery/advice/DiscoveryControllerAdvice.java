@@ -1,5 +1,7 @@
 package edu.tamu.scholars.middleware.discovery.advice;
 
+import java.io.FileNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,13 @@ public class DiscoveryControllerAdvice {
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = SolrRequestException.class)
     public @ResponseBody String handleSolrRequestException(SolrRequestException exception) {
+        logger.error(exception.getMessage(), exception);
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = FileNotFoundException.class)
+    public @ResponseBody String handleFileNotFoundException(FileNotFoundException exception) {
         logger.error(exception.getMessage(), exception);
         return exception.getMessage();
     }
