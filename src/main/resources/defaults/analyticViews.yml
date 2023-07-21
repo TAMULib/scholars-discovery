@@ -1,5 +1,13 @@
 ---
-- name: Test
+- name: Texas A&M Publications by Academic Age Group
+  layout: CONTAINER
+  templates:
+    default: "defaults/analyticViews/test/default.html"
+- name: Texas A&M Research by UN SDG
+  layout: CONTAINER
+  templates:
+    default: "defaults/analyticViews/test/default.html"
+- name: Download Profile Summaries by Department
   layout: CONTAINER
   templates:
     default: "defaults/analyticViews/test/default.html"
