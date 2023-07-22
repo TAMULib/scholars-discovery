@@ -78,6 +78,13 @@ Solr is configured via ```spring.data.solr```.
    cd solr && docker build --tag=scholars/solr . && docker run -d -p 8983:8983 scholars/solr && cd ..
 ```
 
+or
+
+```
+  solr start -p 8983
+  solr create_core -c scholars-discovery -d solr\configsets\scholars-discovery -p 8983
+```
+
 5. Build and Run the application
 
 ```bash
