@@ -1,12 +1,14 @@
 package edu.tamu.scholars.middleware.discovery.component.solr;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
-import static edu.tamu.scholars.middleware.discovery.service.IndexService.CREATED_FIELDS;
+import static edu.tamu.scholars.middleware.discovery.service.IndexService.SCHEMA;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,8 +32,28 @@ public class SolrIndexer implements Indexer {
 
     private final Class<AbstractIndexDocument> type;
 
+    private final List<String> fields;
+
     public SolrIndexer(Class<AbstractIndexDocument> type) {
         this.type = type;
+        this.fields = new ArrayList<>();
+        SCHEMA.put(name(), fields);
+    }
+
+    public void scaffold() {
+        // duplicated from below
+        for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldType.class)) {
+            FieldType indexed = field.getAnnotation(FieldType.class);
+
+            String name = StringUtils.isNotEmpty(indexed.value())
+                ? indexed.value()
+                : field.getName();
+
+            // NOTE: no longer preventing attempting to create duplicate field by name
+            if (!indexed.readonly() && !fields.contains(name) && fields.add(name)) {
+
+            }
+        }
     }
 
     @Override
@@ -43,7 +65,8 @@ public class SolrIndexer implements Indexer {
                 ? indexed.value()
                 : field.getName();
 
-            if (!indexed.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
+            // NOTE: no longer preventing attempting to create duplicate field by name
+            if (!indexed.readonly() && !fields.contains(name) && fields.add(name)) {
                 Map<String, Object> fieldAttributes = new HashMap<String,Object>();
 
                 fieldAttributes.put("type", indexed.type());
@@ -115,7 +138,8 @@ public class SolrIndexer implements Indexer {
         return type;
     }
 
-    private String name() {
+    @Override
+    public String name() {
         return type.getSimpleName();
     }
 

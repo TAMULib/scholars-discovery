@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.tamu.scholars.middleware.discovery.service.IndexService;
 
+/**
+ * @deprecated Please refer to index health metric at http://localhost:9000/actuator/health/index
+ */
 @RestController
 @RequestMapping("/index")
+@Deprecated(forRemoval = true)
 public class IndexingController {
 
     @Autowired

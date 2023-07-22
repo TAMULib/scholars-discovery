@@ -8,6 +8,8 @@ public interface Indexer {
 
     public void init();
 
+    public void scaffold();
+
     public void index(Collection<AbstractIndexDocument> documents);
 
     public void index(AbstractIndexDocument document);
@@ -15,5 +17,7 @@ public interface Indexer {
     public void optimize();
 
     public Class<AbstractIndexDocument> type();
+
+    public String name();
 
 }

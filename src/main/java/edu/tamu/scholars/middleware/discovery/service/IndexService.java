@@ -4,7 +4,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
@@ -26,9 +27,11 @@ public class IndexService {
 
     private final static Logger logger = LoggerFactory.getLogger(IndexService.class);
 
+    private final static AtomicBoolean schematizing = new AtomicBoolean(false);
+
     private final static AtomicBoolean indexing = new AtomicBoolean(false);
 
-    public static final List<String> CREATED_FIELDS = new CopyOnWriteArrayList<String>();
+    public final static Map<String, List<String>> SCHEMA = new ConcurrentHashMap<>(7);
 
     @Value("${middleware.index.initOnStartup:true}")
     private boolean initOnStartup;
@@ -54,17 +57,27 @@ public class IndexService {
     @Autowired
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
+    public Boolean isSchematizing() {
+        return schematizing.get();
+    }
+
     public Boolean isIndexing() {
         return indexing.get();
+    }
+
+    public Map<String, List<String>> getSchema() {
+        return SCHEMA;
     }
 
     @PostConstruct
     public void startup() {
         if (initOnStartup) {
-            logger.info("Initializing index fields...");
+            schematize();
+        } else {
+            logger.info("Scaffolding index fields...");
             indexers.stream().forEach(indexer -> {
-                logger.info(String.format("Initializing %s fields.", indexer.type().getSimpleName()));
-                indexer.init();
+                logger.info(String.format("Scaffolding %s fields.", indexer.name()));
+                indexer.scaffold();
             });
         }
         if (indexOnStartup) {
@@ -76,6 +89,17 @@ public class IndexService {
                 }
 
             }, new Date(System.currentTimeMillis() + indexOnStartupDelay));
+        }
+    }
+
+    public void schematize() {
+        if (schematizing.compareAndSet(false, true)) {
+            logger.info("Initializing index fields...");
+            indexers.stream().forEach(indexer -> {
+                logger.info(String.format("Initializing %s fields.", indexer.name()));
+                indexer.init();
+            });
+            schematizing.set(false);
         }
     }
 
