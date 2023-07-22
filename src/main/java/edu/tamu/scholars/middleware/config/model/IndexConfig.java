@@ -11,6 +11,8 @@ public class IndexConfig {
 
     private String zone = "America/Chicago";
 
+    private boolean initOnStartup = true;
+
     private boolean onStartup = true;
 
     private int onStartupDelay = 10000;
@@ -31,6 +33,14 @@ public class IndexConfig {
 
     public void setZone(String zone) {
         this.zone = zone;
+    }
+
+    public boolean isInitOnStartup() {
+        return initOnStartup;
+    }
+
+    public void setInitOnStartup(boolean schematizeOnIndex) {
+        this.initOnStartup = schematizeOnIndex;
     }
 
     public boolean isOnStartup() {

@@ -27,6 +27,7 @@ middleware:
   index:
     cron: 0 0 0 * * SUN
     zone: America/Chicago
+    initOnStartup: false
     onStartup: false
     batchSize: 1000
   triplestore:
