@@ -42,7 +42,7 @@ public class IndexHealthIndicator implements HealthIndicator {
             SolrPingResponse response = solrClient.ping("scholars-discovery");
             String message = (String) response.getResponse().get("status");
 
-            // NOTE: note a REST response status code
+            // NOTE: not a REST response status code
             // 0 - successful ping response for given collection
             // details.put("status", response.getStatus());
             details.put("message", message);
