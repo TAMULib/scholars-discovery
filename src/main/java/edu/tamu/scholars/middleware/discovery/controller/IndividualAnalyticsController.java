@@ -25,7 +25,6 @@ public class IndividualAnalyticsController {
     @Autowired
     private IndividualRepo repo;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/researchAge")
     public ResponseEntity<DiscoveryResearchAge> researcherAge(
         QueryArg query,
@@ -36,8 +35,8 @@ public class IndividualAnalyticsController {
         // use case: average number of publications out of set of people in age group
         @RequestParam(name = "averageOverInterval", defaultValue = "false") Boolean averageOverInterval,
         @RequestParam(name = "upperLimitInYears", defaultValue = "40") Integer upperLimitInYears,
-        @RequestParam(name = "groupingIntervalInYears", defaultValue = "5") Integer groupingIntervalInYears) {
-
+        @RequestParam(name = "groupingIntervalInYears", defaultValue = "5") Integer groupingIntervalInYears
+    ) {
         return ResponseEntity.ok(repo.researcherAge(DiscoveryResearchAgeDescriptor.of(label, dateField, accumulateMultivaluedDate, averageOverInterval, upperLimitInYears, groupingIntervalInYears), query, filters));
     }
 
@@ -46,8 +45,8 @@ public class IndividualAnalyticsController {
         QueryArg query,
         List<FilterArg> filters,
         @RequestParam(name = "label", defaultValue = "UN SDG") String label,
-        @RequestParam(name = "field", defaultValue = "tags") String field) {
-
+        @RequestParam(name = "field", defaultValue = "tags") String field
+    ) {
         return ResponseEntity.ok(repo.quantityDistribution(DiscoveryQuantityDistributionDescriptor.of(label, field), query, filters));
     }
 
