@@ -1,7 +1,10 @@
 ---
 - name: Publications by Academic Age Group
   layout: CONTAINER
+  type: ACADEMIC_AGE_GROUP
 - name: Research by UN SDG
   layout: CONTAINER
+  type: QUANTITY_DISTRIBUTION
 - name: Download Profile Summaries by Department
   layout: CONTAINER
+  type: SUMMARY_PROFILE_EXPORT
