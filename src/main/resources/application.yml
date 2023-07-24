@@ -5,7 +5,7 @@ middleware:
   ## copy a~n to src/main/resources/assets/a~n
   assets-location: classpath:/assets
   ## works in Windows and expected to work on Linux
-  # assets-location: file:/Users/wwelling/Development/scholars/scholars-discovery/assets
+  # assets-location: file:/scholars/scholars-discovery/assets
   load-defaults: true
   update-defaults: true
   allowed-origins:
@@ -31,8 +31,8 @@ middleware:
   index:
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    initOnStartup: true
-    onStartup: true
+    initOnStartup: false
+    onStartup: false
     onStartupDelay: 10000
     batchSize: 10000
   triplestore:
@@ -124,13 +124,16 @@ spring:
       enabled: false
       path: /h2console
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    # driver-class-name: org.h2.Driver
+    driver-class-name: org.postgresql.Driver
+    # url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     # url: jdbc:h2:./h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:postgresql://localhost:5432/scholars
     username: scholars
     password: scholars
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    # database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
     hibernate.ddl-auto: create-drop
     open-in-view: false
@@ -170,6 +173,7 @@ management:
     web:
       exposure:
         # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
+        # env, httpexchanges, scheduledtasks, sessions
         include: health, info, mappings
   endpoint:
     health:
@@ -178,3 +182,11 @@ management:
       enabled: true
     mappings:
       enabled: true
+    env:
+      enabled: false
+    httpexchanges:
+      enabled: false
+    scheduledtasks:
+      enabled: false
+    sessions:
+      enabled: false
