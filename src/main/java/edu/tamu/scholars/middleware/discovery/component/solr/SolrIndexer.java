@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import edu.tamu.scholars.middleware.config.model.IndexConfig;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.component.Indexer;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
@@ -29,6 +30,9 @@ public class SolrIndexer implements Indexer {
 
     @Autowired
     private SolrClient solrClient;
+
+    @Autowired
+    private IndexConfig index;
 
     private final Class<AbstractIndexDocument> type;
 
@@ -109,7 +113,11 @@ public class SolrIndexer implements Indexer {
             logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
         } catch (Exception e) {
             logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
-            documents.stream().forEach(this::index);
+            if (index.isEnableIndividualOnBatchFail()) {
+                documents.stream().forEach(this::index);
+            } else {
+                logger.warn("Skipping individuals of failed batch of {}.", name() );
+            }
         }
     }
 

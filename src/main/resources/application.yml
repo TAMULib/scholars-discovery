@@ -33,6 +33,7 @@ middleware:
     zone: America/Chicago
     initOnStartup: false
     onStartup: false
+    enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
   triplestore:

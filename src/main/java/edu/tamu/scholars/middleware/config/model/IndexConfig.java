@@ -15,6 +15,8 @@ public class IndexConfig {
 
     private boolean onStartup = true;
 
+    private boolean enableIndividualOnBatchFail = true;
+
     private int onStartupDelay = 10000;
 
     private int batchSize = 10000;
@@ -39,8 +41,8 @@ public class IndexConfig {
         return initOnStartup;
     }
 
-    public void setInitOnStartup(boolean schematizeOnIndex) {
-        this.initOnStartup = schematizeOnIndex;
+    public void setInitOnStartup(boolean initOnStartup) {
+        this.initOnStartup = initOnStartup;
     }
 
     public boolean isOnStartup() {
@@ -49,6 +51,14 @@ public class IndexConfig {
 
     public void setOnStartup(boolean onStartup) {
         this.onStartup = onStartup;
+    }
+
+    public boolean isEnableIndividualOnBatchFail() {
+        return enableIndividualOnBatchFail;
+    }
+
+    public void setEnableIndividualOnBatchFail(boolean enableIndividualOnBatchFail) {
+        this.enableIndividualOnBatchFail = enableIndividualOnBatchFail;
     }
 
     public int getOnStartupDelay() {

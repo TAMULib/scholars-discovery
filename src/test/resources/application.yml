@@ -29,6 +29,7 @@ middleware:
     zone: America/Chicago
     initOnStartup: false
     onStartup: false
+    enableIndividualOnBatchFail: true
     batchSize: 1000
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore
