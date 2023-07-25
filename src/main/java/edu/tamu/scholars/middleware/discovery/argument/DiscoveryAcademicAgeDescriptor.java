@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: refactor to DiscoveryResearchAgeDescriptorArg and add argument resolver
-public class DiscoveryResearchAgeDescriptor {
+// TODO: refactor to DiscoveryAcademicAgeDescriptorArg and add argument resolver
+public class DiscoveryAcademicAgeDescriptor {
 
     private final String label;
 
@@ -19,7 +19,7 @@ public class DiscoveryResearchAgeDescriptor {
 
     private final Integer groupingIntervalInYears;
 
-    private DiscoveryResearchAgeDescriptor(
+    private DiscoveryAcademicAgeDescriptor(
             String label,
             String dateField,
             Boolean accumulateMultivaluedDate,
@@ -132,14 +132,14 @@ public class DiscoveryResearchAgeDescriptor {
         return labeledRanges;
     }
 
-    public static DiscoveryResearchAgeDescriptor of(
+    public static DiscoveryAcademicAgeDescriptor of(
             String label,
             String dateField,
             Boolean accumulateMultivaluedDate,
             Boolean averageOverInterval,
             Integer upperLimitInYears,
             Integer groupingIntervalInYears) {
-        return new DiscoveryResearchAgeDescriptor(
+        return new DiscoveryAcademicAgeDescriptor(
                 label,
                 dateField,
                 accumulateMultivaluedDate,
