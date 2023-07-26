@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -13,13 +14,14 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
-import edu.tamu.scholars.middleware.discovery.component.Harvester;
-import edu.tamu.scholars.middleware.discovery.component.Indexer;
+import edu.tamu.scholars.middleware.config.model.IndexConfig;
+import edu.tamu.scholars.middleware.discovery.service.component.AddOnlyAtomicHashSet;
+import edu.tamu.scholars.middleware.discovery.service.component.Harvester;
+import edu.tamu.scholars.middleware.discovery.service.component.Indexer;
 import edu.tamu.scholars.middleware.service.Triplestore;
 
 @Service
@@ -31,19 +33,12 @@ public class IndexService {
 
     private final static AtomicBoolean indexing = new AtomicBoolean(false);
 
+    public final static Set<String> CREATED_FIELDS = AddOnlyAtomicHashSet.forCreatedFields();
+
     public final static Map<String, List<String>> SCHEMA = new ConcurrentHashMap<>(7);
 
-    @Value("${middleware.index.initOnStartup:true}")
-    private boolean initOnStartup;
-
-    @Value("${middleware.index.onStartup:false}")
-    private boolean indexOnStartup;
-
-    @Value("${middleware.index.onStartupDelay:10000}")
-    private int indexOnStartupDelay;
-
-    @Value("${middleware.index.batchSize:10000}")
-    private int indexBatchSize;
+    @Autowired
+    private IndexConfig index;
 
     @Autowired
     private List<Harvester> harvesters;
@@ -71,7 +66,7 @@ public class IndexService {
 
     @PostConstruct
     public void startup() {
-        if (initOnStartup) {
+        if (index.isInitOnStartup()) {
             schematize();
         } else {
             logger.info("Scaffolding index fields...");
@@ -80,7 +75,7 @@ public class IndexService {
                 indexer.scaffold();
             });
         }
-        if (indexOnStartup) {
+        if (index.isOnStartup()) {
             threadPoolTaskScheduler.schedule(new Runnable() {
 
                 @Override
@@ -88,7 +83,7 @@ public class IndexService {
                     index();
                 }
 
-            }, new Date(System.currentTimeMillis() + indexOnStartupDelay));
+            }, new Date(System.currentTimeMillis() + index.getOnStartupDelay()));
         }
     }
 
@@ -112,7 +107,7 @@ public class IndexService {
             harvesters.parallelStream().forEach(harvester -> {
                 logger.info(String.format("Indexing %s documents.", harvester.type().getSimpleName()));
                 if (indexers.stream().anyMatch(indexer -> indexer.type().equals(harvester.type()))) {
-                    harvester.harvest().buffer(indexBatchSize).subscribe(batch -> {
+                    harvester.harvest().buffer(index.getBatchSize()).subscribe(batch -> {
                         indexers.parallelStream().filter(indexer -> indexer.type().equals(harvester.type())).forEach(indexer -> {
                             indexer.index(batch);
                         });

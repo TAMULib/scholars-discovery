@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.indicator;
 
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.WILDCARD;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class IndexHealthIndicator implements HealthIndicator {
 
             if (response.getStatus() == 0 && message.equals("OK")) {
 
-                long count = individualRepo.count(WILDCARD, List.of());
+                long count = individualRepo.count(DEFAULT_QUERY, List.of());
 
                 details.put("count", count);
 

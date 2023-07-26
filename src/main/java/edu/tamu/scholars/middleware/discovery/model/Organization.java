@@ -114,10 +114,15 @@ public class Organization extends Common {
     private List<String> peopleTitle;
 
     @Field
-    @NestedObject
+    @NestedObject(properties = { @Reference(value = "hasSubOrganizationType", key = "type") })
     @FieldType(type = "nested_whole_strings", searchable = false)
     @FieldSource(template = "organization/hasSubOrganization", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> hasSubOrganizations;
+
+    @Field
+    @FieldType(type = "nested_whole_strings", searchable = false)
+    @FieldSource(template = "organization/hasSubOrganizationType", predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType", parse = true)
+    private List<String> hasSubOrganizationType;
 
     @Field
     @NestedObject
@@ -492,6 +497,14 @@ public class Organization extends Common {
 
     public void setHasSubOrganizations(List<String> hasSubOrganizations) {
         this.hasSubOrganizations = hasSubOrganizations;
+    }
+
+    public List<String> getHasSubOrganizationType() {
+        return hasSubOrganizationType;
+    }
+
+    public void setHasSubOrganizationType(List<String> hasSubOrganizationType) {
+        this.hasSubOrganizationType = hasSubOrganizationType;
     }
 
     public List<String> getOrganizationWithin() {

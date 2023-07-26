@@ -1,4 +1,4 @@
-package edu.tamu.scholars.middleware.discovery.component.jena;
+package edu.tamu.scholars.middleware.discovery.service.component.jena;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_DELIMITER;
@@ -30,8 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionSource;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
-import edu.tamu.scholars.middleware.discovery.component.Harvester;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
+import edu.tamu.scholars.middleware.discovery.service.component.Harvester;
 import edu.tamu.scholars.middleware.service.TemplateService;
 import edu.tamu.scholars.middleware.service.Triplestore;
 import reactor.core.publisher.Flux;

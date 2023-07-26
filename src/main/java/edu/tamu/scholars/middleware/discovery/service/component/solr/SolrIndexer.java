@@ -1,6 +1,7 @@
-package edu.tamu.scholars.middleware.discovery.component.solr;
+package edu.tamu.scholars.middleware.discovery.service.component.solr;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
+import static edu.tamu.scholars.middleware.discovery.service.IndexService.CREATED_FIELDS;
 import static edu.tamu.scholars.middleware.discovery.service.IndexService.SCHEMA;
 
 import java.lang.reflect.Field;
@@ -21,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.tamu.scholars.middleware.config.model.IndexConfig;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
-import edu.tamu.scholars.middleware.discovery.component.Indexer;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
+import edu.tamu.scholars.middleware.discovery.service.component.Indexer;
 
 public class SolrIndexer implements Indexer {
 
@@ -45,7 +46,6 @@ public class SolrIndexer implements Indexer {
     }
 
     public void scaffold() {
-        // duplicated from below
         for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldType.class)) {
             FieldType indexed = field.getAnnotation(FieldType.class);
 
@@ -53,9 +53,8 @@ public class SolrIndexer implements Indexer {
                 ? indexed.value()
                 : field.getName();
 
-            // NOTE: no longer preventing attempting to create duplicate field by name
-            if (!indexed.readonly() && !fields.contains(name) && fields.add(name)) {
-
+            if (!indexed.readonly() && !fields.contains(name)) {
+                fields.add(name);
             }
         }
     }
@@ -69,8 +68,10 @@ public class SolrIndexer implements Indexer {
                 ? indexed.value()
                 : field.getName();
 
-            // NOTE: no longer preventing attempting to create duplicate field by name
-            if (!indexed.readonly() && !fields.contains(name) && fields.add(name)) {
+            if (!indexed.readonly() && !fields.contains(name) && fields.add(name) && CREATED_FIELDS.add(name)) {
+
+                logger.info("Attempting to create field {}.{}", this.name(), name);
+
                 Map<String, Object> fieldAttributes = new HashMap<String,Object>();
 
                 fieldAttributes.put("type", indexed.type());

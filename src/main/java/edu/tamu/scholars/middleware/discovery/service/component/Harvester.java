@@ -1,4 +1,4 @@
-package edu.tamu.scholars.middleware.discovery.component;
+package edu.tamu.scholars.middleware.discovery.service.component;
 
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import reactor.core.publisher.Flux;

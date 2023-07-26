@@ -22,8 +22,8 @@ import edu.tamu.scholars.middleware.config.model.HttpConfig;
 import edu.tamu.scholars.middleware.config.model.IndexerConfig;
 import edu.tamu.scholars.middleware.config.model.MailConfig;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
-import edu.tamu.scholars.middleware.discovery.component.jena.TriplestoreHarvester;
-import edu.tamu.scholars.middleware.discovery.component.solr.SolrIndexer;
+import edu.tamu.scholars.middleware.discovery.service.component.jena.TriplestoreHarvester;
+import edu.tamu.scholars.middleware.discovery.service.component.solr.SolrIndexer;
 
 @SpringBootTest
 public class MiddlewareApplicationTest {
