@@ -2,18 +2,14 @@ package edu.tamu.scholars.middleware.discovery.service.component.solr;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 import static edu.tamu.scholars.middleware.discovery.service.IndexService.CREATED_FIELDS;
-import static edu.tamu.scholars.middleware.discovery.service.IndexService.SCHEMA;
+import static edu.tamu.scholars.middleware.discovery.service.IndexService.SCAFFOLD;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.slf4j.Logger;
@@ -21,9 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.tamu.scholars.middleware.config.model.IndexConfig;
-import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.service.component.Indexer;
+import edu.tamu.scholars.middleware.discovery.service.component.NamedTypedField;
 
 public class SolrIndexer implements Indexer {
 
@@ -37,73 +33,59 @@ public class SolrIndexer implements Indexer {
 
     private final Class<AbstractIndexDocument> type;
 
-    private final List<String> fields;
+    private final List<NamedTypedField> fields;
 
     public SolrIndexer(Class<AbstractIndexDocument> type) {
         this.type = type;
         this.fields = new ArrayList<>();
-        SCHEMA.put(name(), fields);
+        SCAFFOLD.put(name(), fields);
     }
 
+    @Override
     public void scaffold() {
-        for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldType.class)) {
-            FieldType indexed = field.getAnnotation(FieldType.class);
-
-            String name = StringUtils.isNotEmpty(indexed.value())
-                ? indexed.value()
-                : field.getName();
-
-            if (!indexed.readonly() && !fields.contains(name)) {
-                fields.add(name);
-            }
+        try {
+            SolrSchemaUtility.collect(type)
+                    .filter(ntf -> !ntf.fieldType.readonly())
+                    .forEach(ntf -> {
+                        fields.add(ntf);
+                    });
+        } catch (Exception e) {
+            logger.debug("Failed to scaffold", e);
         }
     }
 
     @Override
-    public void init() {
-        for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldType.class)) {
-            FieldType indexed = field.getAnnotation(FieldType.class);
-
-            String name = StringUtils.isNotEmpty(indexed.value())
-                ? indexed.value()
-                : field.getName();
-
-            if (!indexed.readonly() && !fields.contains(name) && fields.add(name) && CREATED_FIELDS.add(name)) {
-
-                logger.info("Attempting to create field {}.{}", this.name(), name);
-
-                Map<String, Object> fieldAttributes = new HashMap<String,Object>();
-
-                fieldAttributes.put("type", indexed.type());
-                fieldAttributes.put("stored", indexed.stored());
-                fieldAttributes.put("indexed", indexed.searchable());
-                fieldAttributes.put("required", indexed.required());
-
-                if (StringUtils.isNotEmpty(indexed.defaultValue())) {
-                    fieldAttributes.put("defaultValue", indexed.defaultValue());
-                }
-
-                fieldAttributes.put("multiValued", Collection.class.isAssignableFrom(field.getType()));
-
-                fieldAttributes.put("name", name);
-
-                try {
-                    SchemaRequest.AddField addFieldRequest = new SchemaRequest.AddField(fieldAttributes);
-                    addFieldRequest.process(solrClient, COLLECTION);
-                } catch (Exception e) {
-                    logger.debug("Failed to add field", e);
-                }
-
-                if (indexed.copyTo().length > 0) {
-                    try {
-                        SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(indexed.copyTo()));
-                        addCopyFieldRequest.process(solrClient, COLLECTION);
-                    } catch (Exception e) {
-                        logger.debug("Failed to add copy field", e);
-                    }
-                }
-            }
+    public void init(List<Map<String, Object>> schema) {
+        if (!index.isInitOnStartup()) {
+            return;
         }
+        // adding fields and copy fields
+        SolrSchemaUtility.collect(type)
+                .filter(ntf -> !ntf.fieldType.readonly())
+                .filter(ntf -> CREATED_FIELDS.add(ntf.name))
+                .forEach(ntf -> {
+
+                    logger.info("Adding field {}.{}", this.name(), ntf.name);
+
+                    // check if field is an existing property in schema
+                    SchemaRequest.AddField addFieldRequest = SolrSchemaUtility.addFieldRequest(ntf);
+
+                    try {
+                        addFieldRequest.process(solrClient, COLLECTION);
+                    } catch (Exception e) {
+                        logger.debug("Failed to add field", e);
+                    }
+
+                    if (ntf.fieldType.copyTo().length > 0) {
+                        logger.info("Adding copy field {}.{} => {}", this.name(), ntf.name, Arrays.asList(ntf.fieldType.copyTo()));
+                        SchemaRequest.AddCopyField addCopyFieldRequest = SolrSchemaUtility.addCopyFieldRequest(ntf);
+                        try {
+                            addCopyFieldRequest.process(solrClient, COLLECTION);
+                        } catch (Exception e) {
+                            logger.debug("Failed to add copy field", e);
+                        }
+                    }
+                });
     }
 
     @Override
@@ -117,7 +99,7 @@ public class SolrIndexer implements Indexer {
             if (index.isEnableIndividualOnBatchFail()) {
                 documents.stream().forEach(this::index);
             } else {
-                logger.warn("Skipping individuals of failed batch of {}.", name() );
+                logger.warn("Skipping individuals of failed batch of {}.", name());
             }
         }
     }

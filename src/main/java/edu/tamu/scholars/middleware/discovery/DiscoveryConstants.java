@@ -29,7 +29,8 @@ public class DiscoveryConstants {
     public static final String DISCOVERY_MODEL_PACKAGE = "edu.tamu.scholars.middleware.discovery.model";
 
     public static final String PARENTHESES_TEMPLATE = "(%s)";
-    
+
+     // TODO: update CollectionTarget use and get collection from index.getName()
     public static final String COLLECTION = "scholars-discovery";
 
 }

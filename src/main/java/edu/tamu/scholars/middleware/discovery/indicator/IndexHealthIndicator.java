@@ -16,6 +16,7 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import edu.tamu.scholars.middleware.config.model.IndexConfig;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.discovery.service.IndexService;
 
@@ -32,6 +33,9 @@ public class IndexHealthIndicator implements HealthIndicator {
     @Autowired
     private IndexService indexService;
 
+    @Autowired
+    private IndexConfig index;
+
     @Override
     public Health health() {
         Health.Builder status = Health.down();
@@ -39,7 +43,8 @@ public class IndexHealthIndicator implements HealthIndicator {
         Map<String, Object> details = new HashMap<String, Object>();
 
         try {
-            SolrPingResponse response = solrClient.ping("scholars-discovery");
+            SolrPingResponse response = solrClient.ping(index.getName());
+
             String message = (String) response.getResponse().get("status");
 
             // NOTE: not a REST response status code
@@ -58,6 +63,7 @@ public class IndexHealthIndicator implements HealthIndicator {
                 details.put("initializing", indexService.isSchematizing());
                 details.put("indexing", indexService.isIndexing());
                 details.put("ready", !indexService.isSchematizing() && !indexService.isIndexing());
+                details.put("scaffold", indexService.getScaffold());
                 details.put("schema", indexService.getSchema());
 
             } else {

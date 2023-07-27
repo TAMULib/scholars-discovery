@@ -25,9 +25,10 @@ middleware:
     request-timeout: 30000
     socket-timeout: 60000
   index:
+    name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    initOnStartup: false
+    initOnStartup: true
     onStartup: false
     enableIndividualOnBatchFail: true
     batchSize: 1000
@@ -157,14 +158,3 @@ spring:
 management:
   endpoints:
     enabled-by-default: false
-    web:
-      exposure:
-        # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, mappings
-  endpoint:
-    health:
-      enabled: true
-    info:
-      enabled: true
-    mappings:
-      enabled: true

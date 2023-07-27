@@ -29,11 +29,12 @@ middleware:
     request-timeout: 30000
     socket-timeout: 60000
   index:
+    name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
     initOnStartup: true
     onStartup: true
-    enableIndividualOnBatchFail: false
+    enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
   triplestore:
@@ -136,7 +137,7 @@ spring:
     # database-platform: org.hibernate.dialect.H2Dialect
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: create-drop
     open-in-view: false
     properties:
       hibernate:
@@ -174,20 +175,34 @@ management:
     web:
       exposure:
         # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        # env, httpexchanges, scheduledtasks, sessions
-        include: health, info, mappings
+        include: health, info, mappings, env, httpexchanges, scheduledtasks, sessions
+  # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints.health
   endpoint:
     health:
       enabled: true
+      show-details: always
+      show-components: always
     info:
       enabled: true
+      show-details: always
+      show-components: always
     mappings:
       enabled: true
+      show-details: always
+      show-components: always
     env:
-      enabled: false
+      enabled: true
+      show-details: always
+      show-components: always
     httpexchanges:
-      enabled: false
+      enabled: true
+      show-details: always
+      show-components: always
     scheduledtasks:
-      enabled: false
+      enabled: true
+      show-details: always
+      show-components: always
     sessions:
-      enabled: false
+      enabled: true
+      show-details: always
+      show-components: always
