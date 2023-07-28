@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
@@ -55,7 +56,7 @@ public class SolrIndexer implements Indexer {
     }
 
     @Override
-    public void init(List<Map<String, Object>> schema) {
+    public void init(Map<String, Object> schema) {
         if (!index.isInitOnStartup()) {
             return;
         }
@@ -65,24 +66,49 @@ public class SolrIndexer implements Indexer {
                 .filter(ntf -> CREATED_FIELDS.add(ntf.name))
                 .forEach(ntf -> {
 
-                    logger.info("Adding field {}.{}", this.name(), ntf.name);
+                    Map<String, Object> field = (Map<String, Object>) schema.get(ntf.name);
+                    if (Objects.nonNull(field)) {
 
-                    // check if field is an existing property in schema
-                    SchemaRequest.AddField addFieldRequest = SolrSchemaUtility.addFieldRequest(ntf);
+                        logger.info("Field {}.{} already exists", this.name(), ntf.name);
 
-                    try {
-                        addFieldRequest.process(solrClient, COLLECTION);
-                    } catch (Exception e) {
-                        logger.debug("Failed to add field", e);
-                    }
+                        // TODO: type these maps or not
+                        // TODO: match version and declared field type in case field type definition changes
+                        if (!field.get("type").equals(ntf.fieldType.type())) {
+                             logger.error("Scaffold to Index type mismatch!!");
+                             logger.debug("\tntf.name: " + ntf.name);
+                             logger.debug("\tntf.fieldType.readonly: " + ntf.fieldType.readonly());
+                             logger.debug("\tntf.fieldType.stored: " + ntf.fieldType.stored());
+                             logger.debug("\tntf.fieldType.searchable: " + ntf.fieldType.searchable());
+                             logger.debug("\tntf.fieldType.type: " + ntf.fieldType.type());
+                             logger.debug("\tntf.fieldType.copyTo: " + ntf.fieldType.copyTo());
+                             logger.debug("\tntf.fieldType.defaultValue: " + ntf.fieldType.defaultValue());
+                             logger.debug("\tntf.fieldType.required: " + ntf.fieldType.required());
+                             logger.debug("\tntf.fieldType.name: " + ntf.fieldType.name());
+                             logger.debug("\tntf.fieldType.value: " + ntf.fieldType.value());
 
-                    if (ntf.fieldType.copyTo().length > 0) {
-                        logger.info("Adding copy field {}.{} => {}", this.name(), ntf.name, Arrays.asList(ntf.fieldType.copyTo()));
-                        SchemaRequest.AddCopyField addCopyFieldRequest = SolrSchemaUtility.addCopyFieldRequest(ntf);
+                             logger.debug("\tfield: " + field);
+                        }
+                    } else {
+                        // create field and copy fields
+                        logger.info("Adding new field {}.{}", this.name(), ntf.name);
+
+                        // check if field is an existing property in schema
+                        SchemaRequest.AddField addFieldRequest = SolrSchemaUtility.addFieldRequest(ntf);
+
                         try {
-                            addCopyFieldRequest.process(solrClient, COLLECTION);
+                            addFieldRequest.process(solrClient, COLLECTION);
                         } catch (Exception e) {
-                            logger.debug("Failed to add copy field", e);
+                            logger.debug("Failed to add field", e);
+                        }
+
+                        if (ntf.fieldType.copyTo().length > 0) {
+                            logger.info("Adding copy field {}.{} => {}", this.name(), ntf.name, Arrays.asList(ntf.fieldType.copyTo()));
+                            SchemaRequest.AddCopyField addCopyFieldRequest = SolrSchemaUtility.addCopyFieldRequest(ntf);
+                            try {
+                                addCopyFieldRequest.process(solrClient, COLLECTION);
+                            } catch (Exception e) {
+                                logger.debug("Failed to add copy field", e);
+                            }
                         }
                     }
                 });

@@ -1,7 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.service.component;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
@@ -19,7 +18,7 @@ public interface Indexer {
     /**
      * Everything the application needs the solr collection to have specified.
      */
-    public void init(List<Map<String, Object>> schema);
+    public void init(Map<String, Object> schema);
 
     /**
      * Index a batch of abstract index documents.

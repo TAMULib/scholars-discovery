@@ -11,4 +11,9 @@ public class NamedTypedField {
     public String name;
     public FieldType fieldType;
     public Field field;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

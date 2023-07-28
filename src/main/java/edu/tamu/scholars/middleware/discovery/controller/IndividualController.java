@@ -75,7 +75,7 @@ public class IndividualController implements RepresentationModelProcessor<Indivi
     }
 
     @GetMapping("/individual/{id}")
-    public ResponseEntity<IndividualModel> individual(@PathVariable String id) {
+    public ResponseEntity<IndividualModel> individual(@PathVariable(required = true) String id) {
         Optional<Individual> individual = repo.findById(id);
         if (individual.isPresent()) {
             return ResponseEntity.ok(assembler.toModel(individual.get()));

@@ -83,7 +83,9 @@ public class IndexService {
         return SCAFFOLD;
     }
 
-    public List<Map<String, Object>> getSchema() {
+    // TODO: type out the response from Solr or not
+    public Map<String, Object> getSchema() {
+        Map<String, Object> schema = new HashMap<>();
         Optional<FieldsResponse> fieldsRes = Optional.empty();
 
         Optional<Object[]> response = Optional.ofNullable(this.ping());
@@ -104,8 +106,15 @@ public class IndexService {
         }
 
         if (fieldsRes.isPresent()) {
-            return fieldsRes.map(fr -> fr.getFields())
-                .get();
+            fieldsRes.map(fr -> fr.getFields())
+                .get()
+                .stream()
+                .forEach(field -> {
+                    String name = (String) field.get("name");
+                    field.remove("name");
+                    schema.put(name, field);
+                });
+            return schema;
         }
 
         throw new RuntimeException("fields request failed");
@@ -135,15 +144,11 @@ public class IndexService {
                 if (status == 0) {
                     logger.info("Initializing index fields for {}", index.getName());
 
-                    Map<String, Object> details = new HashMap<String, Object>();
-
-                    details.put("schema", getSchema());
-
-                    // suspecting some issues without shallow clone of response from Solr
+                    Map<String, Object> schema = getSchema();
 
                     indexers.stream().forEach(indexer -> {
                         logger.info("Initializing fields for {}", indexer.name());
-                        indexer.init((List<Map<String, Object>>) details.get("schema"));
+                        indexer.init(schema);
                     });
                 } else {
                     logger.warn("Unable to connect to Solr collection {}", index.getName());
