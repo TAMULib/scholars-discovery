@@ -95,10 +95,8 @@ public class IndexService {
             SchemaRequest.Fields fieldsReq = new SchemaRequest.Fields();
             try {
                 fieldsRes = Optional.ofNullable(fieldsReq.process(solrClient, index.getName()));
-            } catch (SolrServerException e) {
-                logger.error("Unable to get fields from collection ... continue", e);
-            } catch (IOException e) {
-                logger.error("Unable to get fields from collection ... continue", e);
+            } catch (SolrServerException | IOException e) {
+                logger.error("Unable to get fields from collection", e);
             }
 
         } else {
@@ -122,12 +120,9 @@ public class IndexService {
 
     @PostConstruct
     public void startup() {
-        logger.info("Scaffolding index fields...");
         indexers.stream().forEach(indexer -> {
-            logger.info("Scaffolding {} fields.", indexer.name());
             indexer.scaffold();
         });
-
         if (index.isInitOnStartup()) {
             if (schematizing.compareAndSet(false, true)) {
 
@@ -212,10 +207,8 @@ public class IndexService {
 
         try {
             response = Optional.ofNullable(solrClient.ping(index.getName()));
-        } catch (SolrServerException e) {
-            logger.error("Unable to connect to Solr ... continue", e);
-        } catch (IOException e) {
-            logger.error("Unable to connect to Solr ... continue", e);
+        } catch (SolrServerException | IOException e) {
+            logger.error("Unable to connect to Solr", e);
         }
 
         if (response.isPresent()) {

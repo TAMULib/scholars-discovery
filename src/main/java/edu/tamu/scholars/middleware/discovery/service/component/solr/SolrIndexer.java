@@ -69,7 +69,7 @@ public class SolrIndexer implements Indexer {
                     Map<String, Object> field = (Map<String, Object>) schema.get(ntf.name);
                     if (Objects.nonNull(field)) {
 
-                        logger.info("Field {}.{} already exists", this.name(), ntf.name);
+                        logger.debug("Field {}.{} already exists", this.name(), ntf.name);
 
                         // TODO: type these maps or not
                         // TODO: match version and declared field type in case field type definition changes
