@@ -8,11 +8,16 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
-import edu.tamu.scholars.middleware.discovery.model.helper.IndividualHelper;
+import edu.tamu.scholars.middleware.discovery.model.Organization;
+import edu.tamu.scholars.middleware.discovery.model.Person;
+import edu.tamu.scholars.middleware.discovery.model.helper.ContentMapper;
 
 public class FilenameUtility {
 
     private final static String UNDERSCORE = "_";
+    private final static String NAME = "name";
+    private final static String LAST_NAME = "lastName";
+    private final static String FIRST_NAME = "firstName";
 
     private FilenameUtility() {
 
@@ -27,7 +32,24 @@ public class FilenameUtility {
     }
 
     public static String normalizeExportFilename(Individual individual) {
-        return localizeWhileUnderscoreReplaceSpaceWithUnderscore(IndividualHelper.as(individual).getLabel());
+        ContentMapper cm = ContentMapper.from(individual);
+        StringBuilder label = new StringBuilder();
+
+        String clazz = individual.getClazz();
+
+        if (clazz.equals(Organization.class.getSimpleName())) {
+            label.append(cm.getValue(NAME))
+                .append(UNDERSCORE);
+        } else if (clazz.equals(Person.class.getSimpleName())) {
+             label.append(cm.getValue(LAST_NAME))
+                .append(UNDERSCORE)
+                .append(cm.getValue(FIRST_NAME))
+                .append(UNDERSCORE);
+        }
+
+        return localizeWhileUnderscoreReplaceSpaceWithUnderscore(label
+            .append(individual.getId())
+            .toString());
     }
 
     private static String localizeWhileUnderscoreReplaceSpaceWithUnderscore(String value) {
