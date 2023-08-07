@@ -83,7 +83,6 @@ public class IndexService {
         return SCAFFOLD;
     }
 
-    // TODO: type out the response from Solr or not
     public Map<String, Object> getSchema() {
         Map<String, Object> schema = new HashMap<>();
         Optional<FieldsResponse> fieldsRes = Optional.empty();

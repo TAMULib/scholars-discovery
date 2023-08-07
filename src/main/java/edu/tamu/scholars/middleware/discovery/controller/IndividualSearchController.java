@@ -50,6 +50,8 @@ public class IndividualSearchController implements RepresentationModelProcessor<
 
     @GetMapping("/search/findByIdIn")
     public ResponseEntity<CollectionModel<IndividualModel>> findByIdIn(@RequestParam(required = true) List<String> ids) {
+        repo.findByIdIn(ids);
+        System.out.println("\n\nHERE\n\n");
         return ResponseEntity.ok(assembler.toCollectionModel(repo.findByIdIn(ids)));
     }
 

@@ -8,6 +8,8 @@ public class DiscoveryConstants {
 
     public static final String ID = "id";
 
+    public static final String CONTENT = "content";
+
     public static final String CLASS = "class";
 
     public static final String TYPE = "type";
@@ -32,5 +34,7 @@ public class DiscoveryConstants {
 
      // TODO: update CollectionTarget use and get collection from index.getName()
     public static final String COLLECTION = "scholars-discovery";
+
+    public static final String SYNC_IDS = "syncIds";
 
 }

@@ -137,7 +137,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             QueryResponse queryResponse = jsonRequest.process(solrClient, COLLECTION);
 
-            return queryResponse.getBeans(Individual.class);
+            return queryResponse.getResults()
+                .stream()
+                .map(Individual::from)
+                .collect(Collectors.toList());
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to find documents from ids", e);
         }
@@ -387,8 +390,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         try {
             SolrDocument document = solrClient.getById(COLLECTION, id);
 
-            return solrClient.getBinder()
-                .getBean(Individual.class, document);
+            return Individual.from(document);
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to get document by id", e);
         }
@@ -397,7 +399,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     private List<Individual> findAll(SolrQuery query) {
         try {
             return solrClient.query(COLLECTION, query)
-                .getBeans(Individual.class);
+                .getResults()
+                .stream()
+                .map(Individual::from)
+                .collect(Collectors.toList());
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to query documents", e);
         }
@@ -406,7 +411,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     private Page<Individual> findAll(SolrQuery query, Pageable pageable) {
         try {
             SolrDocumentList documents = solrClient.query(COLLECTION, query).getResults();
-            List<Individual> individuals = solrClient.getBinder().getBeans(Individual.class, documents);
+            List<Individual> individuals = documents
+                .stream()
+                .map(Individual::from)
+                .collect(Collectors.toList());
 
             return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());
         } catch (IOException | SolrServerException e) {

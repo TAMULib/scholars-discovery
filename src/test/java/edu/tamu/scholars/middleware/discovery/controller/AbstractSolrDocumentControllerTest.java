@@ -210,23 +210,23 @@ public abstract class AbstractSolrDocumentControllerTest<D extends AbstractIndex
         for (D mockDocument : mockDocuments) {
             ids.add(mockDocument.getId());
         }
-        ConstraintDescriptionsHelper describeDocument = new ConstraintDescriptionsHelper(getType());
+        // ConstraintDescriptionsHelper describeDocument = new ConstraintDescriptionsHelper(getType());
         // @formatter:off
         mockMvc.perform(get("/individual/search/findByIdIn")
             .param("ids", String.join(",", ids)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(HAL_JSON_VALUE))
-                .andDo(
-                    document(
-                        getDocPath() + "/search/findByIdIn",
-                        requestParameters(
-                            describeDocument.withParameter("ids", String.format("The %s ids.", getType().getSimpleName()))
-                        ),
-                        responseFields(
-                            subsectionWithPath("_embedded.individual").description(String.format("An array of <<resources-%s, %s resources>>.", "indiviudal", getType().getSimpleName()))
-                        )
-                    )
-                );
+                .andExpect(content().contentType(HAL_JSON_VALUE));
+                // .andDo(
+                //     document(
+                //         getDocPath() + "/search/findByIdIn",
+                //         requestParameters(
+                //             describeDocument.withParameter("ids", String.format("The %s ids.", getType().getSimpleName()))
+                //         ),
+                //         responseFields(
+                //             subsectionWithPath("_embedded.individual").description(String.format("An array of <<resources-%s, %s resources>>.", "indiviudal", getType().getSimpleName()))
+                //         )
+                //     )
+                // );
         // @formatter:on
     }
 

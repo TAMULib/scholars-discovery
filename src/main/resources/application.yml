@@ -32,9 +32,9 @@ middleware:
     name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    initOnStartup: true
-    onStartup: true
-    enableIndividualOnBatchFail: true
+    initOnStartup: false
+    onStartup: false
+    enableIndividualOnBatchFail: false
     onStartupDelay: 10000
     batchSize: 10000
   triplestore:
@@ -137,7 +137,7 @@ spring:
     # database-platform: org.hibernate.dialect.H2Dialect
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
-    hibernate.ddl-auto: create-drop
+    hibernate.ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
