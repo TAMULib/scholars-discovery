@@ -31,6 +31,9 @@ public class SolrIndexer implements Indexer {
     @Value("${middleware.index.name}")
     private String collectionName;
 
+    @Value("${middleware.index.enableIndividualOnBatchFail:false}")
+    private boolean enableIndividualOnBatchFail;
+
     private final Class<AbstractIndexDocument> type;
 
     public SolrIndexer(Class<AbstractIndexDocument> type) {
@@ -88,8 +91,12 @@ public class SolrIndexer implements Indexer {
             solrClient.commit(collectionName);
             logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
         } catch (Exception e) {
-            logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
-            documents.stream().forEach(this::index);
+            if (enableIndividualOnBatchFail) {
+                logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
+                documents.stream().forEach(this::index);
+            } else {
+                logger.warn("Skipping individuals of failed batch of {}.", name() );
+            }
         }
     }
 
