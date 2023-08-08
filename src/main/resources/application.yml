@@ -165,15 +165,15 @@ spring:
 
 management:
   endpoints:
-    enabled-by-default: false
+    enabled-by-default: true
     web:
       exposure:
         # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, mappings
+        include: health, info, index
   endpoint:
     health:
       enabled: true
     info:
       enabled: true
-    mappings:
+    index:
       enabled: true
