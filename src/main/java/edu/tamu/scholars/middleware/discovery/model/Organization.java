@@ -1,7 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.model;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 
 import java.util.List;
 
@@ -10,14 +9,12 @@ import org.apache.solr.client.solrj.beans.Field;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionSource;
-import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
-import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
-import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
+import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
+import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
 
 @JsonInclude(NON_EMPTY)
-@CollectionTarget(name = COLLECTION)
 @CollectionSource(name = "organizations", predicate = "http://xmlns.com/foaf/0.1/Organization")
 public class Organization extends Common {
 
