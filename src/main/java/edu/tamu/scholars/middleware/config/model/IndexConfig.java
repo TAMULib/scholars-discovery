@@ -11,6 +11,8 @@ public class IndexConfig {
 
     private String zone = "America/Chicago";
 
+    private boolean schematize = true;
+
     private boolean onStartup = true;
 
     private int onStartupDelay = 10000;
@@ -31,6 +33,14 @@ public class IndexConfig {
 
     public void setZone(String zone) {
         this.zone = zone;
+    }
+
+    public boolean isSchematize() {
+        return schematize;
+    }
+
+    public void setSchematize(boolean schematize) {
+        this.schematize = schematize;
     }
 
     public boolean isOnStartup() {
