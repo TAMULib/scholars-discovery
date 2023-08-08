@@ -30,6 +30,7 @@ middleware:
     schematize: true
     onStartup: false
     onStartupDelay: 10000
+    enableIndividualOnBatchFail: false
     batchSize: 1000
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore

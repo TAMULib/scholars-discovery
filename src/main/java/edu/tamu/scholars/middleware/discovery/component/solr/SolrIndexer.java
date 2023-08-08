@@ -16,6 +16,7 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.component.Indexer;
@@ -27,6 +28,9 @@ public class SolrIndexer implements Indexer {
 
     @Autowired
     private SolrClient solrClient;
+
+    @Value("${middleware.index.enableIndividualOnBatchFail:false}")
+    private boolean enableIndividualOnBatchFail;
 
     private final Class<AbstractIndexDocument> type;
 
@@ -85,8 +89,12 @@ public class SolrIndexer implements Indexer {
             solrClient.commit(COLLECTION);
             logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
         } catch (Exception e) {
-            logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
-            documents.stream().forEach(this::index);
+            if (enableIndividualOnBatchFail) {
+                logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
+                documents.stream().forEach(this::index);
+            } else {
+                logger.warn("Skipping individuals of failed batch of {}.", name() );
+            }
         }
     }
 
