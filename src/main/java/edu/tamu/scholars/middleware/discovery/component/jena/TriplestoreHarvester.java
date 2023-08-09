@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.component.jena;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_DELIMITER;
 
@@ -7,10 +8,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,7 @@ import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.component.Harvester;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
+import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.service.TemplateService;
 import edu.tamu.scholars.middleware.service.Triplestore;
 import reactor.core.publisher.Flux;
@@ -66,24 +70,23 @@ public class TriplestoreHarvester implements Harvester {
         this.indexedFields = FieldUtils.getFieldsListWithAnnotation(type, FieldType.class);
     }
 
-    public Flux<AbstractIndexDocument> harvest() {
+    public Flux<Individual> harvest() {
         CollectionSource source = type.getAnnotation(CollectionSource.class);
         String query = templateService.templateSparql(COLLECTION_SPARQL_TEMPLATE, source.predicate());
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("%s:\n%s", COLLECTION_SPARQL_TEMPLATE, query));
-        }
+        logger.debug(String.format("%s:\n%s", COLLECTION_SPARQL_TEMPLATE, query));
         QueryExecution queryExecution = triplestore.createQueryExecution(query);
         Iterator<Triple> tripleIterator = queryExecution.execConstructTriples();
         Iterable<Triple> triples = () -> tripleIterator;
+
         return Flux.fromIterable(triples)
             .map(this::subject)
             .map(this::harvest)
             .doFinally(onFinally -> queryExecution.close());
     }
 
-    public AbstractIndexDocument harvest(String subject) {
+    public Individual harvest(String subject) {
         try {
-            return createDocument(subject);
+            return createIndividual(subject);
         } catch (Exception e) {
             logger.error(String.format("Unable to index %s: %s", type.getSimpleName(), parse(subject)));
             logger.error(String.format("Error: %s", e.getMessage()));
@@ -102,22 +105,37 @@ public class TriplestoreHarvester implements Harvester {
         return triple.getSubject().toString();
     }
 
-    private AbstractIndexDocument createDocument(String subject) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        AbstractIndexDocument document = construct();
-        Field field = FieldUtils.getField(type, ID, true);
-        field.set(document, parse(subject));
-        lookupProperties(document, subject);
-        lookupSyncIds(document);
-        return document;
+    private Individual createIndividual(String subject) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+        Individual individual = new Individual();
+        individual.setId(parse(subject));
+        individual.setClazz(name());
+
+        lookupProperties(individual, subject);
+        lookupSyncIds(individual);
+
+        return individual;
     }
 
-    private void lookupProperties(AbstractIndexDocument document, String subject) {
+    private void lookupProperties(Individual individual, String subject) {
+        Map<String, Collection<Object>> content = individual.getContent();
+        content.put(CLASS, Arrays.asList(individual.getClazz()));
         propertySourceTypeOps.parallelStream().forEach(typeOp -> {
             try {
                 FieldSource source = typeOp.getPropertySource();
                 Model model = queryForModel(source, subject);
                 List<Object> values = lookupProperty(typeOp, source, model);
-                populate(document, typeOp.getField(), values);
+
+                if (values.isEmpty()) {
+                    logger.debug(String.format("Could not find values for %s", typeOp.getField().getName()));
+                } else {
+                    if (Collection.class.isAssignableFrom(typeOp.getField().getType())) {
+                        content.put(typeOp.getField().getName(), values);
+                    } else {
+                        values.retainAll(values.subList(0, 1));
+                        content.put(typeOp.getField().getName(), values);
+                    }
+                }
+
             } catch (Exception e) {
                 logger.error(String.format("Unable to populate document %s: %s", name(), parse(subject)));
                 logger.error(String.format("Error: %s", e.getMessage()));
@@ -130,9 +148,7 @@ public class TriplestoreHarvester implements Harvester {
 
     private Model queryForModel(FieldSource source, String subject) {
         String query = templateService.templateSparql(source.template(), subject);
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("%s:\n%s", source.template(), query));
-        }
+        logger.debug(String.format("%s:\n%s", source.template(), query));
         try (QueryExecution qe = triplestore.createQueryExecution(query)) {
             Model model = qe.execConstruct();
             if (logger.isDebugEnabled()) {
@@ -170,61 +186,32 @@ public class TriplestoreHarvester implements Harvester {
             if (value.contains("^^")) {
                 value = value.substring(0, value.indexOf("^^"));
             }
-            if (source.unique() && values.stream().map(v -> v.toString()).anyMatch(value::equalsIgnoreCase)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("%s has duplicate value %s", typeOp.getField().getName(), value));
+            if (source.split()) {
+                for (String v : value.split("\\|\\|")) {
+                    values.add(typeOp.type(v));
                 }
             } else {
-                if (source.split()) {
-                    for (String v : value.split("\\|\\|")) {
-                        values.add(typeOp.type(v));
-                    }
-                } else {
-                    values.add(typeOp.type(value));
-                }
+                values.add(typeOp.type(value));
+            }
+            if (source.unique() && values.size() > 1) {
+                logger.debug(String.format("Unique field %s has duplicate value %s", typeOp.getField().getName(), value));
+                values.retainAll(values.subList(0, 1));
             }
         }
         return values;
     }
 
-    private void populate(AbstractIndexDocument document, Field field, List<Object> values) throws IllegalArgumentException, IllegalAccessException {
-        if (values.isEmpty()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Could not find values for %s", field.getName()));
-            }
-        } else {
-            field.setAccessible(true);
-            if (List.class.isAssignableFrom(field.getType())) {
-                field.set(document, values);
-            } else {
-                field.set(document, values.get(0));
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void lookupSyncIds(AbstractIndexDocument document) {
+    private void lookupSyncIds(Individual individual) {
         Set<String> syncIds = new HashSet<String>();
-        syncIds.add(document.getId());
+        syncIds.add(individual.getId());
         indexedFields.stream().filter(this::isNestedField).peek(field -> field.setAccessible(true)).forEach(field -> {
-            try {
-                Object value = field.get(document);
-                if (value != null) {
-                    if (Collection.class.isAssignableFrom(field.getType())) {
-                        ((Collection<String>) value).forEach(v -> addSyncId(syncIds, v));
-                    } else {
-                        addSyncId(syncIds, (String) value);
-                    }
-                }
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                logger.error(String.format("Unable to get value of %s %s", name(), field.getName()));
-                logger.error(String.format("Error: %s", e.getMessage()));
-                if (logger.isDebugEnabled()) {
-                    e.printStackTrace();
-                }
+            String name = field.getName();
+            Collection<Object> value = individual.getContent().get(name);
+            if (value != null) {
+                value.forEach(v -> addSyncId(syncIds, (String) v));
             }
         });
-        document.setSyncIds(new ArrayList<>(syncIds));
+        individual.setSyncIds(new ArrayList<>(syncIds));
     }
 
     private boolean isNestedField(Field field) {
@@ -236,10 +223,6 @@ public class TriplestoreHarvester implements Harvester {
         for (int i = 1; i < vParts.length; i++) {
             syncIds.add(vParts[i]);
         }
-    }
-
-    private AbstractIndexDocument construct() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        return type.getConstructor().newInstance(new Object[0]);
     }
 
     private String name() {

@@ -19,7 +19,7 @@ public class SolrTestConfig {
     private final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
 
     @Bean
-    public SolrClient solrServer() throws Exception {
+    public SolrClient solrClient() throws Exception {
         final File solrDir = new File("solr");
         final File solrHome = SOLR_HOME.toFile();
 

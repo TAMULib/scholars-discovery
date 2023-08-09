@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
+import edu.tamu.scholars.middleware.discovery.model.Individual;
 
 public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
 
@@ -34,7 +35,7 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
     }
 
     public static <T> DiscoveryFacetAndHighlightPage<T> from(QueryResponse response, Pageable pageable, List<FacetArg> facetArguments, HighlightArg highlightArg, Class<T> type) {
-        List<T> documents = response.getBeans(type);
+        List<T> documents = (List<T>) Individual.fromSolrDocumentList(response.getResults());
         List<Facet> facets = buildFacets(response, facetArguments);
         List<Highlight> highlights = buildHighlights(response, highlightArg);
         SolrDocumentList results = response.getResults();

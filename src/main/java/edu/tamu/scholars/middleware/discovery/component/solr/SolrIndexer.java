@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.component.Indexer;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
+import edu.tamu.scholars.middleware.discovery.model.Individual;
 
 public class SolrIndexer implements Indexer {
 
@@ -79,25 +80,25 @@ public class SolrIndexer implements Indexer {
     }
 
     @Override
-    public void index(Collection<AbstractIndexDocument> documents) {
+    public void index(Collection<Individual> individuals) {
         try {
-            solrClient.addBeans(COLLECTION, documents);
+            solrClient.add(COLLECTION, Individual.toSolrInputDocuments(individuals));
             solrClient.commit(COLLECTION);
-            logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
+            logger.info(String.format("Saved %s batch of %s", name(), individuals.size()));
         } catch (Exception e) {
             logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
-            documents.stream().forEach(this::index);
+            individuals.stream().forEach(this::index);
         }
     }
 
     @Override
-    public void index(AbstractIndexDocument document) {
+    public void index(Individual individual) {
         try {
-            solrClient.addBean(COLLECTION, document);
+            solrClient.add(COLLECTION, Individual.toSolrInputDocument(individual));
             solrClient.commit(COLLECTION);
-            logger.info(String.format("Saved %s with id %s", name(), document.getId()));
+            logger.info(String.format("Saved %s with id %s", name(), individual.getId()));
         } catch (Exception e) {
-            logger.warn(String.format("Failed to save %s with id %s", name(), document.getId()), e);
+            logger.warn(String.format("Failed to save %s with id %s", name(), individual.getId()), e);
         }
     }
 

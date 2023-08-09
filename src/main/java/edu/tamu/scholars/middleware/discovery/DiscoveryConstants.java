@@ -16,6 +16,8 @@ public class DiscoveryConstants {
 
     public static final String MOD_TIME = "modTime";
 
+    public static final String SYNC_IDS = "syncIds";
+
     public static final String QUERY_DELIMETER = ":";
 
     public static final String DEFAULT_QUERY = WILDCARD + QUERY_DELIMETER + WILDCARD;

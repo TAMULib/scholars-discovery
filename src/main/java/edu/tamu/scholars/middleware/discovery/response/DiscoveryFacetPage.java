@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FacetSortArg;
+import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 import edu.tamu.scholars.middleware.view.model.FacetSort;
 
@@ -36,7 +37,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
     }
 
     public static <T> DiscoveryFacetPage<T> from(QueryResponse response, Pageable pageable, List<FacetArg> facetArguments, Class<T> type) {
-        List<T> documents = response.getBeans(type);
+        List<T> documents = (List<T>) Individual.fromSolrDocumentList(response.getResults());
         List<Facet> facets = buildFacets(response, facetArguments);
         SolrDocumentList results = response.getResults();
 
