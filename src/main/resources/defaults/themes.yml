@@ -1,6 +1,7 @@
 ---
 - name: Scholars
   organization: Scholars University
+  organizationId: n000001
   active: false
   home:
     heroesNavigable: false
@@ -159,6 +160,7 @@
       value: "#F5B041"
 - name: TAMU
   organization: Texas A&M University
+  organizationId: n5d3837d6
   active: true
   home:
     heroesNavigable: false
