@@ -27,7 +27,9 @@ middleware:
   index:
     cron: 0 0 0 * * SUN
     zone: America/Chicago
+    schematize: true
     onStartup: false
+    onStartupDelay: 10000
     enableIndividualOnBatchFail: false
     batchSize: 1000
   triplestore:
@@ -163,6 +165,8 @@ management:
   endpoint:
     health:
       enabled: true
+      show-details: always
+      show-components: always
     info:
       enabled: true
     mappings:
