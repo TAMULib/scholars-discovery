@@ -1,6 +1,6 @@
 === Directory Views
 
-This section describes about the directory views of the application. This object is a persistent representation of a directory UI.
+This section describes the directory views of the application. This object is a persistent representation of a directory UI.
 
 ==== Directory
 

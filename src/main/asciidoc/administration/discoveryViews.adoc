@@ -1,6 +1,6 @@
 === Discovery Views
 
-This section describes about the discovery views of the application. This object is a persistent representation of a discovery view.
+This section describes the discovery views of the application. This object is a persistent representation of a discovery view.
 
 ==== Directory
 
