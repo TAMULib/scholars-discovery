@@ -1,6 +1,6 @@
 === Display Views
 
-This section describes about the display views of the application. This object is a persistent representation of a display UI.
+This section describes the display views of the application. This object is a persistent representation of a display UI.
 
 ==== Directory
 

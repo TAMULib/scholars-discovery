@@ -42,6 +42,7 @@ include::auth/user.adoc[]
 
 == Administration
 
+include::administration/dataAndAnalyticsViews.adoc[]
 include::administration/directoryViews.adoc[]
 include::administration/discoveryViews.adoc[]
 include::administration/displayViews.adoc[]

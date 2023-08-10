@@ -1,6 +1,6 @@
 === Themes
 
-This section describes about the "look and feel" of the application. This object is a collection of properties like the header, logo, footer, color, size, styles etc.
+This section describes the "look and feel" of the application. This object is a collection of properties like the header, logo, footer, color, size, styles etc.
 The default theme view is seen in the *Sample Response*.
 
 ==== Directory
