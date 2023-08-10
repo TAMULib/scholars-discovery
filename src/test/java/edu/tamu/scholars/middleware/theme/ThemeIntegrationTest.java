@@ -24,7 +24,7 @@ public abstract class ThemeIntegrationTest extends UserIntegrationTest {
     protected ThemeRepo themeRepo;
 
     protected Theme getMockTheme() {
-        Theme theme = new Theme("Test", "Testing Unlimited");
+        Theme theme = new Theme("Test", "Testing Unlimited", "n000001");
 
         Home home = new Home();
 

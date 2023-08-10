@@ -70,6 +70,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                         describeTheme.withField("active", "Designates the theme currently in use."),
                         describeTheme.withField("name", "The name of the theme."),
                         describeTheme.withField("organization", "An organization the theme belongs to."),
+                        describeTheme.withField("organizationId", "An id of the organization the theme belongs to."),
                         describeTheme.withSubsection("home", "A <<resources-home, Home resource>>."),
                         describeTheme.withSubsection("header", "A <<resources-header, Header resource>>."),
                         describeTheme.withSubsection("footer", "A <<resources-header, Footer resource>>."),
@@ -85,6 +86,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                         describeTheme.withField("active", "Designates the theme currently in use."),
                         describeTheme.withField("name", "The name of the theme."),
                         describeTheme.withField("organization", "An organization the theme belongs to."),
+                        describeTheme.withField("organizationId", "An id of the organization the theme belongs to."),
                         describeTheme.withSubsection("home", "A <<resources-home, Home resource>>."),
                         describeTheme.withSubsection("header", "A <<resources-header, Header resource>>."),
                         describeTheme.withSubsection("footer", "A <<resources-header, Footer resource>>."),
@@ -115,6 +117,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                         describeTheme.withField("active", "Designates the theme currently in use."),
                         describeTheme.withField("name", "The name of the theme."),
                         describeTheme.withField("organization", "An organization the theme belongs to."),
+                        describeTheme.withField("organizationId", "An id of the organization the theme belongs to."),
                         describeTheme.withSubsection("home", "A <<resources-home, Home resource>>."),
                         describeTheme.withSubsection("header", "A <<resources-header, Header resource>>."),
                         describeTheme.withSubsection("footer", "A <<resources-header, Footer resource>>."),
@@ -130,6 +133,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                         describeTheme.withField("active", "Designates the theme currently in use."),
                         describeTheme.withField("name", "The name of the theme."),
                         describeTheme.withField("organization", "An organization the theme belongs to."),
+                        describeTheme.withField("organizationId", "An id of the organization the theme belongs to."),
                         describeTheme.withSubsection("home", "A <<resources-home, Home resource>>."),
                         describeTheme.withSubsection("header", "A <<resources-header, Header resource>>."),
                         describeTheme.withSubsection("footer", "A <<resources-header, Footer resource>>."),
@@ -140,7 +144,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                     )
                 )
             );
-		// @formatter:on
+        // @formatter:on
     }
 
     @Test
@@ -148,16 +152,16 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
         performCreateTheme();
         Theme theme = themeRepo.findByName("Test").get();
         // @formatter:off
-		mockMvc.perform(patch("/themes/{id}", theme.getId())
-	        .content("{\"active\": true, \"header\": { \"navbar\": { \"brandText\": \"Hello, Scholars!\"}}}")
-			.cookie(loginAdmin()))
-		        .andExpect(status().isOk())
-		        .andExpect(content().contentType(HAL_JSON_VALUE))
-    			.andExpect(jsonPath("active", equalTo(true)))
-    			.andExpect(jsonPath("name", equalTo("Test")))
-    			.andExpect(jsonPath("organization", equalTo("Testing Unlimited")))
-    			.andExpect(jsonPath("header.navbar.brandText", equalTo("Hello, Scholars!")))
-    			.andDo(
+        mockMvc.perform(patch("/themes/{id}", theme.getId())
+            .content("{\"active\": true, \"header\": { \"navbar\": { \"brandText\": \"Hello, Scholars!\"}}}")
+            .cookie(loginAdmin()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON_VALUE))
+                .andExpect(jsonPath("active", equalTo(true)))
+                .andExpect(jsonPath("name", equalTo("Test")))
+                .andExpect(jsonPath("organization", equalTo("Testing Unlimited")))
+                .andExpect(jsonPath("header.navbar.brandText", equalTo("Hello, Scholars!")))
+                .andDo(
                     document(
                         "themes/patch",
                         pathParameters(
@@ -167,6 +171,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                             describeTheme.withParameter("active", "Designates the theme currently in use.").optional(),
                             describeTheme.withParameter("name", "The name of the theme.").optional(),
                             describeTheme.withParameter("organization", "An organization the theme belongs to.").optional(),
+                            describeTheme.withParameter("organizationId", "An id of the organization the theme belongs to.").optional(),
                             describeTheme.withParameter("home", "A <<resources-home, Home resource>>.").optional(),
                             describeTheme.withParameter("header", "A <<resources-header, Header resource>>.").optional(),
                             describeTheme.withParameter("footer", "A <<resources-header, Footer resource>>.").optional(),
@@ -182,6 +187,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                             describeTheme.withField("active", "Designates the theme currently in use."),
                             describeTheme.withField("name", "The name of the theme."),
                             describeTheme.withField("organization", "An organization the theme belongs to."),
+                            describeTheme.withField("organizationId", "An id of the organization the theme belongs to."),
                             describeTheme.withSubsection("home", "A <<resources-home, Home resource>>."),
                             describeTheme.withSubsection("header", "A <<resources-header, Header resource>>."),
                             describeTheme.withSubsection("footer", "A <<resources-header, Footer resource>>."),
@@ -192,7 +198,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                         )
                     )
                 );
-		// @formatter:on
+        // @formatter:on
     }
 
     @Test
@@ -206,18 +212,18 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
         colors.add(new Style("--blue", "#007bff"));
 
         // @formatter:off
-		mockMvc.perform(patch("/themes/" + theme.getId())
-	        .content("{\"colors\": " + objectMapper.writeValueAsString(colors) + "}")
-	        .cookie(loginAdmin()))
-    			.andExpect(status().isOk())
-    			.andExpect(content().contentType(HAL_JSON_VALUE))
-    			.andExpect(jsonPath("colors[0].key", equalTo("--red")))
-    			.andExpect(jsonPath("colors[0].value", equalTo("#dc3545")))
-    			.andExpect(jsonPath("colors[1].key", equalTo("--green")))
-    			.andExpect(jsonPath("colors[1].value", equalTo("#28a745")))
-    			.andExpect(jsonPath("colors[2].key", equalTo("--blue")))
-    			.andExpect(jsonPath("colors[2].value", equalTo("#007bff")));
-		// @formatter:on
+        mockMvc.perform(patch("/themes/" + theme.getId())
+            .content("{\"colors\": " + objectMapper.writeValueAsString(colors) + "}")
+            .cookie(loginAdmin()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON_VALUE))
+                .andExpect(jsonPath("colors[0].key", equalTo("--red")))
+                .andExpect(jsonPath("colors[0].value", equalTo("#dc3545")))
+                .andExpect(jsonPath("colors[1].key", equalTo("--green")))
+                .andExpect(jsonPath("colors[1].value", equalTo("#28a745")))
+                .andExpect(jsonPath("colors[2].key", equalTo("--blue")))
+                .andExpect(jsonPath("colors[2].value", equalTo("#007bff")));
+        // @formatter:on
     }
 
     @Test
@@ -231,18 +237,18 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
         variants.add(new Style("--success", "#28a745"));
 
         // @formatter:off
-		mockMvc.perform(patch("/themes/" + theme.getId())
-	        .content("{\"variants\": " + objectMapper.writeValueAsString(variants) + "}")
-	        .cookie(loginAdmin()))
-    			.andExpect(status().isOk())
-    			.andExpect(content().contentType(HAL_JSON_VALUE))
-    			.andExpect(jsonPath("variants[0].key", equalTo("--primary")))
-    			.andExpect(jsonPath("variants[0].value", equalTo("#500000")))
-    			.andExpect(jsonPath("variants[1].key", equalTo("--secondary")))
-    			.andExpect(jsonPath("variants[1].value", equalTo("#65a6d1")))
-    			.andExpect(jsonPath("variants[2].key", equalTo("--success")))
-    			.andExpect(jsonPath("variants[2].value", equalTo("#28a745")));
-		// @formatter:on
+        mockMvc.perform(patch("/themes/" + theme.getId())
+            .content("{\"variants\": " + objectMapper.writeValueAsString(variants) + "}")
+            .cookie(loginAdmin()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON_VALUE))
+                .andExpect(jsonPath("variants[0].key", equalTo("--primary")))
+                .andExpect(jsonPath("variants[0].value", equalTo("#500000")))
+                .andExpect(jsonPath("variants[1].key", equalTo("--secondary")))
+                .andExpect(jsonPath("variants[1].value", equalTo("#65a6d1")))
+                .andExpect(jsonPath("variants[2].key", equalTo("--success")))
+                .andExpect(jsonPath("variants[2].value", equalTo("#28a745")));
+        // @formatter:on
     }
 
     @Test
@@ -256,18 +262,18 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
         variables.add(new Style("--navbar-color", "#0000ff"));
 
         // @formatter:off
-		mockMvc.perform(patch("/themes/" + theme.getId())
-	        .content("{\"variables\": " + objectMapper.writeValueAsString(variables) + "}")
-	        .cookie(loginAdmin()))
-    			.andExpect(status().isOk())
-    			.andExpect(content().contentType(HAL_JSON_VALUE))
-    			.andExpect(jsonPath("variables[0].key", equalTo("--accent")))
-    			.andExpect(jsonPath("variables[0].value", equalTo("#00ff00")))
-    			.andExpect(jsonPath("variables[1].key", equalTo("--navigation-color")))
-    			.andExpect(jsonPath("variables[1].value", equalTo("#ff0000")))
-    			.andExpect(jsonPath("variables[2].key", equalTo("--navbar-color")))
-    			.andExpect(jsonPath("variables[2].value", equalTo("#0000ff")));
-		// @formatter:on
+        mockMvc.perform(patch("/themes/" + theme.getId())
+            .content("{\"variables\": " + objectMapper.writeValueAsString(variables) + "}")
+            .cookie(loginAdmin()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON_VALUE))
+                .andExpect(jsonPath("variables[0].key", equalTo("--accent")))
+                .andExpect(jsonPath("variables[0].value", equalTo("#00ff00")))
+                .andExpect(jsonPath("variables[1].key", equalTo("--navigation-color")))
+                .andExpect(jsonPath("variables[1].value", equalTo("#ff0000")))
+                .andExpect(jsonPath("variables[2].key", equalTo("--navbar-color")))
+                .andExpect(jsonPath("variables[2].value", equalTo("#0000ff")));
+        // @formatter:on
     }
 
     @Test
@@ -275,14 +281,14 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
         performCreateTheme();
         Theme theme = themeRepo.findByName("Test").get();
         // @formatter:off
-		mockMvc.perform(get("/themes/{id}", theme.getId())
-	        .cookie(loginAdmin()))
-    		    .andExpect(status().isOk())
-    			.andExpect(content().contentType(HAL_JSON_VALUE))
-    			.andExpect(jsonPath("active", equalTo(false)))
-    			.andExpect(jsonPath("name", equalTo("Test")))
-    			.andExpect(jsonPath("organization", equalTo("Testing Unlimited")))
-    			.andDo(
+        mockMvc.perform(get("/themes/{id}", theme.getId())
+            .cookie(loginAdmin()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON_VALUE))
+                .andExpect(jsonPath("active", equalTo(false)))
+                .andExpect(jsonPath("name", equalTo("Test")))
+                .andExpect(jsonPath("organization", equalTo("Testing Unlimited")))
+                .andDo(
                     document(
                         "themes/find-by-id",
                         pathParameters(
@@ -296,6 +302,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                             describeTheme.withField("active", "Designates the theme currently in use."),
                             describeTheme.withField("name", "The name of the theme."),
                             describeTheme.withField("organization", "An organization the theme belongs to."),
+                            describeTheme.withField("organizationId", "An id of the organization the theme belongs to."),
                             describeTheme.withSubsection("home", "A <<resources-home, Home resource>>."),
                             describeTheme.withSubsection("header", "A <<resources-header, Header resource>>."),
                             describeTheme.withSubsection("footer", "A <<resources-header, Footer resource>>."),
@@ -306,16 +313,16 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                         )
                     )
                 );
-		// @formatter:on
+        // @formatter:on
     }
 
     @Test
     public void testGetThemes() throws JsonProcessingException, Exception {
         performCreateTheme();
         // @formatter:off
-		mockMvc.perform(
-	        get("/themes").param("page", "0").param("size", "20").param("sort", "name")
-	        .cookie(loginAdmin()))
+        mockMvc.perform(
+            get("/themes").param("page", "0").param("size", "20").param("sort", "name")
+            .cookie(loginAdmin()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(HAL_JSON_VALUE))
                 .andExpect(jsonPath("page.size", equalTo(20)))
@@ -392,7 +399,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                         )
                     )
                 );
-		// @formatter:on
+        // @formatter:on
     }
 
     @Test
@@ -400,14 +407,14 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
         performCreateTheme();
         performUpdateTheme();
         // @formatter:off
-		mockMvc.perform(get("/themes/search/active"))
-		    .andExpect(status().isOk())
-			.andExpect(content().contentType(HAL_JSON_VALUE))
-			.andExpect(jsonPath("active", equalTo(true)))
-			.andExpect(jsonPath("name", equalTo("Test")))
-			.andExpect(jsonPath("organization", equalTo("Testing Limited")))
+        mockMvc.perform(get("/themes/search/active"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(HAL_JSON_VALUE))
+            .andExpect(jsonPath("active", equalTo(true)))
+            .andExpect(jsonPath("name", equalTo("Test")))
+            .andExpect(jsonPath("organization", equalTo("Testing Limited")))
             .andDo(document("themes/active"));
-		// @formatter:on
+        // @formatter:on
     }
 
     @Test
