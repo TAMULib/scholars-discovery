@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
@@ -33,7 +32,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.scholars.middleware.config.SolrTestConfig;
-import edu.tamu.scholars.middleware.discovery.annotation.CollectionTarget;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 
@@ -43,6 +41,9 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @Value("classpath:mock/discovery")
     private Resource mocksDirectoryResource;
+
+    @Value("${middleware.index.name}")
+    private String collectionName;
 
     @Autowired
     protected SolrClient solrClient;
@@ -68,14 +69,14 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     private void createCore() throws SolrServerException, IOException {
         CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-        createRequest.setCoreName(getCollection());
-        createRequest.setConfigSet(getCollection());
+        createRequest.setCoreName(collectionName);
+        createRequest.setConfigSet(collectionName);
         solrClient.request(createRequest);
     }
 
     private void deleteCore() throws SolrServerException, IOException {
         CoreAdminRequest.Unload unloadRequest = new CoreAdminRequest.Unload(true);
-        unloadRequest.setCoreName(getCollection());
+        unloadRequest.setCoreName(collectionName);
         solrClient.request(unloadRequest);
     }
 
@@ -95,7 +96,7 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
                      document.removeField(fieldName);
                  }
              }
-             solrClient.add(getCollection(), document);
+             solrClient.add(collectionName, document);
              if (type.equals(getType())) {
                  @SuppressWarnings("unchecked")
                  D mockDocument = (D) objectMapper.readValue(file, getType());
@@ -104,14 +105,14 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
              }
          }
          assertTrue(mockDocuments.size() > 0, "No mock documents processed");
-         solrClient.commit(getCollection());
+         solrClient.commit(collectionName);
          numberOfDocuments = (int) repo.count(DEFAULT_QUERY, Collections.emptyList());
          assertEquals(mockFiles.size(), numberOfDocuments, "Indexed documents count not matching mock documents count");
     }
 
     private void deleteDocuments() throws SolrServerException, IOException {
-        solrClient.deleteByQuery(getCollection(), DEFAULT_QUERY);
-        solrClient.commit(getCollection());
+        solrClient.deleteByQuery(collectionName, DEFAULT_QUERY);
+        solrClient.commit(collectionName);
     }
 
     private List<File> getMockFiles() throws IOException {
@@ -120,13 +121,6 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
         File mocksDirectory = mocksDirectoryResource.getFile();
         assertTrue(mocksDirectory.isDirectory());
         return Files.walk(mocksDirectory.toPath(), 2).map(path -> path.toFile()).filter(file -> file.isFile()).collect(Collectors.toList());
-    }
-
-    private String getCollection() {
-        CollectionTarget solrDocument = getType().getAnnotation(CollectionTarget.class);
-        String collection = solrDocument.name();
-        assertTrue(StringUtils.isNotEmpty(collection));
-        return collection;
     }
 
     protected String getDocPath() {

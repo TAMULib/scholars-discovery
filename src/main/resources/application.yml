@@ -29,6 +29,7 @@ middleware:
     request-timeout: 30000
     socket-timeout: 60000
   index:
+    name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
     schematize: true
@@ -167,11 +168,11 @@ spring:
 
 management:
   endpoints:
-    enabled-by-default: false
+    enabled-by-default: true
     web:
       exposure:
         # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, mappings
+        include: health, info, index
   endpoint:
     health:
       enabled: true
@@ -179,5 +180,5 @@ management:
       show-components: always
     info:
       enabled: true
-    mappings:
+    index:
       enabled: true

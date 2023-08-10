@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "middleware.index")
 public class IndexConfig {
 
+    private String name = "scholars-discovery";
+
     private String cron = "0 0 0 * * SUN";
 
     private String zone = "America/Chicago";
@@ -20,6 +22,14 @@ public class IndexConfig {
     private int onStartupDelay = 10000;
 
     private int batchSize = 10000;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getCron() {
         return cron;
