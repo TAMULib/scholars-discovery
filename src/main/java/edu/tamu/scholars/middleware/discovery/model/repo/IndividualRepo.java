@@ -49,7 +49,7 @@ import org.springframework.stereotype.Service;
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryQuantityDistributionDescriptor;
-import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryAcademicAgeDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
@@ -59,7 +59,7 @@ import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryQuantityDistribution;
-import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryAcademicAge;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 import reactor.core.publisher.Flux;
 
@@ -275,18 +275,18 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public DiscoveryResearchAge researcherAge(DiscoveryResearchAgeDescriptor researcherAgeDescriptor, QueryArg query, List<FilterArg> filters) {
-        DiscoveryResearchAge researchAge = new DiscoveryResearchAge(researcherAgeDescriptor.getLabel(), researcherAgeDescriptor.getDateField());
+    public DiscoveryAcademicAge academicAge(DiscoveryAcademicAgeDescriptor academicAgeDescriptor, QueryArg query, List<FilterArg> filters) {
+        DiscoveryAcademicAge academicAge = new DiscoveryAcademicAge(academicAgeDescriptor.getLabel(), academicAgeDescriptor.getDateField());
 
-        String dateField = researcherAgeDescriptor.getDateField();
-        String ageField = researcherAgeDescriptor.getAgeField();
+        String dateField = academicAgeDescriptor.getDateField();
+        String ageField = academicAgeDescriptor.getAgeField();
 
         try {
 
             // get count
             long count = this.count(query, filters);
 
-            String fields = researcherAgeDescriptor.getAccumulateMultivaluedDate()
+            String fields = academicAgeDescriptor.getAccumulateMultivaluedDate()
                 ? String.format("%s,%s", dateField, ageField)
                 : ageField;
 
@@ -301,12 +301,12 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             SolrDocumentList results = response.getResults();
 
-            researchAge.from(researcherAgeDescriptor, results);
+            academicAge.from(academicAgeDescriptor, results);
 
         } catch (Exception e) {
-            logger.error("Failed to gather researcher age analytics!", e);
+            logger.error("Failed to gather academic age analytics!", e);
         }
-        return researchAge;
+        return academicAge;
     }
 
     @Override
