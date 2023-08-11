@@ -8,10 +8,10 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import org.springframework.data.domain.Sort.Direction;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import org.springframework.data.domain.Sort.Direction;
 
 import edu.tamu.scholars.middleware.model.OpKey;
 
@@ -57,6 +57,9 @@ public class Facet {
     private boolean collapsed;
 
     @Column(nullable = false)
+    private boolean useDialog;
+
+    @Column(nullable = false)
     private boolean hidden;
 
     @Column(nullable = true)
@@ -78,6 +81,7 @@ public class Facet {
         expandable = true;
         collapsible = true;
         collapsed = true;
+        useDialog = false;
         hidden = false;
     }
 
@@ -167,6 +171,14 @@ public class Facet {
 
     public void setCollapsed(boolean collapsed) {
         this.collapsed = collapsed;
+    }
+
+    public boolean isUseDialog() {
+        return useDialog;
+    }
+
+    public void setUseDialog(boolean useDialog) {
+        this.useDialog = useDialog;
     }
 
     public boolean isHidden() {
