@@ -1,0 +1,12 @@
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#>
+
+CONSTRUCT {
+    ?organization vitro:mostSpecificType ?mostSpecificTypeWithId .
+} WHERE {
+    <{{uri}}> obo:BFO_0000051 ?organization .
+    ?organization rdfs:label ?label .
+    ?organization vitro:mostSpecificType ?mostSpecificType .
+    BIND( CONCAT( STR(?mostSpecificType), REPLACE(STR(?organization), "(^.*/)", "::") ) AS ?mostSpecificTypeWithId ) .
+}
