@@ -157,7 +157,7 @@ public class Relationship extends Common {
 
     @Field
     @FieldType(type = "nested_tokenized_strings", copyTo = "_text_")
-    @NestedObject(properties = { @Reference(value = "contributorRole", key = "role"), @Reference(value = "contributorOrganization", key = "organization") })
+    @NestedObject(properties = { @Reference(value = "contributorRole", key = "role"), @Reference(value = "contributorOrganization", key = "organizations") })
     @FieldSource(template = "relationship/contributor", predicate = "http://www.w3.org/2000/01/rdf-schema#label")
     private List<String> contributors;
 
