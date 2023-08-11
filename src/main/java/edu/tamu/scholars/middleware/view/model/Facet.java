@@ -8,10 +8,10 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import org.springframework.data.domain.Sort.Direction;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import org.springframework.data.domain.Sort.Direction;
 
 import edu.tamu.scholars.middleware.model.OpKey;
 
@@ -48,7 +48,16 @@ public class Facet {
     private int pageNumber;
 
     @Column(nullable = false)
+    private boolean expandable;
+
+    @Column(nullable = false)
+    private boolean collapsible;
+
+    @Column(nullable = false)
     private boolean collapsed;
+
+    @Column(nullable = false)
+    private boolean useDialog;
 
     @Column(nullable = false)
     private boolean hidden;
@@ -69,7 +78,10 @@ public class Facet {
         direction = DESC;
         pageSize = 10;
         pageNumber = 1;
+        expandable = true;
+        collapsible = true;
         collapsed = true;
+        useDialog = false;
         hidden = false;
     }
 
@@ -137,12 +149,36 @@ public class Facet {
         this.pageNumber = pageNumber;
     }
 
+    public boolean isExpandable() {
+        return expandable;
+    }
+
+    public void setExpandable(boolean expandable) {
+        this.expandable = expandable;
+    }
+
+    public boolean isCollapsible() {
+        return collapsible;
+    }
+
+    public void setCollapsible(boolean collapsible) {
+        this.collapsible = collapsible;
+    }
+
     public boolean isCollapsed() {
         return collapsed;
     }
 
     public void setCollapsed(boolean collapsed) {
         this.collapsed = collapsed;
+    }
+
+    public boolean isUseDialog() {
+        return useDialog;
+    }
+
+    public void setUseDialog(boolean useDialog) {
+        this.useDialog = useDialog;
     }
 
     public boolean isHidden() {
