@@ -23,7 +23,7 @@ import edu.tamu.scholars.middleware.discovery.model.Organization;
 import edu.tamu.scholars.middleware.discovery.model.Person;
 import edu.tamu.scholars.middleware.discovery.model.Process;
 import edu.tamu.scholars.middleware.discovery.model.Relationship;
-import edu.tamu.scholars.middleware.service.SDBTriplestore;
+import edu.tamu.scholars.middleware.service.TDBTriplestore;
 
 @ExtendWith(SpringExtension.class)
 public class MiddlewareConfigTest {
@@ -155,7 +155,7 @@ public class MiddlewareConfigTest {
     public void testTriplestoreGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         TriplestoreConfig newTriplestoreConfig = new TriplestoreConfig();
-        newTriplestoreConfig.setType(SDBTriplestore.class);
+        newTriplestoreConfig.setType(TDBTriplestore.class);
         newTriplestoreConfig.setDirectory("vivo_data");
         newTriplestoreConfig.setLayoutType("layout/hash");
         newTriplestoreConfig.setDatabaseType("PostgreSQL");
@@ -168,8 +168,8 @@ public class MiddlewareConfigTest {
         newTriplestoreConfig.setAnnotateGeneratedSQL(true);
         middlewareConfig.setTriplestore(newTriplestoreConfig);
         TriplestoreConfig triplestoreConfig = middlewareConfig.getTriplestore();
-        triplestoreConfig.setType(SDBTriplestore.class);
-        assertEquals(SDBTriplestore.class, triplestoreConfig.getType());
+        triplestoreConfig.setType(TDBTriplestore.class);
+        assertEquals(TDBTriplestore.class, triplestoreConfig.getType());
         triplestoreConfig.setDirectory("vivo_data");
         assertEquals("vivo_data", triplestoreConfig.getDirectory());
         triplestoreConfig.setLayoutType("layout/hash");

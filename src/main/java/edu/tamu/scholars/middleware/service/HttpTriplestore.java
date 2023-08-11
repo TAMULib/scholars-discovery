@@ -1,27 +1,27 @@
 package edu.tamu.scholars.middleware.service;
 
-import edu.tamu.scholars.middleware.config.model.TriplestoreConfig;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.time.Instant;
 
-public class SparqlHttpTriplestore implements Triplestore {
+import org.apache.jena.query.QueryExecution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private final static Logger logger = LoggerFactory.getLogger(SparqlHttpTriplestore.class);
+import edu.tamu.scholars.middleware.config.model.TriplestoreConfig;
+
+public class HttpTriplestore implements Triplestore {
+
+    private final static Logger logger = LoggerFactory.getLogger(HttpTriplestore.class);
 
     private final TriplestoreConfig config;
 
-    public SparqlHttpTriplestore(TriplestoreConfig config) {
+    public HttpTriplestore(TriplestoreConfig config) {
         this.config = config;
     }
 
     @Override
     public QueryExecution createQueryExecution(String query) {
-        return QueryExecutionFactory.sparqlService(config.getDatasourceUrl(), query);
+        return QueryExecution.service(config.getDatasourceUrl()).query(query).build();
     }
 
     @Override

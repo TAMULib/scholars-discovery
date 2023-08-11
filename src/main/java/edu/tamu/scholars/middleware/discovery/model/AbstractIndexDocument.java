@@ -18,7 +18,6 @@ public abstract class AbstractIndexDocument {
 
     @JsonProperty("class")
     @Field("class")
-    @FieldType(type = "string", value = "class", required = true)
     private String clazz = this.getClass().getSimpleName();
 
     @Field

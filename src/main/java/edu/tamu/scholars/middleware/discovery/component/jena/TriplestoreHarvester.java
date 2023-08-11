@@ -69,9 +69,7 @@ public class TriplestoreHarvester implements Harvester {
     public Flux<AbstractIndexDocument> harvest() {
         CollectionSource source = type.getAnnotation(CollectionSource.class);
         String query = templateService.templateSparql(COLLECTION_SPARQL_TEMPLATE, source.predicate());
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("%s:\n%s", COLLECTION_SPARQL_TEMPLATE, query));
-        }
+        logger.debug("{}:\n{}", COLLECTION_SPARQL_TEMPLATE, query);
         QueryExecution queryExecution = triplestore.createQueryExecution(query);
         Iterator<Triple> tripleIterator = queryExecution.execConstructTriples();
         Iterable<Triple> triples = () -> tripleIterator;
@@ -85,8 +83,8 @@ public class TriplestoreHarvester implements Harvester {
         try {
             return createDocument(subject);
         } catch (Exception e) {
-            logger.error(String.format("Unable to index %s: %s", type.getSimpleName(), parse(subject)));
-            logger.error(String.format("Error: %s", e.getMessage()));
+            logger.error("Unable to index {}: {}", type.getSimpleName(), parse(subject));
+            logger.error("Error: {}", e.getMessage());
             if (logger.isDebugEnabled()) {
                 e.printStackTrace();
             }
@@ -104,8 +102,7 @@ public class TriplestoreHarvester implements Harvester {
 
     private AbstractIndexDocument createDocument(String subject) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         AbstractIndexDocument document = construct();
-        Field field = FieldUtils.getField(type, ID, true);
-        field.set(document, parse(subject));
+        document.setId(parse(subject));
         lookupProperties(document, subject);
         lookupSyncIds(document);
         return document;
@@ -119,8 +116,8 @@ public class TriplestoreHarvester implements Harvester {
                 List<Object> values = lookupProperty(typeOp, source, model);
                 populate(document, typeOp.getField(), values);
             } catch (Exception e) {
-                logger.error(String.format("Unable to populate document %s: %s", name(), parse(subject)));
-                logger.error(String.format("Error: %s", e.getMessage()));
+                logger.error("Unable to populate document {}: {}", name(), parse(subject));
+                logger.error("Error: {}", e.getMessage());
                 if (logger.isDebugEnabled()) {
                     e.printStackTrace();
                 }
@@ -130,9 +127,7 @@ public class TriplestoreHarvester implements Harvester {
 
     private Model queryForModel(FieldSource source, String subject) {
         String query = templateService.templateSparql(source.template(), subject);
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("%s:\n%s", source.template(), query));
-        }
+        logger.debug("{}:\n{}", source.template(), query);
         try (QueryExecution qe = triplestore.createQueryExecution(query)) {
             Model model = qe.execConstruct();
             if (logger.isDebugEnabled()) {
@@ -158,7 +153,7 @@ public class TriplestoreHarvester implements Harvester {
         try {
             statements = resource.listProperties(model.createProperty(source.predicate()));
         } catch (InvalidPropertyURIException exception) {
-            logger.error(String.format("%s lookup by %s", typeOp.getField().getName(), source.predicate()));
+            logger.error("{} lookup by {}", typeOp.getField().getName(), source.predicate());
             throw exception;
         }
 
@@ -171,9 +166,7 @@ public class TriplestoreHarvester implements Harvester {
                 value = value.substring(0, value.indexOf("^^"));
             }
             if (source.unique() && values.stream().map(v -> v.toString()).anyMatch(value::equalsIgnoreCase)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("%s has duplicate value %s", typeOp.getField().getName(), value));
-                }
+                logger.debug("{} has duplicate value {}", typeOp.getField().getName(), value);
             } else {
                 if (source.split()) {
                     for (String v : value.split("\\|\\|")) {
@@ -189,9 +182,7 @@ public class TriplestoreHarvester implements Harvester {
 
     private void populate(AbstractIndexDocument document, Field field, List<Object> values) throws IllegalArgumentException, IllegalAccessException {
         if (values.isEmpty()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Could not find values for %s", field.getName()));
-            }
+            logger.debug("Could not find values for {}", field.getName());
         } else {
             field.setAccessible(true);
             if (List.class.isAssignableFrom(field.getType())) {
@@ -217,8 +208,8 @@ public class TriplestoreHarvester implements Harvester {
                     }
                 }
             } catch (IllegalArgumentException | IllegalAccessException e) {
-                logger.error(String.format("Unable to get value of %s %s", name(), field.getName()));
-                logger.error(String.format("Error: %s", e.getMessage()));
+                logger.error("Unable to get value of {} {}", name(), field.getName());
+                logger.error("Error: {}", e.getMessage());
                 if (logger.isDebugEnabled()) {
                     e.printStackTrace();
                 }
