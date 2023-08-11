@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import edu.tamu.scholars.middleware.service.SDBTriplestore;
 import edu.tamu.scholars.middleware.service.TDBTriplestore;
 
 @ExtendWith(SpringExtension.class)
@@ -36,8 +35,8 @@ public class TriplestoreConfigTest {
     @Test
     public void testGettersAndSetters() {
         TriplestoreConfig triplestoreConfig = new TriplestoreConfig();
-        triplestoreConfig.setType(SDBTriplestore.class);
-        assertEquals(SDBTriplestore.class, triplestoreConfig.getType());
+        triplestoreConfig.setType(TDBTriplestore.class);
+        assertEquals(TDBTriplestore.class, triplestoreConfig.getType());
         triplestoreConfig.setDirectory("vivo_data");
         assertEquals("vivo_data", triplestoreConfig.getDirectory());
         triplestoreConfig.setLayoutType("layout/hash");

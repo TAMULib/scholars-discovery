@@ -32,9 +32,6 @@ middleware:
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore
     directory: triplestore
-    datasourceUrl: jdbc:mysql://localhost/vivo
-    username:
-    password:
   harvesters:
   - type: edu.tamu.scholars.middleware.discovery.component.jena.TriplestoreHarvester
     documentTypes:
