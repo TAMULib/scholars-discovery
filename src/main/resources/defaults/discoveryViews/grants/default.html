@@ -11,20 +11,20 @@
 </div>
 <div>
   <div>
-    {{#if dateTimeIntervalStart}}
-    {{#if dateTimeIntervalEnd}}
+    {{#if startDateTime}}
+    {{#if endDateTime}}
     <span class="label">Date:</span>
-    <span>{{toYear dateTimeIntervalStart}}</span>
+    <span>{{toYear startDateTime}}</span>
     <span>-</span>
-    <span>{{toYear dateTimeIntervalEnd}}</span>
+    <span>{{toYear endDateTime}}</span>
     {{else}}
     <span class="label">Date:</span>
-    <span>{{toYear dateTimeIntervalStart}}</span>
+    <span>{{toYear startDateTime}}</span>
     {{/if}}
     {{else}}
-    {{#if dateTimeIntervalEnd}}
+    {{#if endDateTime}}
     <span class="label">Date:</span>
-    <span>{{toYear dateTimeIntervalEnd}}</span>
+    <span>{{toYear endDateTime}}</span>
     {{/if}}
     {{/if}}
   </div>

@@ -191,13 +191,13 @@ public class Relationship extends Common {
 
     @Field
     @FieldType(type = "pdate")
-    @FieldSource(template = "relationship/dateTimeIntervalStart", predicate = "http://vivoweb.org/ontology/core#dateTime")
-    private String dateTimeIntervalStart;
+    @FieldSource(template = "relationship/startDateTime", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    private String startDateTime;
 
     @Field
     @FieldType(type = "pdate")
-    @FieldSource(template = "relationship/dateTimeIntervalEnd", predicate = "http://vivoweb.org/ontology/core#dateTime")
-    private String dateTimeIntervalEnd;
+    @FieldSource(template = "relationship/endDateTime", predicate = "http://vivoweb.org/ontology/core#dateTime")
+    private String endDateTime;
 
     @Field
     @NestedObject
@@ -486,20 +486,20 @@ public class Relationship extends Common {
         this.supportedPublicationOrOtherWork = supportedPublicationOrOtherWork;
     }
 
-    public String getDateTimeIntervalStart() {
-        return dateTimeIntervalStart;
+    public String getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setDateTimeIntervalStart(String dateTimeIntervalStart) {
-        this.dateTimeIntervalStart = dateTimeIntervalStart;
+    public void setStartDateTime(String startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public String getDateTimeIntervalEnd() {
-        return dateTimeIntervalEnd;
+    public String getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setDateTimeIntervalEnd(String dateTimeIntervalEnd) {
-        this.dateTimeIntervalEnd = dateTimeIntervalEnd;
+    public void setEndDateTime(String endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public List<String> getSubjectAreas() {

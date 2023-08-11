@@ -353,8 +353,8 @@
   fields:
     - type
     - title
-    - dateTimeIntervalStart
-    - dateTimeIntervalEnd
+    - startDateTime
+    - endDateTime
     - awardedBy
     - contributors
     - contributors.role
@@ -409,7 +409,7 @@
       collapsed: true
       hidden: false
     - name: Year Start
-      field: dateTimeIntervalStart
+      field: startDateTime
       opKey: BETWEEN
       type: DATE_YEAR
       sort: COUNT
@@ -418,7 +418,7 @@
       collapsed: true
       hidden: false
     - name: Year End
-      field: dateTimeIntervalEnd
+      field: endDateTime
       opKey: BETWEEN
       type: DATE_YEAR
       sort: COUNT
@@ -448,9 +448,9 @@
     - columnHeader: Grant title
       valuePath: title
     - columnHeader: Grant date start
-      valuePath: dateTimeIntervalStart
+      valuePath: startDateTime
     - columnHeader: Grant date end
-      valuePath: dateTimeIntervalEnd
+      valuePath: endDateTime
     - columnHeader: Awarded by
       valuePath: awardedBy
     - columnHeader: Principal investigators
