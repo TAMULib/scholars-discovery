@@ -34,6 +34,8 @@ public class FacetTest {
         facet.setDirection(Sort.Direction.ASC);
         facet.setPageSize(5);
         facet.setPageNumber(2);
+        facet.setExpandable(true);
+        facet.setCollapsible(false);
         facet.setCollapsed(false);
         facet.setHidden(true);
 
@@ -48,6 +50,8 @@ public class FacetTest {
         assertEquals(Sort.Direction.ASC, facet.getDirection());
         assertEquals(5, facet.getPageSize());
         assertEquals(2, facet.getPageNumber());
+        assertTrue(facet.isExpandable());
+        assertFalse(facet.isCollapsible());
         assertFalse(facet.isCollapsed());
         assertTrue(facet.isHidden());
 

@@ -48,6 +48,12 @@ public class Facet {
     private int pageNumber;
 
     @Column(nullable = false)
+    private boolean expandable;
+
+    @Column(nullable = false)
+    private boolean collapsible;
+
+    @Column(nullable = false)
     private boolean collapsed;
 
     @Column(nullable = false)
@@ -69,6 +75,8 @@ public class Facet {
         direction = DESC;
         pageSize = 10;
         pageNumber = 1;
+        expandable = true;
+        collapsible = true;
         collapsed = true;
         hidden = false;
     }
@@ -135,6 +143,22 @@ public class Facet {
 
     public void setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
+    }
+
+    public boolean isExpandable() {
+        return expandable;
+    }
+
+    public void setExpandable(boolean expandable) {
+        this.expandable = expandable;
+    }
+
+    public boolean isCollapsible() {
+        return collapsible;
+    }
+
+    public void setCollapsible(boolean collapsible) {
+        this.collapsible = collapsible;
     }
 
     public boolean isCollapsed() {
