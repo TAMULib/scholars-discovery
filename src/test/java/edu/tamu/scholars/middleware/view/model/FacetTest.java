@@ -37,6 +37,7 @@ public class FacetTest {
         facet.setExpandable(true);
         facet.setCollapsible(false);
         facet.setCollapsed(false);
+        facet.setUseDialog(false);
         facet.setHidden(true);
 
         facet.setRangeStart("0");
@@ -53,6 +54,7 @@ public class FacetTest {
         assertTrue(facet.isExpandable());
         assertFalse(facet.isCollapsible());
         assertFalse(facet.isCollapsed());
+        assertFalse(facet.isUseDialog());
         assertTrue(facet.isHidden());
 
         assertEquals("0", facet.getRangeStart());
