@@ -5,7 +5,6 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_D
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,12 +60,12 @@ public class CsvExporter implements Exporter {
                 .create()
                 .setHeader(headers)
                 .build();
+            List<String> properties = export.stream()
+                .map(e -> e.getField())
+                .collect(Collectors.toList());
             try (CSVPrinter printer = new CSVPrinter(outputStreamWriter, format)) {
                 individuals.subscribe(
                     individual -> {
-                        List<String> properties = export.stream()
-                            .map(e -> e.getField())
-                            .collect(Collectors.toList());
                         try {
                             List<Object> row = getRow(individual, properties);
                             printer.printRecord(row.toArray(new Object[row.size()]));
@@ -101,27 +100,42 @@ public class CsvExporter implements Exporter {
     }
 
     private List<Object> getRow(Individual individual, List<String> properties) throws InvalidValuePathException, IllegalArgumentException, IllegalAccessException {
-        Map<String, Collection<Object>> content = individual.getContent();
+        Map<String, Object> content = individual.getContent();
         List<Object> row = new ArrayList<Object>();
         for (String property : properties) {
             if (property.equals(config.getIndividualKey())) {
                 row.add(String.format("%s/%s", config.getIndividualBaseUri(), individual.getId()));
                 continue;
             }
-            String value = StringUtils.EMPTY;
+
+            String data = StringUtils.EMPTY;
+
             if (content.containsKey(property)) {
-            	Collection<Object> values = content.get(property);
-                if (values.size() > 0) {
-                    value = String.join(DELIMITER, values.stream().map(this::serialize).collect(Collectors.toList()));
+
+                Object value = content.get(property);
+
+                if (List.class.isAssignableFrom(value.getClass())) {
+
+                    @SuppressWarnings("unchecked")
+                    List<String> values = (List<String>) value;
+
+                    if (values.size() > 0) {
+                        data = String.join(DELIMITER, values.stream()
+                            .map(v -> (String) v)
+                            .map(this::serialize)
+                            .collect(Collectors.toList()));
+                    }
+
+                } else {
+                    data = (String) value;
                 }
             }
-            row.add(serialize(value));
+            row.add(serialize(data));
         }
         return row;
     }
 
-    private String serialize(Object obj) {
-        String value = String.valueOf(obj);
+    private String serialize(String value) {
         return value.contains(NESTED_DELIMITER)
             ? value.substring(0, value.indexOf(NESTED_DELIMITER))
             : value;

@@ -35,8 +35,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
         this.facets = facets;
     }
 
-    public static <T> DiscoveryFacetPage<T> from(QueryResponse response, Pageable pageable, List<FacetArg> facetArguments, Class<T> type) {
-        List<T> documents = response.getBeans(type);
+    public static <T> DiscoveryFacetPage<T> from(List<T> documents, QueryResponse response, Pageable pageable, List<FacetArg> facetArguments, Class<T> type) {
         List<Facet> facets = buildFacets(response, facetArguments);
         SolrDocumentList results = response.getResults();
 

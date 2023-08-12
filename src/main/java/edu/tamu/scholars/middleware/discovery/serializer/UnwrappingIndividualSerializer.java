@@ -3,11 +3,10 @@ package edu.tamu.scholars.middleware.discovery.serializer;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_DELIMITER;
-import static edu.tamu.scholars.middleware.discovery.utility.DiscoveryUtility.getDiscoveryDocumentTypeByName;
+import static edu.tamu.scholars.middleware.discovery.utility.DiscoveryUtility.getDiscoveryDocumentType;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -54,11 +53,11 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
     }
 
     @Override
-    public void serialize(Individual document, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
-        Class<?> type = getDiscoveryDocumentTypeByName(document.getClazz());
-        Map<String, Collection<Object>> content = document.getContent();
-        jsonGenerator.writeObjectField(nameTransformer.transform(ID), document.getId());
-        jsonGenerator.writeObjectField(nameTransformer.transform(CLASS), document.getClazz());
+    public void serialize(Individual individual, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+        Class<?> type = getDiscoveryDocumentType(individual.getProxy());
+        Map<String, Object> content = individual.getContent();
+        jsonGenerator.writeObjectField(nameTransformer.transform(ID), individual.getId());
+        jsonGenerator.writeObjectField(nameTransformer.transform(CLASS), individual.getProxy());
         for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldSource.class)) {
             JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
             String name = nameTransformer.transform(jsonProperty != null ? jsonProperty.value() : field.getName());
@@ -90,14 +89,13 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
                     }
                 } else {
                     if (!value.toString().contains(NESTED_DELIMITER)) {
-
-                        @SuppressWarnings("unchecked")
-                        List<String> values = (List<String>) value;
-
                         if (List.class.isAssignableFrom(field.getType())) {
+                            @SuppressWarnings("unchecked")
+                            List<String> values = (List<String>) value;
+
                             jsonGenerator.writeObjectField(name, values);
                         } else {
-                            jsonGenerator.writeObjectField(nameTransformer.transform(name), values.get(0));
+                            jsonGenerator.writeObjectField(nameTransformer.transform(name), value);
                         }
                     }
                 }
@@ -105,7 +103,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
         }
     }
 
-    private ObjectNode processValue(Map<String, Collection<Object>> content, Class<?> type, Field field, String[] vParts, int index) {
+    private ObjectNode processValue(Map<String, Object> content, Class<?> type, Field field, String[] vParts, int index) {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         NestedObject nestedObject = field.getAnnotation(NestedObject.class);
         if (nestedObject != null) {
@@ -116,7 +114,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
         return node;
     }
 
-    private void processNestedObject(Map<String, Collection<Object>> content, Class<?> type, NestedObject nestedObject, ObjectNode node, String[] vParts, int depth) {
+    private void processNestedObject(Map<String, Object> content, Class<?> type, NestedObject nestedObject, ObjectNode node, String[] vParts, int depth) {
         for (Reference reference : nestedObject.properties()) {
             String ref = reference.value();
             Field nestedField = FieldUtils.getField(type, ref, true);

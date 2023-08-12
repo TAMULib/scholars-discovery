@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.utility;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DISCOVERY_MODEL_PACKAGE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.PATH_DELIMETER_REGEX;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
@@ -7,8 +8,9 @@ import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,14 +24,17 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import edu.tamu.scholars.middleware.discovery.annotation.CollectionSource;
+import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject;
 import edu.tamu.scholars.middleware.discovery.annotation.NestedObject.Reference;
 
 public class DiscoveryUtility {
 
-    private final static Set<Class<?>> DISCOVERY_DOCUMENT_TYPES = new HashSet<>();
+    private final static Map<String, Class<?>> TYPES = new HashMap<>();
 
-    private final static BidiMap<String, String> DISCOVERY_DOCUMENT_PROPERTY_PATH_MAPPING = new DualHashBidiMap<String, String>();
+    private final static Map<String, Map<String, Class<?>>> TYPE_FIELDS = new HashMap<>();
+
+    private final static BidiMap<String, String> MAPPING = new DualHashBidiMap<String, String>();
 
     static {
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
@@ -37,28 +42,49 @@ public class DiscoveryUtility {
         Set<BeanDefinition> beanDefinitions = provider.findCandidateComponents(DISCOVERY_MODEL_PACKAGE);
         for (BeanDefinition beanDefinition : beanDefinitions) {
             try {
-                DISCOVERY_DOCUMENT_TYPES.add(Class.forName(beanDefinition.getBeanClassName()));
+                Class<?> type = Class.forName(beanDefinition.getBeanClassName());
+                TYPES.put(type.getSimpleName(), type);
+
+                Map<String, Class<?>> fields = FieldUtils.getFieldsListWithAnnotation(type, FieldType.class)
+                    .stream()
+                    .collect(Collectors.toMap(field -> {
+                        FieldType fieldType = field.getAnnotation(FieldType.class);
+                        return StringUtils.isNotEmpty(fieldType.value())
+                            ? fieldType.value()
+                            : field.getName();
+                    }, field -> field.getType()));
+
+                fields.put(CLASS, String.class);
+                TYPE_FIELDS.put(type.getSimpleName(), fields);
+
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("Unable to find class for " + beanDefinition.getBeanClassName(), e);
             }
         }
     }
 
-    public static Set<Class<?>> getDiscoveryDocumentTypes() {
-        return DISCOVERY_DOCUMENT_TYPES;
-    }
-
-    public static Class<?> getDiscoveryDocumentTypeByName(String name) {
-        String typeName = String.format("%s.%s", DISCOVERY_MODEL_PACKAGE, name);
-        Optional<Class<?>> documentType = DISCOVERY_DOCUMENT_TYPES.stream().filter(type -> type.getName().equals(typeName)).findAny();
+    public static Class<?> getDiscoveryDocumentType(String name) {
+        Optional<Class<?>> documentType = Optional.ofNullable(TYPES.get(name));
         if (documentType.isPresent()) {
             return documentType.get();
         }
         throw new RuntimeException("Unable to find class for " + name);
     }
 
+    public static Map<String, Class<?>> getDiscoveryDocumentTypeFields(String name) {
+        Optional<Map<String, Class<?>>> documentTypeFields = Optional.ofNullable(TYPE_FIELDS.get(name));
+        if (documentTypeFields.isPresent()) {
+            return documentTypeFields.get();
+        }
+        throw new RuntimeException("Unable to find class for " + name);
+    }
+
     public static String[] processFields(String[] fields) {
-        return Arrays.asList(fields).stream().map(DiscoveryUtility::findProperty).collect(Collectors.toList()).toArray(new String[fields.length]);
+        return Arrays.asList(fields)
+            .stream()
+            .map(DiscoveryUtility::findProperty)
+            .collect(Collectors.toList())
+            .toArray(new String[fields.length]);
     }
 
     public static String processFields(String fields) {
@@ -73,7 +99,7 @@ public class DiscoveryUtility {
     }
 
     public static String findPath(String property) {
-        String actualProperty = DISCOVERY_DOCUMENT_PROPERTY_PATH_MAPPING.getKey(property);
+        String actualProperty = MAPPING.getKey(property);
         if (StringUtils.isNoneEmpty(actualProperty)) {
             return actualProperty;
         }
@@ -81,19 +107,19 @@ public class DiscoveryUtility {
     }
 
     public static String findProperty(String path) {
-        String actualPath = DISCOVERY_DOCUMENT_PROPERTY_PATH_MAPPING.get(path);
+        String actualPath = MAPPING.get(path);
         if (StringUtils.isNotEmpty(actualPath)) {
             return actualPath;
         }
         List<String> properties = new ArrayList<String>(Arrays.asList(path.split(PATH_DELIMETER_REGEX)));
-        for (Class<?> type : DISCOVERY_DOCUMENT_TYPES) {
+        for (Class<?> type : TYPES.values()) {
             Optional<String> property = findProperty(type, properties);
             if (property.isPresent()) {
-                DISCOVERY_DOCUMENT_PROPERTY_PATH_MAPPING.put(path, property.get());
+                MAPPING.put(path, property.get());
                 return property.get();
             }
         }
-        DISCOVERY_DOCUMENT_PROPERTY_PATH_MAPPING.put(path, path);
+        MAPPING.put(path, path);
         return path;
     }
 

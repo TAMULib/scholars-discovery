@@ -54,7 +54,7 @@ public class IndexService {
         if (index.isSchematize()) {
             logger.info("Initializing index fields...");
             indexers.stream().forEach(indexer -> {
-                logger.info(String.format("Initializing %s fields.", indexer.type().getSimpleName()));
+                logger.info("Initializing {} fields.", indexer.type().getSimpleName());
                 indexer.init();
             });
         }
@@ -77,7 +77,7 @@ public class IndexService {
             Instant start = Instant.now();
             logger.info("Indexing...");
             harvesters.parallelStream().forEach(harvester -> {
-                logger.info(String.format("Indexing %s documents.", harvester.type().getSimpleName()));
+                logger.info("Indexing {} documents.", harvester.type().getSimpleName());
                 if (indexers.stream().anyMatch(indexer -> indexer.type().equals(harvester.type()))) {
                     harvester.harvest().buffer(index.getBatchSize()).subscribe(batch -> {
                         indexers.parallelStream().filter(indexer -> indexer.type().equals(harvester.type())).forEach(indexer -> {
@@ -85,15 +85,15 @@ public class IndexService {
                         });
                     });
                 } else {
-                    logger.warn(String.format("No indexer found for %s documents!", harvester.type().getSimpleName()));
+                    logger.warn("No indexer found for {} documents!", harvester.type().getSimpleName());
                 }
-                logger.info(String.format("Indexing %s documents finished.", harvester.type().getSimpleName()));
+                logger.info("Indexing {} documents finished.", harvester.type().getSimpleName());
             });
             indexers.stream().forEach(indexer -> {
-                logger.info(String.format("Optimizing %s index.", indexer.type().getSimpleName()));
+                logger.info("Optimizing {} index.", indexer.type().getSimpleName());
                 indexer.optimize();
             });
-            logger.info(String.format("Indexing finished. %s seconds.", Duration.between(start, Instant.now()).toMillis() / 1000.0));
+            logger.info("Indexing finished. {} seconds.", Duration.between(start, Instant.now()).toMillis() / 1000.0);
             triplestore.destroy();
             indexing.set(false);
         } else {

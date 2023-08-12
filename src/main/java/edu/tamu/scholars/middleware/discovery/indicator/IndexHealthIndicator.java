@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import edu.tamu.scholars.middleware.config.model.IndexConfig;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
-import edu.tamu.scholars.middleware.discovery.service.IndexService;
 
 @Component("index")
 @Profile("!test")
@@ -31,9 +30,6 @@ public class IndexHealthIndicator implements HealthIndicator {
     @Lazy
     @Autowired
     private IndividualRepo individualRepo;
-
-    @Autowired
-    private IndexService indexService;
 
     @Autowired
     private IndexConfig index;

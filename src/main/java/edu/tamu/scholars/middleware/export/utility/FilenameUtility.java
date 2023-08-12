@@ -1,6 +1,5 @@
 package edu.tamu.scholars.middleware.export.utility;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -33,27 +32,27 @@ public class FilenameUtility {
     }
 
     public static String normalizeExportFilename(Individual individual) {
-        Map<String, Collection<Object>> content = individual.getContent();
+        Map<String, Object> content = individual.getContent();
         StringBuilder label = new StringBuilder();
 
-        String clazz = individual.getClazz();
+        String proxy = individual.getProxy();
 
-        if (clazz.equals(Organization.class.getSimpleName()) && content.containsKey(NAME)) {
-            label.append(content.get(NAME).iterator().next())
+        if (proxy.equals(Organization.class.getSimpleName()) && content.containsKey(NAME)) {
+            label.append((String) content.get(NAME))
                 .append(UNDERSCORE);
-        } else if (clazz.equals(Person.class.getSimpleName()) && content.containsKey(LAST_NAME)) {
-             label.append(content.get(LAST_NAME).iterator().next())
+        } else if (proxy.equals(Person.class.getSimpleName()) && content.containsKey(LAST_NAME)) {
+             label.append((String) content.get(LAST_NAME))
                 .append(UNDERSCORE);
 
             if (content.containsKey(FIRST_NAME)) {
-                label.append(content.get(FIRST_NAME).iterator().next())
+                label.append((String) content.get(FIRST_NAME))
                     .append(UNDERSCORE);
             }
         }
 
-        return localizeWhileUnderscoreReplaceSpaceWithUnderscore(label
-            .append(individual.getId())
-            .toString());
+        label.append(individual.getId());
+
+        return localizeWhileUnderscoreReplaceSpaceWithUnderscore(label.toString());
     }
 
     private static String localizeWhileUnderscoreReplaceSpaceWithUnderscore(String value) {
