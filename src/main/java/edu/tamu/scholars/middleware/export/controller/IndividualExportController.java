@@ -19,6 +19,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import edu.tamu.scholars.middleware.discovery.assembler.model.IndividualModel;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
+import edu.tamu.scholars.middleware.discovery.model.Organization;
+import edu.tamu.scholars.middleware.discovery.model.Person;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
 import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
 import edu.tamu.scholars.middleware.export.service.Exporter;
@@ -54,16 +56,69 @@ public class IndividualExportController implements RepresentationModelProcessor<
 
     @Override
     public IndividualModel process(IndividualModel resource) {
+        // TODO: figure out how to add links from appropriate display view export views
+        Individual individual = resource.getContent();
+        if (individual != null) {
+            if (individual.getProxy().equals(Person.class.getSimpleName())) {
+                addResource(resource, new ResourceLink(individual, "docx", "Single Page Bio", "Individual single page bio export"));
+                addResource(resource, new ResourceLink(individual, "docx", "Profile Summary", "Individual profile summary export"));
+                addResource(resource, new ResourceLink(individual, "zip", "5 Year Publications", "Individual 5 year publications export"));
+                addResource(resource, new ResourceLink(individual, "zip", "8 Year Publications", "Individual 8 year publications export"));
+            } else if (individual.getProxy().equals(Organization.class.getSimpleName())) {
+                addResource(resource, new ResourceLink(individual, "zip", "5 Year Publications", "Organization 5 year publications export"));
+                addResource(resource, new ResourceLink(individual, "zip", "8 Year Publications", "Organization 8 year publications export"));
+            }
+        }
+
+        return resource;
+    }
+
+    private void addResource(IndividualModel resource, ResourceLink link) {
         try {
             resource.add(linkTo(methodOn(this.getClass()).export(
-                resource.getContent().getId(),
-                "docx",
-                "Profile Summary"
-            )).withRel("export").withTitle("Individual export"));
+                link.getIndividual().getId(),
+                link.getType(),
+                link.getName()
+            )).withRel(link.getName().toLowerCase().replace(" ", "_")).withTitle(link.getTitle()));
         } catch (NullPointerException | UnknownExporterTypeException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        return resource;
+    }
+
+    private class ResourceLink {
+        private final Individual individual;
+        private final String type;
+        private final String name;
+        private final String title;
+
+        private ResourceLink(
+            Individual individual,
+            String type,
+            String name,
+            String title
+        ) {
+            this.individual = individual;
+            this.type = type;
+            this.name = name;
+            this.title = title;
+        }
+
+        public Individual getIndividual() {
+            return individual;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+        
     }
 
 }
