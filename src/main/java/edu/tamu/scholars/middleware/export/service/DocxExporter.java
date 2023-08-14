@@ -43,8 +43,8 @@ public class DocxExporter extends AbstractDocxExporter {
     }
 
     @Override
-    public StreamingResponseBody streamIndividual(Individual document, String name) {
-        final List<String> type = document.getType();
+    public StreamingResponseBody streamIndividual(Individual individual, String name) {
+        final List<String> type = individual.getType();
 
         Optional<DisplayView> displayView = displayViewRepo.findByTypesIn(type);
 
@@ -64,7 +64,7 @@ public class DocxExporter extends AbstractDocxExporter {
 
         return outputStream -> {
             try {
-                final ObjectNode node = mapper.valueToTree(document);
+                final ObjectNode node = mapper.valueToTree(individual.getContent());
                 final WordprocessingMLPackage pkg = createDocx(node, exportView.get());
 
                 pkg.save(outputStream);

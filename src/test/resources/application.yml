@@ -28,7 +28,7 @@ middleware:
     name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    schematize: true
+    schematize: false
     onStartup: false
     onStartupDelay: 10000
     enableIndividualOnBatchFail: false

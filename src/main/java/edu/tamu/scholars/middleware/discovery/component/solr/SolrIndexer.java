@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.component.Indexer;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
+import edu.tamu.scholars.middleware.discovery.model.Individual;
 
 public class SolrIndexer implements Indexer {
 
@@ -43,22 +44,22 @@ public class SolrIndexer implements Indexer {
     @Override
     public void init() {
         for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldType.class)) {
-            FieldType indexed = field.getAnnotation(FieldType.class);
+            FieldType fieldType = field.getAnnotation(FieldType.class);
 
-            String name = StringUtils.isNotEmpty(indexed.value())
-                ? indexed.value()
+            String name = StringUtils.isNotEmpty(fieldType.value())
+                ? fieldType.value()
                 : field.getName();
 
-            if (!indexed.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
+            if (!fieldType.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
                 Map<String, Object> fieldAttributes = new HashMap<String,Object>();
 
-                fieldAttributes.put("type", indexed.type());
-                fieldAttributes.put("stored", indexed.stored());
-                fieldAttributes.put("indexed", indexed.searchable());
-                fieldAttributes.put("required", indexed.required());
+                fieldAttributes.put("type", fieldType.type());
+                fieldAttributes.put("stored", fieldType.stored());
+                fieldAttributes.put("indexed", fieldType.searchable());
+                fieldAttributes.put("required", fieldType.required());
 
-                if (StringUtils.isNotEmpty(indexed.defaultValue())) {
-                    fieldAttributes.put("defaultValue", indexed.defaultValue());
+                if (StringUtils.isNotEmpty(fieldType.defaultValue())) {
+                    fieldAttributes.put("defaultValue", fieldType.defaultValue());
                 }
 
                 fieldAttributes.put("multiValued", Collection.class.isAssignableFrom(field.getType()));
@@ -72,9 +73,9 @@ public class SolrIndexer implements Indexer {
                     logger.debug("Failed to add field", e);
                 }
 
-                if (indexed.copyTo().length > 0) {
+                if (fieldType.copyTo().length > 0) {
                     try {
-                        SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(indexed.copyTo()));
+                        SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(fieldType.copyTo()));
                         addCopyFieldRequest.process(solrClient, collectionName);
                     } catch (Exception e) {
                         logger.debug("Failed to add copy field", e);
@@ -85,29 +86,31 @@ public class SolrIndexer implements Indexer {
     }
 
     @Override
-    public void index(Collection<AbstractIndexDocument> documents) {
+    public void index(Collection<Individual> individuals) {
         try {
-            solrClient.addBeans(collectionName, documents);
+            solrClient.addBeans(collectionName, individuals);
             solrClient.commit(collectionName);
-            logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
+            logger.info("Saved {} batch of {}", name(), individuals.size());
         } catch (Exception e) {
+            logger.debug("Error saving batch", e);
             if (enableIndividualOnBatchFail) {
-                logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
-                documents.stream().forEach(this::index);
+                logger.warn("Failed to save batch of {}. Attempting individually.", name());
+                individuals.stream().forEach(this::index);
             } else {
-                logger.warn("Skipping individuals of failed batch of {}.", name() );
+                logger.warn("Skipping individuals of failed batch of {}. {}", name(), e.getMessage());
             }
         }
     }
 
     @Override
-    public void index(AbstractIndexDocument document) {
+    public void index(Individual individual) {
         try {
-            solrClient.addBean(collectionName, document);
+            solrClient.addBean(collectionName, individual);
             solrClient.commit(collectionName);
-            logger.info(String.format("Saved %s with id %s", name(), document.getId()));
+            logger.info("Saved {} with id {}", name(), individual.getId());
         } catch (Exception e) {
-            logger.warn(String.format("Failed to save %s with id %s", name(), document.getId()), e);
+            logger.debug("Error saving individual", e);
+            logger.warn("Failed to save {} with id {}", name(), individual.getId());
         }
     }
 
@@ -116,7 +119,8 @@ public class SolrIndexer implements Indexer {
         try {
             solrClient.optimize(collectionName);
         } catch (Exception e) {
-            logger.warn(String.format("Failed to optimize index"), e);
+            logger.debug("Error optimizing collection", e);
+            logger.warn("Failed to optimize collection. {}", e.getMessage());
         }
     }
 
