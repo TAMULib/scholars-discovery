@@ -34,7 +34,6 @@ import edu.tamu.scholars.middleware.discovery.component.Indexer;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
-import edu.tamu.scholars.middleware.discovery.service.IndexService;
 
 @Import(SolrTestConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -51,9 +50,6 @@ public abstract class AbstractSolrDocumentIntegrationTest<D extends AbstractInde
 
     @Autowired
     private List<Indexer> indexers;
-
-    @Autowired
-    protected IndexService indexService;
 
     @Autowired
     protected IndividualRepo repo;
