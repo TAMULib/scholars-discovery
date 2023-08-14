@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.view.model.Boost;
+import edu.tamu.scholars.middleware.view.model.ContainerType;
 import edu.tamu.scholars.middleware.view.model.DataAndAnalyticsView;
 import edu.tamu.scholars.middleware.view.model.DirectoryView;
 import edu.tamu.scholars.middleware.view.model.DiscoveryView;
@@ -37,6 +38,7 @@ public class ViewTestUtility {
 
         dataAndAnalyticsView.setName(MOCK_VIEW_NAME);
         dataAndAnalyticsView.setLayout(Layout.GRID);
+        dataAndAnalyticsView.setType(ContainerType.PROFILE_SUMMARIES_EXPORT);
 
         Map<String, String> templates = new HashMap<String, String>();
         templates.put("default", "<h1>Element template from WSYWIG</h1>");
