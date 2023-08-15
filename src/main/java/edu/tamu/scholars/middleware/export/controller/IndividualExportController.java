@@ -56,17 +56,16 @@ public class IndividualExportController implements RepresentationModelProcessor<
 
     @Override
     public IndividualModel process(IndividualModel resource) {
-        // TODO: figure out how to add links from appropriate display view export views
         Individual individual = resource.getContent();
         if (individual != null) {
             if (individual.getProxy().equals(Person.class.getSimpleName())) {
                 addResource(resource, new ResourceLink(individual, "docx", "Single Page Bio", "Individual single page bio export"));
                 addResource(resource, new ResourceLink(individual, "docx", "Profile Summary", "Individual profile summary export"));
-                addResource(resource, new ResourceLink(individual, "zip", "5 Year Publications", "Individual 5 year publications export"));
-                addResource(resource, new ResourceLink(individual, "zip", "8 Year Publications", "Individual 8 year publications export"));
+                addResource(resource, new ResourceLink(individual, "zip", "Last 5 Years", "Individual 5 year publications export"));
+                addResource(resource, new ResourceLink(individual, "zip", "Last 8 Years", "Individual 8 year publications export"));
             } else if (individual.getProxy().equals(Organization.class.getSimpleName())) {
-                addResource(resource, new ResourceLink(individual, "zip", "5 Year Publications", "Organization 5 year publications export"));
-                addResource(resource, new ResourceLink(individual, "zip", "8 Year Publications", "Organization 8 year publications export"));
+                addResource(resource, new ResourceLink(individual, "zip", "Last 5 Years", "Organization 5 year publications export"));
+                addResource(resource, new ResourceLink(individual, "zip", "Last 8 Years", "Organization 8 year publications export"));
             }
         }
 
