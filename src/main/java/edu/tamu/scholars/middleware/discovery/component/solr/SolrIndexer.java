@@ -69,17 +69,17 @@ public class SolrIndexer implements Indexer {
                 try {
                     SchemaRequest.AddField addFieldRequest = new SchemaRequest.AddField(fieldAttributes);
                     addFieldRequest.process(solrClient, collectionName);
+
+                    if (fieldType.copyTo().length > 0) {
+                        try {
+                            SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(fieldType.copyTo()));
+                            addCopyFieldRequest.process(solrClient, collectionName);
+                        } catch (Exception e) {
+                            logger.error("Failed to add copy field", e);
+                        }
+                    }
                 } catch (Exception e) {
                     logger.debug("Failed to add field", e);
-                }
-
-                if (fieldType.copyTo().length > 0) {
-                    try {
-                        SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(fieldType.copyTo()));
-                        addCopyFieldRequest.process(solrClient, collectionName);
-                    } catch (Exception e) {
-                        logger.debug("Failed to add copy field", e);
-                    }
                 }
             }
         }
