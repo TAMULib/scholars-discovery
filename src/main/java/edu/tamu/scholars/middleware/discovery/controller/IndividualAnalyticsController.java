@@ -26,7 +26,7 @@ public class IndividualAnalyticsController {
     private IndividualRepo repo;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/aca")
+    @GetMapping("/academicAge")
     public ResponseEntity<DiscoveryAcademicAge> academicAge(
         QueryArg query,
         List<FilterArg> filters,
