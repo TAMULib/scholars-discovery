@@ -25,16 +25,17 @@ middleware:
     request-timeout: 30000
     socket-timeout: 60000
   index:
+    name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
+    schematize: false
     onStartup: false
+    onStartupDelay: 10000
+    enableIndividualOnBatchFail: false
     batchSize: 1000
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore
     directory: triplestore
-    datasourceUrl: jdbc:mysql://localhost/vivo
-    username:
-    password:
   harvesters:
   - type: edu.tamu.scholars.middleware.discovery.component.jena.TriplestoreHarvester
     documentTypes:
@@ -162,6 +163,8 @@ management:
   endpoint:
     health:
       enabled: true
+      show-details: always
+      show-components: always
     info:
       enabled: true
     mappings:

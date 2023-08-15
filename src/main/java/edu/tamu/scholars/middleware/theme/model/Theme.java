@@ -21,6 +21,9 @@ public class Theme extends Named {
     private String organization;
 
     @Column(nullable = false)
+    private String organizationId;
+
+    @Column(nullable = false)
     private boolean active;
 
     @Embedded
@@ -52,10 +55,11 @@ public class Theme extends Named {
         this.variables = new ArrayList<Style>();
     }
 
-    public Theme(String name, String organization) {
+    public Theme(String name, String organization, String organizationId) {
         this();
         setName(name);
         this.organization = organization;
+        this.organizationId = organizationId;
     }
 
     public String getOrganization() {
@@ -64,6 +68,14 @@ public class Theme extends Named {
 
     public void setOrganization(String organization) {
         this.organization = organization;
+    }
+
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
     }
 
     public boolean isActive() {

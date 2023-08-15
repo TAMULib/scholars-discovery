@@ -29,17 +29,17 @@ middleware:
     request-timeout: 30000
     socket-timeout: 60000
   index:
+    name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
+    schematize: true
     onStartup: true
+    enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore
     directory: triplestore
-    datasourceUrl: jdbc:mysql://localhost/vivo?useLegacyDatetimeCode=false&serverTimezone=America/Chicago
-    username:
-    password:
   harvesters:
   - type: edu.tamu.scholars.middleware.discovery.component.jena.TriplestoreHarvester
     documentTypes:
@@ -165,15 +165,17 @@ spring:
 
 management:
   endpoints:
-    enabled-by-default: false
+    enabled-by-default: true
     web:
       exposure:
         # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, mappings
+        include: health, info, index
   endpoint:
     health:
       enabled: true
+      show-details: always
+      show-components: always
     info:
       enabled: true
-    mappings:
+    index:
       enabled: true

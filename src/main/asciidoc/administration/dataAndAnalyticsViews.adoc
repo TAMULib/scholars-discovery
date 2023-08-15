@@ -1,0 +1,120 @@
+=== Data And Analytics Views
+
+This section describes the data and analytics views of the application. This object is a persistent representation of a data and analytics UI.
+
+==== Data And Analytics
+
+This displays a list of all the data and analytics view objects based on parameters like page, size or sort feature based on name, collection etc as shown in *Request Parameters*.
+
+===== Request Parameters
+include::../{snippets}/dataAndAnalyticsViews/directory/request-parameters.adoc[]
+
+===== Response Fields
+include::../{snippets}/dataAndAnalyticsViews/directory/response-fields.adoc[]
+
+===== Sample Request
+include::../{snippets}/dataAndAnalyticsViews/directory/http-request.adoc[]
+
+===== Sample Response
+include::../{snippets}/dataAndAnalyticsViews/directory/http-response.adoc[]
+
+===== CURL Sample
+include::../{snippets}/dataAndAnalyticsViews/directory/curl-request.adoc[]
+
+==== Create
+
+A data and analytics view is created by adding a fields like _name_, _collection_ etc along with other variables as shown in the *Request Fields*.
+
+===== Request Fields
+include::../{snippets}/dataAndAnalyticsViews/create/request-fields.adoc[]
+
+===== Response Fields
+include::../{snippets}/dataAndAnalyticsViews/create/response-fields.adoc[]
+
+===== Sample Request
+include::../{snippets}/dataAndAnalyticsViews/create/http-request.adoc[]
+
+===== Sample Response
+include::../{snippets}/dataAndAnalyticsViews/create/http-response.adoc[]
+
+===== CURL Sample
+include::../{snippets}/dataAndAnalyticsViews/create/curl-request.adoc[]
+
+==== Delete
+
+A data and analytics view can be deleted by passing the _dataAndAnalyticsView id_ as a path parameter. This will return a *NO_CONTENT (204)* http status code as shown in the *Sample Response*.
+
+===== Path Parameters
+include::../{snippets}/dataAndAnalyticsViews/delete/path-parameters.adoc[]
+
+===== Sample Request
+include::../{snippets}/dataAndAnalyticsViews/delete/http-request.adoc[]
+
+===== Sample Response
+include::../{snippets}/dataAndAnalyticsViews/delete/http-response.adoc[]
+
+===== CURL Sample
+include::../{snippets}/dataAndAnalyticsViews/delete/curl-request.adoc[]
+
+==== Find by Id
+
+A user can find a data and analytics view by providing _dataAndAnalyticsView id_ as a path parameter. This returns a json response displaying the  *HttpStatus.OK(200)*  message along with the data and analytics view object as shown in the *Sample Response*.
+
+===== Path Parameters
+include::../{snippets}/dataAndAnalyticsViews/find-by-id/path-parameters.adoc[]
+
+===== Response Fields
+include::../{snippets}/dataAndAnalyticsViews/find-by-id/response-fields.adoc[]
+
+===== Sample Request
+include::../{snippets}/dataAndAnalyticsViews/find-by-id/http-request.adoc[]
+
+===== Sample Response
+include::../{snippets}/dataAndAnalyticsViews/find-by-id/http-response.adoc[]
+
+===== CURL Sample
+include::../{snippets}/dataAndAnalyticsViews/find-by-id/curl-request.adoc[]
+
+==== Patch
+
+This helps an admin user to partially update a data and analytics view. This process utilizes the http patch protocol.
+
+===== Path Parameters
+include::../{snippets}/dataAndAnalyticsViews/patch/path-parameters.adoc[]
+
+===== Request Parameters
+include::../{snippets}/dataAndAnalyticsViews/patch/request-parameters.adoc[]
+
+===== Response Fields
+include::../{snippets}/dataAndAnalyticsViews/patch/response-fields.adoc[]
+
+===== Sample Request
+include::../{snippets}/dataAndAnalyticsViews/patch/http-request.adoc[]
+
+===== Sample Response
+include::../{snippets}/dataAndAnalyticsViews/patch/http-response.adoc[]
+
+===== CURL Sample
+include::../{snippets}/dataAndAnalyticsViews/patch/curl-request.adoc[]
+
+==== Update
+
+This helps an admin user to update a specifc data and analytics view based on the _dataAndAnalyticsView id_ provided in the path parameter. This utilizes the http put protocol.
+
+===== Path Parameters
+include::../{snippets}/dataAndAnalyticsViews/update/path-parameters.adoc[]
+
+===== Request Fields
+include::../{snippets}/dataAndAnalyticsViews/update/request-fields.adoc[]
+
+===== Response Fields
+include::../{snippets}/dataAndAnalyticsViews/update/response-fields.adoc[]
+
+===== Sample Request
+include::../{snippets}/dataAndAnalyticsViews/update/http-request.adoc[]
+
+===== Sample Response
+include::../{snippets}/dataAndAnalyticsViews/update/http-response.adoc[]
+
+===== CURL Sample
+include::../{snippets}/dataAndAnalyticsViews/update/curl-request.adoc[]

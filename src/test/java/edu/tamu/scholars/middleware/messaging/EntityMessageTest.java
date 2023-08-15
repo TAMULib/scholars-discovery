@@ -17,19 +17,21 @@ public class EntityMessageTest {
 
     @Test
     public void testCreateEntityMessage() {
-        CreateEntityMessage<Theme> createThemeMessage = new CreateEntityMessage<Theme>(new Theme("Test", "Testing Unlimited"));
+        CreateEntityMessage<Theme> createThemeMessage = new CreateEntityMessage<Theme>(new Theme("Test", "Testing Unlimited", "n000001"));
         assertNotNull(createThemeMessage);
         assertEquals("Test", createThemeMessage.getEntity().getName());
         assertEquals("Testing Unlimited", createThemeMessage.getEntity().getOrganization());
+        assertEquals("n000001", createThemeMessage.getEntity().getOrganizationId());
         assertEquals(CREATE, createThemeMessage.getAction());
     }
 
     @Test
     public void testUpdateEntityMessage() {
-        UpdateEntityMessage<Theme> updateThemeMessage = new UpdateEntityMessage<Theme>(new Theme("Test", "Testing Unlimited"));
+        UpdateEntityMessage<Theme> updateThemeMessage = new UpdateEntityMessage<Theme>(new Theme("Test", "Testing Unlimited", "n000001"));
         assertNotNull(updateThemeMessage);
         assertEquals("Test", updateThemeMessage.getEntity().getName());
         assertEquals("Testing Unlimited", updateThemeMessage.getEntity().getOrganization());
+        assertEquals("n000001", updateThemeMessage.getEntity().getOrganizationId());
         assertEquals(UPDATE, updateThemeMessage.getAction());
     }
 

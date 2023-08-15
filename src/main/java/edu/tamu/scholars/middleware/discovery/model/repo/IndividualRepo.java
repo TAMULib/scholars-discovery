@@ -1,7 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.model.repo;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
@@ -15,7 +14,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -47,19 +45,19 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryAcademicAgeDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryNetworkDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryQuantityDistributionDescriptor;
-import edu.tamu.scholars.middleware.discovery.argument.DiscoveryResearchAgeDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.exception.SolrRequestException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryAcademicAge;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryQuantityDistribution;
-import edu.tamu.scholars.middleware.discovery.response.DiscoveryResearchAge;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 import reactor.core.publisher.Flux;
 
@@ -69,6 +67,9 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     private static final Logger logger = LoggerFactory.getLogger(IndividualRepo.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
+
+    @Value("${middleware.index.name}")
+    private String collectionName;
 
     @Value("${spring.data.solr.parser:edismax}")
     private String defType;
@@ -135,9 +136,12 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             JsonQueryRequest jsonRequest = builder.jsonQuery(ids);
 
-            QueryResponse queryResponse = jsonRequest.process(solrClient, COLLECTION);
+            QueryResponse response = jsonRequest.process(solrClient, collectionName);
 
-            return queryResponse.getBeans(Individual.class);
+            return response.getResults()
+                .stream()
+                .map(Individual::from)
+                .collect(Collectors.toList());
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to find documents from ids", e);
         }
@@ -171,9 +175,14 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             .withPage(page);
 
         try {
-            QueryResponse response = solrClient.query(COLLECTION, builder.query());
+            QueryResponse response = solrClient.query(collectionName, builder.query());
 
-            return DiscoveryFacetAndHighlightPage.from(response, page, facets, highlight, Individual.class);
+            List<Individual> individuals = response.getResults()
+                .stream()
+                .map(Individual::from)
+                .collect(Collectors.toList());
+
+            return DiscoveryFacetAndHighlightPage.from(individuals, response, page, facets, highlight, Individual.class);
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to search documents", e);
         }
@@ -190,21 +199,12 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         return Flux.create(emitter -> {
             try {
-                solrClient.queryAndStreamResponse(COLLECTION, builder.query(), new StreamingResponseCallback() {
+                solrClient.queryAndStreamResponse(collectionName, builder.query(), new StreamingResponseCallback() {
                     private final AtomicLong remaining = new AtomicLong(0);
 
                     @Override
-                    public void streamSolrDocument(SolrDocument doc) {
-                        Individual individual = new Individual();
-
-                        individual.setContent(doc.getFieldValuesMap());
-                        individual.setId(doc.getFieldValue(ID).toString());
-                        individual.setClazz(doc.getFieldValue(CLASS).toString());
-                        if (Objects.nonNull(doc.getFieldValues(TYPE))) {
-                            individual.setType(doc.getFieldValues(TYPE).stream().map(to -> to.toString()).collect(Collectors.toList()));
-                        }
-
-                        emitter.next(individual);
+                    public void streamSolrDocument(SolrDocument document) {
+                        emitter.next(Individual.from(document));
 
                         if (remaining.decrementAndGet() == 0) {
                             emitter.complete();
@@ -213,10 +213,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
                     @Override
                     public void streamDocListInfo(long numFound, long start, Float maxScore) {
-                        if (numFound == 0) {
-                            emitter.complete();
-                        } else {
+                        if (numFound > 0) {
                             remaining.set(numFound);
+                        } else {
+                            emitter.complete();
                         }
                     }
 
@@ -235,7 +235,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         try {
             final SolrParams queryParams = dataNetworkDescriptor.getSolrParams();
 
-            final QueryResponse response = solrClient.query(COLLECTION, queryParams);
+            final QueryResponse response = solrClient.query(collectionName, queryParams);
 
             final SolrDocumentList documents = response.getResults();
 
@@ -275,18 +275,16 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public DiscoveryResearchAge researcherAge(DiscoveryResearchAgeDescriptor researcherAgeDescriptor, QueryArg query, List<FilterArg> filters) {
-        DiscoveryResearchAge researchAge = new DiscoveryResearchAge(researcherAgeDescriptor.getLabel(), researcherAgeDescriptor.getDateField());
+    public DiscoveryAcademicAge academicAge(DiscoveryAcademicAgeDescriptor academicAgeDescriptor, QueryArg query, List<FilterArg> filters) {
+        DiscoveryAcademicAge academicAge = new DiscoveryAcademicAge(academicAgeDescriptor.getLabel(), academicAgeDescriptor.getDateField());
 
-        String dateField = researcherAgeDescriptor.getDateField();
-        String ageField = researcherAgeDescriptor.getAgeField();
+        String dateField = academicAgeDescriptor.getDateField();
+        String ageField = academicAgeDescriptor.getAgeField();
 
         try {
-
-            // get count
             long count = this.count(query, filters);
 
-            String fields = researcherAgeDescriptor.getAccumulateMultivaluedDate()
+            String fields = academicAgeDescriptor.getAccumulateMultivaluedDate()
                 ? String.format("%s,%s", dateField, ageField)
                 : ageField;
 
@@ -297,16 +295,16 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .withSort(Sort.by(Direction.ASC, ageField))
                 .withRows((int) count);
 
-            QueryResponse response = solrClient.query(COLLECTION, builder.query());
+            QueryResponse response = solrClient.query(collectionName, builder.query());
 
             SolrDocumentList results = response.getResults();
 
-            researchAge.from(researcherAgeDescriptor, results);
+            academicAge.from(academicAgeDescriptor, results);
 
         } catch (Exception e) {
-            logger.error("Failed to gather researcher age analytics!", e);
+            logger.error("Failed to gather academic age analytics!", e);
         }
-        return researchAge;
+        return academicAge;
     }
 
     @Override
@@ -336,7 +334,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             .withRows(0);
 
         try {
-            QueryResponse response = solrClient.query(COLLECTION, builder.query());
+            QueryResponse response = solrClient.query(collectionName, builder.query());
 
             quantityDistribution.parse(response);
         } catch (IOException | SolrServerException e) {
@@ -375,7 +373,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     private long count(SolrQuery query) {
         try {
-            return solrClient.query(COLLECTION, query)
+            return solrClient.query(collectionName, query)
                 .getResults()
                 .getNumFound();
         } catch (IOException | SolrServerException e) {
@@ -385,10 +383,9 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     private Individual getById(String id) {
         try {
-            SolrDocument document = solrClient.getById(COLLECTION, id);
+            SolrDocument document = solrClient.getById(collectionName, id);
 
-            return solrClient.getBinder()
-                .getBean(Individual.class, document);
+            return Individual.from(document);
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to get document by id", e);
         }
@@ -396,8 +393,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     private List<Individual> findAll(SolrQuery query) {
         try {
-            return solrClient.query(COLLECTION, query)
-                .getBeans(Individual.class);
+            return solrClient.query(collectionName, query).getResults()
+                .stream()
+                .map(Individual::from)
+                .collect(Collectors.toList());
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to query documents", e);
         }
@@ -405,8 +404,13 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     private Page<Individual> findAll(SolrQuery query, Pageable pageable) {
         try {
-            SolrDocumentList documents = solrClient.query(COLLECTION, query).getResults();
-            List<Individual> individuals = solrClient.getBinder().getBeans(Individual.class, documents);
+            SolrDocumentList documents = solrClient.query(collectionName, query)
+                .getResults();
+            List<Individual> individuals = solrClient.query(collectionName, query)
+                .getResults()
+                .stream()
+                .map(Individual::from)
+                .collect(Collectors.toList());
 
             return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());
         } catch (IOException | SolrServerException e) {

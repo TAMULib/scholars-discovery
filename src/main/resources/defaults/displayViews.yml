@@ -77,7 +77,7 @@
           - field: class
             value: Relationship AND type:Grant
             opKey: EXPRESSION
-  - name: 5 Year Publications
+  - name: Last 5 Years
     contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     lazyReferences:
@@ -127,7 +127,7 @@
         - field: class
           value: Relationship AND type:Grant
           opKey: EXPRESSION
-  - name: 8 Year Publications
+  - name: Last 8 Years
     contentTemplate: "defaults/displayViews/persons/8YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     lazyReferences:
@@ -930,7 +930,7 @@
   asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
   asideLocation: RIGHT
   exportViews:
-  - name: 5 Year Publications
+  - name: Last 5 Years
     contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     multipleReference:
@@ -987,7 +987,7 @@
         - field: class
           value: Relationship AND type:Grant
           opKey: EXPRESSION
-  - name: 8 Year Publications
+  - name: Last 8 Years
     contentTemplate: "defaults/displayViews/persons/8YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     multipleReference:
@@ -1103,22 +1103,18 @@
           template: "defaults/displayViews/organizations/overview/abbreviation.html"
           field: abbreviation
           order: 2
-        - name: date/time interval
-          template: "defaults/displayViews/organizations/overview/dateTimeInterval.html"
-          field: dateTimeInterval
-          order: 3
         - name: sponsors award or honor
           paginated: true
           template: "defaults/displayViews/organizations/overview/sponsorsAwardOrHonor.html"
           field: sponsorsAwardOrHonor
-          order: 4
+          order: 3
           lazyReferences:
             - sponsorsAwardOrHonor
         - name: award or honor given
           paginated: true
           template: "defaults/displayViews/organizations/overview/awardOrHonorGiven.html"
           field: awardOrHonorGiven
-          order: 5
+          order: 4
           sort:
             - field: yearAwarded
               direction: DESC
@@ -1128,17 +1124,17 @@
         - name: awards and honors received
           template: "defaults/displayViews/organizations/overview/awardsAndHonorsReceived.html"
           field: awardsAndHonorsReceived
-          order: 6
+          order: 5
           lazyReferences:
             - awardsAndHonorsReceived
         - name: keywords
           template: "defaults/displayViews/organizations/overview/keywords.html"
           field: keywords
-          order: 7
+          order: 6
         - name: geographic focus
           template: "defaults/displayViews/organizations/overview/geographicFocus.html"
           field: geographicFocus
-          order: 8
+          order: 7
     - name: Affiliation
       sections:
         - name: organization for training
@@ -1778,10 +1774,10 @@
           order: 3
         - name: date/time interval
           template: "defaults/displayViews/relationships/overview/dateTimeInterval.html"
-          field: dateTimeIntervalStart
+          field: startDateTime
           order: 4
           requiredFields:
-            - dateTimeIntervalEnd
+            - endDateTime
         - name: year awarded
           template: "defaults/displayViews/relationships/overview/yearAwarded.html"
           field: yearAwarded

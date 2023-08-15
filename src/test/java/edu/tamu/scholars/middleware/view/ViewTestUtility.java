@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort.Direction;
 
 import edu.tamu.scholars.middleware.model.OpKey;
 import edu.tamu.scholars.middleware.view.model.Boost;
+import edu.tamu.scholars.middleware.view.model.ContainerType;
+import edu.tamu.scholars.middleware.view.model.DataAndAnalyticsView;
 import edu.tamu.scholars.middleware.view.model.DirectoryView;
 import edu.tamu.scholars.middleware.view.model.DiscoveryView;
 import edu.tamu.scholars.middleware.view.model.DisplaySectionView;
@@ -29,7 +31,100 @@ import edu.tamu.scholars.middleware.view.model.Sort;
 
 public class ViewTestUtility {
 
-    public static String MOCK_VIEW_NAME = "People";
+    public static String MOCK_VIEW_NAME = "View";
+
+    public static DataAndAnalyticsView getMockDataAndAnalyticsView() {
+        DataAndAnalyticsView dataAndAnalyticsView = new DataAndAnalyticsView();
+
+        dataAndAnalyticsView.setName(MOCK_VIEW_NAME);
+        dataAndAnalyticsView.setLayout(Layout.GRID);
+        dataAndAnalyticsView.setType(ContainerType.PROFILE_SUMMARIES_EXPORT);
+
+        Map<String, String> templates = new HashMap<String, String>();
+        templates.put("default", "<h1>Element template from WSYWIG</h1>");
+
+        dataAndAnalyticsView.setTemplates(templates);
+
+        List<String> styles = new ArrayList<String>();
+
+        styles.add("color: maroon;");
+
+        dataAndAnalyticsView.setStyles(styles);
+
+        List<String> fields = new ArrayList<String>();
+
+        fields.add("title");
+
+        dataAndAnalyticsView.setFields(fields);
+
+        List<Facet> facets = new ArrayList<Facet>();
+
+        Facet facet = new Facet();
+
+        facet.setName("Name");
+        facet.setField("name");
+        facet.setType(FacetType.STRING);
+        facet.setSort(FacetSort.COUNT);
+        facet.setDirection(Direction.DESC);
+        facet.setPageSize(20);
+        facet.setPageNumber(1);
+
+        facets.add(facet);
+
+        dataAndAnalyticsView.setFacets(facets);
+
+        List<Filter> filters = new ArrayList<Filter>();
+
+        Filter filter = new Filter();
+
+        filter.setField("type");
+        filter.setValue("FacultyMember");
+
+        filters.add(filter);
+
+        dataAndAnalyticsView.setFilters(filters);
+
+        List<Boost> boosts = new ArrayList<Boost>();
+
+        Boost boost = new Boost();
+
+        boost.setField("name");
+        boost.setValue(2.0f);
+
+        boosts.add(boost);
+
+        dataAndAnalyticsView.setBoosts(boosts);
+
+        List<Sort> sorting = new ArrayList<Sort>();
+
+        Sort sort = new Sort();
+        sort.setField("name");
+        sort.setDirection(Direction.ASC);
+
+        sorting.add(sort);
+
+        dataAndAnalyticsView.setSort(sorting);
+
+        List<ExportField> exporting = new ArrayList<ExportField>();
+
+        ExportField idExport = new ExportField();
+
+        idExport.setColumnHeader("Id");
+        idExport.setValuePath("id");
+
+        exporting.add(idExport);
+
+        ExportField nameExport = new ExportField();
+
+        nameExport.setColumnHeader("Name");
+        nameExport.setValuePath("name");
+
+        exporting.add(nameExport);
+
+        dataAndAnalyticsView.setExport(exporting);
+
+        return dataAndAnalyticsView;
+    }
 
     public static DirectoryView getMockDirectoryView() {
         DirectoryView directoryView = new DirectoryView();

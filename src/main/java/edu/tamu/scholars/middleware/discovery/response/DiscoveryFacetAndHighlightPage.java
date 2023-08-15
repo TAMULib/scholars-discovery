@@ -33,8 +33,7 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
         this.highlights = highlights;
     }
 
-    public static <T> DiscoveryFacetAndHighlightPage<T> from(QueryResponse response, Pageable pageable, List<FacetArg> facetArguments, HighlightArg highlightArg, Class<T> type) {
-        List<T> documents = response.getBeans(type);
+    public static <T> DiscoveryFacetAndHighlightPage<T> from(List<T> documents, QueryResponse response, Pageable pageable, List<FacetArg> facetArguments, HighlightArg highlightArg, Class<T> type) {
         List<Facet> facets = buildFacets(response, facetArguments);
         List<Highlight> highlights = buildHighlights(response, highlightArg);
         SolrDocumentList results = response.getResults();

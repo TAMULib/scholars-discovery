@@ -1,6 +1,5 @@
 package edu.tamu.scholars.middleware.discovery.component.solr;
 
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.COLLECTION;
 import static edu.tamu.scholars.middleware.discovery.service.IndexService.CREATED_FIELDS;
 
 import java.lang.reflect.Field;
@@ -16,10 +15,12 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import edu.tamu.scholars.middleware.discovery.annotation.FieldType;
 import edu.tamu.scholars.middleware.discovery.component.Indexer;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
+import edu.tamu.scholars.middleware.discovery.model.Individual;
 
 public class SolrIndexer implements Indexer {
 
@@ -27,6 +28,12 @@ public class SolrIndexer implements Indexer {
 
     @Autowired
     private SolrClient solrClient;
+
+    @Value("${middleware.index.name}")
+    private String collectionName;
+
+    @Value("${middleware.index.enableIndividualOnBatchFail:false}")
+    private boolean enableIndividualOnBatchFail;
 
     private final Class<AbstractIndexDocument> type;
 
@@ -37,22 +44,22 @@ public class SolrIndexer implements Indexer {
     @Override
     public void init() {
         for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldType.class)) {
-            FieldType indexed = field.getAnnotation(FieldType.class);
+            FieldType fieldType = field.getAnnotation(FieldType.class);
 
-            String name = StringUtils.isNotEmpty(indexed.value())
-                ? indexed.value()
+            String name = StringUtils.isNotEmpty(fieldType.value())
+                ? fieldType.value()
                 : field.getName();
 
-            if (!indexed.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
+            if (!fieldType.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
                 Map<String, Object> fieldAttributes = new HashMap<String,Object>();
 
-                fieldAttributes.put("type", indexed.type());
-                fieldAttributes.put("stored", indexed.stored());
-                fieldAttributes.put("indexed", indexed.searchable());
-                fieldAttributes.put("required", indexed.required());
+                fieldAttributes.put("type", fieldType.type());
+                fieldAttributes.put("stored", fieldType.stored());
+                fieldAttributes.put("indexed", fieldType.searchable());
+                fieldAttributes.put("required", fieldType.required());
 
-                if (StringUtils.isNotEmpty(indexed.defaultValue())) {
-                    fieldAttributes.put("defaultValue", indexed.defaultValue());
+                if (StringUtils.isNotEmpty(fieldType.defaultValue())) {
+                    fieldAttributes.put("defaultValue", fieldType.defaultValue());
                 }
 
                 fieldAttributes.put("multiValued", Collection.class.isAssignableFrom(field.getType()));
@@ -61,12 +68,12 @@ public class SolrIndexer implements Indexer {
 
                 try {
                     SchemaRequest.AddField addFieldRequest = new SchemaRequest.AddField(fieldAttributes);
-                    addFieldRequest.process(solrClient, COLLECTION);
+                    addFieldRequest.process(solrClient, collectionName);
 
-                    if (indexed.copyTo().length > 0) {
+                    if (fieldType.copyTo().length > 0) {
                         try {
-                            SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(indexed.copyTo()));
-                            addCopyFieldRequest.process(solrClient, COLLECTION);
+                            SchemaRequest.AddCopyField addCopyFieldRequest = new SchemaRequest.AddCopyField(name, Arrays.asList(fieldType.copyTo()));
+                            addCopyFieldRequest.process(solrClient, collectionName);
                         } catch (Exception e) {
                             logger.error("Failed to add copy field", e);
                         }
@@ -79,34 +86,41 @@ public class SolrIndexer implements Indexer {
     }
 
     @Override
-    public void index(Collection<AbstractIndexDocument> documents) {
+    public void index(Collection<Individual> individuals) {
         try {
-            solrClient.addBeans(COLLECTION, documents);
-            solrClient.commit(COLLECTION);
-            logger.info(String.format("Saved %s batch of %s", name(), documents.size()));
+            solrClient.addBeans(collectionName, individuals);
+            solrClient.commit(collectionName);
+            logger.info("Saved {} batch of {}", name(), individuals.size());
         } catch (Exception e) {
-            logger.warn(String.format("Failed to save batch of %s. Attempting individually.", name()), e);
-            documents.stream().forEach(this::index);
+            logger.debug("Error saving batch", e);
+            if (enableIndividualOnBatchFail) {
+                logger.warn("Failed to save batch of {}. Attempting individually.", name());
+                individuals.stream().forEach(this::index);
+            } else {
+                logger.warn("Skipping individuals of failed batch of {}. {}", name(), e.getMessage());
+            }
         }
     }
 
     @Override
-    public void index(AbstractIndexDocument document) {
+    public void index(Individual individual) {
         try {
-            solrClient.addBean(COLLECTION, document);
-            solrClient.commit(COLLECTION);
-            logger.info(String.format("Saved %s with id %s", name(), document.getId()));
+            solrClient.addBean(collectionName, individual);
+            solrClient.commit(collectionName);
+            logger.info("Saved {} with id {}", name(), individual.getId());
         } catch (Exception e) {
-            logger.warn(String.format("Failed to save %s with id %s", name(), document.getId()), e);
+            logger.debug("Error saving individual", e);
+            logger.warn("Failed to save {} with id {}", name(), individual.getId());
         }
     }
 
     @Override
     public void optimize() {
         try {
-            solrClient.optimize(COLLECTION);
+            solrClient.optimize(collectionName);
         } catch (Exception e) {
-            logger.warn(String.format("Failed to optimize index"), e);
+            logger.debug("Error optimizing collection", e);
+            logger.warn("Failed to optimize collection. {}", e.getMessage());
         }
     }
 

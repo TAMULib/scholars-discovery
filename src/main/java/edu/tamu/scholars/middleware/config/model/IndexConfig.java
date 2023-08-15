@@ -7,15 +7,29 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "middleware.index")
 public class IndexConfig {
 
+    private String name = "scholars-discovery";
+
     private String cron = "0 0 0 * * SUN";
 
     private String zone = "America/Chicago";
 
+    private boolean schematize = true;
+
     private boolean onStartup = true;
+
+    private boolean enableIndividualOnBatchFail = true;
 
     private int onStartupDelay = 10000;
 
     private int batchSize = 10000;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getCron() {
         return cron;
@@ -33,12 +47,28 @@ public class IndexConfig {
         this.zone = zone;
     }
 
+    public boolean isSchematize() {
+        return schematize;
+    }
+
+    public void setSchematize(boolean schematize) {
+        this.schematize = schematize;
+    }
+
     public boolean isOnStartup() {
         return onStartup;
     }
 
     public void setOnStartup(boolean onStartup) {
         this.onStartup = onStartup;
+    }
+
+    public boolean isEnableIndividualOnBatchFail() {
+        return enableIndividualOnBatchFail;
+    }
+
+    public void setEnableIndividualOnBatchFail(boolean enableIndividualOnBatchFail) {
+        this.enableIndividualOnBatchFail = enableIndividualOnBatchFail;
     }
 
     public int getOnStartupDelay() {

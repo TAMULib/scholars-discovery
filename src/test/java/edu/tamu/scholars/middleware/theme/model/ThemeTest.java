@@ -33,9 +33,10 @@ public class ThemeTest {
 
     @Test
     public void testBasicConstructor() {
-        Theme theme = new Theme("Test", "Testing Unlimited");
+        Theme theme = new Theme("Test", "Testing Unlimited", "n000001");
         assertEquals("Test", theme.getName());
         assertEquals("Testing Unlimited", theme.getOrganization());
+        assertEquals("n000001", theme.getOrganizationId());
     }
 
     @Test
@@ -45,10 +46,12 @@ public class ThemeTest {
         theme.setId(1L);
         theme.setName("Test");
         theme.setOrganization("Testing Unlimited");
+        theme.setOrganizationId("n000001");
 
         assertEquals(1L, theme.getId(), 1);
         assertEquals("Test", theme.getName());
         assertEquals("Testing Unlimited", theme.getOrganization());
+        assertEquals("n000001", theme.getOrganizationId());
 
         Home home = new Home();
 

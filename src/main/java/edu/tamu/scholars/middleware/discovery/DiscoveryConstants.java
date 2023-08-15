@@ -10,11 +10,15 @@ public class DiscoveryConstants {
 
     public static final String CLASS = "class";
 
+    public static final String ABSTRACT = "abstract";
+
     public static final String TYPE = "type";
 
     public static final String SNIPPET = "snippet";
 
     public static final String MOD_TIME = "modTime";
+
+    public static final String SYNC_IDS = "syncIds";
 
     public static final String QUERY_DELIMETER = ":";
 
@@ -29,7 +33,5 @@ public class DiscoveryConstants {
     public static final String DISCOVERY_MODEL_PACKAGE = "edu.tamu.scholars.middleware.discovery.model";
 
     public static final String PARENTHESES_TEMPLATE = "(%s)";
-    
-    public static final String COLLECTION = "scholars-discovery";
 
 }

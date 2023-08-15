@@ -8,13 +8,13 @@
     - name
     - preferredTitle
     - researchAreas
-    - positionOrganization
+    - positions.organizations
   fields:
     - type
     - name
     - preferredTitle
     - positions
-    - positionOrganization
+    - positions.organizations
     - researchAreas
     - thumbnail
   facets:
@@ -27,7 +27,7 @@
       collapsed: true
       hidden: false
     - name: Organization
-      field: positionOrganization
+      field: positions.organizations
       type: STRING
       sort: COUNT
       direction: DESC
@@ -109,7 +109,7 @@
     - columnHeader: Position
       valuePath: positions
     - columnHeader: Department
-      valuePath: positionOrganization
+      valuePath: positions.organizations
     - columnHeader: Individual
       valuePath: individual
     - columnHeader: ORCID
@@ -128,7 +128,7 @@
     - preferredTitle
     - overview
     - positions
-    - positionOrganization
+    - positions.organizations
     - thumbnail
   facets:
     - name: People
@@ -140,7 +140,7 @@
       collapsed: true
       hidden: false
     - name: Organization
-      field: positionOrganization
+      field: positions.organizations
       type: STRING
       sort: COUNT
       direction: DESC
@@ -185,7 +185,7 @@
     - columnHeader: Position
       valuePath: preferredTitle
     - columnHeader: Department
-      valuePath: positionOrganization
+      valuePath: positions.organizations
     - columnHeader: Overview
       valuePath: overview
     - columnHeader: Individual
@@ -206,7 +206,7 @@
     - publicationDate
     - publisher
     - authors
-    - authorOrganization
+    - authors.organizations
     - doi
     - pmcid
     - uri
@@ -238,7 +238,7 @@
       collapsed: true
       hidden: false
     - name: Author Organization
-      field: authorOrganization
+      field: authors.organizations
       type: STRING
       sort: COUNT
       direction: DESC
@@ -329,7 +329,7 @@
     - columnHeader: Author
       valuePath: authors
     - columnHeader: Author's department
-      valuePath: authorOrganization
+      valuePath: authors.organizations
     - columnHeader: DOI
       valuePath: doi
     - columnHeader: PubMed ID
@@ -353,12 +353,12 @@
   fields:
     - type
     - title
-    - dateTimeIntervalStart
-    - dateTimeIntervalEnd
+    - startDateTime
+    - endDateTime
     - awardedBy
     - contributors
     - contributors.role
-    - contributors.organization
+    - contributors.organizations
   facets:
     - name: Grants
       field: type
@@ -385,7 +385,7 @@
       collapsed: true
       hidden: false
     - name: Contributor Organization
-      field: contributorOrganization
+      field: contributors.organizations
       type: STRING
       sort: COUNT
       direction: DESC
@@ -409,7 +409,7 @@
       collapsed: true
       hidden: false
     - name: Year Start
-      field: dateTimeIntervalStart
+      field: startDateTime
       opKey: BETWEEN
       type: DATE_YEAR
       sort: COUNT
@@ -418,7 +418,7 @@
       collapsed: true
       hidden: false
     - name: Year End
-      field: dateTimeIntervalEnd
+      field: endDateTime
       opKey: BETWEEN
       type: DATE_YEAR
       sort: COUNT
@@ -448,9 +448,9 @@
     - columnHeader: Grant title
       valuePath: title
     - columnHeader: Grant date start
-      valuePath: dateTimeIntervalStart
+      valuePath: startDateTime
     - columnHeader: Grant date end
-      valuePath: dateTimeIntervalEnd
+      valuePath: endDateTime
     - columnHeader: Awarded by
       valuePath: awardedBy
     - columnHeader: Principal investigators
@@ -652,7 +652,7 @@
     - type
     - name
     - futureResearchIdeaOf
-    - futureResearchIdeaOfOrganization
+    - futureResearchIdeaOf.organizations
     - createdDate
   facets:
     - name: People
@@ -664,7 +664,7 @@
       collapsed: true
       hidden: false
     - name: Organization
-      field: futureResearchIdeaOfOrganization
+      field: futureResearchIdeaOf.organizations
       type: STRING
       sort: COUNT
       direction: DESC
@@ -697,7 +697,7 @@
     - columnHeader: Researcher
       valuePath: futureResearchIdeaOf
     - columnHeader: Researcher Organization
-      valuePath: futureResearchIdeaOfOrganization
+      valuePath: futureResearchIdeaOf.organizations
     - columnHeader: Individual
       valuePath: individual
 

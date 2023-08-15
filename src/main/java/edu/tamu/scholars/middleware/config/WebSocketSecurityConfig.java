@@ -29,6 +29,7 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
             .simpSubscribeDestMatchers(
                     "/queue/public",
                     "/queue/themes",
+                    "/queue/dataAndAnalyticsViews",
                     "/queue/directoryViews",
                     "/queue/discoveryViews",
                     "/queue/displayViews",

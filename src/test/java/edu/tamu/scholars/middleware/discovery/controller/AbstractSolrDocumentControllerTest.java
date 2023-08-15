@@ -53,7 +53,7 @@ public abstract class AbstractSolrDocumentControllerTest<D extends AbstractIndex
                 .andExpect(content().contentType(HAL_JSON_VALUE))
                 .andExpect(jsonPath("page.size", equalTo(10)))
                 .andExpect(jsonPath("page.totalElements", equalTo(numberOfDocuments)))
-                .andExpect(jsonPath("page.totalPages", equalTo(3)))
+                .andExpect(jsonPath("page.totalPages", equalTo(1)))
                 .andExpect(jsonPath("page.number", equalTo(1)))
                 .andDo(
                     document(
@@ -64,10 +64,7 @@ public abstract class AbstractSolrDocumentControllerTest<D extends AbstractIndex
                             parameterWithName("sort").description("The page sort [field,asc/desc].")
                         ),
                         links(
-                            linkWithRel("first").description("First page link for this resource."),
-                            linkWithRel("self").description("Canonical link for this resource."),
-                            linkWithRel("next").description("Next page link for this resource."),
-                            linkWithRel("last").description("Last page link for this resource.")
+                            linkWithRel("self").description("Canonical link for this resource.")
                         ),
                         responseFields(
                             subsectionWithPath("_embedded.individual").description(String.format("An array of <<resources-%s, %s resources>>.", "individual", getType().getSimpleName())),
