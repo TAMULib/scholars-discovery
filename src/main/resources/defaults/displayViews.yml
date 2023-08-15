@@ -77,7 +77,7 @@
           - field: class
             value: Relationship AND type:Grant
             opKey: EXPRESSION
-  - name: 5 Year Publications
+  - name: Last 5 Years
     contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     lazyReferences:
@@ -127,7 +127,7 @@
         - field: class
           value: Relationship AND type:Grant
           opKey: EXPRESSION
-  - name: 8 Year Publications
+  - name: Last 8 Years
     contentTemplate: "defaults/displayViews/persons/8YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     lazyReferences:
@@ -930,7 +930,7 @@
   asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
   asideLocation: RIGHT
   exportViews:
-  - name: 5 Year Publications
+  - name: Last 5 Years
     contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     multipleReference:
@@ -987,7 +987,7 @@
         - field: class
           value: Relationship AND type:Grant
           opKey: EXPRESSION
-  - name: 8 Year Publications
+  - name: Last 8 Years
     contentTemplate: "defaults/displayViews/persons/8YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
     multipleReference:

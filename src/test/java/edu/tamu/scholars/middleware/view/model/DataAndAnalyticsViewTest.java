@@ -37,6 +37,7 @@ public class DataAndAnalyticsViewTest {
         assertEquals(1L, dataAndAnalyticsView.getId(), 1);
         assertEquals(MOCK_VIEW_NAME, dataAndAnalyticsView.getName());
         assertEquals(Layout.GRID, dataAndAnalyticsView.getLayout());
+        assertEquals(ContainerType.PROFILE_SUMMARIES_EXPORT, dataAndAnalyticsView.getType());
 
         assertTrue(dataAndAnalyticsView.getTemplates().containsKey("default"));
         assertEquals("<h1>Element template from WSYWIG</h1>", dataAndAnalyticsView.getTemplates().get("default"));

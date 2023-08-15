@@ -4,19 +4,18 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.tamu.scholars.middleware.discovery.argument.DiscoveryQuantityDistributionDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.DiscoveryAcademicAgeDescriptor;
+import edu.tamu.scholars.middleware.discovery.argument.DiscoveryQuantityDistributionDescriptor;
 import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
-import edu.tamu.scholars.middleware.discovery.response.DiscoveryQuantityDistribution;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryAcademicAge;
+import edu.tamu.scholars.middleware.discovery.response.DiscoveryQuantityDistribution;
 
 @RestController
 @RequestMapping("/individual/analytics")
@@ -25,8 +24,7 @@ public class IndividualAnalyticsController {
     @Autowired
     private IndividualRepo repo;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/aca")
+    @GetMapping("/academicAge")
     public ResponseEntity<DiscoveryAcademicAge> academicAge(
         QueryArg query,
         List<FilterArg> filters,
