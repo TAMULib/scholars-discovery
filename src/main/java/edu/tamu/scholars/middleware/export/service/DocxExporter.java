@@ -64,7 +64,7 @@ public class DocxExporter extends AbstractDocxExporter {
 
         return outputStream -> {
             try {
-                final ObjectNode node = mapper.valueToTree(individual.getContent());
+                final ObjectNode node = mapper.valueToTree(individual);
                 final WordprocessingMLPackage pkg = createDocx(node, exportView.get());
 
                 pkg.save(outputStream);

@@ -53,8 +53,8 @@ public class ZipDocxExporter extends AbstractDocxExporter {
     }
 
     @Override
-    public StreamingResponseBody streamIndividual(Individual document, String name) {
-        final List<String> type = document.getType();
+    public StreamingResponseBody streamIndividual(Individual individual, String name) {
+        final List<String> type = individual.getType();
 
         Optional<DisplayView> displayView = displayViewRepo.findByTypesIn(type);
 
@@ -74,7 +74,7 @@ public class ZipDocxExporter extends AbstractDocxExporter {
 
         return outputStream -> {
 
-            final ObjectNode node = mapper.valueToTree(document);
+            final ObjectNode node = mapper.valueToTree(individual);
 
             Optional<ExportFieldView> multipleReference = Optional.ofNullable(exportView.get().getMultipleReference());
 
@@ -85,10 +85,10 @@ public class ZipDocxExporter extends AbstractDocxExporter {
                 List<String> ids = extractIds(reference);
                 referenceDocuments.addAll(fetchLazyReference(multipleReference.get(), ids));
             } else {
-                referenceDocuments.add(document);
+                referenceDocuments.add(individual);
             }
 
-            File zipFile = File.createTempFile(document.getId(), ".zip");
+            File zipFile = File.createTempFile(individual.getId(), ".zip");
 
             try (
                 FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
