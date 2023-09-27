@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import edu.tamu.scholars.middleware.export.exception.ExportException;
 import edu.tamu.scholars.middleware.export.exception.ExportQueryParameterRequiredException;
+import edu.tamu.scholars.middleware.export.exception.UnauthorizedExportException;
 import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
 import edu.tamu.scholars.middleware.export.exception.UnsupportedExporterTypeException;
 
@@ -41,6 +42,12 @@ public class ExportControllerAdvice {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = ExportQueryParameterRequiredException.class)
     public @ResponseBody String handleExportQueryParameterRequiredException(ExportQueryParameterRequiredException exception) {
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(value = UnauthorizedExportException.class)
+    public @ResponseBody String handleUnauthorizedExportException(UnauthorizedExportException exception) {
         return exception.getMessage();
     }
 

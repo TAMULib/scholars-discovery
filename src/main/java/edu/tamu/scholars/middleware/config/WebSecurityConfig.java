@@ -140,6 +140,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .expressionHandler(securityExpressionHandler)
 
                 .antMatchers(PATCH,
+                    "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
@@ -152,6 +153,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
 
                 .antMatchers(POST,
+                    "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
@@ -165,6 +167,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
 
                 .antMatchers(PUT,
+                    "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
@@ -185,6 +188,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasRole("ADMIN")
 
                 .antMatchers(DELETE,
+                    "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
