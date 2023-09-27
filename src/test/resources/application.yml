@@ -102,6 +102,8 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
+  liquibase:
+    enabled: true
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true
@@ -120,8 +122,8 @@ spring:
     password: scholars
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
-    generate-ddl: true
-    hibernate.ddl-auto: create
+    generate-ddl: false
+    hibernate.ddl-auto: none
     open-in-view: false
     properties:
       hibernate:

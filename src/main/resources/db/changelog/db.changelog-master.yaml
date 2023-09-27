@@ -1,0 +1,3243 @@
+databaseChangeLog:
+- changeSet:
+    id: 1695831558937-1
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_F
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: LAYOUT
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: TYPE
+            type: VARCHAR(255)
+        tableName: DATA_AND_ANALYTICS_VIEWS
+- changeSet:
+    id: 1695831558937-2
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_AND_ANALYTICS_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: DOUBLE PRECISION
+        tableName: DATA_AND_ANALYTICS_VIEW_BOOSTS
+- changeSet:
+    id: 1695831558937-3
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_AND_ANALYTICS_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: COLUMN_HEADER
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE_PATH
+            type: VARCHAR(255)
+        tableName: DATA_AND_ANALYTICS_VIEW_EXPORT
+- changeSet:
+    id: 1695831558937-4
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_AND_ANALYTICS_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: COLLAPSED
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: COLLAPSIBLE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: EXPANDABLE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: HIDDEN
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: PAGE_NUMBER
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: PAGE_SIZE
+            type: INT
+        - column:
+            name: RANGE_END
+            type: VARCHAR(255)
+        - column:
+            name: RANGE_GAP
+            type: VARCHAR(255)
+        - column:
+            name: RANGE_START
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: SORT
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: TYPE
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: USE_DIALOG
+            type: BOOLEAN
+        tableName: DATA_AND_ANALYTICS_VIEW_FACETS
+- changeSet:
+    id: 1695831558937-5
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_AND_ANALYTICS_VIEW_ID
+            type: BIGINT
+        - column:
+            name: FIELDS
+            type: VARCHAR(255)
+        tableName: DATA_AND_ANALYTICS_VIEW_FIELDS
+- changeSet:
+    id: 1695831558937-6
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_AND_ANALYTICS_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: DATA_AND_ANALYTICS_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-7
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_AND_ANALYTICS_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: DATE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        tableName: DATA_AND_ANALYTICS_VIEW_SORT
+- changeSet:
+    id: 1695831558937-8
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_AND_ANALYTICS_VIEW_ID
+            type: BIGINT
+        - column:
+            name: STYLES
+            type: VARCHAR(255)
+        tableName: DATA_AND_ANALYTICS_VIEW_STYLES
+- changeSet:
+    id: 1695831558937-9
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_FE
+            name: DATA_AND_ANALYTICS_VIEW_ID
+            type: BIGINT
+        - column:
+            name: TEMPLATE
+            type: CLOB
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_FE
+            name: KEY
+            type: VARCHAR(255)
+        tableName: DATA_AND_ANALYTICS_VIEW_TEMPLATES
+- changeSet:
+    id: 1695831558937-10
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_F1
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: LAYOUT
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        tableName: DIRECTORY_VIEWS
+- changeSet:
+    id: 1695831558937-11
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: DOUBLE PRECISION
+        tableName: DIRECTORY_VIEW_BOOSTS
+- changeSet:
+    id: 1695831558937-12
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: COLUMN_HEADER
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE_PATH
+            type: VARCHAR(255)
+        tableName: DIRECTORY_VIEW_EXPORT
+- changeSet:
+    id: 1695831558937-13
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: COLLAPSED
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: COLLAPSIBLE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: EXPANDABLE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: HIDDEN
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: PAGE_NUMBER
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: PAGE_SIZE
+            type: INT
+        - column:
+            name: RANGE_END
+            type: VARCHAR(255)
+        - column:
+            name: RANGE_GAP
+            type: VARCHAR(255)
+        - column:
+            name: RANGE_START
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: SORT
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: TYPE
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: USE_DIALOG
+            type: BOOLEAN
+        tableName: DIRECTORY_VIEW_FACETS
+- changeSet:
+    id: 1695831558937-14
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: FIELDS
+            type: VARCHAR(255)
+        tableName: DIRECTORY_VIEW_FIELDS
+- changeSet:
+    id: 1695831558937-15
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: DIRECTORY_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-16
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: OPTIONS
+            type: VARCHAR(255)
+        tableName: DIRECTORY_VIEW_OPTIONS
+- changeSet:
+    id: 1695831558937-17
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: DATE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        tableName: DIRECTORY_VIEW_SORT
+- changeSet:
+    id: 1695831558937-18
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: STYLES
+            type: VARCHAR(255)
+        tableName: DIRECTORY_VIEW_STYLES
+- changeSet:
+    id: 1695831558937-19
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_4
+            name: DIRECTORY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: TEMPLATE
+            type: CLOB
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_4
+            name: KEY
+            type: VARCHAR(255)
+        tableName: DIRECTORY_VIEW_TEMPLATES
+- changeSet:
+    id: 1695831558937-20
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_E
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: LAYOUT
+            type: VARCHAR(255)
+        - column:
+            name: DEFAULT_SEARCH_FIELD
+            type: VARCHAR(255)
+        - column:
+            name: HIGHLIGHT_POSTFIX
+            type: VARCHAR(255)
+        - column:
+            name: HIGHLIGHT_PREFIX
+            type: VARCHAR(255)
+        tableName: DISCOVERY_VIEWS
+- changeSet:
+    id: 1695831558937-21
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: DOUBLE PRECISION
+        tableName: DISCOVERY_VIEW_BOOSTS
+- changeSet:
+    id: 1695831558937-22
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: COLUMN_HEADER
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE_PATH
+            type: VARCHAR(255)
+        tableName: DISCOVERY_VIEW_EXPORT
+- changeSet:
+    id: 1695831558937-23
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: COLLAPSED
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: COLLAPSIBLE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: EXPANDABLE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: HIDDEN
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: PAGE_NUMBER
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: PAGE_SIZE
+            type: INT
+        - column:
+            name: RANGE_END
+            type: VARCHAR(255)
+        - column:
+            name: RANGE_GAP
+            type: VARCHAR(255)
+        - column:
+            name: RANGE_START
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: SORT
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: TYPE
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: USE_DIALOG
+            type: BOOLEAN
+        tableName: DISCOVERY_VIEW_FACETS
+- changeSet:
+    id: 1695831558937-24
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: FIELDS
+            type: VARCHAR(255)
+        tableName: DISCOVERY_VIEW_FIELDS
+- changeSet:
+    id: 1695831558937-25
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: DISCOVERY_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-26
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: HIGHLIGHT_FIELDS
+            type: VARCHAR(255)
+        tableName: DISCOVERY_VIEW_HIGHLIGHT_FIELDS
+- changeSet:
+    id: 1695831558937-27
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: DATE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        tableName: DISCOVERY_VIEW_SORT
+- changeSet:
+    id: 1695831558937-28
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: STYLES
+            type: VARCHAR(255)
+        tableName: DISCOVERY_VIEW_STYLES
+- changeSet:
+    id: 1695831558937-29
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_7
+            name: DISCOVERY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: TEMPLATE
+            type: CLOB
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_7
+            name: KEY
+            type: VARCHAR(255)
+        tableName: DISCOVERY_VIEW_TEMPLATES
+- changeSet:
+    id: 1695831558937-30
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_8
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            name: CONTENT_TEMPLATE
+            type: CLOB
+        - column:
+            name: HEADER_TEMPLATE
+            type: CLOB
+        - column:
+            name: MULTIPLE_REFERENCE_ID
+            type: BIGINT
+        - column:
+            name: EXPORT_VIEW_ID
+            type: BIGINT
+        tableName: DISPLAY_EXPORT_VIEWS
+- changeSet:
+    id: 1695831558937-31
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_B
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: order
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: HIDDEN
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: PAGE_SIZE
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: PAGINATED
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: SHARED
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: TEMPLATE
+            type: CLOB
+        - column:
+            name: DISPLAY_TAB_VIEW_ID
+            type: BIGINT
+        tableName: DISPLAY_SECTIONS
+- changeSet:
+    id: 1695831558937-32
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISPLAY_SECTION_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: DISPLAY_SECTION_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-33
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISPLAY_SECTION_VIEW_ID
+            type: BIGINT
+        - column:
+            name: LAZY_REFERENCES
+            type: VARCHAR(255)
+        tableName: DISPLAY_SECTION_VIEW_LAZY_REFERENCES
+- changeSet:
+    id: 1695831558937-34
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISPLAY_SECTION_VIEW_ID
+            type: BIGINT
+        - column:
+            name: REQUIRED_FIELDS
+            type: VARCHAR(255)
+        tableName: DISPLAY_SECTION_VIEW_REQUIRED_FIELDS
+- changeSet:
+    id: 1695831558937-35
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISPLAY_SECTION_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: DATE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        tableName: DISPLAY_SECTION_VIEW_SORT
+- changeSet:
+    id: 1695831558937-36
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_2
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: order
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: PAGE_SIZE
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: TEMPLATE
+            type: CLOB
+        - column:
+            name: DISPLAY_TAB_SECTION_ID
+            type: BIGINT
+        tableName: DISPLAY_SUBSECTIONS
+- changeSet:
+    id: 1695831558937-37
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISPLAY_SUBSECTION_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: DISPLAY_SUBSECTION_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-38
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISPLAY_SUBSECTION_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: DATE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        tableName: DISPLAY_SUBSECTION_VIEW_SORT
+- changeSet:
+    id: 1695831558937-39
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_EC
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: HIDDEN
+            type: BOOLEAN
+        - column:
+            name: DISPLAY_VIEW_ID
+            type: BIGINT
+        tableName: DISPLAY_TABS
+- changeSet:
+    id: 1695831558937-40
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_9
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: ASIDE_LOCATION
+            type: VARCHAR(255)
+        - column:
+            name: ASIDE_TEMPLATE
+            type: CLOB
+        - column:
+            name: LEFT_SCAN_TEMPLATE
+            type: CLOB
+        - column:
+            constraints:
+              nullable: false
+            name: MAIN_CONTENT_TEMPLATE
+            type: CLOB
+        - column:
+            name: RIGHT_SCAN_TEMPLATE
+            type: CLOB
+        tableName: DISPLAY_VIEWS
+- changeSet:
+    id: 1695831558937-41
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_E9
+            name: DISPLAY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: EMBED_TEMPLATE
+            type: CLOB
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_E9
+            name: NAME
+            type: VARCHAR(255)
+        tableName: DISPLAY_VIEW_EMBED_TEMPLATES
+- changeSet:
+    id: 1695831558937-42
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_1
+            name: DISPLAY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: META_TEMPLATE
+            type: CLOB
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_1
+            name: NAME
+            type: VARCHAR(255)
+        tableName: DISPLAY_VIEW_META_TEMPLATES
+- changeSet:
+    id: 1695831558937-43
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DISPLAY_VIEW_ID
+            type: BIGINT
+        - column:
+            name: TYPES
+            type: VARCHAR(255)
+        tableName: DISPLAY_VIEW_TYPES
+- changeSet:
+    id: 1695831558937-44
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_89
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: order
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: limit
+            type: INT
+        - column:
+            name: EXPORT_FIELD_ID
+            type: BIGINT
+        tableName: EXPORT_FIELDS
+- changeSet:
+    id: 1695831558937-45
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: EXPORT_FIELD_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: OP_KEY
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: EXPORT_FIELD_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-46
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: EXPORT_FIELD_VIEW_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: DATE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: DIRECTION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: FIELD
+            type: VARCHAR(255)
+        tableName: EXPORT_FIELD_VIEW_SORT
+- changeSet:
+    id: 1695831558937-47
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SPRING_SESSION_PK
+            name: PRIMARY_ID
+            type: CHAR(36)
+        - column:
+            constraints:
+              nullable: false
+            name: SESSION_ID
+            type: CHAR(36)
+        - column:
+            constraints:
+              nullable: false
+            name: CREATION_TIME
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: LAST_ACCESS_TIME
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: MAX_INACTIVE_INTERVAL
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: EXPIRY_TIME
+            type: BIGINT
+        - column:
+            name: PRINCIPAL_NAME
+            type: VARCHAR(100)
+        tableName: SPRING_SESSION
+- changeSet:
+    id: 1695831558937-48
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SPRING_SESSION_ATTRIBUTES_PK
+            name: SESSION_PRIMARY_ID
+            type: CHAR(36)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SPRING_SESSION_ATTRIBUTES_PK
+            name: ATTRIBUTE_NAME
+            type: VARCHAR(200)
+        - column:
+            constraints:
+              nullable: false
+            name: ATTRIBUTE_BYTES
+            type: VARBINARY(2147483647)
+        tableName: SPRING_SESSION_ATTRIBUTES
+- changeSet:
+    id: 1695831558937-49
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_93
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIVE
+            type: BOOLEAN
+        - column:
+            name: COPYRIGHT
+            type: VARCHAR(255)
+        - column:
+            name: BANNER_ALT_TEXT
+            type: VARCHAR(255)
+        - column:
+            name: BANNER_IMAGE_URI
+            type: VARCHAR(255)
+        - column:
+            name: NAVBAR_BRAND_TEXT
+            type: VARCHAR(255)
+        - column:
+            name: NAVBAR_BRAND_URI
+            type: VARCHAR(255)
+        - column:
+            name: NAVBAR_LOGO_URI
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: HEROES_NAVIGABLE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: ORGANIZATION
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: ORGANIZATION_ID
+            type: VARCHAR(255)
+        tableName: THEMES
+- changeSet:
+    id: 1695831558937-50
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: KEY
+            type: VARCHAR(255)
+        - column:
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: THEME_BANNER_VARIABLES
+- changeSet:
+    id: 1695831558937-51
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: KEY
+            type: VARCHAR(255)
+        - column:
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: THEME_COLORS
+- changeSet:
+    id: 1695831558937-52
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: LABEL
+            type: VARCHAR(255)
+        - column:
+            name: URI
+            type: VARCHAR(255)
+        tableName: THEME_FOOTER_LINKS
+- changeSet:
+    id: 1695831558937-53
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: KEY
+            type: VARCHAR(255)
+        - column:
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: THEME_FOOTER_VARIABLES
+- changeSet:
+    id: 1695831558937-54
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: KEY
+            type: VARCHAR(255)
+        - column:
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: THEME_HEADER_VARIABLES
+- changeSet:
+    id: 1695831558937-55
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: BASE_TEXT
+            type: CLOB
+        - column:
+            name: FONT_COLOR
+            type: VARCHAR(255)
+        - column:
+            name: HELP_TEXT
+            type: CLOB
+        - column:
+            name: IMAGE_ALT
+            type: VARCHAR(255)
+        - column:
+            name: IMAGE_URI
+            type: VARCHAR(255)
+        - column:
+            name: LINK_COLOR
+            type: VARCHAR(255)
+        - column:
+            name: LINK_HOVER_COLOR
+            type: VARCHAR(255)
+        - column:
+            name: SLIDE_INTERVAL
+            type: INT
+        - column:
+            name: WATERMARK_IMAGE_URI
+            type: VARCHAR(255)
+        - column:
+            name: WATERMARK_TEXT
+            type: VARCHAR(255)
+        tableName: THEME_HEROES
+- changeSet:
+    id: 1695831558937-56
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: KEY
+            type: VARCHAR(255)
+        - column:
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: THEME_HOME_VARIABLES
+- changeSet:
+    id: 1695831558937-57
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: LABEL
+            type: VARCHAR(255)
+        - column:
+            name: URI
+            type: VARCHAR(255)
+        tableName: THEME_NAVBAR_LINKS
+- changeSet:
+    id: 1695831558937-58
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: KEY
+            type: VARCHAR(255)
+        - column:
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: THEME_NAVBAR_VARIABLES
+- changeSet:
+    id: 1695831558937-59
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: KEY
+            type: VARCHAR(255)
+        - column:
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: THEME_VARIABLES
+- changeSet:
+    id: 1695831558937-60
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: THEME_ID
+            type: BIGINT
+        - column:
+            name: KEY
+            type: VARCHAR(255)
+        - column:
+            name: VALUE
+            type: VARCHAR(255)
+        tableName: THEME_VARIANTS
+- changeSet:
+    id: 1695831558937-61
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CONSTRAINT_4D
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIVE
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: CONFIRMED
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: CREATED
+            type: TIMESTAMP
+        - column:
+            constraints:
+              nullable: false
+            name: EMAIL
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: ENABLED
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: FIRST_NAME
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: LAST_NAME
+            type: VARCHAR(64)
+        - column:
+            name: PASSWORD
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: ROLE
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: TIMESTAMP
+            type: TIMESTAMP
+        tableName: USERS
+- changeSet:
+    id: 1695831558937-62
+    author: William (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: USER_ID
+            type: BIGINT
+        - column:
+            name: OLD_PASSWORDS
+            type: VARCHAR(255)
+        tableName: USER_OLD_PASSWORDS
+- changeSet:
+    id: 1695831558937-63
+    author: William (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: NAME
+        constraintName: UK_2OJKXSMS6DYJTVQQRJVGOMJJ
+        tableName: DATA_AND_ANALYTICS_VIEWS
+- changeSet:
+    id: 1695831558937-64
+    author: William (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: NAME
+        constraintName: UK_3ESTNY12YBH85K7Y8J6GYYREP
+        tableName: THEMES
+- changeSet:
+    id: 1695831558937-65
+    author: William (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: NAME
+        constraintName: UK_3U3XI3FIS8805HQ65GL7018GW
+        tableName: DIRECTORY_VIEWS
+- changeSet:
+    id: 1695831558937-66
+    author: William (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: EMAIL
+        constraintName: UK_6DOTKOTT2KJSP8VW4D0M25FB7
+        tableName: USERS
+- changeSet:
+    id: 1695831558937-67
+    author: William (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: NAME
+        constraintName: UK_N9AOBW47OYV0DAKVFQMCO8H7R
+        tableName: DISPLAY_VIEWS
+- changeSet:
+    id: 1695831558937-68
+    author: William (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: NAME
+        constraintName: UK_OXQYGN8NDIFM6OGKH9WDLSN65
+        tableName: DISCOVERY_VIEWS
+- changeSet:
+    id: 1695831558937-69
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: USER_ID
+        indexName: FK197YYGMHXJFB4MTWR47LTDJUR_INDEX_5
+        tableName: USER_OLD_PASSWORDS
+- changeSet:
+    id: 1695831558937-70
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_SECTION_VIEW_ID
+        indexName: FK1MFB6PF3AQJKEAYJHGGOA55YT_INDEX_4
+        tableName: DISPLAY_SECTION_VIEW_LAZY_REFERENCES
+- changeSet:
+    id: 1695831558937-71
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FK2Y31OFPEKT1G2J2O960KJHTP_INDEX_B
+        tableName: DIRECTORY_VIEW_SORT
+- changeSet:
+    id: 1695831558937-72
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FK2YT9F73AOO86K1THX4RYNNTAA_INDEX_F
+        tableName: DIRECTORY_VIEW_OPTIONS
+- changeSet:
+    id: 1695831558937-73
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA_AND_ANALYTICS_VIEW_ID
+        indexName: FK3TCOY6IJM3EMOA4322C3BRGG9_INDEX_4
+        tableName: DATA_AND_ANALYTICS_VIEW_FIELDS
+- changeSet:
+    id: 1695831558937-74
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FK42FH2GQURI1UF3L6DJ5USOXKA_INDEX_1
+        tableName: THEME_FOOTER_LINKS
+- changeSet:
+    id: 1695831558937-75
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_VIEW_ID
+        indexName: FK5ITNKVC3EB3U0DQ6IUEA46133_INDEX_E
+        tableName: DISPLAY_TABS
+- changeSet:
+    id: 1695831558937-76
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FK5TRIIWL2IXLNP6AEEBQAIIAE6_INDEX_A
+        tableName: DISCOVERY_VIEW_STYLES
+- changeSet:
+    id: 1695831558937-77
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: EXPORT_FIELD_VIEW_ID
+        indexName: FK7AXA337DBXE7830N6C8BVSF3C_INDEX_D
+        tableName: EXPORT_FIELD_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-78
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FK85GBSOODU4MYR5NY05TDMIIQN_INDEX_4
+        tableName: DIRECTORY_VIEW_FIELDS
+- changeSet:
+    id: 1695831558937-79
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FK8TYTPU5RE15QDHTU08T325J6K_INDEX_6
+        tableName: THEME_VARIABLES
+- changeSet:
+    id: 1695831558937-80
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FK8U58V541CPB0C3RNQ3Y74W1V7_INDEX_4
+        tableName: DIRECTORY_VIEW_FACETS
+- changeSet:
+    id: 1695831558937-81
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FK8XGQOCY13IGYE6V44XD3KQKJS_INDEX_9
+        tableName: DISCOVERY_VIEW_FACETS
+- changeSet:
+    id: 1695831558937-82
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_SUBSECTION_VIEW_ID
+        indexName: FK92TMLR0CKW9FX43H44AEEVJGH_INDEX_A
+        tableName: DISPLAY_SUBSECTION_VIEW_SORT
+- changeSet:
+    id: 1695831558937-83
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_SECTION_VIEW_ID
+        indexName: FK9LEEHCQ3522K66I9NDPJWHD1V_INDEX_E
+        tableName: DISPLAY_SECTION_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-84
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FK9Q6KX6NKW7A8TMY9KMEIV5DN1_INDEX_E
+        tableName: DISCOVERY_VIEW_SORT
+- changeSet:
+    id: 1695831558937-85
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA_AND_ANALYTICS_VIEW_ID
+        indexName: FKAJMKMPM754P4C3DCSLE23BAMJ_INDEX_F
+        tableName: DATA_AND_ANALYTICS_VIEW_TEMPLATES
+- changeSet:
+    id: 1695831558937-86
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FKAWIF9EIF2PADV7E6Y702FEQ1S_INDEX_6
+        tableName: DIRECTORY_VIEW_STYLES
+- changeSet:
+    id: 1695831558937-87
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA_AND_ANALYTICS_VIEW_ID
+        indexName: FKC3SY82CGP43KBA26XRP9536T9_INDEX_4
+        tableName: DATA_AND_ANALYTICS_VIEW_FACETS
+- changeSet:
+    id: 1695831558937-88
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKDB108US65HIM2ENEQEOSM6UL1_INDEX_4
+        tableName: THEME_FOOTER_VARIABLES
+- changeSet:
+    id: 1695831558937-89
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKDH3C04L77FWGHD9UOR7CL4JFC_INDEX_C
+        tableName: THEME_NAVBAR_LINKS
+- changeSet:
+    id: 1695831558937-90
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FKDHT4YY735QLKGHW6IYNPD5VPY_INDEX_9
+        tableName: DISCOVERY_VIEW_FIELDS
+- changeSet:
+    id: 1695831558937-91
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKDRSDVJQQYB5LQEJI6C1FX539Q_INDEX_F
+        tableName: THEME_HEROES
+- changeSet:
+    id: 1695831558937-92
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FKEDR10WJX6HYS47BOSX4OE3YMB_INDEX_9
+        tableName: DISCOVERY_VIEW_BOOSTS
+- changeSet:
+    id: 1695831558937-93
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA_AND_ANALYTICS_VIEW_ID
+        indexName: FKEKAOX1TI0BCQXUTQXAKN232XU_INDEX_7
+        tableName: DATA_AND_ANALYTICS_VIEW_SORT
+- changeSet:
+    id: 1695831558937-94
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_SECTION_VIEW_ID
+        indexName: FKFKP2DVWKSCUQNUU2DQR9OM1IP_INDEX_5
+        tableName: DISPLAY_SECTION_VIEW_SORT
+- changeSet:
+    id: 1695831558937-95
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FKFOC0R07U0FU5U80CSTE8SITAT_INDEX_9
+        tableName: DISCOVERY_VIEW_EXPORT
+- changeSet:
+    id: 1695831558937-96
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKFRUJR5YHE8MVU7WJYPJKU0C3B_INDEX_E
+        tableName: THEME_COLORS
+- changeSet:
+    id: 1695831558937-97
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKG2E1EL3ADBV92FJX04W55QI0D_INDEX_C
+        tableName: THEME_VARIANTS
+- changeSet:
+    id: 1695831558937-98
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FKGLMOMLKKJCE7JKBQIX1KKXHJT_INDEX_4
+        tableName: DIRECTORY_VIEW_BOOSTS
+- changeSet:
+    id: 1695831558937-99
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FKHRJ2TBYJXOP1EAFKMUYUYW4YL_INDEX_4
+        tableName: DIRECTORY_VIEW_EXPORT
+- changeSet:
+    id: 1695831558937-100
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_VIEW_ID
+        indexName: FKHYRTB0CPLGKDR0RCBE6R7EBFV_INDEX_F
+        tableName: DISPLAY_VIEW_TYPES
+- changeSet:
+    id: 1695831558937-101
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: MULTIPLE_REFERENCE_ID
+        indexName: FKHYWYNO0U356T0EJFVEVP4MX59_INDEX_8
+        tableName: DISPLAY_EXPORT_VIEWS
+- changeSet:
+    id: 1695831558937-102
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKI7RL73BP218G021CVPV7MYPI8_INDEX_6
+        tableName: THEME_BANNER_VARIABLES
+- changeSet:
+    id: 1695831558937-103
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA_AND_ANALYTICS_VIEW_ID
+        indexName: FKIP6UW3NLSNJOPI5M8QD48GS33_INDEX_6
+        tableName: DATA_AND_ANALYTICS_VIEW_STYLES
+- changeSet:
+    id: 1695831558937-104
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_TAB_VIEW_ID
+        indexName: FKJ0NCVU4YU1J57I6RU2CKBSFBQ_INDEX_B
+        tableName: DISPLAY_SECTIONS
+- changeSet:
+    id: 1695831558937-105
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA_AND_ANALYTICS_VIEW_ID
+        indexName: FKJMSM0GCW2VTD7I7GAFCMV9CEC_INDEX_F
+        tableName: DATA_AND_ANALYTICS_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-106
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FKK1D8MW576GKUIA0LS8W50359R_INDEX_7
+        tableName: DISCOVERY_VIEW_TEMPLATES
+- changeSet:
+    id: 1695831558937-107
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FKK273TJN1BY3UCNDHNT4MSLMS3_INDEX_2
+        tableName: DISCOVERY_VIEW_HIGHLIGHT_FIELDS
+- changeSet:
+    id: 1695831558937-108
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_VIEW_ID
+        indexName: FKKG49T4WMERFRIEBVY6FELG89A_INDEX_E
+        tableName: DISPLAY_VIEW_EMBED_TEMPLATES
+- changeSet:
+    id: 1695831558937-109
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKL6IFYCWURES06F9P5AL9WEOIN_INDEX_1
+        tableName: THEME_HOME_VARIABLES
+- changeSet:
+    id: 1695831558937-110
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FKL9VGSBAC977SI32CNO27JUG4E_INDEX_1
+        tableName: DIRECTORY_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-111
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKLD6YWOHJPD0EQXEFON5XV9G2E_INDEX_4
+        tableName: THEME_HEADER_VARIABLES
+- changeSet:
+    id: 1695831558937-112
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: EXPORT_FIELD_VIEW_ID
+        indexName: FKLGUEDHA79C3MS01WGX90HEFG4_INDEX_9
+        tableName: EXPORT_FIELD_VIEW_SORT
+- changeSet:
+    id: 1695831558937-113
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA_AND_ANALYTICS_VIEW_ID
+        indexName: FKMAPF30OAGOE6A5BVKKRHEB8TQ_INDEX_4
+        tableName: DATA_AND_ANALYTICS_VIEW_EXPORT
+- changeSet:
+    id: 1695831558937-114
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: THEME_ID
+        indexName: FKN14FVBR987SY8QBYNK3OARQFW_INDEX_B
+        tableName: THEME_NAVBAR_VARIABLES
+- changeSet:
+    id: 1695831558937-115
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA_AND_ANALYTICS_VIEW_ID
+        indexName: FKN4QLBX0MNRWDSAK4SPLBM5P6S_INDEX_4
+        tableName: DATA_AND_ANALYTICS_VIEW_BOOSTS
+- changeSet:
+    id: 1695831558937-116
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_TAB_SECTION_ID
+        indexName: FKNNC55D4V3VJHMAFVKGTBI2383_INDEX_2
+        tableName: DISPLAY_SUBSECTIONS
+- changeSet:
+    id: 1695831558937-117
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISCOVERY_VIEW_ID
+        indexName: FKOXQMPPJ6AB8CHVLJ77D2G9UOI_INDEX_6
+        tableName: DISCOVERY_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-118
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_SUBSECTION_VIEW_ID
+        indexName: FKP6SQXK4JBYYCL2KXH9UHGDKLB_INDEX_F
+        tableName: DISPLAY_SUBSECTION_VIEW_FILTERS
+- changeSet:
+    id: 1695831558937-119
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: EXPORT_VIEW_ID
+        indexName: FKPJ2SNF3HAGFPOTM0WHNHOMHSL_INDEX_8
+        tableName: DISPLAY_EXPORT_VIEWS
+- changeSet:
+    id: 1695831558937-120
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: EXPORT_FIELD_ID
+        indexName: FKQEOVEJVLEO5YDF6DC4WQ81AOH_INDEX_8
+        tableName: EXPORT_FIELDS
+- changeSet:
+    id: 1695831558937-121
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DIRECTORY_VIEW_ID
+        indexName: FKRT276X6RGJQF6RLN949EO4AGR_INDEX_4
+        tableName: DIRECTORY_VIEW_TEMPLATES
+- changeSet:
+    id: 1695831558937-122
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_SECTION_VIEW_ID
+        indexName: FKSFMVBGXWY3C2AJBR0FCQDNT3Q_INDEX_1
+        tableName: DISPLAY_SECTION_VIEW_REQUIRED_FIELDS
+- changeSet:
+    id: 1695831558937-123
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DISPLAY_VIEW_ID
+        indexName: FKTJ3632C6Y6T3ARNCPGEM94NFM_INDEX_1
+        tableName: DISPLAY_VIEW_META_TEMPLATES
+- changeSet:
+    id: 1695831558937-124
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SESSION_PRIMARY_ID
+        indexName: SPRING_SESSION_ATTRIBUTES_FK_INDEX_B
+        tableName: SPRING_SESSION_ATTRIBUTES
+- changeSet:
+    id: 1695831558937-125
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SESSION_ID
+        indexName: SPRING_SESSION_IX1
+        tableName: SPRING_SESSION
+        unique: true
+- changeSet:
+    id: 1695831558937-126
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: EXPIRY_TIME
+        indexName: SPRING_SESSION_IX2
+        tableName: SPRING_SESSION
+- changeSet:
+    id: 1695831558937-127
+    author: William (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PRINCIPAL_NAME
+        indexName: SPRING_SESSION_IX3
+        tableName: SPRING_SESSION
+- changeSet:
+    id: 1695831558937-128
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: USER_ID
+        baseTableName: USER_OLD_PASSWORDS
+        constraintName: FK197YYGMHXJFB4MTWR47LTDJUR
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: USERS
+        validate: true
+- changeSet:
+    id: 1695831558937-129
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_SECTION_VIEW_ID
+        baseTableName: DISPLAY_SECTION_VIEW_LAZY_REFERENCES
+        constraintName: FK1MFB6PF3AQJKEAYJHGGOA55YT
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_SECTIONS
+        validate: true
+- changeSet:
+    id: 1695831558937-130
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_SORT
+        constraintName: FK2Y31OFPEKT1G2J2O960KJHTP
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-131
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_OPTIONS
+        constraintName: FK2YT9F73AOO86K1THX4RYNNTAA
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-132
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DATA_AND_ANALYTICS_VIEW_ID
+        baseTableName: DATA_AND_ANALYTICS_VIEW_FIELDS
+        constraintName: FK3TCOY6IJM3EMOA4322C3BRGG9
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DATA_AND_ANALYTICS_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-133
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_FOOTER_LINKS
+        constraintName: FK42FH2GQURI1UF3L6DJ5USOXKA
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-134
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_VIEW_ID
+        baseTableName: DISPLAY_TABS
+        constraintName: FK5ITNKVC3EB3U0DQ6IUEA46133
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-135
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_STYLES
+        constraintName: FK5TRIIWL2IXLNP6AEEBQAIIAE6
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-136
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: EXPORT_FIELD_VIEW_ID
+        baseTableName: EXPORT_FIELD_VIEW_FILTERS
+        constraintName: FK7AXA337DBXE7830N6C8BVSF3C
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: EXPORT_FIELDS
+        validate: true
+- changeSet:
+    id: 1695831558937-137
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_FIELDS
+        constraintName: FK85GBSOODU4MYR5NY05TDMIIQN
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-138
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_VARIABLES
+        constraintName: FK8TYTPU5RE15QDHTU08T325J6K
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-139
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_FACETS
+        constraintName: FK8U58V541CPB0C3RNQ3Y74W1V7
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-140
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_FACETS
+        constraintName: FK8XGQOCY13IGYE6V44XD3KQKJS
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-141
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_SUBSECTION_VIEW_ID
+        baseTableName: DISPLAY_SUBSECTION_VIEW_SORT
+        constraintName: FK92TMLR0CKW9FX43H44AEEVJGH
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_SUBSECTIONS
+        validate: true
+- changeSet:
+    id: 1695831558937-142
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_SECTION_VIEW_ID
+        baseTableName: DISPLAY_SECTION_VIEW_FILTERS
+        constraintName: FK9LEEHCQ3522K66I9NDPJWHD1V
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_SECTIONS
+        validate: true
+- changeSet:
+    id: 1695831558937-143
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_SORT
+        constraintName: FK9Q6KX6NKW7A8TMY9KMEIV5DN1
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-144
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DATA_AND_ANALYTICS_VIEW_ID
+        baseTableName: DATA_AND_ANALYTICS_VIEW_TEMPLATES
+        constraintName: FKAJMKMPM754P4C3DCSLE23BAMJ
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DATA_AND_ANALYTICS_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-145
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_STYLES
+        constraintName: FKAWIF9EIF2PADV7E6Y702FEQ1S
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-146
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DATA_AND_ANALYTICS_VIEW_ID
+        baseTableName: DATA_AND_ANALYTICS_VIEW_FACETS
+        constraintName: FKC3SY82CGP43KBA26XRP9536T9
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DATA_AND_ANALYTICS_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-147
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_FOOTER_VARIABLES
+        constraintName: FKDB108US65HIM2ENEQEOSM6UL1
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-148
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_NAVBAR_LINKS
+        constraintName: FKDH3C04L77FWGHD9UOR7CL4JFC
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-149
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_FIELDS
+        constraintName: FKDHT4YY735QLKGHW6IYNPD5VPY
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-150
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_HEROES
+        constraintName: FKDRSDVJQQYB5LQEJI6C1FX539Q
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-151
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_BOOSTS
+        constraintName: FKEDR10WJX6HYS47BOSX4OE3YMB
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-152
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DATA_AND_ANALYTICS_VIEW_ID
+        baseTableName: DATA_AND_ANALYTICS_VIEW_SORT
+        constraintName: FKEKAOX1TI0BCQXUTQXAKN232XU
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DATA_AND_ANALYTICS_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-153
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_SECTION_VIEW_ID
+        baseTableName: DISPLAY_SECTION_VIEW_SORT
+        constraintName: FKFKP2DVWKSCUQNUU2DQR9OM1IP
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_SECTIONS
+        validate: true
+- changeSet:
+    id: 1695831558937-154
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_EXPORT
+        constraintName: FKFOC0R07U0FU5U80CSTE8SITAT
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-155
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_COLORS
+        constraintName: FKFRUJR5YHE8MVU7WJYPJKU0C3B
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-156
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_VARIANTS
+        constraintName: FKG2E1EL3ADBV92FJX04W55QI0D
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-157
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_BOOSTS
+        constraintName: FKGLMOMLKKJCE7JKBQIX1KKXHJT
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-158
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_EXPORT
+        constraintName: FKHRJ2TBYJXOP1EAFKMUYUYW4YL
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-159
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_VIEW_ID
+        baseTableName: DISPLAY_VIEW_TYPES
+        constraintName: FKHYRTB0CPLGKDR0RCBE6R7EBFV
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-160
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: MULTIPLE_REFERENCE_ID
+        baseTableName: DISPLAY_EXPORT_VIEWS
+        constraintName: FKHYWYNO0U356T0EJFVEVP4MX59
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: EXPORT_FIELDS
+        validate: true
+- changeSet:
+    id: 1695831558937-161
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_BANNER_VARIABLES
+        constraintName: FKI7RL73BP218G021CVPV7MYPI8
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-162
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DATA_AND_ANALYTICS_VIEW_ID
+        baseTableName: DATA_AND_ANALYTICS_VIEW_STYLES
+        constraintName: FKIP6UW3NLSNJOPI5M8QD48GS33
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DATA_AND_ANALYTICS_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-163
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_TAB_VIEW_ID
+        baseTableName: DISPLAY_SECTIONS
+        constraintName: FKJ0NCVU4YU1J57I6RU2CKBSFBQ
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_TABS
+        validate: true
+- changeSet:
+    id: 1695831558937-164
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DATA_AND_ANALYTICS_VIEW_ID
+        baseTableName: DATA_AND_ANALYTICS_VIEW_FILTERS
+        constraintName: FKJMSM0GCW2VTD7I7GAFCMV9CEC
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DATA_AND_ANALYTICS_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-165
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_TEMPLATES
+        constraintName: FKK1D8MW576GKUIA0LS8W50359R
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-166
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_HIGHLIGHT_FIELDS
+        constraintName: FKK273TJN1BY3UCNDHNT4MSLMS3
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-167
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_VIEW_ID
+        baseTableName: DISPLAY_VIEW_EMBED_TEMPLATES
+        constraintName: FKKG49T4WMERFRIEBVY6FELG89A
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-168
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_HOME_VARIABLES
+        constraintName: FKL6IFYCWURES06F9P5AL9WEOIN
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-169
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_FILTERS
+        constraintName: FKL9VGSBAC977SI32CNO27JUG4E
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-170
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_HEADER_VARIABLES
+        constraintName: FKLD6YWOHJPD0EQXEFON5XV9G2E
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-171
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: EXPORT_FIELD_VIEW_ID
+        baseTableName: EXPORT_FIELD_VIEW_SORT
+        constraintName: FKLGUEDHA79C3MS01WGX90HEFG4
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: EXPORT_FIELDS
+        validate: true
+- changeSet:
+    id: 1695831558937-172
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DATA_AND_ANALYTICS_VIEW_ID
+        baseTableName: DATA_AND_ANALYTICS_VIEW_EXPORT
+        constraintName: FKMAPF30OAGOE6A5BVKKRHEB8TQ
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DATA_AND_ANALYTICS_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-173
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: THEME_ID
+        baseTableName: THEME_NAVBAR_VARIABLES
+        constraintName: FKN14FVBR987SY8QBYNK3OARQFW
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: THEMES
+        validate: true
+- changeSet:
+    id: 1695831558937-174
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DATA_AND_ANALYTICS_VIEW_ID
+        baseTableName: DATA_AND_ANALYTICS_VIEW_BOOSTS
+        constraintName: FKN4QLBX0MNRWDSAK4SPLBM5P6S
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DATA_AND_ANALYTICS_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-175
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_TAB_SECTION_ID
+        baseTableName: DISPLAY_SUBSECTIONS
+        constraintName: FKNNC55D4V3VJHMAFVKGTBI2383
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_SECTIONS
+        validate: true
+- changeSet:
+    id: 1695831558937-176
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISCOVERY_VIEW_ID
+        baseTableName: DISCOVERY_VIEW_FILTERS
+        constraintName: FKOXQMPPJ6AB8CHVLJ77D2G9UOI
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISCOVERY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-177
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_SUBSECTION_VIEW_ID
+        baseTableName: DISPLAY_SUBSECTION_VIEW_FILTERS
+        constraintName: FKP6SQXK4JBYYCL2KXH9UHGDKLB
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_SUBSECTIONS
+        validate: true
+- changeSet:
+    id: 1695831558937-178
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: EXPORT_VIEW_ID
+        baseTableName: DISPLAY_EXPORT_VIEWS
+        constraintName: FKPJ2SNF3HAGFPOTM0WHNHOMHSL
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-179
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: EXPORT_FIELD_ID
+        baseTableName: EXPORT_FIELDS
+        constraintName: FKQEOVEJVLEO5YDF6DC4WQ81AOH
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_EXPORT_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-180
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIRECTORY_VIEW_ID
+        baseTableName: DIRECTORY_VIEW_TEMPLATES
+        constraintName: FKRT276X6RGJQF6RLN949EO4AGR
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DIRECTORY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-181
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_SECTION_VIEW_ID
+        baseTableName: DISPLAY_SECTION_VIEW_REQUIRED_FIELDS
+        constraintName: FKSFMVBGXWY3C2AJBR0FCQDNT3Q
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_SECTIONS
+        validate: true
+- changeSet:
+    id: 1695831558937-182
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DISPLAY_VIEW_ID
+        baseTableName: DISPLAY_VIEW_META_TEMPLATES
+        constraintName: FKTJ3632C6Y6T3ARNCPGEM94NFM
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DISPLAY_VIEWS
+        validate: true
+- changeSet:
+    id: 1695831558937-183
+    author: William (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: SESSION_PRIMARY_ID
+        baseTableName: SPRING_SESSION_ATTRIBUTES
+        constraintName: SPRING_SESSION_ATTRIBUTES_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: RESTRICT
+        referencedColumnNames: PRIMARY_ID
+        referencedTableName: SPRING_SESSION
+        validate: true
+

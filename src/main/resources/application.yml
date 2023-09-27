@@ -111,6 +111,8 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
+  liquibase:
+    enabled: true
   main:
     allow-bean-definition-overriding: false
     allow-circular-references: true
@@ -123,15 +125,34 @@ spring:
       enabled: false
       path: /h2console
   datasource:
+
+    # h2
     driver-class-name: org.h2.Driver
+
+    # postgres
+    # driver-class-name: org.postgresql.Driver
+
+    # h2 in memory
     url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+
+    # h2 file
     # url: jdbc:h2:./h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+
+    # postgres
+    # url: jdbc:postgresql://localhost:5432/scholars
+
     username: scholars
     password: scholars
   jpa:
+
+    # h2
     database-platform: org.hibernate.dialect.H2Dialect
-    generate-ddl: true
-    hibernate.ddl-auto: create-drop
+
+    # postgres
+    # database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    generate-ddl: false
+    hibernate.ddl-auto: none
     open-in-view: false
     properties:
       hibernate:
@@ -140,19 +161,6 @@ spring:
     show-sql: false
   mail:
     host: relay.tamu.edu
-    #host: smtp.gmail.com
-    #username: scholarsdiscovery@gmail.com
-    #password:
-    #properties:
-    #  mail:
-    #    transport:
-    #      protocol: smtp
-    #    smtp:
-    #      port: 587
-    #      auth: true
-    #      starttls:
-    #        enable: true
-    #        required: true
   profiles:
     active: default
   session:
