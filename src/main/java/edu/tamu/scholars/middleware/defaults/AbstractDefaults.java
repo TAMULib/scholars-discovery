@@ -1,5 +1,7 @@
 package edu.tamu.scholars.middleware.defaults;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -23,9 +25,9 @@ import edu.tamu.scholars.middleware.model.repo.NamedRepo;
 
 public abstract class AbstractDefaults<E extends Named, R extends NamedRepo<E>> implements Defaults<E, R> {
 
-    private static final String CREATED_DEFAULTS = "Created %s %s defaults.";
+    private static final String CREATED_DEFAULTS = "Created {} {} defaults.";
 
-    private static final String UPDATED_DEFAULTS = "Updated %s %s defaults.";
+    private static final String UPDATED_DEFAULTS = "Updated {} {} defaults.";
 
     protected static final String CLASSPATH = "classpath:%s";
 
@@ -66,16 +68,16 @@ public abstract class AbstractDefaults<E extends Named, R extends NamedRepo<E>> 
             update(entity, existingEntity.get());
         } else {
             repo.save(entity);
-            logger.info(String.format(CREATED_DEFAULTS, this.getClass().getSimpleName(), entity.getName()));
+            logger.info(CREATED_DEFAULTS, this.getClass().getSimpleName(), entity.getName());
         }
     }
 
     @Override
     public void update(E entity, E existingEntity) {
         if (middleware.isUpdateDefaults()) {
-            BeanUtils.copyProperties(entity, existingEntity);
-            repo.save(entity);
-            logger.info(String.format(UPDATED_DEFAULTS, this.getClass().getSimpleName(), entity.getName()));
+            BeanUtils.copyProperties(entity, existingEntity, ID);
+            repo.save(existingEntity);
+            logger.info(UPDATED_DEFAULTS, this.getClass().getSimpleName(), entity.getName());
         }
     }
 

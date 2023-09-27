@@ -125,7 +125,7 @@ spring:
       enabled: false
       path: /h2console
   datasource:
-    
+
     # h2
     driver-class-name: org.h2.Driver
 
@@ -147,7 +147,7 @@ spring:
 
     # h2
     database-platform: org.hibernate.dialect.H2Dialect
-    
+
     # postgres
     # database-platform: org.hibernate.dialect.PostgreSQLDialect
 
