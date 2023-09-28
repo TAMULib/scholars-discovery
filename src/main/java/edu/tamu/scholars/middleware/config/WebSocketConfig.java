@@ -35,8 +35,8 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
         registry.setErrorHandler(new CustomStompSubProtocolErrorHandler());
         registry
             .addEndpoint("/connect")
-            .setAllowedOrigins(config.getAllowedOrigins().toArray(new String[config.getAllowedOrigins().size()])).withSockJS()
-            .setInterceptors(
+            .setAllowedOrigins(config.getAllowedOrigins().toArray(new String[config.getAllowedOrigins().size()]))
+            .addInterceptors(
                 new HttpSessionHandshakeInterceptor(),
                 // TODO: remove when patched in spring-session, https://github.com/spring-projects/spring-session/issues/561
                 new HandshakeInterceptor() {
