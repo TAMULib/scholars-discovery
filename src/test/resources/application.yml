@@ -132,19 +132,7 @@ spring:
         show_sql: false
     show-sql: false
   mail:
-    host: smtp.gmail.com
-    username: scholarsdiscovery@gmail.com
-    password:
-    properties:
-      mail:
-        transport:
-          protocol: smtp
-        smtp:
-          port: 587
-          auth: true
-          starttls:
-            enable: true
-            required: true
+    host: smtp-relay.tamu.edu
   profiles:
     active: test
   session:

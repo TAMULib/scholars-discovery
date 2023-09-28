@@ -160,7 +160,7 @@ spring:
         show_sql: false
     show-sql: false
   mail:
-    host: relay.tamu.edu
+    host: smtp-relay.tamu.edu
   profiles:
     active: default
   session:
