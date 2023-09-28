@@ -86,7 +86,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
 
     private boolean isAdmin(Authentication authentication) {
         return authentication.getAuthorities().stream()
-            .anyMatch(a -> a.getAuthority().equals("ADMIN") || a.getAuthority().equals("SUPER_ADMIN"));
+            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_SUPER_ADMIN"));
     }
 
     private void addResource(IndividualModel resource, ResourceLink link) {
