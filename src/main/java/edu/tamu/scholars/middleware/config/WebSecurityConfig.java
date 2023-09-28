@@ -29,6 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -113,7 +115,8 @@ public class WebSecurityConfig {
         primaryConfig.setAllowCredentials(true);
         primaryConfig.setAllowedOrigins(config.getAllowedOrigins());
         primaryConfig.setAllowedMethods(Arrays.asList("GET", "DELETE", "PUT", "POST", "PATCH", "OPTIONS"));
-        primaryConfig.setAllowedHeaders(Arrays.asList("Authorization", "Origin", "Content-Type"));
+        primaryConfig.setAllowedHeaders(Arrays.asList("Authorization", "Origin", "Content-Type", "Content-Disposition"));
+        primaryConfig.setExposedHeaders(Arrays.asList("Content-Disposition"));
 
         // NOTE: most general path must be last
         source.registerCorsConfiguration("/**", primaryConfig);
@@ -125,6 +128,14 @@ public class WebSecurityConfig {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource);
         return bean;
+    }
+
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        serializer.setUseHttpOnlyCookie(false);
+        serializer.setUseSecureCookie(false);
+        return serializer;
     }
 
     @Bean
