@@ -10,8 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -22,18 +20,23 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.scholars.middleware.auth.config.TokenConfig;
 import edu.tamu.scholars.middleware.auth.handler.CustomAccessDeniedExceptionHandler;
@@ -46,7 +49,7 @@ import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
     @Value("${spring.profiles.active:default}")
     private String profile;
@@ -112,7 +115,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         primaryConfig.setAllowCredentials(true);
         primaryConfig.setAllowedOrigins(config.getAllowedOrigins());
         primaryConfig.setAllowedMethods(Arrays.asList("GET", "DELETE", "PUT", "POST", "PATCH", "OPTIONS"));
-        primaryConfig.setAllowedHeaders(Arrays.asList("Authorization", "Origin", "Content-Type"));
+        primaryConfig.setAllowedHeaders(Arrays.asList("Authorization", "Origin", "Content-Type", "Content-Disposition"));
+        primaryConfig.setExposedHeaders(Arrays.asList("Content-Disposition"));
 
         // NOTE: most general path must be last
         source.registerCorsConfiguration("/**", primaryConfig);
@@ -126,8 +130,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return bean;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        serializer.setUseHttpOnlyCookie(false);
+        serializer.setUseSecureCookie(false);
+        return serializer;
+    }
+
+    @Bean
+    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         if (enableH2Console()) {
             // NOTE: permit all access to h2console
             http
@@ -140,6 +152,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .expressionHandler(securityExpressionHandler)
 
                 .antMatchers(PATCH,
+                    "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
@@ -152,6 +165,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
 
                 .antMatchers(POST,
+                    "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
@@ -165,6 +179,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
 
                 .antMatchers(PUT,
+                    "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
@@ -185,6 +200,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasRole("ADMIN")
 
                 .antMatchers(DELETE,
+                    "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
@@ -204,7 +220,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .permitAll()
             .and()
                 .logout()
-                    .deleteCookies("remove")
+                    .deleteCookies("SESSION")
                     .invalidateHttpSession(true)
                     .logoutSuccessHandler(logoutSuccessHandler())
                         .permitAll()
@@ -220,6 +236,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .csrf()
                     .disable();
+
+        http.sessionManagement()
+            .sessionFixation()
+                .migrateSession()
+            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+
+        return http.build();
     }
 
     private CustomAuthenticationSuccessHandler authenticationSuccessHandler() {

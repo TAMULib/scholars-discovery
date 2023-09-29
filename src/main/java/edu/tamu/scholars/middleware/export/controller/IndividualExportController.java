@@ -3,6 +3,7 @@ package edu.tamu.scholars.middleware.export.controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +25,7 @@ import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.Organization;
 import edu.tamu.scholars.middleware.discovery.model.Person;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
+import edu.tamu.scholars.middleware.export.exception.UnauthorizedExportException;
 import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
 import edu.tamu.scholars.middleware.export.service.Exporter;
 import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
@@ -42,6 +46,14 @@ public class IndividualExportController implements RepresentationModelProcessor<
         @RequestParam(value = "type", required = false, defaultValue = "docx") String type,
         @RequestParam(value = "name", required = true) String name
     ) throws UnknownExporterTypeException, IllegalArgumentException, IllegalAccessException {
+
+        if (type.equals("zip")) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (Objects.isNull(authentication) || !this.isAdmin(authentication)) {
+                throw new UnauthorizedExportException("Must be administrator to use zip exporter.");
+            }
+        }
+
         Optional<Individual> individual = repo.findById(id);
         if (individual.isPresent()) {
             Individual document = individual.get();
@@ -70,6 +82,11 @@ public class IndividualExportController implements RepresentationModelProcessor<
         }
 
         return resource;
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_SUPER_ADMIN"));
     }
 
     private void addResource(IndividualModel resource, ResourceLink link) {

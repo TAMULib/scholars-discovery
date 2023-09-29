@@ -36,7 +36,7 @@ public class SecurityExpressionConfig {
     }
 
     private String buildRoleHierarchy() {
-        return "ROLE_SUPER_ADMIN > ROLE_ADMIN > ROLE_USER";
+        return "ROLE_SUPER_ADMIN > ROLE_ADMIN\nROLE_ADMIN > ROLE_USER\n";
     }
 
 }
