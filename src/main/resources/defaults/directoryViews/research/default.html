@@ -10,6 +10,7 @@
 </div>
 <div>
   {{#if publicationDate}}
+  {{#if type}}
   <div>
     <span class="label">Publication Date:</span>
     {{#when type '~' 'NewsRelease' }}
@@ -19,6 +20,7 @@
     <span>{{toYear publicationDate}}</span>
     {{/when}}
   </div>
+  {{/if}}
   {{/if}}
   {{#if authors}}
   <div>
