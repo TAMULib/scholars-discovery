@@ -135,6 +135,8 @@ public class WebSecurityConfig {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
         serializer.setUseHttpOnlyCookie(false);
         serializer.setUseSecureCookie(false);
+        serializer.setCookiePath("/");
+        serializer.setCookieName("SESSION");
         return serializer;
     }
 
