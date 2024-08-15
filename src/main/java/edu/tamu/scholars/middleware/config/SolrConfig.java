@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 
 import edu.tamu.scholars.middleware.config.model.IndexConfig;
+import edu.tamu.scholars.middleware.discovery.service.IndexService;
 import edu.tamu.scholars.middleware.service.JwtTokenService;
 
 /**
@@ -79,7 +80,7 @@ public class SolrConfig {
             public NamedList<Object> request(SolrRequest<?> request, String collection)
                     throws SolrServerException, IOException {
 
-                if (Objects.isNull(request) || index.isSchematize() || index.isOnStartup()) {
+                if (index.isSchematize() || index.isOnStartup() || Objects.isNull(request)) {
                     return solrClient.request(request, collection);
                 }
 
@@ -138,6 +139,9 @@ public class SolrConfig {
                 NamedList<Object> response = null;
 
                 synchronized (map) {
+                    // if (map.containsKey(jwt)) {
+                    //     // remove file if file older than duration
+                    // }
                     map.put(jwt, uuid);
 
                     File directory = new File("src/test/resources/lookup_table");
@@ -170,7 +174,6 @@ public class SolrConfig {
 
                         mapper.writerWithDefaultPrettyPrinter().writeValue(lookupTable, map);
                     }
-
                 }
 
                 return response;
