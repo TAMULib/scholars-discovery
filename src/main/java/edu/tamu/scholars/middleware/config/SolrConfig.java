@@ -79,7 +79,7 @@ public class SolrConfig {
             public NamedList<Object> request(SolrRequest<?> request, String collection)
                     throws SolrServerException, IOException {
 
-                if (Objects.isNull(request)) {
+                if (Objects.isNull(request) || index.isSchematize() || index.isOnStartup()) {
                     return solrClient.request(request, collection);
                 }
 
