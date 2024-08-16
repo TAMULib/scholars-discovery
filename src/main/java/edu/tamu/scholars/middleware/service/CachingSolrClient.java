@@ -49,7 +49,7 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
     private final Map<String, File> lookup;
 
-    private Map<String, Map<String, String>> map;
+    private final Map<String, Map<String, String>> map;
 
     // there are different type of SolrClient
     C client;
