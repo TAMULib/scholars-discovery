@@ -40,7 +40,7 @@ import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
  * 
  */
 @RestController
-@RequestMapping("/individual")
+@RequestMapping("/individual/search")
 public class IndividualSearchController implements RepresentationModelProcessor<RepositorySearchesResource> {
 
     @Lazy
@@ -55,19 +55,19 @@ public class IndividualSearchController implements RepresentationModelProcessor<
     @Autowired
     private DiscoveryPagedResourcesAssembler<Individual> pagedAssembler;
 
-    @GetMapping("/search/findByIdIn")
+    @GetMapping("/findByIdIn")
     public ResponseEntity<CollectionModel<IndividualModel>> findByIdIn(
         @RequestParam(required = true) List<String> ids
     ) {
         return ResponseEntity.ok(assembler.toCollectionModel(repo.findByIdIn(ids)));
     }
 
-    @GetMapping("/search/findByType")
+    @GetMapping("/findByType")
     public ResponseEntity<CollectionModel<IndividualModel>> findByType(@RequestParam(required = true) String type) {
         return ResponseEntity.ok(assembler.toCollectionModel(repo.findByType(type)));
     }
 
-    @GetMapping("/search/recentlyUpdated")
+    @GetMapping("/recentlyUpdated")
     public ResponseEntity<CollectionModel<IndividualModel>> recentlyUpdated(
         @RequestParam(value = "limit", defaultValue = "10") int limit,
         List<FilterArg> filters
@@ -75,7 +75,7 @@ public class IndividualSearchController implements RepresentationModelProcessor<
         return ResponseEntity.ok(assembler.toCollectionModel(repo.findMostRecentlyUpdate(limit, filters)));
     }
 
-    @GetMapping("/search/advanced")
+    @GetMapping("/advanced")
     public ResponseEntity<PagedModel<IndividualModel>> search(
         QueryArg query,
         List<FacetArg> facets,
