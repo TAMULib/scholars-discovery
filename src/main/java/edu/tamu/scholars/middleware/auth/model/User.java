@@ -34,8 +34,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import edu.tamu.scholars.middleware.auth.details.CustomUserDetails;
 
 /**
- * Application `User` to identify, authenticate, and authorize. Encapsulated by
- * {@link CustomUserDetails} for Spring security integration.
+ * Represents a user in the application.
+ * 
+ * <p>The {@link User} entity is used to identify, authenticate, and authorize users within the application.
+ * It is integrated with Spring Security through the {@link CustomUserDetails} class. This class contains
+ * user details including personal information, authentication credentials, and role-based permissions.</p>
+ * 
+ * <p>The user entity is mapped to the database table "users" and includes fields for user identification, 
+ * authentication, and account management.</p>
  */
 @Entity
 @Table(name = "users")
@@ -98,6 +104,12 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean enabled;
 
+    /**
+     * Default constructor.
+     * 
+     * <p>Initializes the user's old passwords list, role, creation and update timestamps,
+     * confirmation status, active status, and enabled status with default values.</p>
+     */
     public User() {
         super();
         this.oldPasswords = new ArrayList<String>();
@@ -109,6 +121,13 @@ public class User implements Serializable {
         this.enabled = false;
     }
 
+    /**
+     * Constructs a new {@code User} with the specified first name, last name, and email.
+
+     * @param firstName the user's first name
+     * @param lastName  the user's last name
+     * @param email     the user's email address
+     */
     public User(String firstName, String lastName, String email) {
         this();
         this.firstName = firstName;
@@ -116,103 +135,228 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    /**
+     * Constructs a new {@code User} by copying properties from another {@code User} instance.
+
+     * @param user the {@code User} instance to copy properties from
+     */
     public User(User user) {
         this();
         copyProperties(user, this);
     }
 
+    /**
+     * Returns the unique identifier of the user.
+
+     * @return the user's ID
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier of the user.
+
+     * @param id the user's ID
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Returns the user's first name.
+
+     * @return the user's first name
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Sets the user's first name.
+
+     * @param firstName the user's first name
+     */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    /**
+     * Returns the user's last name.
+
+     * @return the user's last name
+     */
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * Sets the user's last name.
+
+     * @param lastName the user's last name
+     */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    /**
+     * Returns the user's email address.
+
+     * @return the user's email address
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Sets the user's email address.
+
+     * @param email the user's email address
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Returns the user's password.
+
+     * @return the user's password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets the user's password.
+
+     * @param password the user's password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Returns the list of old passwords for the user.
+
+     * @return the list of old passwords
+     */
     public List<String> getOldPasswords() {
         return oldPasswords;
     }
 
+    /**
+     * Sets the list of old passwords for the user.
+
+     * @param oldPasswords the list of old passwords
+     */
     public void setOldPasswords(List<String> oldPasswords) {
         this.oldPasswords = oldPasswords;
     }
 
+    /**
+     * Returns the role of the user.
+
+     * @return the user's role
+     */
     public Role getRole() {
         return role;
     }
 
+    /**
+     * Sets the role of the user.
+
+     * @param role the user's role
+     */
     public void setRole(Role role) {
         this.role = role;
     }
 
+    /**
+     * Returns the timestamp of when the user was created.
+
+     * @return the creation timestamp
+     */
     public Calendar getCreated() {
         return created;
     }
 
+    /**
+     * Sets the timestamp of when the user was created.
+
+     * @param created the creation timestamp
+     */
     public void setCreated(Calendar created) {
         this.created = created;
     }
 
+    /**
+     * Returns the timestamp of the last update to the user record.
+
+     * @return the last update timestamp
+     */
     public Calendar getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Sets the timestamp of the last update to the user record.
+
+     * @param timestamp the last update timestamp
+     */
     public void setTimestamp(Calendar timestamp) {
         this.timestamp = timestamp;
     }
 
+    /**
+     * Returns whether the user's email has been confirmed.
+
+     * @return {@code true} if the email is confirmed; {@code false} otherwise
+     */
     public boolean isConfirmed() {
         return confirmed;
     }
 
+    /**
+     * Sets whether the user's email has been confirmed.
+
+     * @param confirmed {@code true} if the email is confirmed; {@code false} otherwise
+     */
     public void setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
     }
 
+    /**
+     * Returns whether the user's account is active.
+
+     * @return {@code true} if the account is active; {@code false} otherwise
+     */
     public boolean isActive() {
         return active;
     }
 
+    /**
+     * Sets whether the user's account is active.
+
+     * @param active {@code true} if the account is active; {@code false} otherwise
+     */
     public void setActive(boolean active) {
         this.active = active;
     }
 
+    /**
+     * Returns whether the user's account is enabled.
+
+     * @return {@code true} if the account is enabled; {@code false} otherwise
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Sets whether the user's account is enabled.
+
+     * @param enabled {@code true} if the account is enabled; {@code false} otherwise
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }

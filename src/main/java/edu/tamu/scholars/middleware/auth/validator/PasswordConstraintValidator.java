@@ -32,7 +32,26 @@ import edu.tamu.scholars.middleware.auth.model.User;
 import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
 
 /**
- * {@link User} passsword validator. Valid when email does not exist, otherwise invalid.
+ * Validator for checking the validity of passwords for {@link User} registration.
+ * 
+ * <p>This class implements {@link ConstraintValidator} for the custom annotation
+ * {@link ValidPassword}. It ensures that the password adheres to specified
+ * security rules, such as length, character requirements, and history checks.</p>
+ * 
+ * <p>The validation process involves:
+ * <ul>
+ *   <li>Ensuring the password meets minimum and maximum length requirements.</li>
+ *   <li>Requiring at least one upper-case letter, lower-case letter, digit, and special character.</li>
+ *   <li>Verifying that the password has not been used previously, if applicable.</li>
+ *   <li>Checking that the password does not contain whitespace.</li>
+ * </ul>
+ * If the password does not meet these criteria or does not match the confirmation password,
+ * appropriate constraint violation messages are provided.</p>
+
+ * @see ValidPassword
+ * @see Registration
+ * @see User
+ * @see UserRepo
  */
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, Registration> {
 
@@ -42,6 +61,20 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
     @Autowired
     private MessageSource messageSource;
 
+    /**
+     * Validates the password of a {@link Registration} object.
+     * 
+     * <p>This method performs several checks on the provided password:
+     * <ul>
+     *   <li>Validates the password length, character composition, and history.</li>
+     *   <li>Ensures the password matches the confirmation password.</li>
+     * </ul>
+     * If the password is invalid, it adds constraint violation messages to the context.</p>
+
+     * @param registration The {@link Registration} object containing the password and confirmation password.
+     * @param context The context in which the constraint is evaluated.
+     * @return {@code true} if the password is valid and matches the confirmation password; otherwise, {@code false}.
+     */
     @Override
     public boolean isValid(Registration registration, ConstraintValidatorContext context) {
         String email = registration.getEmail();
@@ -51,25 +84,19 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
                 // use spring message resolver
                 new SpringMessageResolver(messageSource),
 
-                // length between PASSWORD_MIN_LENGTH and PASSWORD_MAX_LENGTH characters
+                // Password length rule
                 new LengthRule(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH),
 
-                // at least one upper-case character
+                // Character rules
                 new CharacterRule(EnglishCharacterData.UpperCase, 1),
-
-                // at least one lower-case character
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),
-
-                // at least one digit character
                 new CharacterRule(EnglishCharacterData.Digit, 1),
-
-                // at least one symbol (special character)
                 new CharacterRule(EnglishCharacterData.Special, 1),
 
-                // not previously used
+                // Historical password rules
                 new HistoryRule(),
 
-                // no whitespace
+                // Whitespace rule
                 new WhitespaceRule());
 
         PasswordData passwordData = new PasswordData(password);

@@ -12,17 +12,40 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 /**
- * Spring Boot autoconfigured custom {@link LogoutSuccessHandler}. Customized to
- * return 205 status and write i18n message to response.
+ * Custom implementation of {@link LogoutSuccessHandler} for handling successful logout events.
+ * 
+ * <p>This handler is configured to return a 205 Reset Content status code upon successful logout. It also writes an
+ * internationalized (i18n) message to the response body using {@link MessageSource} to support different locales.</p>
  */
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
     private MessageSource messageSource;
 
+    /**
+     * Constructs a {@link CustomLogoutSuccessHandler} with the specified {@link MessageSource}.
+     * 
+     * <p>The {@link MessageSource} is used to retrieve the 
+     * internationalized message to be included in the response body.</p>
+
+     * @param messageSource the {@link MessageSource} used for retrieving localized messages
+     */
     public CustomLogoutSuccessHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
+    /**
+     * Handles successful logout by setting the HTTP response status to 205 (Reset Content)
+     * and writing an internationalized message to the response body.
+     * 
+     * <p>This method retrieves the appropriate localized message from the {@link MessageSource},
+     *  writes it to the response, and then flushes and closes the response writer.</p>
+
+     * @param request the HTTP request that triggered the logout
+     * @param response the HTTP response to be sent to the client
+     * @param authentication the {@link Authentication} object representing the user's authentication details
+     * @throws IOException if an input or output error occurs while handling the response
+     * @throws ServletException if a servlet error occurs while handling the request
+     */
     @Override
     public void onLogoutSuccess(
         HttpServletRequest request,

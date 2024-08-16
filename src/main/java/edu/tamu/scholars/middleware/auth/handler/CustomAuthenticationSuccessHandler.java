@@ -15,17 +15,39 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import edu.tamu.scholars.middleware.auth.model.User;
 
 /**
- * Spring Boot autoconfigured custom {@link AuthenticationSuccessHandler}. Customized to
- * return authenticated principal as {@link User}.
+ * Custom implementation of {@link AuthenticationSuccessHandler} for handling successful authentication.
+ * 
+ * <p>This handler customizes the response sent to the client upon successful authentication. Instead of the default
+ * behavior, it returns the authenticated principal as a {@link User} object in JSON format.</p>
  */
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private ObjectMapper objectMapper;
 
+    /**
+     * Constructs a {@link CustomAuthenticationSuccessHandler} with the specified {@link ObjectMapper}.
+     * 
+     * <p>The {@link ObjectMapper} is used to convert the {@link User} object to JSON format for the response body.</p>
+
+     * @param objectMapper the {@link ObjectMapper} used for serializing the {@link User} object to JSON
+     */
     public CustomAuthenticationSuccessHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Handles successful authentication by returning the authenticated
+     * principal as a {@link User} object in JSON format.
+     * 
+     * <p>This method sets the response content type to {@code application/json} and writes the serialized {@link User}
+     * object to the response output stream. This provides the client with the details of the authenticated user.</p>
+
+     * @param request the HTTP request that triggered the successful authentication
+     * @param response the HTTP response to be sent to the client
+     * @param authentication the {@link Authentication} object containing the authenticated user's details
+     * @throws IOException if an input or output error occurs while handling the response
+     * @throws ServletException if a servlet error occurs while handling the request
+     */
     @Override
     public void onAuthenticationSuccess(
         HttpServletRequest request,
