@@ -1,5 +1,7 @@
 package edu.tamu.scholars.middleware.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,9 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -24,12 +24,14 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.util.NamedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import edu.tamu.scholars.middleware.config.model.IndexConfig;
 
 public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
-    private static final Logger logger = LoggerFactory.getLogger("CachingSolrClient");
+    private static final Logger logger = LoggerFactory.getLogger(CachingSolrClient.class);
 
     private static final String BASE_PATH = "basePath";
     private static final String BASIC_AUTH_USER = "basicAuthUser";
@@ -45,9 +47,9 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
     private static final String QUERY_PARAMS = "queryParams";
     private static final String REQUEST_TYPE = "requestType";
 
-    private final File lookupTable;
+    private final Map<String, File> lookup;
 
-    private final Map<String, String> map;
+    private Map<String, Map<String, String>> map;
 
     // there are different type of SolrClient
     C client;
@@ -58,14 +60,9 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
     ObjectMapper objectMapper;
 
-    public CachingSolrClient(C client, JwtTokenService jwtTokenService, IndexConfig index, ObjectMapper objectMapper) throws IOException {
-        this.lookupTable = new File("src/test/resources/lookup_table.sd");
-
-        // <JWT, UUID>
-        this.map = lookupTable.exists() && !lookupTable.isDirectory()
-            ? objectMapper.readValue(lookupTable, new TypeReference<ConcurrentHashMap<String, String>>() { })
-            : new ConcurrentHashMap<>();
-
+    public CachingSolrClient(C client, JwtTokenService jwtTokenService, IndexConfig index, ObjectMapper objectMapper) {
+        this.lookup = new ConcurrentHashMap<>();
+        this.map = new ConcurrentHashMap<>();
         this.client = client;
         this.jwtTokenService = jwtTokenService;
         this.index = index;
@@ -82,8 +79,39 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
     public NamedList<Object> request(SolrRequest<?> request, String collection)
             throws SolrServerException, IOException {
 
-        if (!request.getMethod().equals(org.apache.solr.client.solrj.SolrRequest.METHOD.GET) || index.isSchematize() || index.isOnStartup() || Objects.isNull(request)) {
+        if (!request.getMethod().equals(org.apache.solr.client.solrj.SolrRequest.METHOD.GET) || index.isSchematize()
+                || index.isOnStartup() || Objects.isNull(request)) {
             return client.request(request, collection);
+        }
+
+        HttpServletRequest origatingRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+
+        String cachePath = origatingRequest.getRequestURI();
+
+        if (
+            cachePath.startsWith("/individual") &&
+            !cachePath.startsWith("/individual/analytics") &&
+            !cachePath.startsWith("/individual/search")
+        ) {
+            cachePath = "/individual";
+        }
+
+        String key = String.format("src/test/resources%s/lookup_table", cachePath);
+
+        File lookupFile = this.lookup.get(key);
+
+        if (lookupFile == null) {
+            lookupFile = new File(key + ".sd");
+            this.lookup.put(key, lookupFile);
+        }
+
+        Map<String, String> innerMap = this.map.get(key);
+
+        if (innerMap == null) {
+            innerMap = lookupFile.exists() && !lookupFile.isDirectory()
+                    ? objectMapper.readValue(lookupFile, new TypeReference<ConcurrentHashMap<String, String>>() { })
+                    : new ConcurrentHashMap<>();
+            this.map.put(key, innerMap);
         }
 
         long start = System.currentTimeMillis();
@@ -148,65 +176,56 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
         NamedList<Object> response = null;
 
-        synchronized (map) {
-            // if (map.containsKey(jwt)) {
-            // // remove file if file older than duration
-            // }
+        File directory = new File(key);
 
-            File directory = new File("src/test/resources/lookup_table");
+        directory.mkdirs();
 
-            directory.mkdir();
+        String filename = String.format("%s/%s", key, uuid);
 
-            String filename = String.format("src/test/resources/lookup_table/%s", uuid);
+        File file = new File(filename);
 
-            File file = new File(filename);
+        long startFoundCache = System.currentTimeMillis();
+        long startQueryToSolr = System.currentTimeMillis();
 
-            long startFoundCache = System.currentTimeMillis();
-            long startQueryToSolr = System.currentTimeMillis();
+        if (file.exists()) {
+            startFoundCache = System.currentTimeMillis();
 
-            if (file.exists()) {
-                startFoundCache = System.currentTimeMillis();
-
-                try (
-                    FileInputStream fileIn = new FileInputStream(filename);
-                    ObjectInputStream in = new ObjectInputStream(fileIn);
-                ) {
-                    response = (NamedList<Object>) in.readObject();
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                logger.info("{}:{}: {} seconds", uuid, "RESPONSE CACHED READ", (System.currentTimeMillis() - startFoundCache) / (double) 1000);
-            } else {
-                startQueryToSolr = System.currentTimeMillis();
-                response = client.request(request, collection);
-
-                // TODO: make asynchronous with thread pool
-                try (
-                    FileOutputStream fileOut = new FileOutputStream(filename);
-                    ObjectOutputStream out = new ObjectOutputStream(fileOut);
-                ) {
-                    out.writeObject(response);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                logger.info("{}:{}: {} seconds", uuid, "QUERY RESPONSE", (System.currentTimeMillis() - startQueryToSolr) / (double) 1000);
-
-                long startUdateLookupTable = System.currentTimeMillis();
-
-                // concurrent write, synchronize with file write
-                map.put(jwt, uuid);
-
-                // concurrent read, synchronize with file write
-                objectMapper.writerWithDefaultPrettyPrinter().writeValue(lookupTable, map);
-
-                logger.info("{}:{}: {} seconds", uuid, "UPDATE LOOKUP TABLE", (System.currentTimeMillis() - startUdateLookupTable) / (double) 1000);
-
-                logger.info("{}:{}:{} {}", uuid, "REQUEST", uuid, rootNode.toPrettyString());
+            try (
+                FileInputStream fileIn = new FileInputStream(filename);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+            ) {
+                response = (NamedList<Object>) in.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
-            logger.info("{}:{}: {} seconds", uuid, "ACTUAL RESPONSE", (System.currentTimeMillis() - start) / (double) 1000);
+
+            logger.info("{}:{}: {} seconds", uuid, "RESPONSE CACHED READ", (System.currentTimeMillis() - startFoundCache) / (double) 1000);
+        } else {
+            startQueryToSolr = System.currentTimeMillis();
+            response = client.request(request, collection);
+
+            try (
+                FileOutputStream fileOut = new FileOutputStream(filename);
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            ) {
+                out.writeObject(response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            logger.info("{}:{}: {} seconds", uuid, "QUERY RESPONSE", (System.currentTimeMillis() - startQueryToSolr) / (double) 1000);
+
+            long startUdateLookupTable = System.currentTimeMillis();
+
+            innerMap.put(jwt, uuid);
+
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(lookupFile, innerMap);
+
+            logger.info("{}:{}: {} seconds", uuid, "UPDATE LOOKUP TABLE", (System.currentTimeMillis() - startUdateLookupTable) / (double) 1000);
+
+            logger.info("{}:{}:{} {}", uuid, "REQUEST", uuid, rootNode.toPrettyString());
         }
+        logger.info("{}:{}: {} seconds", uuid, "ACTUAL RESPONSE", (System.currentTimeMillis() - start) / (double) 1000);
 
         return response;
     }
