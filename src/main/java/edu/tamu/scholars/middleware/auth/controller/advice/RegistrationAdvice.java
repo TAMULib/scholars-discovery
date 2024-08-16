@@ -33,7 +33,7 @@ public class RegistrationAdvice {
      * 
      * <p>When a method argument validation fails, this method is invoked to return a BAD_REQUEST (400)
      * response with the default error message of the first validation error.</p>
-
+     * 
      * @param exception the {@link MethodArgumentNotValidException} instance containing details of the error
      * @return a {@link String} containing the default error message of the first validation error
      */
@@ -53,7 +53,7 @@ public class RegistrationAdvice {
      * 
      * <p>This method returns a BAD_REQUEST (400) response with the exception's message. It is a fallback handler
      * for exceptions not covered by more specific handlers.</p>
-
+     * 
      * @param exception the {@link Exception} instance representing the general exception
      * @return a {@link String} containing the exception's message
      */

@@ -33,7 +33,7 @@ public class EmailConstraintValidator implements ConstraintValidator<AvailableEm
 
     /**
      * Validates the email address to ensure it does not already exist.
-
+     * 
      * @param email The email address to be validated.
      * @param context The context in which the constraint is evaluated.
      * @return {@code true} if the email does not exist in the repository, otherwise {@code false}.

@@ -43,7 +43,7 @@ public class PasswordConfig {
 
     /**
      * Returns the duration (in days) for which the password is considered valid.
-
+     * 
      * @return the duration in days
      */
     public int getDuration() {
@@ -52,7 +52,7 @@ public class PasswordConfig {
 
     /**
      * Sets the duration (in days) for which the password is considered valid.
-
+     * 
      * @param duration the duration in days to set
      */
     public void setDuration(int duration) {
@@ -61,7 +61,7 @@ public class PasswordConfig {
 
     /**
      * Returns the minimum length required for the password.
-
+     * 
      * @return the minimum length
      */
     public int getMinLength() {
@@ -70,7 +70,7 @@ public class PasswordConfig {
 
     /**
      * Sets the minimum length required for the password.
-
+     * 
      * @param minLength the minimum length to set
      */
     public void setMinLength(int minLength) {
@@ -79,7 +79,7 @@ public class PasswordConfig {
 
     /**
      * Returns the maximum length allowed for the password.
-
+     * 
      * @return the maximum length
      */
     public int getMaxLength() {
@@ -88,7 +88,7 @@ public class PasswordConfig {
 
     /**
      * Sets the maximum length allowed for the password.
-
+     * 
      * @param maxLength the maximum length to set
      */
     public void setMaxLength(int maxLength) {

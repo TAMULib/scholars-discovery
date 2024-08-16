@@ -43,7 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * is found, it returns a {@link CustomUserDetails} instance that wraps the user data.
      * If the user is not found, it throws a {@link UsernameNotFoundException} with a
      * localized error message.</p>
-
+     * 
      * @param username the username (email) of the user to load
      * @return a {@link UserDetails} object containing the user information
      * @throws UsernameNotFoundException if no user is found with the given username

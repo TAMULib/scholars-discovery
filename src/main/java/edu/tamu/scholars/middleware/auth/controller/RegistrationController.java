@@ -52,7 +52,7 @@ public class RegistrationController {
      * <p>This method handles POST requests to the "/registration" endpoint. It accepts a {@link Registration} object
      * containing the user's registration details, validates the request using the {@link SubmitRegistration} group,
      * and processes the registration by creating a disabled user and sending a confirmation email.</p>
-
+     * 
      * @param registration the registration details to be submitted
      * @return a {@link ResponseEntity} containing the submitted {@link Registration} object
      * @throws JsonProcessingException if there is an error processing the JSON input
@@ -69,7 +69,7 @@ public class RegistrationController {
      * 
      * <p>This method handles GET requests to the "/registration" endpoint with a required query parameter "key". 
      * It validates the provided key, confirms the user's email registration, and returns the registration details.</p>
-
+     * 
      * @param key the confirmation key sent in the email
      * @return a {@link ResponseEntity} containing the confirmed {@link Registration} details
      * @throws JsonParseException if there is an error parsing the JSON input
@@ -90,7 +90,7 @@ public class RegistrationController {
      * <p>This method handles PUT requests to the "/registration" endpoint with a required query parameter "key"
      * and a {@link Registration} object in the request body. It updates and activates the user's account based on
      * the provided key and registration details.</p>
-
+     * 
      * @param key the confirmation key used to complete the registration
      * @param registration the registration details including the password
      * @return a {@link ResponseEntity} containing the updated {@link User} object

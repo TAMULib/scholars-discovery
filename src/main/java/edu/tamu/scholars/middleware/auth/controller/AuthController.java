@@ -21,7 +21,7 @@ public class AuthController {
      * <p>The {@code @AuthenticationPrincipal} annotation is used to inject the currently authenticated
      * user into the method parameter. This method returns the {@link User} object representing the authenticated
      * user details.</p>
-
+     * 
      * @param user the currently authenticated {@link User}
      * @return the {@link User} object representing the authenticated user
      */

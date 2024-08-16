@@ -26,7 +26,7 @@ public class CustomAccessDeniedExceptionHandler implements AccessDeniedHandler {
      * <p>This method is called when a user attempts to access a resource for which they do not have the necessary
      * permissions. It sets the HTTP response status to 401 (Unauthorized) and writes the exception message to the
      * response body.</p>
-
+     * 
      * @param request the HTTP request that caused the exception
      * @param response the HTTP response to be sent
      * @param exception the exception representing the access denied error

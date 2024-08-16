@@ -39,7 +39,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
      * 
      * <p>This method retrieves the appropriate localized message from the {@link MessageSource},
      *  writes it to the response, and then flushes and closes the response writer.</p>
-
+     * 
      * @param request the HTTP request that triggered the logout
      * @param response the HTTP response to be sent to the client
      * @param authentication the {@link Authentication} object representing the user's authentication details

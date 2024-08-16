@@ -128,7 +128,7 @@ public class Registration {
 
     /**
      * Gets the user's first name.
-
+     * 
      * @return the first name of the user
      */
     public String getFirstName() {
@@ -137,7 +137,7 @@ public class Registration {
 
     /**
      * Sets the user's first name.
-
+     * 
      * @param firstName the first name of the user
      */
     public void setFirstName(String firstName) {
@@ -146,7 +146,7 @@ public class Registration {
 
     /**
      * Gets the user's last name.
-
+     * 
      * @return the last name of the user
      */
     public String getLastName() {
@@ -155,7 +155,7 @@ public class Registration {
 
     /**
      * Sets the user's last name.
-
+     * 
      * @param lastName the last name of the user
      */
     public void setLastName(String lastName) {
@@ -164,7 +164,7 @@ public class Registration {
 
     /**
      * Gets the user's email address.
-
+     * 
      * @return the email address of the user
      */
     public String getEmail() {
@@ -173,7 +173,7 @@ public class Registration {
 
     /**
      * Sets the user's email address.
-
+     * 
      * @param email the email address of the user
      */
     public void setEmail(String email) {
@@ -182,7 +182,7 @@ public class Registration {
 
     /**
      * Gets the user's password.
-
+     * 
      * @return the password of the user
      */
     public String getPassword() {
@@ -191,7 +191,7 @@ public class Registration {
 
     /**
      * Sets the user's password.
-
+     * 
      * @param password the password of the user
      */
     public void setPassword(String password) {
@@ -200,7 +200,7 @@ public class Registration {
 
     /**
      * Gets the user's password confirmation.
-
+     * 
      * @return the password confirmation of the user
      */
     public String getConfirm() {
@@ -209,7 +209,7 @@ public class Registration {
 
     /**
      * Sets the user's password confirmation.
-
+     * 
      * @param confirm the password confirmation of the user
      */
     public void setConfirm(String confirm) {

@@ -70,7 +70,7 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
      *   <li>Ensures the password matches the confirmation password.</li>
      * </ul>
      * If the password is invalid, it adds constraint violation messages to the context.</p>
-
+     * 
      * @param registration The {@link Registration} object containing the password and confirmation password.
      * @param context The context in which the constraint is evaluated.
      * @return {@code true} if the password is valid and matches the confirmation password; otherwise, {@code false}.

@@ -29,7 +29,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
      * Finds a {@link User} entity by the specified email address.
      * 
      * <p>This method is suppressed from Spring Data REST controller endpoints using {@link RestResource}.</p>
-
+     * 
      * @param email the email address of the {@link User} to find
      * @return an {@link Optional} containing the {@link User} if found, or an empty {@link Optional} if not found
      */
@@ -40,7 +40,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
      * Checks if a {@link User} entity exists with the specified email address.
      * 
      * <p>This method is suppressed from Spring Data REST controller endpoints using {@link RestResource}.</p>
-
+     * 
      * @param email the email address to check
      * @return {@code true} if a {@link User} with the specified email exists, {@code false} otherwise
      */

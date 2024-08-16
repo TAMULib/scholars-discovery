@@ -61,7 +61,7 @@ public enum Role {
 
     /**
      * Constructs a new {@code Role} with the specified string value.
-
+     * 
      * @param value the string value of the role
      */
     Role(String value) {
@@ -70,7 +70,7 @@ public enum Role {
 
     /**
      * Returns the string value associated with this role.
-
+     * 
      * @return the string value of the role
      */
     public String getValue() {
@@ -79,7 +79,7 @@ public enum Role {
 
     /**
      * Retrieves the {@code Role} enum constant associated with the specified string value.
-
+     * 
      * @param value the string value of the role
      * @return the corresponding {@code Role} enum constant, or {@code null} if no role is found
      */

@@ -41,7 +41,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
      * 
      * <p>This method sets the response content type to {@code application/json} and writes the serialized {@link User}
      * object to the response output stream. This provides the client with the details of the authenticated user.</p>
-
+     * 
      * @param request the HTTP request that triggered the successful authentication
      * @param response the HTTP response to be sent to the client
      * @param authentication the {@link Authentication} object containing the authenticated user's details

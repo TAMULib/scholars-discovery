@@ -41,7 +41,7 @@ public class UserEventHandler {
      * and user-specific channels.
      * 
      * <p>The broadcast message includes an {@link UpdateEntityMessage} containing the updated user information.</p>
-
+     * 
      * @param user the {@link User} entity that has been saved
      */
     @HandleAfterSave
@@ -60,7 +60,7 @@ public class UserEventHandler {
      * 
      * <p>The broadcast message includes a {@link DeleteEntityMessage}
      *  containing the email address of the deleted user.</p>
-
+     * 
      * @param user the {@link User} entity that has been deleted
      */
     @HandleAfterDelete

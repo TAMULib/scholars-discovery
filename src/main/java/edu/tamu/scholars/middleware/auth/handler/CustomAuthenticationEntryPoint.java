@@ -26,7 +26,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
      * 
      * <p>This method is called when an unauthenticated user attempts to access a resource that requires authentication.
      * It ensures that the client receives an appropriate error response indicating that authentication is required.</p>
-
+     * 
      * @param request the HTTP request that caused the authentication exception
      * @param response the HTTP response to be sent to the client
      * @param exception the {@link AuthenticationException} representing the authentication error

@@ -26,7 +26,7 @@ public class CustomUserDetails extends User implements UserDetails {
 
     /**
      * Constructs a {@link CustomUserDetails} object from a {@link User}.
-
+     * 
      * @param user the {@link User} object to encapsulate
      */
     public CustomUserDetails(User user) {
@@ -38,7 +38,7 @@ public class CustomUserDetails extends User implements UserDetails {
      * 
      * <p>This method provides a collection of granted authorities for the user. It converts the user's role into
      * a list of authorities suitable for Spring Security.</p>
-
+     * 
      * @return a collection of {@link GrantedAuthority} representing the user's roles
      */
     @Override
@@ -52,7 +52,7 @@ public class CustomUserDetails extends User implements UserDetails {
      * 
      * <p>This method checks if the user's account is still active. In this implementation, it returns whether the
      * user is marked as active.</p>
-
+     * 
      * @return {@code true} if the user's account is not expired; {@code false} otherwise
      */
     @Override
@@ -66,7 +66,7 @@ public class CustomUserDetails extends User implements UserDetails {
      * 
      * <p>This method checks whether the user's account is locked or disabled. It returns {@code true} if the user
      * is enabled and their email is confirmed.</p>
-
+     * 
      * @return {@code true} if the user's account is not locked; {@code false} otherwise
      */
     @Override
@@ -81,7 +81,7 @@ public class CustomUserDetails extends User implements UserDetails {
      * <p>This method checks whether the user's credentials (e.g., password) are still valid. It compares the current
      * date with the timestamp of when the credentials were last updated, using the password duration defined in the
      * {@code PASSWORD_DURATION_IN_DAYS} constant.</p>
-
+     * 
      * @return {@code true} if the user's credentials are not expired; {@code false} otherwise
      */
     @Override
@@ -97,7 +97,7 @@ public class CustomUserDetails extends User implements UserDetails {
      * Returns the username of the user.
      * 
      * <p>This method returns the email of the user, which is used as the username for authentication purposes.</p>
-
+     * 
      * @return the email address of the user
      */
     @Override

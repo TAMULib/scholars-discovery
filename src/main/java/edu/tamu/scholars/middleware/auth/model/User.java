@@ -123,7 +123,7 @@ public class User implements Serializable {
 
     /**
      * Constructs a new {@code User} with the specified first name, last name, and email.
-
+     * 
      * @param firstName the user's first name
      * @param lastName  the user's last name
      * @param email     the user's email address
@@ -137,7 +137,7 @@ public class User implements Serializable {
 
     /**
      * Constructs a new {@code User} by copying properties from another {@code User} instance.
-
+     * 
      * @param user the {@code User} instance to copy properties from
      */
     public User(User user) {
@@ -147,7 +147,7 @@ public class User implements Serializable {
 
     /**
      * Returns the unique identifier of the user.
-
+     * 
      * @return the user's ID
      */
     public Long getId() {
@@ -156,7 +156,7 @@ public class User implements Serializable {
 
     /**
      * Sets the unique identifier of the user.
-
+     * 
      * @param id the user's ID
      */
     public void setId(Long id) {
@@ -165,7 +165,7 @@ public class User implements Serializable {
 
     /**
      * Returns the user's first name.
-
+     * 
      * @return the user's first name
      */
     public String getFirstName() {
@@ -174,7 +174,7 @@ public class User implements Serializable {
 
     /**
      * Sets the user's first name.
-
+     * 
      * @param firstName the user's first name
      */
     public void setFirstName(String firstName) {
@@ -183,7 +183,7 @@ public class User implements Serializable {
 
     /**
      * Returns the user's last name.
-
+     * 
      * @return the user's last name
      */
     public String getLastName() {
@@ -192,7 +192,7 @@ public class User implements Serializable {
 
     /**
      * Sets the user's last name.
-
+     * 
      * @param lastName the user's last name
      */
     public void setLastName(String lastName) {
@@ -201,7 +201,7 @@ public class User implements Serializable {
 
     /**
      * Returns the user's email address.
-
+     * 
      * @return the user's email address
      */
     public String getEmail() {
@@ -210,7 +210,7 @@ public class User implements Serializable {
 
     /**
      * Sets the user's email address.
-
+     * 
      * @param email the user's email address
      */
     public void setEmail(String email) {
@@ -219,7 +219,7 @@ public class User implements Serializable {
 
     /**
      * Returns the user's password.
-
+     * 
      * @return the user's password
      */
     public String getPassword() {
@@ -228,7 +228,7 @@ public class User implements Serializable {
 
     /**
      * Sets the user's password.
-
+     * 
      * @param password the user's password
      */
     public void setPassword(String password) {
@@ -237,7 +237,7 @@ public class User implements Serializable {
 
     /**
      * Returns the list of old passwords for the user.
-
+     * 
      * @return the list of old passwords
      */
     public List<String> getOldPasswords() {
@@ -246,7 +246,7 @@ public class User implements Serializable {
 
     /**
      * Sets the list of old passwords for the user.
-
+     * 
      * @param oldPasswords the list of old passwords
      */
     public void setOldPasswords(List<String> oldPasswords) {
@@ -255,7 +255,7 @@ public class User implements Serializable {
 
     /**
      * Returns the role of the user.
-
+     * 
      * @return the user's role
      */
     public Role getRole() {
@@ -264,7 +264,7 @@ public class User implements Serializable {
 
     /**
      * Sets the role of the user.
-
+     * 
      * @param role the user's role
      */
     public void setRole(Role role) {
@@ -273,7 +273,7 @@ public class User implements Serializable {
 
     /**
      * Returns the timestamp of when the user was created.
-
+     * 
      * @return the creation timestamp
      */
     public Calendar getCreated() {
@@ -282,7 +282,7 @@ public class User implements Serializable {
 
     /**
      * Sets the timestamp of when the user was created.
-
+     * 
      * @param created the creation timestamp
      */
     public void setCreated(Calendar created) {
@@ -291,7 +291,7 @@ public class User implements Serializable {
 
     /**
      * Returns the timestamp of the last update to the user record.
-
+     * 
      * @return the last update timestamp
      */
     public Calendar getTimestamp() {
@@ -300,7 +300,7 @@ public class User implements Serializable {
 
     /**
      * Sets the timestamp of the last update to the user record.
-
+     * 
      * @param timestamp the last update timestamp
      */
     public void setTimestamp(Calendar timestamp) {
@@ -309,7 +309,7 @@ public class User implements Serializable {
 
     /**
      * Returns whether the user's email has been confirmed.
-
+     * 
      * @return {@code true} if the email is confirmed; {@code false} otherwise
      */
     public boolean isConfirmed() {
@@ -318,7 +318,7 @@ public class User implements Serializable {
 
     /**
      * Sets whether the user's email has been confirmed.
-
+     * 
      * @param confirmed {@code true} if the email is confirmed; {@code false} otherwise
      */
     public void setConfirmed(boolean confirmed) {
@@ -327,7 +327,7 @@ public class User implements Serializable {
 
     /**
      * Returns whether the user's account is active.
-
+     * 
      * @return {@code true} if the account is active; {@code false} otherwise
      */
     public boolean isActive() {
@@ -336,7 +336,7 @@ public class User implements Serializable {
 
     /**
      * Sets whether the user's account is active.
-
+     * 
      * @param active {@code true} if the account is active; {@code false} otherwise
      */
     public void setActive(boolean active) {
@@ -345,7 +345,7 @@ public class User implements Serializable {
 
     /**
      * Returns whether the user's account is enabled.
-
+     * 
      * @return {@code true} if the account is enabled; {@code false} otherwise
      */
     public boolean isEnabled() {
@@ -354,7 +354,7 @@ public class User implements Serializable {
 
     /**
      * Sets whether the user's account is enabled.
-
+     * 
      * @param enabled {@code true} if the account is enabled; {@code false} otherwise
      */
     public void setEnabled(boolean enabled) {

@@ -81,7 +81,7 @@ public class RegistrationService {
      * 
      * <p>This method creates a new registration token and sends a confirmation email to the user.
      * It also saves the user with a default role based on the number of existing users.</p>
-
+     * 
      * @param registration the registration request details
      * @return the submitted registration request
      * @throws JsonProcessingException if an error occurs while processing JSON
@@ -106,7 +106,7 @@ public class RegistrationService {
      * 
      * <p>This method verifies the token and updates the user status if the token is valid and not expired.
      * It throws exceptions if the token is expired or the email is already confirmed.</p>
-
+     * 
      * @param key the verification token
      * @return the registration details if the confirmation is successful
      * @throws JsonParseException if an error occurs while parsing JSON
@@ -152,7 +152,7 @@ public class RegistrationService {
      * 
      * <p>This method verifies the token, sets the user's password, and enables the user if the email is confirmed.
      * It throws exceptions if the token is expired or if the email is not confirmed.</p>
-
+     * 
      * @param key the verification token
      * @param registration the registration details including the password
      * @return the updated user if the registration is completed successfully
@@ -193,7 +193,7 @@ public class RegistrationService {
      * 
      * <p>This method assigns roles based on the number of existing users and broadcasts
      * the creation event to the messaging channel.</p>
-
+     * 
      * @param registration the registration details
      */
     private synchronized void createUser(Registration registration) {
@@ -211,7 +211,7 @@ public class RegistrationService {
 
     /**
      * Checks if the provided token has expired.
-
+     * 
      * @param token the token to check
      * @return {@code true} if the token is expired, {@code false} otherwise
      */

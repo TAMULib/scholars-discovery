@@ -45,7 +45,7 @@ public class TokenConfig {
 
     /**
      * Returns the integer value used for server identification or configuration.
-
+     * 
      * @return the server integer value
      */
     public int getServerInteger() {
@@ -54,7 +54,7 @@ public class TokenConfig {
 
     /**
      * Sets the integer value used for server identification or configuration.
-
+     * 
      * @param serverInteger the integer value to set
      */
     public void setServerInteger(int serverInteger) {
@@ -63,7 +63,7 @@ public class TokenConfig {
 
     /**
      * Returns the server secret used for token generation or validation.
-
+     * 
      * @return the server secret string
      */
     public String getServerSecret() {
@@ -76,7 +76,7 @@ public class TokenConfig {
      * <p>Note: In a production environment, it is crucial to use a secure
      * and secret value for this property to ensure the security of token-based
      * authentication mechanisms.</p>
-
+     * 
      * @param serverSecret the server secret string to set
      */
     public void setServerSecret(String serverSecret) {
@@ -85,7 +85,7 @@ public class TokenConfig {
 
     /**
      * Returns the number of bytes used for generating pseudo-random numbers for tokens.
-
+     * 
      * @return the number of bytes
      */
     public int getPseudoRandomNumberBytes() {
@@ -94,7 +94,7 @@ public class TokenConfig {
 
     /**
      * Sets the number of bytes used for generating pseudo-random numbers for tokens.
-
+     * 
      * @param pseudoRandomNumberBytes the number of bytes to set
      */
     public void setPseudoRandomNumberBytes(int pseudoRandomNumberBytes) {

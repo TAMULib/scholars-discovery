@@ -26,7 +26,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
      * 
      * <p>This method is invoked when authentication fails, for example, due to incorrect username or password. It
      * ensures that the client receives a proper error response indicating that authentication has failed.</p>
-
+     * 
      * @param request the HTTP request that triggered the authentication failure
      * @param response the HTTP response to be sent to the client
      * @param exception the {@link AuthenticationException} representing the reason for the authentication failure

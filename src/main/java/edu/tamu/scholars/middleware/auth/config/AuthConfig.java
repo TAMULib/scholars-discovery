@@ -41,7 +41,7 @@ public class AuthConfig {
 
     /**
      * Returns the password configuration.
-
+     * 
      * @return the {@link PasswordConfig} instance
      */
     public PasswordConfig getPassword() {
@@ -50,7 +50,7 @@ public class AuthConfig {
 
     /**
      * Sets the password configuration.
-
+     * 
      * @param password the {@link PasswordConfig} instance to set
      */
     public void setPassword(PasswordConfig password) {
@@ -59,7 +59,7 @@ public class AuthConfig {
 
     /**
      * Returns the token configuration.
-
+     * 
      * @return the {@link TokenConfig} instance
      */
     public TokenConfig getToken() {
@@ -68,7 +68,7 @@ public class AuthConfig {
 
     /**
      * Sets the token configuration.
-
+     * 
      * @param token the {@link TokenConfig} instance to set
      */
     public void setToken(TokenConfig token) {
@@ -77,7 +77,7 @@ public class AuthConfig {
 
     /**
      * Returns the duration for the registration token validity.
-
+     * 
      * @return the registration token duration in days
      */
     public int getRegistrationTokenDuration() {
@@ -86,7 +86,7 @@ public class AuthConfig {
 
     /**
      * Sets the duration for the registration token validity.
-
+     * 
      * @param registrationTokenDuration the duration to set, in days
      */
     public void setRegistrationTokenDuration(int registrationTokenDuration) {

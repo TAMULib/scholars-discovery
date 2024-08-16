@@ -42,14 +42,14 @@ public @interface ValidPassword {
 
     /**
      * The error message to be returned when the password validation fails.
-
+     * 
      * @return the error message
      */
     String message();
 
     /**
      * Allows grouping of constraints. Default is an empty array, meaning no specific groups.
-
+     *
      * @return the groups
      */
     Class<?>[] groups() default {};
@@ -57,7 +57,7 @@ public @interface ValidPassword {
     /**
      * Provides additional data to the annotation, which can be used by clients of the annotation.
      * Default is an empty array.
-
+     * 
      * @return the payload
      */
     Class<? extends Payload>[] payload() default {};
