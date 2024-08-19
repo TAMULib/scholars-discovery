@@ -2,14 +2,8 @@ package edu.tamu.scholars.middleware.service;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
@@ -20,6 +14,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -28,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.HandlerMapping;
 
 import edu.tamu.scholars.middleware.config.model.IndexConfig;
 import edu.tamu.scholars.middleware.utility.JavaObjectStorageFileUtility;
@@ -50,17 +46,15 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
     private static final String QUERY_PARAMS = "queryParams";
     private static final String REQUEST_TYPE = "requestType";
 
+    private static final String LEFT_CURLY_BRACKET = "{";
+    private static final String RIGHT_CURLY_BRACKET = "}";
+
+    private static final String FORWARD_SLASH = "/";
+
     private final Map<String, File> lookup;
-
-    // TODO: take the average of 5 attempts on cache, repeat until 5 attempts on solr, select more performant and fallback
-
-    // add threshold to solr response to avoid network glitches
-    // add threshold to cached response to avoid unexpected file objects
 
     private final Map<String, Map<String, String>> map;
 
-    // there are different type of SolrClient
-    // this provides only interface methods
     C client;
 
     JwtTokenService jwtTokenService;
@@ -83,32 +77,30 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         client.close();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public NamedList<Object> request(SolrRequest<?> request, String collection)
             throws SolrServerException, IOException {
 
-        if (!request.getMethod().equals(org.apache.solr.client.solrj.SolrRequest.METHOD.GET) || index.isSchematize()
-                || index.isOnStartup() || Objects.isNull(request)) {
+        if (!index.isCacheEnabled() ||
+            index.isSchematize() ||
+            index.isOnStartup() ||
+            !request.getMethod().equals(org.apache.solr.client.solrj.SolrRequest.METHOD.GET) ||
+            Objects.isNull(request)) {
             return client.request(request, collection);
         }
 
         HttpServletRequest originatingRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
-        System.out.println("\n\npathWithinHandlerMapping: " + originatingRequest.getAttribute("org.springframework.web.servlet.HandlerMapping.pathWithinHandlerMapping") +
-                            "\nbestMatchingPattern: " + originatingRequest.getAttribute("org.springframework.web.servlet.HandlerMapping.bestMatchingPattern") + 
-                            "\nuriTemplateVariables: " + originatingRequest.getAttribute("org.springframework.web.servlet.HandlerMapping.uriTemplateVariables") + "\n\n");
+        String cachePath = ((String) originatingRequest.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
+            .replace(LEFT_CURLY_BRACKET, StringUtils.EMPTY)
+            .replace(RIGHT_CURLY_BRACKET, StringUtils.EMPTY);
 
-        String cachePath = ((String) originatingRequest.getAttribute("org.springframework.web.servlet.HandlerMapping.bestMatchingPattern"))
-            .replace("{", "")
-            .replace("}", "");
-
-        String key = String.format("src/test/resources%s/lookup_table", cachePath);
+        String key = String.format("%s%s/lookup_table", StringUtils.removeEnd(index.getCacheLocation(), FORWARD_SLASH), cachePath);
 
         File lookupFile = this.lookup.get(key);
 
         if (lookupFile == null) {
-            lookupFile = new File(key + ".sd");
+            lookupFile = new File(key + ".sdc");
             this.lookup.put(key, lookupFile);
         }
 
@@ -164,9 +156,6 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         }
 
         rootNode.put(REQUEST_TYPE, request.getRequestType());
-
-        // System.out.println("getResponseParser: " + request.getResponseParser());
-        // System.out.println("getUserPrincipal: " + request.getUserPrincipal());
 
         logger.info("{}: {} seconds", "DESERIALIZE", (System.currentTimeMillis() - start) / (double) 1000);
 

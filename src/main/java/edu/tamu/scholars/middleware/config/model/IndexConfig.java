@@ -28,6 +28,10 @@ public class IndexConfig {
 
     private int batchSize = 10000;
 
+    private boolean cacheEnabled = false;
+
+    private String cacheLocation = "src/test/resources";
+
     public String getName() {
         return name;
     }
@@ -90,6 +94,22 @@ public class IndexConfig {
 
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public boolean isCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    public void setCacheEnabled(boolean cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+    }
+
+    public String getCacheLocation() {
+        return cacheLocation;
+    }
+
+    public void setCacheLocation(String cacheLocation) {
+        this.cacheLocation = cacheLocation;
     }
 
 }
