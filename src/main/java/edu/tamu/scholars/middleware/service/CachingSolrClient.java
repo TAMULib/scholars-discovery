@@ -8,7 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -26,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.util.ServletRequestPathUtils;
 
 import edu.tamu.scholars.middleware.config.model.IndexConfig;
 
@@ -84,17 +88,15 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
             return client.request(request, collection);
         }
 
-        HttpServletRequest origatingRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletRequest originatingRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
-        String cachePath = origatingRequest.getRequestURI();
+        System.out.println("\n\npathWithinHandlerMapping: " + originatingRequest.getAttribute("org.springframework.web.servlet.HandlerMapping.pathWithinHandlerMapping") +
+                            "\nbestMatchingPattern: " + originatingRequest.getAttribute("org.springframework.web.servlet.HandlerMapping.bestMatchingPattern") + 
+                            "\nuriTemplateVariables: " + originatingRequest.getAttribute("org.springframework.web.servlet.HandlerMapping.uriTemplateVariables") + "\n\n");
 
-        if (
-            cachePath.startsWith("/individual") &&
-            !cachePath.startsWith("/individual/analytics") &&
-            !cachePath.startsWith("/individual/search")
-        ) {
-            cachePath = "/individual";
-        }
+        String cachePath = ((String) originatingRequest.getAttribute("org.springframework.web.servlet.HandlerMapping.bestMatchingPattern"))
+            .replace("{", "")
+            .replace("}", "");
 
         String key = String.format("src/test/resources%s/lookup_table", cachePath);
 
@@ -172,7 +174,7 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         byte[] bytes = jwt.getBytes(StandardCharsets.UTF_8);
         String uuid = UUID.nameUUIDFromBytes(bytes).toString();
 
-        logger.info("{}: {} seconds", "CLAIMS_TO_JWT_UUID", (System.currentTimeMillis() - startClaimsToJWTUUID) / (double) 1000);
+        logger.info("{}:{}: {} seconds", uuid, "CLAIMS_TO_JWT_UUID", (System.currentTimeMillis() - startClaimsToJWTUUID) / (double) 1000);
 
         NamedList<Object> response = null;
 
