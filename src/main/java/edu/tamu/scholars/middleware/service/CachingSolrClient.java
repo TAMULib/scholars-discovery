@@ -2,15 +2,15 @@ package edu.tamu.scholars.middleware.service;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -28,10 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.util.ServletRequestPathUtils;
 
 import edu.tamu.scholars.middleware.config.model.IndexConfig;
+import edu.tamu.scholars.middleware.utility.JavaObjectStorageFileUtility;
 
 public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
@@ -53,9 +52,15 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
     private final Map<String, File> lookup;
 
+    // TODO: take the average of 5 attempts on cache, repeat until 5 attempts on solr, select more performant and fallback
+
+    // add threshold to solr response to avoid network glitches
+    // add threshold to cached response to avoid unexpected file objects
+
     private final Map<String, Map<String, String>> map;
 
     // there are different type of SolrClient
+    // this provides only interface methods
     C client;
 
     JwtTokenService jwtTokenService;
@@ -186,18 +191,14 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
         File file = new File(filename);
 
-        long startFoundCache = System.currentTimeMillis();
-        long startQueryToSolr = System.currentTimeMillis();
+        long startFoundCache, startQueryToSolr;
 
         if (file.exists()) {
             startFoundCache = System.currentTimeMillis();
 
-            try (
-                FileInputStream fileIn = new FileInputStream(filename);
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-            ) {
-                response = (NamedList<Object>) in.readObject();
-            } catch (IOException | ClassNotFoundException e) {
+            try {
+                response = JavaObjectStorageFileUtility.readObject(filename);
+            } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
 
@@ -206,14 +207,7 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
             startQueryToSolr = System.currentTimeMillis();
             response = client.request(request, collection);
 
-            try (
-                FileOutputStream fileOut = new FileOutputStream(filename);
-                ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            ) {
-                out.writeObject(response);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            JavaObjectStorageFileUtility.writeObject(response, filename);
 
             logger.info("{}:{}: {} seconds", uuid, "QUERY RESPONSE", (System.currentTimeMillis() - startQueryToSolr) / (double) 1000);
 
