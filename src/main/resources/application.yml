@@ -37,7 +37,9 @@ middleware:
     enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
-    cacheLocation: false
+    cacheEnabled: false
+    clearCache: true
+    cacheLocation: src/test/resources
   triplestore:
     type: edu.tamu.scholars.middleware.service.TDBTriplestore
     directory: triplestore
