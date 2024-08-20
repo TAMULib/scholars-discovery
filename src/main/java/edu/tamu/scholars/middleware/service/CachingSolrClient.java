@@ -132,12 +132,12 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         HttpServletRequest originatingRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
 
         // get a cache path from the path pattern
-        String cachePath = ((String) originatingRequest.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
+        String cacheRequestPath = ((String) originatingRequest.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
             .replace(LEFT_CURLY_BRACKET, StringUtils.EMPTY)
             .replace(RIGHT_CURLY_BRACKET, StringUtils.EMPTY);
 
-        // key as path in cache with UUID as cachePath/<UUID>.sdc => cacheLocation / cachePath / requestPath / <UUID>.sdc
-        String key = String.format("%s%s/lookup_table", StringUtils.removeEnd(index.getCacheLocation(), FORWARD_SLASH), cachePath);
+        // key as path as cacheLocation / cacheRequestPath / <UUID>.sdc
+        String key = String.format("%s%s/lookup_table", StringUtils.removeEnd(index.getCacheLocation(), FORWARD_SLASH), cacheRequestPath);
 
         File lookupFile = getOrCreateLookupFile(key);
 
@@ -222,7 +222,7 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
     }
 
     /**
-     * Get lookup file by key or read lookup file provided is exists and is not a directory/
+     * Get lookup file by key or read lookup file provided if does exists and is not a directory.
      * 
      * @param key
      * @param lookupFile lookup file or request cache
