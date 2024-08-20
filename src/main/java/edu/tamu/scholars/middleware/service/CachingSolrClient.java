@@ -124,7 +124,7 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
         if (Objects.isNull(requestAttributes)) {
-            logger.warn("Unable to cache without originating request. RequestContextHolder.getRequestAttributes() is {}");
+            logger.warn("Unable to cache without originating request. RequestContextHolder.getRequestAttributes() is {}", requestAttributes);
             return client.request(request, collection);
         }
 
@@ -140,6 +140,7 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         String key = String.format("%s%s/lookup_table", StringUtils.removeEnd(index.getCacheLocation(), FORWARD_SLASH), cachePath);
 
         File lookupFile = getOrCreateLookupFile(key);
+
         Map<String, String> innerMap = getOrCreateInnerMapForLookupFile(key, lookupFile);
 
         long start = System.currentTimeMillis();
@@ -171,25 +172,23 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
         File file = new File(filename);
 
-        long startFoundCache, startQueryToSolr;
-
         if (file.exists()) { // cache response branch
-            startFoundCache = System.currentTimeMillis();
+            long startTime = System.currentTimeMillis();
 
             try {
                 response = JavaObjectStorageFileUtility.readObject(filename);
             } catch (ClassNotFoundException | IOException e) {
-                throw new RuntimeException(String.format("%s:%s", e.getClass(), e.getMessage(), e));
+                throw new RuntimeException(String.format("%s:%s", e.getClass(), e.getMessage()), e);
             }
 
-            logger.info("{}:{}: {} seconds", uuid, "RESPONSE CACHED READ", (System.currentTimeMillis() - startFoundCache) / (double) 1000);
+            logger.info("{}:{}: {} seconds", uuid, "RESPONSE CACHED READ", (System.currentTimeMillis() - startTime) / (double) 1000);
         } else { // actual response branch
-            startQueryToSolr = System.currentTimeMillis();
+            long startTime = System.currentTimeMillis();
             response = client.request(request, collection);
 
             JavaObjectStorageFileUtility.writeObject(response, filename);
 
-            logger.info("{}:{}: {} seconds", uuid, "QUERY RESPONSE", (System.currentTimeMillis() - startQueryToSolr) / (double) 1000);
+            logger.info("{}:{}: {} seconds", uuid, "QUERY RESPONSE", (System.currentTimeMillis() - startTime) / (double) 1000);
 
             long startUdateLookupTable = System.currentTimeMillis();
 
@@ -205,6 +204,12 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         return response;
     }
 
+    /**
+     * Get lookup file by key or create lookup file and place in map.
+     * 
+     * @param key
+     * @return lookup file
+     */
     private synchronized File getOrCreateLookupFile(String key) {
         File lookupFile = this.lookup.get(key);
 
@@ -216,7 +221,15 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         return lookupFile;
     }
 
-    private synchronized Map<String, String> getOrCreateInnerMapForLookupFile(String key, File lookupFile) throws StreamReadException, DatabindException, IOException {
+    /**
+     * Get lookup file by key or read lookup file provided is exists and is not a directory/
+     * 
+     * @param key
+     * @param lookupFile lookup file or request cache
+     * @return inner map for cache
+     * @throws IOException if unable to read and map file
+     */
+    private synchronized Map<String, String> getOrCreateInnerMapForLookupFile(String key, File lookupFile) throws IOException {
         Map<String, String> innerMap = this.map.get(key);
 
         if (innerMap == null) {
@@ -229,14 +242,13 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
         return innerMap;
     }
 
-    /**
-     * Convert the request to an ObjectNode with at most knowledge of SolrRequest at this time.
-     * 
-     * @param request SolrRequest
-     * @return ObjectNode
-     * @throws JsonMappingException when unable to map request parameters to JSON
-     * @throws JsonProcessingException when unable to deserialize JSON parameters of the SolrRequest
-     */
+     /**
+      * Convert the request to an ObjectNode with at most knowledge of SolrRequest at this time.
+      * 
+      * @param request SolrRequest
+      * @return ObjectNode for SolrRequest
+      * @throws JsonProcessingException when unable to deserialize JSON parameters of the SolrRequest
+      */
     private ObjectNode requestToObjectNode(SolrRequest<?> request) throws JsonProcessingException {
         ObjectNode rootNode = objectMapper.createObjectNode();
 
@@ -288,10 +300,10 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
     }
 
     /**
-     * Convert the ObjectNode to a Map<String, Object>.
+     * Convert the ObjectNode to a Map<String, Object> without null values.
      * 
      * @param rootNode ObjectNode from the SolrRequest
-     * @return claims without nulls
+     * @return claims without null values
      */
     private Map<String, Object> requestObjectToClaims(ObjectNode rootNode) {
         return ClaimBuilder
