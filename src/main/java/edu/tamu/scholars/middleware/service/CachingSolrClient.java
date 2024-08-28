@@ -202,7 +202,7 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
             long startTime = System.currentTimeMillis();
             response = client.request(request, collection);
 
-            if (index.isCacheReadOnly()) {
+            if (!index.isCacheReadOnly()) {
                 JavaObjectStorageFileUtility.writeObject(response, filename);
 
                 logger.info("{}:{}: {} seconds", uuid, "QUERY RESPONSE", (System.currentTimeMillis() - startTime) / (double) 1000);
