@@ -38,6 +38,7 @@ middleware:
     onStartupDelay: 10000
     batchSize: 10000
     cacheEnabled: false
+    cacheReadOnly: false
     clearCache: true
     cacheLocation: src/test/resources
   triplestore:

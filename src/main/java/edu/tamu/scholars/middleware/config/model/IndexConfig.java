@@ -30,6 +30,8 @@ public class IndexConfig {
 
     private boolean cacheEnabled = false;
 
+    private boolean cacheReadOnly = false;
+
     private boolean clearCache = true;
 
     private String cacheLocation = "src/test/resources";
@@ -104,6 +106,14 @@ public class IndexConfig {
 
     public void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
+    }
+
+    public boolean isCacheReadOnly() {
+        return cacheReadOnly;
+    }
+
+    public void setCacheReadOnly(boolean cacheReadOnly) {
+        this.cacheReadOnly = cacheReadOnly;
     }
 
     public boolean isClearCache() {

@@ -141,7 +141,7 @@ For Windows Command Prompt, the syntax is slightly different:
 set SPRING_APPLICATION_JSON={"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres"} && mvn spring-boot:run
 ```
 
-Run with schematize and indexing turned on:
+Run with schematize and indexing turned on (default):
 ```
 set SPRING_APPLICATION_JSON={"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres","middleware.index.schematize":true,"middleware.index.onStartup":true} && mvn spring-boot:run
 ```
@@ -154,6 +154,11 @@ set SPRING_APPLICATION_JSON={"spring.datasource.driver-class-name":"org.postgres
 Run with schematize and indexing turned off and cache enabled:
 ```
 set SPRING_APPLICATION_JSON={"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres","middleware.index.schematize":false,"middleware.index.onStartup":false,"middleware.index.cacheEnabled":true} && mvn spring-boot:run
+```
+
+Run with schematize and indexing turned off and cache enabled read-only:
+```
+set SPRING_APPLICATION_JSON={"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres","middleware.index.schematize":false,"middleware.index.onStartup":false,"middleware.index.cacheEnabled":true,"middleware.index.cacheReadOnly":true} && mvn spring-boot:run
 ```
 
 For Windows PowerShell:

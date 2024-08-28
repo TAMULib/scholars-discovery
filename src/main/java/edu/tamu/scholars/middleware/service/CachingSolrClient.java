@@ -6,17 +6,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -37,6 +33,26 @@ import edu.tamu.scholars.middleware.config.model.IndexConfig;
 import edu.tamu.scholars.middleware.service.builder.ClaimBuilder;
 import edu.tamu.scholars.middleware.utility.JavaObjectStorageFileUtility;
 
+/**
+ * SorlClient cache.
+ * 
+ * Configure with {@link IndexConfig}.
+ * 
+ * To enable the cache:
+ * middleware.index.cacheEnabled: false
+ * 
+ * To only allow to read from cache:
+ * middleware.index.cacheReadOnly: false
+ * 
+ * To clear the cache on startup:
+ * middleware.index.clearCache: true
+ * 
+ * Location to store cache:
+ * middleware.index.cacheLocation: src/test/resources
+ * 
+ * The cache storage is per API endpoint mapping.
+ * 
+ */
 public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
     private static final Logger logger = LoggerFactory.getLogger(CachingSolrClient.class);
@@ -85,7 +101,7 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
 
     @PostConstruct
     public void clearCache() {
-        if (index.isCacheEnabled()) {
+        if (index.isCacheEnabled() && !index.isCacheReadOnly()) {
             File cacheDirectory = new File(StringUtils.removeEnd(index.getCacheLocation(), FORWARD_SLASH));
             if (cacheDirectory.exists() && !cacheDirectory.isDirectory()) {
                 throw new RuntimeException(String.format("Cache location %s is not a directory!", index.getCacheLocation()));
@@ -186,18 +202,20 @@ public class CachingSolrClient<C extends SolrClient> extends SolrClient {
             long startTime = System.currentTimeMillis();
             response = client.request(request, collection);
 
-            JavaObjectStorageFileUtility.writeObject(response, filename);
+            if (index.isCacheReadOnly()) {
+                JavaObjectStorageFileUtility.writeObject(response, filename);
 
-            logger.info("{}:{}: {} seconds", uuid, "QUERY RESPONSE", (System.currentTimeMillis() - startTime) / (double) 1000);
+                logger.info("{}:{}: {} seconds", uuid, "QUERY RESPONSE", (System.currentTimeMillis() - startTime) / (double) 1000);
 
-            long startUdateLookupTable = System.currentTimeMillis();
+                long startUdateLookupTable = System.currentTimeMillis();
 
-            innerMap.put(jwt, uuid);
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(lookupFile, innerMap);
+                innerMap.put(jwt, uuid);
+                objectMapper.writerWithDefaultPrettyPrinter().writeValue(lookupFile, innerMap);
 
-            logger.info("{}:{}: {} seconds", uuid, "UPDATE LOOKUP TABLE", (System.currentTimeMillis() - startUdateLookupTable) / (double) 1000);
+                logger.info("{}:{}: {} seconds", uuid, "UPDATE LOOKUP TABLE", (System.currentTimeMillis() - startUdateLookupTable) / (double) 1000);
 
-            logger.info("{}:{}:{} {}", uuid, "REQUEST", uuid, requestAsObject.toPrettyString());
+                logger.info("{}:{}:{} {}", uuid, "REQUEST", uuid, requestAsObject.toPrettyString());
+            }
         }
         logger.info("{}:{}: {} seconds", uuid, "ACTUAL RESPONSE", (System.currentTimeMillis() - start) / (double) 1000);
 
