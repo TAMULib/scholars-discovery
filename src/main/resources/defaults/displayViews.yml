@@ -415,7 +415,7 @@
                 - field: subtype
                   value: Album
               sort:
-                - field: dateTimeIntervalStart
+                - field: dateTimeInterval.Start
                   direction: DESC
                   date: true
                 - field: title
