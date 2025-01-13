@@ -59,9 +59,6 @@ public class WebSecurityConfig {
     @Value("${spring.h2.console.enabled:false}")
     private boolean h2ConsoleEnabled;
 
-    @Value("${server.servlet.session.cookie.domain:library.tamu.edu}")
-    private String domainName;
-
     @Autowired
     private MiddlewareConfig config;
 
@@ -151,8 +148,6 @@ public class WebSecurityConfig {
         serializer.setUseSecureCookie(false);
         serializer.setCookiePath("/");
         serializer.setCookieName("SESSION");
-        serializer.setDomainName(domainName);
-
         return serializer;
     }
 
@@ -174,9 +169,13 @@ public class WebSecurityConfig {
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
-                    "/themes/{id}",
-                    "/users/{id}")
+                    "/themes/{id}"
+                    )
                     .hasRole("ADMIN")
+
+                .antMatchers(PATCH,
+                    "/users/{id}"
+                ).hasRole("SUPER_ADMIN")
 
                 .antMatchers(POST,
                     "/registration")
