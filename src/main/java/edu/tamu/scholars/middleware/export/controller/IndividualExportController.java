@@ -1,18 +1,33 @@
 package edu.tamu.scholars.middleware.export.controller;
 
 import static edu.tamu.scholars.middleware.export.utility.FilenameUtility.normalizeExportFilename;
+import static java.util.Optional.empty;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
-import javax.persistence.EntityNotFoundException;
-
+import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
+import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
+import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
+import edu.tamu.scholars.middleware.discovery.assembler.model.IndividualModel;
+import edu.tamu.scholars.middleware.discovery.model.Individual;
+import edu.tamu.scholars.middleware.discovery.model.Organization;
+import edu.tamu.scholars.middleware.discovery.model.Person;
+import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
+import edu.tamu.scholars.middleware.export.argument.ExportArg;
+import edu.tamu.scholars.middleware.export.exception.UnauthorizedExportException;
+import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
+import edu.tamu.scholars.middleware.export.service.Exporter;
+import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
+import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,16 +37,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import edu.tamu.scholars.middleware.discovery.assembler.model.IndividualModel;
-import edu.tamu.scholars.middleware.discovery.model.Individual;
-import edu.tamu.scholars.middleware.discovery.model.Organization;
-import edu.tamu.scholars.middleware.discovery.model.Person;
-import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
-import edu.tamu.scholars.middleware.export.exception.UnauthorizedExportException;
-import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
-import edu.tamu.scholars.middleware.export.service.Exporter;
-import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
 
 
 /**
@@ -47,6 +52,28 @@ public class IndividualExportController implements RepresentationModelProcessor<
     @Lazy
     @Autowired
     private ExporterRegistry exporterRegistry;
+
+    @GetMapping("/individual/all/export")
+    public ResponseEntity<StreamingResponseBody> exportAll(
+      @RequestParam(value = "ids", required = false) String ids // TODO: collapse/merge ids string (but this may be 100 ids or something absurd).
+    ) throws UnknownExporterTypeException, IllegalArgumentException, IllegalAccessException {
+
+      String testQ = "(id:n0016a660 OR id:n54c59a01)^=1.0 AND class:\"Person\"";
+      QueryArg query = QueryArg.of(Optional.of(testQ), empty(), empty(), empty(), empty(), empty());
+      //List<Individual> individuals = repo.findByIdIn(ids.getIds());
+      List<FilterArg> filters = new ArrayList<>();
+      List<BoostArg> boosts = new ArrayList<>();
+      List<ExportArg> export = new ArrayList<>();
+
+      //if (individuals != null) {
+          Exporter exporter = exporterRegistry.getExporter("zip");
+          return ResponseEntity.ok()
+              .header(CONTENT_DISPOSITION, exporter.contentDisposition(normalizeExportFilename("selectedTODO")))
+              .header(CONTENT_TYPE, exporter.contentType())
+              .body(exporter.streamIndividuals(repo.export(query, filters, boosts, Sort.unsorted()), export));
+      //}
+      //throw new EntityNotFoundException(String.format("Individual not found"));
+    }
 
     @GetMapping("/individual/{id}/export")
     public ResponseEntity<StreamingResponseBody> export(
@@ -174,6 +201,26 @@ public class IndividualExportController implements RepresentationModelProcessor<
             return title;
         }
         
+    }
+
+    private class PeopleIds {
+      private List<String> ids;
+
+      public PeopleIds() {
+        ids = new ArrayList<>();
+      }
+
+      public PeopleIds(List<String> ids) {
+        this.ids = new ArrayList<>(ids);
+      }
+
+      public List<String> getIds() {
+        return ids;
+      }
+
+      public void setIds(List<String> ids) {
+        this.ids = ids;
+      }
     }
 
 }

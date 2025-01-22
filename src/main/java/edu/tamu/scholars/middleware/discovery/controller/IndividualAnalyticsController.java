@@ -31,7 +31,7 @@ public class IndividualAnalyticsController {
     private IndividualRepo repo;
 
     @GetMapping("/academicAge")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<DiscoveryAcademicAge> academicAge(
         QueryArg query,
         List<FilterArg> filters,
@@ -60,7 +60,7 @@ public class IndividualAnalyticsController {
     }
 
     @GetMapping("/quantityDistribution")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<DiscoveryQuantityDistribution> quantityDistribution(
         QueryArg query,
         List<FilterArg> filters,

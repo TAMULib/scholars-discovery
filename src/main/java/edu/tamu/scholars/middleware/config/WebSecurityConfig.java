@@ -214,7 +214,8 @@ public class WebSecurityConfig {
                     "/users",
                     "/users/{id}",
                     "/themes",
-                    "/themes/{id}")
+                    "/themes/{id}",
+                    "/individual/all/export")
                     .hasRole("ADMIN")
 
                 .antMatchers(DELETE,
