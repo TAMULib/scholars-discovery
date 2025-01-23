@@ -152,7 +152,6 @@ public class WebSecurityConfig {
         serializer.setCookiePath("/");
         serializer.setCookieName("SESSION");
         serializer.setDomainName(domainName);
-
         return serializer;
     }
 
@@ -174,9 +173,13 @@ public class WebSecurityConfig {
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
                     "/displayViews/{id}",
-                    "/themes/{id}",
-                    "/users/{id}")
+                    "/themes/{id}"
+                    )
                     .hasRole("ADMIN")
+
+                .antMatchers(PATCH,
+                    "/users/{id}"
+                ).hasRole("SUPER_ADMIN")
 
                 .antMatchers(POST,
                     "/registration")
