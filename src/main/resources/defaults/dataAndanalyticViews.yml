@@ -69,6 +69,9 @@
       collapsed: false
       useDialog: true
       hidden: false
+- name: Download Profile Summaries by Department
+  layout: CONTAINER
+  type: PROFILE_SUMMARIES_EXPORT
 - name: Temporal Graph
   layout: CONTAINER
   type: FREQUENCY_GRAPH
@@ -99,6 +102,3 @@
       collapsed: false
       useDialog: true
       hidden: false
-- name: Download Profile Summaries by Department
-  layout: CONTAINER
-  type: PROFILE_SUMMARIES_EXPORT
