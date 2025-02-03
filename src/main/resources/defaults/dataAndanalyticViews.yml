@@ -84,7 +84,7 @@
       type: STRING
       sort: COUNT
       direction: DESC
-      pageSize: 10
+      pageSize: 2147483647
       expandable: false
       collapsible: false
       collapsed: false
@@ -95,7 +95,7 @@
       type: STRING
       sort: COUNT
       direction: DESC
-      pageSize: 10
+      pageSize: 2147483647
       expandable: false
       collapsible: false
       collapsed: false
