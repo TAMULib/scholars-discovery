@@ -90,11 +90,10 @@
       collapsed: false
       useDialog: true
       hidden: false
-    - name: Year
-      field: publicationDate
-      opKey: BETWEEN
-      type: DATE_YEAR
-      sort: INDEX
+    - name: Authors
+      field: authors
+      type: STRING
+      sort: COUNT
       direction: DESC
       pageSize: 10
       expandable: false
