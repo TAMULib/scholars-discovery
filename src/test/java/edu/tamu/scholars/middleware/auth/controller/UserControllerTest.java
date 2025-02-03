@@ -79,9 +79,9 @@ public class UserControllerTest extends UserIntegrationTest {
 
     @Test
     public void testPatchUser() throws Exception {
-        User admin = createMockAdmin();
+        User superAdmin = createMockSuperAdmin();
         // @formatter:off
-        mockMvc.perform(patch("/users/{id}", admin.getId()).cookie(login(admin)).content("{\"role\": \"ROLE_USER\", \"active\": false}"))
+        mockMvc.perform(patch("/users/{id}", superAdmin.getId()).cookie(login(superAdmin)).content("{\"role\": \"ROLE_USER\", \"active\": false}"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(HAL_JSON_VALUE))
             .andExpect(jsonPath("active", equalTo(false)))
