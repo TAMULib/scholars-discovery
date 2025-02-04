@@ -55,7 +55,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
     }
 
     public static <T> List<Facet> buildFacets(QueryResponse response, List<FacetArg> facetArguments) {
-        List<Facet> facets = new ArrayList<Facet>();
+        List<Facet> facets = new ArrayList<>();
 
         facetArguments.forEach(facetArgument -> {
             String name = facetArgument.getField();
@@ -77,7 +77,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                 int pageNumber = facetArgument.getPageNumber() - 1;
                 int offset = pageSize * pageNumber;
 
-                int totalElements = (int) entries.size();
+                int totalElements = entries.size();
 
                 int start = offset;
 
@@ -94,8 +94,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                 DiscoveryPage<FacetEntry> page = DiscoveryPage.from(entries.subList(start, end), pageable,
                         totalElements);
 
-                facets.add(
-                        new Facet(findPath(name), page, pivot));
+                facets.add(new Facet(findPath(name), page, pivot));
             }
         });
         return facets;
@@ -104,32 +103,23 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
     private static Map<String, List<FacetPivot>> buildPivotMap(QueryResponse response, String facetName) {
         Map<String, List<FacetPivot>> pivotMap = new HashMap<>();
 
-        // Get pivot fields for the current facet
         NamedList<List<PivotField>> pivotResponse = response.getFacetPivot();
         if (pivotResponse != null) {
-            // Find pivot fields that start with the current facet name
             pivotResponse.forEach((pivotKey, pivotFields) -> {
                 if (pivotKey.startsWith(facetName)) {
                     List<FacetPivot> pivots = new ArrayList<>();
-
-                    // Process each pivot field
                     if (pivotFields != null) {
                         for (PivotField pivotField : pivotFields) {
-                            // Add the main pivot
-                            pivots.add(new FacetPivot(
-                                    pivotField.getField(),
-                                    String.valueOf(pivotField.getValue()),
-                                    pivotField.getCount()));
 
-                            // Process nested pivots if they exist
+                            List<FacetPivot> pivotEntries = new ArrayList<>();
+
                             if (pivotField.getPivot() != null) {
                                 for (PivotField nested : pivotField.getPivot()) {
-                                    pivots.add(new FacetPivot(
-                                            nested.getField(),
-                                            String.valueOf(nested.getValue()),
-                                            nested.getCount()));
+                                    pivotEntries.add(new FacetPivot(nested.getField(), String.valueOf(nested.getValue()), nested.getCount(), new ArrayList<>()));
                                 }
                             }
+
+                            pivots.add(new FacetPivot(pivotField.getField(), String.valueOf(pivotField.getValue()), pivotField.getCount(), pivotEntries));
                         }
                     }
 
@@ -253,10 +243,13 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
         private final long count;
 
-        public FacetPivot(String field, String value, long count) {
+        private final List<FacetPivot> pivot;
+
+        public FacetPivot(String field, String value, long count, List<FacetPivot> pivot) {
             this.field = field;
             this.value = value;
             this.count = count;
+            this.pivot = pivot;
         }
 
         public String getField() {
@@ -269,6 +262,10 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
         public long getCount() {
             return count;
+        }
+
+        public List<FacetPivot> getPivot() {
+            return pivot;
         }
 
     }
