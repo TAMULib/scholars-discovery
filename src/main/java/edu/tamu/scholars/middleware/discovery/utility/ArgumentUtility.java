@@ -38,6 +38,7 @@ public class ArgumentUtility {
     private static final String HIGHLIGHT_PRE_QUERY_PARAM_KEY = "hl.prefix";
     private static final String HIGHLIGHT_POST_QUERY_PARAM_KEY = "hl.postfix";
 
+    private static final String FACET_PIVOT_FORMAT = "%s.pivot";
     private static final String FACET_SORT_FORMAT = "%s.sort";
     private static final String FACET_PAGE_SIZE_FORMAT = "%s.pageSize";
     private static final String FACET_PAGE_NUMBER_FORMAT = "%s.pageNumber";
@@ -68,6 +69,7 @@ public class ArgumentUtility {
             .flatMap(list -> list.stream())
             .collect(Collectors.toList());
         return fields.stream().map(field -> {
+            final String pivotFacet = String.format(FACET_PIVOT_FORMAT, field);
             final String sortFacet = String.format(FACET_SORT_FORMAT, field);
             final String pageSizeFacet = String.format(FACET_PAGE_SIZE_FORMAT, field);
             final String pageNumberFacet = String.format(FACET_PAGE_NUMBER_FORMAT, field);
@@ -76,6 +78,7 @@ public class ArgumentUtility {
             final String rangeStartTagFacet = String.format(FACET_RANGE_START_TAG_FORMAT, field);
             final String rangeEndTagFacet = String.format(FACET_RANGE_END_TAG_FORMAT, field);
             final String rangeGapTagFacet = String.format(FACET_RANGE_GAP_TAG_FORMAT, field);
+            Optional<String> pivot = Optional.empty();
             Optional<String> sort = Optional.empty();
             Optional<String> pageSize = Optional.empty();
             Optional<String> pageNumber = Optional.empty();
@@ -88,7 +91,9 @@ public class ArgumentUtility {
                 String[] parameterValues = request.getParameterValues(paramName);
                 if (Objects.nonNull(parameterValues)) {
                     Optional<String> value = Optional.of(parameterValues[0]);
-                    if (paramName.equals(sortFacet)) {
+                    if (paramName.equals(pivotFacet)) {
+                        pivot = value;
+                    } else if (paramName.equals(sortFacet)) {
                         sort = value;
                     } else if (paramName.equals(pageSizeFacet)) {
                         pageSize = value;
@@ -107,7 +112,7 @@ public class ArgumentUtility {
                     }
                 }
             }
-            return FacetArg.of(field, sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap);
+            return FacetArg.of(field, pivot, sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap);
         }).collect(Collectors.toList());
     }
 

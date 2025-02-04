@@ -352,6 +352,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             {
                 add(FacetArg.of(
                     field, 
+                    Optional.empty(),
                     Optional.of("COUNT,DESC"),
                     Optional.of(String.valueOf(Integer.MAX_VALUE)),
                     Optional.empty(),
@@ -592,6 +593,11 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                     default:
                         this.query.addFacetField(name);
                         break;
+                }
+
+                if (StringUtils.isNotEmpty(facet.getPivot())) {
+                    // what format? field, pivot
+                    this.query.addFacetPivotField(facet.getPivot());
                 }
             });
 

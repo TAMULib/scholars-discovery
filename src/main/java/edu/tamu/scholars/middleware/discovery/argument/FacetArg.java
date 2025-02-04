@@ -14,6 +14,8 @@ public class FacetArg {
 
     private final String field;
 
+    private final String pivot;
+
     private final FacetSortArg sort;
 
     private final int pageSize;
@@ -32,6 +34,7 @@ public class FacetArg {
 
     FacetArg(
         String field,
+        String pivot,
         String sort,
         int pageSize,
         int pageNumber,
@@ -42,6 +45,7 @@ public class FacetArg {
         String rangeGap
     ) {
         this.field = DiscoveryUtility.findProperty(field);
+        this.pivot = StringUtils.isNotEmpty(pivot) ? DiscoveryUtility.findProperty(pivot) : StringUtils.EMPTY;
         this.sort = FacetSortArg.of(sort);
         this.pageSize = pageSize;
         this.pageNumber = pageNumber;
@@ -54,6 +58,10 @@ public class FacetArg {
 
     public String getField() {
         return field;
+    }
+
+    public String getPivot() {
+        return pivot;
     }
 
     public FacetSortArg getSort() {
@@ -94,6 +102,7 @@ public class FacetArg {
 
     public static FacetArg of(
         String field,
+        Optional<String> pivot,
         Optional<String> sort,
         Optional<String> pageSize,
         Optional<String> pageNumber,
@@ -103,6 +112,7 @@ public class FacetArg {
         Optional<String> rangeEnd,
         Optional<String> rangeGap
     ) {
+        String pivotParam = pivot.isPresent() ? pivot.get() : StringUtils.EMPTY;
         String sortParam = sort.isPresent() ? sort.get() : "COUNT,DESC";
         int pageSizeParam = pageSize.isPresent() ? Integer.valueOf(pageSize.get()) : 10;
         int pageNumberParam = pageNumber.isPresent() ? Integer.valueOf(pageNumber.get()) : 1;
@@ -113,6 +123,7 @@ public class FacetArg {
         String rangeGapParam = rangeGap.isPresent() ? rangeGap.get() : "100";
         return new FacetArg(
             field,
+            pivotParam,
             sortParam,
             pageSizeParam,
             pageNumberParam,
