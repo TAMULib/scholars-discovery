@@ -81,6 +81,7 @@
   facets:
     - name: Author organization
       field: authorOrganization
+      pivot: publicationDate
       type: STRING
       sort: COUNT
       direction: DESC
@@ -92,6 +93,7 @@
       hidden: false
     - name: Authors
       field: authors
+      pivot: publicationDate
       type: STRING
       sort: COUNT
       direction: DESC
