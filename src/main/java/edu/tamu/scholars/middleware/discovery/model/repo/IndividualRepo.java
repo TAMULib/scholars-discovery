@@ -596,7 +596,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 }
 
                 if (StringUtils.isNotEmpty(facet.getPivot())) {
-                    // what format? field, pivot
+                    // format: <field>,<pivot field>
                     this.query.addFacetPivotField(facet.getPivot());
                 }
             });

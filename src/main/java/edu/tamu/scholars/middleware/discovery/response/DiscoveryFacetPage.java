@@ -43,11 +43,12 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
     }
 
     public static <T> DiscoveryFacetPage<T> from(
-            List<T> documents,
-            QueryResponse response,
-            Pageable pageable,
-            List<FacetArg> facetArguments,
-            Class<T> type) {
+        List<T> documents,
+        QueryResponse response,
+        Pageable pageable,
+        List<FacetArg> facetArguments,
+        Class<T> type
+    ) {
         List<Facet> facets = buildFacets(response, facetArguments);
         SolrDocumentList results = response.getResults();
 
@@ -65,12 +66,12 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
             if (Objects.nonNull(facetField) && !facetField.getValues().isEmpty()) {
 
                 List<FacetEntry> entries = facetField.getValues().parallelStream()
-                        .map(entry -> new FacetEntry(entry.getName(), entry.getCount()))
-                        .collect(Collectors.toMap(FacetEntry::getValueKey, fe -> fe, FacetEntry::merge))
-                        .values()
-                        .parallelStream()
-                        .sorted(FacetEntryComparator.of(facetArgument.getSort()))
-                        .collect(Collectors.toList());
+                    .map(entry -> new FacetEntry(entry.getName(), entry.getCount()))
+                    .collect(Collectors.toMap(FacetEntry::getValueKey, fe -> fe, FacetEntry::merge))
+                    .values()
+                    .parallelStream()
+                    .sorted(FacetEntryComparator.of(facetArgument.getSort()))
+                    .collect(Collectors.toList());
 
                 int pageSize = facetArgument.getPageSize();
                 // convert to zero-based numbering page number
@@ -83,16 +84,13 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
                 int end = offset + (pageSize > totalElements ? totalElements : offset + pageSize);
 
-                Sort sort = Sort.by(
-                        facetArgument.getSort().getDirection(),
-                        facetArgument.getSort().getProperty().toString());
+                Sort sort = Sort.by(facetArgument.getSort().getDirection(), facetArgument.getSort().getProperty().toString());
 
                 Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
                 Map<String, List<FacetPivot>> pivot = buildPivotMap(response, name);
 
-                DiscoveryPage<FacetEntry> page = DiscoveryPage.from(entries.subList(start, end), pageable,
-                        totalElements);
+                DiscoveryPage<FacetEntry> page = DiscoveryPage.from(entries.subList(start, end), pageable, totalElements);
 
                 facets.add(new Facet(findPath(name), page, pivot));
             }
@@ -143,8 +141,8 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
         public int compare(FacetEntry e1, FacetEntry e2) {
             if (facetSort.getProperty().equals(FacetSort.COUNT)) {
                 return facetSort.getDirection().equals(Direction.ASC)
-                        ? Long.compare(e1.count, e2.count)
-                        : Long.compare(e2.count, e1.count);
+                    ? Long.compare(e1.count, e2.count)
+                    : Long.compare(e2.count, e1.count);
             }
             try {
                 ZonedDateTime ld1 = DateFormatUtility.parseZonedDateTime(e1.value);
@@ -157,8 +155,8 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                     return facetSort.getDirection().equals(Direction.ASC) ? d1.compareTo(d2) : d2.compareTo(d1);
                 } else {
                     return facetSort.getDirection().equals(Direction.ASC)
-                            ? e1.value.compareTo(e2.value)
-                            : e2.value.compareTo(e1.value);
+                        ? e1.value.compareTo(e2.value)
+                        : e2.value.compareTo(e1.value);
                 }
             }
         }
