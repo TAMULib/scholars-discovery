@@ -72,3 +72,32 @@
 - name: Download Profile Summaries by Department
   layout: CONTAINER
   type: PROFILE_SUMMARIES_EXPORT
+- name: Temporal Graph
+  layout: CONTAINER
+  type: FREQUENCY_GRAPH
+  filters:
+  - field: class
+    value: Document
+  facets:
+    - name: Author organization
+      field: authorOrganization
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      expandable: false
+      collapsible: false
+      collapsed: false
+      useDialog: true
+      hidden: false
+    - name: Authors
+      field: authors
+      type: STRING
+      sort: COUNT
+      direction: DESC
+      pageSize: 10
+      expandable: false
+      collapsible: false
+      collapsed: false
+      useDialog: true
+      hidden: false
