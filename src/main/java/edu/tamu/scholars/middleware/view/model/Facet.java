@@ -70,6 +70,9 @@ public class Facet {
     @Column(nullable = true)
     private String rangeGap;
 
+    @Column(nullable = true)
+    private String pivot;
+
     /**
      * Default `Facet` constructor.
      * 
@@ -227,6 +230,14 @@ public class Facet {
 
     public void setRangeGap(String rangeGap) {
         this.rangeGap = rangeGap;
+    }
+
+    public String getPivot() {
+        return pivot;
+    }
+
+    public void setPivot(String pivot) {
+        this.pivot = pivot;
     }
 
 }

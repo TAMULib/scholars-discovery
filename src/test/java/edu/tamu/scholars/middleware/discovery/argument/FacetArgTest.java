@@ -18,9 +18,10 @@ public class FacetArgTest {
 
     @Test
     public void testDefaultConstructor() {
-        FacetArg facetArg = new FacetArg("class", "COUNT,DESC", 10, 1, "STRING", "CLAZZ", "0", "1000", "10");
+        FacetArg facetArg = new FacetArg("class", "", "COUNT,DESC", 10, 1, "STRING", "CLAZZ", "0", "1000", "10");
         assertNotNull(facetArg);
         assertEquals("class", facetArg.getField());
+        assertEquals("", facetArg.getPivot());
         assertEquals(FacetSort.COUNT, facetArg.getSort().getProperty());
         assertEquals(Direction.DESC, facetArg.getSort().getDirection());
         assertEquals(10, facetArg.getPageSize());
@@ -34,6 +35,7 @@ public class FacetArgTest {
 
     @Test
     public void testOfQueryParameter() {
+        Optional<String> pivot = Optional.of("");
         Optional<String> sort = Optional.of("COUNT,DESC");
         Optional<String> pageSize = Optional.of("10");
         Optional<String> pageNumber = Optional.of("1");
@@ -42,9 +44,10 @@ public class FacetArgTest {
         Optional<String> rangeStart = Optional.of("0");
         Optional<String> rangeEnd = Optional.of("1000");
         Optional<String> rangeGap = Optional.of("10");
-        FacetArg facetArg = FacetArg.of("class", sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap);
+        FacetArg facetArg = FacetArg.of("class", pivot, sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap);
         assertNotNull(facetArg);
         assertEquals("class", facetArg.getField());
+        assertEquals("", facetArg.getPivot());
         assertEquals(FacetSort.COUNT, facetArg.getSort().getProperty());
         assertEquals(Direction.DESC, facetArg.getSort().getDirection());
         assertEquals(10, facetArg.getPageSize());

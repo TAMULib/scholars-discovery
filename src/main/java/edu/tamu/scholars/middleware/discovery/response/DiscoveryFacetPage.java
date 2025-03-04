@@ -6,14 +6,18 @@ import java.text.ParseException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.PivotField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -52,7 +56,7 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
     }
 
     public static <T> List<Facet> buildFacets(QueryResponse response, List<FacetArg> facetArguments) {
-        List<Facet> facets = new ArrayList<Facet>();
+        List<Facet> facets = new ArrayList<>();
 
         facetArguments.forEach(facetArgument -> {
             String name = facetArgument.getField();
@@ -64,8 +68,8 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                 List<FacetEntry> entries = facetField.getValues().parallelStream()
                     .map(entry -> new FacetEntry(entry.getName(), entry.getCount()))
                     .collect(Collectors.toMap(FacetEntry::getValueKey, fe -> fe, FacetEntry::merge))
-                        .values()
-                        .parallelStream()
+                    .values()
+                    .parallelStream()
                     .sorted(FacetEntryComparator.of(facetArgument.getSort()))
                     .collect(Collectors.toList());
 
@@ -74,26 +78,55 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                 int pageNumber = facetArgument.getPageNumber() - 1;
                 int offset = pageSize * pageNumber;
 
-                int totalElements = (int) entries.size();
+                int totalElements = entries.size();
 
                 int start = offset;
 
                 int end = offset + (pageSize > totalElements ? totalElements : offset + pageSize);
 
-                Sort sort = Sort.by(
-                    facetArgument.getSort().getDirection(),
-                    facetArgument.getSort().getProperty().toString()
-                );
+                Sort sort = Sort.by(facetArgument.getSort().getDirection(), facetArgument.getSort().getProperty().toString());
 
                 Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
-                facets.add(
-                    new Facet(findPath(name),
-                    DiscoveryPage.from(entries.subList(start, end), pageable, totalElements))
-                );
+                Map<String, List<FacetPivot>> pivot = buildPivotMap(response, name);
+
+                DiscoveryPage<FacetEntry> page = DiscoveryPage.from(entries.subList(start, end), pageable, totalElements);
+
+                facets.add(new Facet(findPath(name), page, pivot));
             }
         });
         return facets;
+    }
+
+    private static Map<String, List<FacetPivot>> buildPivotMap(QueryResponse response, String facetName) {
+        Map<String, List<FacetPivot>> pivotMap = new HashMap<>();
+
+        NamedList<List<PivotField>> pivotResponse = response.getFacetPivot();
+        if (pivotResponse != null) {
+            pivotResponse.forEach((pivotKey, pivotFields) -> {
+                if (pivotKey.startsWith(facetName)) {
+                    List<FacetPivot> pivots = new ArrayList<>();
+                    if (pivotFields != null) {
+                        for (PivotField pivotField : pivotFields) {
+
+                            List<FacetPivot> pivotEntries = new ArrayList<>();
+
+                            if (pivotField.getPivot() != null) {
+                                for (PivotField nested : pivotField.getPivot()) {
+                                    pivotEntries.add(new FacetPivot(nested.getField(), String.valueOf(nested.getValue()), nested.getCount(), new ArrayList<>()));
+                                }
+                            }
+
+                            pivots.add(new FacetPivot(pivotField.getField(), String.valueOf(pivotField.getValue()), pivotField.getCount(), pivotEntries));
+                        }
+                    }
+
+                    pivotMap.put(pivotKey, pivots);
+                }
+            });
+        }
+
+        return pivotMap;
     }
 
     private static class FacetEntryComparator implements Comparator<FacetEntry> {
@@ -144,9 +177,12 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
         private final DiscoveryPage<FacetEntry> entries;
 
-        public Facet(String field, DiscoveryPage<FacetEntry> entries) {
+        private final Map<String, List<FacetPivot>> pivot;
+
+        public Facet(String field, DiscoveryPage<FacetEntry> entries, Map<String, List<FacetPivot>> pivot) {
             this.field = field;
             this.entries = entries;
+            this.pivot = pivot;
         }
 
         public String getField() {
@@ -155,6 +191,10 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
         public DiscoveryPage<FacetEntry> getEntries() {
             return entries;
+        }
+
+        public Map<String, List<FacetPivot>> getPivot() {
+            return pivot;
         }
 
     }
@@ -189,6 +229,41 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
         public static FacetEntry merge(FacetEntry src, FacetEntry dest) {
             return new FacetEntry(src.value, src.count + dest.count);
+        }
+
+    }
+
+    public static class FacetPivot {
+
+        private final String field;
+
+        private final String value;
+
+        private final long count;
+
+        private final List<FacetPivot> pivot;
+
+        public FacetPivot(String field, String value, long count, List<FacetPivot> pivot) {
+            this.field = field;
+            this.value = value;
+            this.count = count;
+            this.pivot = pivot;
+        }
+
+        public String getField() {
+            return field;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public long getCount() {
+            return count;
+        }
+
+        public List<FacetPivot> getPivot() {
+            return pivot;
         }
 
     }
