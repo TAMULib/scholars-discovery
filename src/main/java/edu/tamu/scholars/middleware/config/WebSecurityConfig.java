@@ -69,7 +69,7 @@ public class WebSecurityConfig {
     @Value("${spring.h2.console.enabled:false}")
     private boolean h2ConsoleEnabled;
 
-    @Value("${server.servlet.session.cookie.domain:library.tamu.edu}")
+    @Value("${server.servlet.session.cookie.domain:localhost}")
     private String domainName;
 
     @Autowired
@@ -186,7 +186,7 @@ public class WebSecurityConfig {
     http
         .authorizeRequests()
             .expressionHandler(securityExpressionHandler)
-            .antMatchers("/login/saml2/**", "/saml2/**")
+            .antMatchers("/login/success", "/login/saml2/**", "/saml2/**")
                 .permitAll()
             .antMatchers(PATCH, "/dataAndAnalyticsViews/{id}", "/directoryViews/{id}",
                 "/discoveryViews/{id}", "/displayViews/{id}", "/themes/{id}")
@@ -233,7 +233,6 @@ public class WebSecurityConfig {
         .failureHandler(authenticationFailureHandler())
         .permitAll()
     );
-//         .authenticationRequestRepository(new StatelessSaml2AuthenticationRequestRepository())
 
     http
         .logout(logout -> logout
@@ -260,21 +259,7 @@ public class WebSecurityConfig {
     return http.build();
     }
 
-    /*
-
-    @Bean
-    public RelyingPartyRegistrationRepository relyingPartyRegistrationRepository() {
-        RelyingPartyRegistration registration = RelyingPartyRegistrations
-            .fromMetadataLocation("https://login.microsoftonline.com/{tenant-id}/federationmetadata/2007-06/federationmetadata.xml")
-            .registrationId("entra-id")
-            .build();
-        return new InMemoryRelyingPartyRegistrationRepository(registration);
-    }
-
-    */
-
     private CustomAuthenticationSuccessHandler authenticationSuccessHandler() {
-
         return new CustomAuthenticationSuccessHandler(objectMapper);
     }
 
@@ -292,10 +277,6 @@ public class WebSecurityConfig {
 
     private CustomAccessDeniedExceptionHandler accessDeniedHandler() {
         return new CustomAccessDeniedExceptionHandler();
-    }
-
-    private NullRequestCache nullRequestCache() {
-        return new NullRequestCache();
     }
 
     private boolean enableH2Console() {

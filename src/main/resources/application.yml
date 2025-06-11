@@ -109,6 +109,8 @@ spring:
               identityprovider:
                 metadata-uri: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/federationmetadata/2007-06/federationmetadata.xml?appid=2f88008b-4c85-496d-8b96-f5ee076d8dc8
               entity-id: http://localhost:9000/saml2/service-provider-metadata/my-idp
+              acs:
+                location: http://localhost:9000/login/saml2/sso/my-idp
   data:
     rest:
       return-body-on-create: true
