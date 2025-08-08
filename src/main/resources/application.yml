@@ -32,8 +32,8 @@ middleware:
     name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    schematize: false
-    onStartup: false
+    schematize: true
+    onStartup: true
     enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
@@ -140,29 +140,29 @@ spring:
   datasource:
 
     # h2
-    # driver-class-name: org.h2.Driver
+    driver-class-name: org.h2.Driver
 
     # postgres
-    driver-class-name: org.postgresql.Driver
+    # driver-class-name: org.postgresql.Driver
 
     # h2 in memory
-    # url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 
     # h2 file
     # url: jdbc:h2:./h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 
     # postgres
-    url: jdbc:postgresql://localhost:5432/scholars
+    # url: jdbc:postgresql://localhost:5432/scholars
 
     username: scholars
     password: scholars
   jpa:
 
     # h2
-    # database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.H2Dialect
 
     # postgres
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    # database-platform: org.hibernate.dialect.PostgreSQLDialect
 
     generate-ddl: false
     hibernate.ddl-auto: none
@@ -182,7 +182,8 @@ spring:
       initialize-schema: always
   sql:
     init:
-      platform: postgres
+      platform: h2
+      # platform: postgres
 
 management:
   endpoints:
