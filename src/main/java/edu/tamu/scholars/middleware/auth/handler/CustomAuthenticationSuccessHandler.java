@@ -34,7 +34,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     ) throws IOException, ServletException {
         response.setContentType(APPLICATION_JSON_VALUE);
         response.getOutputStream()
-            .write(objectMapper.writeValueAsBytes((User) authentication.getPrincipal()));
+            .write(objectMapper.writeValueAsBytes(authentication.getPrincipal()));
     }
 
 }
