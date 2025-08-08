@@ -6,11 +6,17 @@ import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 
+import java.lang.System.LoggerFinder;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+import javax.servlet.Filter;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -27,6 +33,8 @@ import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
+import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationRequestFilter;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
@@ -53,13 +61,15 @@ import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
 
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Value("${spring.profiles.active:default}")
     private String profile;
 
     @Value("${spring.h2.console.enabled:false}")
     private boolean h2ConsoleEnabled;
 
-    @Value("${server.servlet.session.cookie.domain:library.tamu.edu}")
+    @Value("${server.servlet.session.cookie.domain:localhost}")
     private String domainName;
 
     @Autowired
@@ -79,6 +89,7 @@ public class WebSecurityConfig {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        logger.info("\n\n\n WebSecurityConfig configureGlobal \n\n\n");
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
@@ -155,8 +166,15 @@ public class WebSecurityConfig {
         return serializer;
     }
 
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        logger.info("\n\n\n SecurityFilterChain setup started: \n");
+
+        http.getSharedObjects().forEach((key, value) ->
+            logger.info("\n\n\n Shared Object: {} = {}", key.getSimpleName(), value)
+        );
+        logger.info("\n\n\n-----\n\n\n");
         if (enableH2Console()) {
             // NOTE: permit all access to h2console
             http
@@ -164,106 +182,81 @@ public class WebSecurityConfig {
                     .frameOptions()
                         .sameOrigin();
         }
-        http
-            .authorizeRequests()
-                .expressionHandler(securityExpressionHandler)
 
-                .antMatchers(PATCH,
-                    "/dataAndAnalyticsViews/{id}",
-                    "/directoryViews/{id}",
-                    "/discoveryViews/{id}",
-                    "/displayViews/{id}",
-                    "/themes/{id}"
-                    )
-                    .hasRole("ADMIN")
+    http
+        .authorizeRequests()
+            .expressionHandler(securityExpressionHandler)
+            .antMatchers("/login/success", "/login/saml2/**", "/saml2/**")
+                .permitAll()
+            .antMatchers(PATCH, "/dataAndAnalyticsViews/{id}", "/directoryViews/{id}",
+                "/discoveryViews/{id}", "/displayViews/{id}", "/themes/{id}")
+                .hasRole("ADMIN")
+            .antMatchers(PATCH, "/users/{id}")
+                .hasRole("SUPER_ADMIN")
+            .antMatchers(POST, "/registration")
+                .permitAll()
+            .antMatchers(POST, "/dataAndAnalyticsViews/{id}", "/directoryViews/{id}",
+                "/discoveryViews/{id}", "/displayViews/{id}", "/themes/{id}")
+                .hasRole("ADMIN")
+            .antMatchers(POST, "/users/{id}")
+                .denyAll()
+            .antMatchers(PUT, "/registration")
+                .permitAll()
+            .antMatchers(PUT, "/dataAndAnalyticsViews/{id}", "/directoryViews/{id}",
+                "/discoveryViews/{id}", "/displayViews/{id}", "/themes/{id}")
+                .hasRole("ADMIN")
+            .antMatchers(PUT, "/users/{id}")
+                .denyAll()
+            .antMatchers(GET, "/user")
+                .hasRole("USER")
+            .antMatchers(GET, "/users", "/users/{id}", "/themes", "/themes/{id}")
+                .hasRole("ADMIN")
+            .antMatchers(DELETE, "/dataAndAnalyticsViews/{id}", "/directoryViews/{id}",
+                "/discoveryViews/{id}", "/displayViews/{id}", "/themes/{id}")
+                .hasRole("ADMIN")
+            .antMatchers(DELETE, "/users/{id}")
+                .hasRole("SUPER_ADMIN")
+            .anyRequest()
+                .permitAll();
 
-                .antMatchers(PATCH,
-                    "/users/{id}"
-                ).hasRole("SUPER_ADMIN")
+    http
+        .requestCache(requestCache -> requestCache
+            .requestCache(new NullRequestCache()));
+    http
+    .csrf(csrf -> csrf.disable())
+    .sessionManagement(session -> session
+        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+    )
+    .saml2Login(saml2 -> saml2
+        .loginPage("/saml2/authenticate/my-idp")
+        .successHandler(authenticationSuccessHandler())
+        .failureHandler(authenticationFailureHandler())
+        .permitAll()
+    );
 
-                .antMatchers(POST,
-                    "/registration")
-                    .permitAll()
+    http
+        .logout(logout -> logout
+            .deleteCookies("SESSION")
+            .invalidateHttpSession(true)
+            .logoutSuccessHandler(logoutSuccessHandler())
+            .permitAll());
 
-                .antMatchers(POST,
-                    "/dataAndAnalyticsViews/{id}",
-                    "/directoryViews/{id}",
-                    "/discoveryViews/{id}",
-                    "/displayViews/{id}",
-                    "/themes/{id}")
-                    .hasRole("ADMIN")
+    http
+        .exceptionHandling(handling -> handling
+            .authenticationEntryPoint(authenticationEntryPoint())
+            .accessDeniedHandler(accessDeniedHandler()));
 
-                .antMatchers(POST, "/users/{id}")
-                    .denyAll()
+    http
+        .csrf(csrf -> csrf
+            .disable());
 
-                .antMatchers(PUT, "/registration")
-                    .permitAll()
-
-                .antMatchers(PUT,
-                    "/dataAndAnalyticsViews/{id}",
-                    "/directoryViews/{id}",
-                    "/discoveryViews/{id}",
-                    "/displayViews/{id}",
-                    "/themes/{id}")
-                    .hasRole("ADMIN")
-
-                .antMatchers(PUT, "/users/{id}")
-                    .denyAll()
-
-                .antMatchers(GET, "/user")
-                    .hasRole("USER")
-
-                .antMatchers(GET,
-                    "/users",
-                    "/users/{id}",
-                    "/themes",
-                    "/themes/{id}")
-                    .hasRole("ADMIN")
-
-                .antMatchers(DELETE,
-                    "/dataAndAnalyticsViews/{id}",
-                    "/directoryViews/{id}",
-                    "/discoveryViews/{id}",
-                    "/displayViews/{id}",
-                    "/themes/{id}")
-                    .hasRole("ADMIN")
-
-                .antMatchers(DELETE, "/users/{id}")
-                    .hasRole("SUPER_ADMIN")
-
-                .anyRequest()
-                    .permitAll()
-
-            .and()
-                .formLogin()
-                    .successHandler(authenticationSuccessHandler())
-                    .failureHandler(authenticationFailureHandler())
-                        .permitAll()
-            .and()
-                .logout()
-                    .deleteCookies("SESSION")
-                    .invalidateHttpSession(true)
-                    .logoutSuccessHandler(logoutSuccessHandler())
-                        .permitAll()
-            .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint())
-                    .accessDeniedHandler(accessDeniedHandler())
-            .and()
-                .requestCache()
-                    .requestCache(nullRequestCache())
-            .and()
-                .cors()
-            .and()
-                .csrf()
-                    .disable();
-
-        http.sessionManagement()
+    http
+        .sessionManagement(management -> management
             .sessionFixation()
-                .migrateSession()
-            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+            .migrateSession()
+            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
-        return http.build();
+    return http.build();
     }
 
     private CustomAuthenticationSuccessHandler authenticationSuccessHandler() {
@@ -284,10 +277,6 @@ public class WebSecurityConfig {
 
     private CustomAccessDeniedExceptionHandler accessDeniedHandler() {
         return new CustomAccessDeniedExceptionHandler();
-    }
-
-    private NullRequestCache nullRequestCache() {
-        return new NullRequestCache();
     }
 
     private boolean enableH2Console() {
