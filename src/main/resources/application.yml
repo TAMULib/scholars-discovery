@@ -33,8 +33,8 @@ middleware:
     name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    schematize: true
-    onStartup: true
+    schematize: false
+    onStartup: false
     enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
@@ -83,8 +83,8 @@ logging:
           middleware: INFO
     org:
       springframework:
-        security: INFO
-        web: INFO
+        security: DEBUG
+        web: DEBUG
 
 server:
   compression:
@@ -111,7 +111,7 @@ spring:
     saml2:
       relyingparty:
         registration:
-          tamu-entraid:
+          entraid:
             identityprovider:
               entity-id: https://sts.windows.net/68f381e3-46da-47b9-ba57-6f322b8f0da1/
               metadata-uri: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/federationmetadata/2007-06/federationmetadata.xml?appid=2f88008b-4c85-496d-8b96-f5ee076d8dc8
@@ -122,7 +122,7 @@ spring:
                 url: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/saml2
                 sign-request: false
             acs:
-              location: http://localhost:9000/login/saml2/sso/tamu-entraid
+              location: http://localhost:9000/login/saml2/sso/entraid
   data:
     rest:
       return-body-on-create: true
@@ -152,29 +152,29 @@ spring:
   datasource:
 
     # h2
-    driver-class-name: org.h2.Driver
+    # driver-class-name: org.h2.Driver
 
     # postgres
-    # driver-class-name: org.postgresql.Driver
+    driver-class-name: org.postgresql.Driver
 
     # h2 in memory
-    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    # url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 
     # h2 file
     # url: jdbc:h2:./h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 
     # postgres
-    # url: jdbc:postgresql://localhost:5432/scholars
+    url: jdbc:postgresql://localhost:5432/scholars
 
     username: scholars
     password: scholars
   jpa:
 
     # h2
-    database-platform: org.hibernate.dialect.H2Dialect
+    # database-platform: org.hibernate.dialect.H2Dialect
 
     # postgres
-    # database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
     generate-ddl: false
     hibernate.ddl-auto: none
@@ -194,8 +194,8 @@ spring:
       initialize-schema: always
   sql:
     init:
-      platform: h2
-      # platform: postgres
+      # platform: h2
+      platform: postgres
 
 management:
   endpoints:
@@ -203,12 +203,14 @@ management:
     web:
       exposure:
         # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, index
+        include: health, httptrace, info, index
   endpoint:
     health:
       enabled: true
       show-details: always
       show-components: always
+    httptrace:
+      enabled: true
     info:
       enabled: true
     index:

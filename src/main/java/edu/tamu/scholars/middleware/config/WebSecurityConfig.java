@@ -7,6 +7,9 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -33,10 +36,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.saml2.provider.service.authentication.AbstractSaml2AuthenticationRequest;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider.ResponseToken;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticatedPrincipal;
 import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
+import org.springframework.security.saml2.provider.service.web.Saml2AuthenticationRequestRepository;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
@@ -54,6 +59,7 @@ import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationEntryPoint;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationFailureHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationSuccessHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomLogoutSuccessHandler;
+import edu.tamu.scholars.middleware.auth.handler.CustomSaml2AuthenticationSuccessHandler;
 import edu.tamu.scholars.middleware.auth.model.Role;
 import edu.tamu.scholars.middleware.auth.model.User;
 import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
@@ -75,6 +81,9 @@ public class WebSecurityConfig {
 
     @Value("${server.servlet.session.cookie.domain:localhost}")
     private String domainName;
+
+    @Value("${ui.url:http://localhost:4200}")
+    protected String uiUrl;
 
     @Autowired
     private MiddlewareConfig config;
@@ -176,15 +185,36 @@ public class WebSecurityConfig {
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-        // TODO: use http only and require client to make subsequent request to user/status endpoint
-        // to determine authentication status
-        serializer.setUseHttpOnlyCookie(false);
-        // TODO: use secure cookies
-        serializer.setUseSecureCookie(false);
+        serializer.setUseHttpOnlyCookie(true);
+        serializer.setUseSecureCookie(true);
         serializer.setCookiePath("/");
         serializer.setCookieName("SESSION");
         serializer.setDomainName(domainName);
         return serializer;
+    }
+
+     @Bean
+    Saml2AuthenticationRequestRepository<AbstractSaml2AuthenticationRequest> authenticationRequestRepository() {
+       return new Saml2AuthenticationRequestRepository() {
+
+        @Override
+        public AbstractSaml2AuthenticationRequest loadAuthenticationRequest(HttpServletRequest request) {
+            return null;
+        }
+
+        @Override
+        public void saveAuthenticationRequest(AbstractSaml2AuthenticationRequest authenticationRequest,
+                HttpServletRequest request, HttpServletResponse response) {
+            
+        }
+
+        @Override
+        public AbstractSaml2AuthenticationRequest removeAuthenticationRequest(HttpServletRequest request,
+                HttpServletResponse response) {
+            return null;
+        }
+
+       };
     }
 
     @Bean
@@ -217,7 +247,7 @@ public class WebSecurityConfig {
                 userDetails = new CustomUserDetails(userRepo.save(user));
             }
 
-            return new Saml2Authentication((AuthenticatedPrincipal) userDetails, responseToken.getToken().getSaml2Response(), responseToken.getToken().getAuthorities());
+            return new Saml2Authentication((AuthenticatedPrincipal) userDetails, responseToken.getToken().getSaml2Response(), userDetails.getAuthorities());
         });
 
         if (enableH2Console()) {
@@ -303,7 +333,7 @@ public class WebSecurityConfig {
             .and()
                 .saml2Login(saml2 -> saml2
                     .authenticationManager(new ProviderManager(authenticationProvider))
-                    .successHandler(authenticationSuccessHandler())
+                    .successHandler(new CustomSaml2AuthenticationSuccessHandler(uiUrl))
                     .failureHandler(authenticationFailureHandler()))
                 .formLogin()
                     .successHandler(authenticationSuccessHandler())
