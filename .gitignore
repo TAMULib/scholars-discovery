@@ -40,3 +40,5 @@ pgadmin/*
 !pgadmin/servers.json
 !pgadmin/pgpass
 pgdata/
+
+config.json
