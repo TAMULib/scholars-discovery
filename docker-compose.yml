@@ -21,3 +21,31 @@ services:
       - ./solr/data:/var/solr/data
     ports:
       - 8983:8983
+
+  # pgAdmin web interface for managing development database in container network
+  # To register server
+  #   1. Open browser at http://localhost:8080
+  #      a. login `email: admin@tamu.edu` and `password: admin`
+  #   2. Register scholars-db Servers in the object explorer
+  #      a. Right click on server
+  #      b. Select Register -> Server
+  #      c. Verify and Save the connection
+  #         Host name/address: db
+  #         Port: 5432
+  #         Maintenance database: scholars
+  #         Username: scholars
+  #         Password: scholars
+  pgadmin:
+    container_name: scholars-pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@tamu.edu
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+      # ./pgadmin/pgpass must match scholars-db db, user, and password
+      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+    ports:
+      - 8080:80
+    depends_on:
+      - db
