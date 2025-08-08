@@ -94,6 +94,10 @@ server:
   port: 9000
   servlet:
     context-path:
+    session:
+      cookie:
+        # this must match the domain for secure session cookies
+        domain: localhost
   tomcat:
     connection-timeout: 900000
   error:

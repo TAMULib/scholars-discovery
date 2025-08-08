@@ -59,7 +59,7 @@ public class WebSecurityConfig {
     @Value("${spring.h2.console.enabled:false}")
     private boolean h2ConsoleEnabled;
 
-    @Value("${server.servlet.session.cookie.domain:library.tamu.edu}")
+    @Value("${server.servlet.session.cookie.domain:localhost}")
     private String domainName;
 
     @Autowired
@@ -147,7 +147,10 @@ public class WebSecurityConfig {
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        // TODO: use http only and require client to make subsequent request to user/status endpoint
+        // to determine authentication status
         serializer.setUseHttpOnlyCookie(false);
+        // TODO: use secure cookies
         serializer.setUseSecureCookie(false);
         serializer.setCookiePath("/");
         serializer.setCookieName("SESSION");
