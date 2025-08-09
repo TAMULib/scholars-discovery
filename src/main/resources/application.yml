@@ -121,6 +121,10 @@ spring:
               singlesignon:
                 url: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/saml2
                 sign-request: false
+                # TODO: sign requests
+                # Generate public private pair for signing requests.
+                # Enable validation in Azure EntraID for checking requests
+                # are signed from the intended service relaying the authentication.
             acs:
               location: http://localhost:9000/login/saml2/sso/entraid
   data:

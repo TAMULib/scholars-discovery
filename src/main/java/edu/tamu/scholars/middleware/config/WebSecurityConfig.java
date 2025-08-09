@@ -193,8 +193,10 @@ public class WebSecurityConfig {
         return serializer;
     }
 
-     @Bean
+    // TODO: determine how to persist in JDBC session store
+    @Bean
     Saml2AuthenticationRequestRepository<AbstractSaml2AuthenticationRequest> authenticationRequestRepository() {
+       // TODO: move into its own class
        return new Saml2AuthenticationRequestRepository() {
 
         @Override
@@ -222,22 +224,31 @@ public class WebSecurityConfig {
 
         OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
 
+        // Should one of these be created for each responseToken processed?
         Converter<ResponseToken, Saml2Authentication> delegate =
             OpenSaml4AuthenticationProvider.createDefaultResponseAuthenticationConverter();
 
         authenticationProvider.setResponseAuthenticationConverter(responseToken -> {
+
+            // move into service
+
             Saml2Authentication authentication = delegate.convert(responseToken);
             UserDetails userDetails;
             try {
                 userDetails = userDetailsService.loadUserByUsername(authentication.getName());
+                // sign in successful and persisted user and web authentication user details provided can be synched
             } catch(UsernameNotFoundException e) {
                 Saml2AuthenticatedPrincipal principal = (Saml2AuthenticatedPrincipal) authentication.getPrincipal();
 
+                // sign in successful and web authentication user details provided for registration
+
+                // move to mapping from properties
                 User user = new User(
                     principal.getAttributes().get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").get(0).toString(),
                     principal.getAttributes().get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname").get(0).toString(),
                     principal.getAttributes().get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").get(0).toString()
                 );
+
 
                 user.setActive(true);
                 user.setConfirmed(true);
