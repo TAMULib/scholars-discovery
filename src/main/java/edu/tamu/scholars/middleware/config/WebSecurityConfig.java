@@ -13,8 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -22,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -52,6 +56,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import edu.tamu.scholars.middleware.auth.config.AuthConfig;
+import edu.tamu.scholars.middleware.auth.config.Saml2Config;
 import edu.tamu.scholars.middleware.auth.config.TokenConfig;
 import edu.tamu.scholars.middleware.auth.details.CustomUserDetails;
 import edu.tamu.scholars.middleware.auth.handler.CustomAccessDeniedExceptionHandler;
@@ -109,12 +115,12 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public TokenService tokenService() throws NoSuchAlgorithmException {
+    TokenService tokenService() throws NoSuchAlgorithmException {
         KeyBasedPersistenceTokenService tokenService = new KeyBasedPersistenceTokenService();
         TokenConfig tokenConfig = config.getAuth().getToken();
         tokenService.setServerInteger(tokenConfig.getServerInteger());
@@ -125,7 +131,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    CorsFilter corsFilter() {
         CorsConfiguration embedConfig = new CorsConfiguration();
         embedConfig.setAllowCredentials(true);
         embedConfig.setAllowedOriginPatterns(Arrays.asList("*"));
@@ -176,14 +182,14 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public LocalValidatorFactoryBean getValidator() {
+    LocalValidatorFactoryBean getValidator() {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource);
         return bean;
     }
 
     @Bean
-    public CookieSerializer cookieSerializer() {
+    CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
         serializer.setUseHttpOnlyCookie(true);
         serializer.setUseSecureCookie(true);
@@ -193,68 +199,82 @@ public class WebSecurityConfig {
         return serializer;
     }
 
-    // TODO: determine how to persist in JDBC session store
+    // NoOp persistence of SAML request/response
     @Bean
     Saml2AuthenticationRequestRepository<AbstractSaml2AuthenticationRequest> authenticationRequestRepository() {
-       // TODO: move into its own class
        return new Saml2AuthenticationRequestRepository() {
-
         @Override
         public AbstractSaml2AuthenticationRequest loadAuthenticationRequest(HttpServletRequest request) {
             return null;
         }
-
         @Override
         public void saveAuthenticationRequest(AbstractSaml2AuthenticationRequest authenticationRequest,
                 HttpServletRequest request, HttpServletResponse response) {
-            
-        }
 
+        }
         @Override
         public AbstractSaml2AuthenticationRequest removeAuthenticationRequest(HttpServletRequest request,
                 HttpServletResponse response) {
             return null;
         }
-
        };
     }
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
+        AuthConfig authConfig = config.getAuth();
+        Saml2Config saml2Config = authConfig.getSaml2();
+
         OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
 
-        // Should one of these be created for each responseToken processed?
         Converter<ResponseToken, Saml2Authentication> delegate =
             OpenSaml4AuthenticationProvider.createDefaultResponseAuthenticationConverter();
 
         authenticationProvider.setResponseAuthenticationConverter(responseToken -> {
 
-            // move into service
-
             Saml2Authentication authentication = delegate.convert(responseToken);
             UserDetails userDetails;
             try {
                 userDetails = userDetailsService.loadUserByUsername(authentication.getName());
-                // sign in successful and persisted user and web authentication user details provided can be synched
             } catch(UsernameNotFoundException e) {
                 Saml2AuthenticatedPrincipal principal = (Saml2AuthenticatedPrincipal) authentication.getPrincipal();
 
-                // sign in successful and web authentication user details provided for registration
+                Map<String, String> attributeMap = saml2Config.getAttributeMap();
 
-                // move to mapping from properties
+                Map<String, List<Object>> attributes = principal.getAttributes();
+
+                final String FIRST_NAME = "firstName";
+                final String LAST_NAME = "lastName";
+                final String EMAIL = "email";
+
+                String firstNameKey = attributeMap.containsKey(FIRST_NAME) ? attributeMap.get(FIRST_NAME) : FIRST_NAME;
+                String lastNameKey = attributeMap.containsKey(LAST_NAME) ? attributeMap.get(LAST_NAME) : LAST_NAME;
+                String emailKey = attributeMap.containsKey(EMAIL) ? attributeMap.get(EMAIL) : EMAIL;
+
+                List<Object> firstNames = attributes.containsKey(firstNameKey) ? attributes.get(firstNameKey) : Arrays.asList();
+                if (firstNames.isEmpty() || StringUtils.isBlank(firstNames.get(0).toString())) {
+                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + firstNameKey + "` attribute");
+                }
+                List<Object> lastNames = attributes.containsKey(lastNameKey) ? attributes.get(lastNameKey) : Arrays.asList();
+                if (lastNames.isEmpty() || StringUtils.isBlank(lastNames.get(0).toString())) {
+                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + lastNameKey + "` attribute");
+                }
+                List<Object> emails = attributes.containsKey(emailKey) ? attributes.get(emailKey) : Arrays.asList();
+                if (!emails.isEmpty() || StringUtils.isBlank(emails.get(0).toString())) {
+                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + emailKey + "` attribute");
+                }
+
                 User user = new User(
-                    principal.getAttributes().get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").get(0).toString(),
-                    principal.getAttributes().get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname").get(0).toString(),
-                    principal.getAttributes().get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").get(0).toString()
+                    firstNames.get(0).toString(),
+                    lastNames.get(0).toString(),
+                    emails.get(0).toString()
                 );
-
 
                 user.setActive(true);
                 user.setConfirmed(true);
                 user.setEnabled(true);
                 user.setRole(Role.ROLE_USER);
-
                 userDetails = new CustomUserDetails(userRepo.save(user));
             }
 

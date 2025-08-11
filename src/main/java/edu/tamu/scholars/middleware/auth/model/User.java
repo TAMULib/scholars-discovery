@@ -100,7 +100,7 @@ public class User implements Serializable {
 
     public User() {
         super();
-        this.oldPasswords = new ArrayList<String>();
+        this.oldPasswords = new ArrayList<>();
         this.role = Role.ROLE_USER;
         this.created = Calendar.getInstance();
         this.timestamp = Calendar.getInstance();
