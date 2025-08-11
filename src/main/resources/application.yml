@@ -38,8 +38,8 @@ middleware:
     name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    schematize: false
-    onStartup: false
+    schematize: true
+    onStartup: true
     enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
@@ -88,8 +88,8 @@ logging:
           middleware: INFO
     org:
       springframework:
-        security: DEBUG
-        web: DEBUG
+        security: INFO
+        web: INFO
 
 server:
   compression:
@@ -211,14 +211,12 @@ management:
     web:
       exposure:
         # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, httptrace, info, index
+        include: health, info, index
   endpoint:
     health:
       enabled: true
       show-details: always
       show-components: always
-    httptrace:
-      enabled: true
     info:
       enabled: true
     index:
