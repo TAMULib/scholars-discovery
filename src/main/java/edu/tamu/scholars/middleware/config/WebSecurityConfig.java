@@ -233,10 +233,12 @@ public class WebSecurityConfig {
 
         authenticationProvider.setResponseAuthenticationConverter(responseToken -> {
 
-            Saml2Authentication authentication = delegate.convert(responseToken);
+            final Saml2Authentication authentication = delegate.convert(responseToken);
+
+            final String username = authentication.getName();
             UserDetails userDetails;
             try {
-                userDetails = userDetailsService.loadUserByUsername(authentication.getName());
+                userDetails = userDetailsService.loadUserByUsername(username);
             } catch(UsernameNotFoundException e) {
                 Saml2AuthenticatedPrincipal principal = (Saml2AuthenticatedPrincipal) authentication.getPrincipal();
 
@@ -246,11 +248,11 @@ public class WebSecurityConfig {
 
                 final String FIRST_NAME = "firstName";
                 final String LAST_NAME = "lastName";
-                final String EMAIL = "email";
+                final String USERNAME = "username";
 
                 String firstNameKey = attributeMap.containsKey(FIRST_NAME) ? attributeMap.get(FIRST_NAME) : FIRST_NAME;
                 String lastNameKey = attributeMap.containsKey(LAST_NAME) ? attributeMap.get(LAST_NAME) : LAST_NAME;
-                String emailKey = attributeMap.containsKey(EMAIL) ? attributeMap.get(EMAIL) : EMAIL;
+                String usernameKey = attributeMap.containsKey(USERNAME) ? attributeMap.get(USERNAME) : USERNAME;
 
                 List<Object> firstNames = attributes.containsKey(firstNameKey) ? attributes.get(firstNameKey) : Arrays.asList();
                 if (firstNames.isEmpty() || StringUtils.isBlank(firstNames.get(0).toString())) {
@@ -260,15 +262,15 @@ public class WebSecurityConfig {
                 if (lastNames.isEmpty() || StringUtils.isBlank(lastNames.get(0).toString())) {
                     throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + lastNameKey + "` attribute");
                 }
-                List<Object> emails = attributes.containsKey(emailKey) ? attributes.get(emailKey) : Arrays.asList();
-                if (emails.isEmpty() || StringUtils.isBlank(emails.get(0).toString())) {
-                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + emailKey + "` attribute");
+                List<Object> usernames = attributes.containsKey(usernameKey) ? attributes.get(usernameKey) : Arrays.asList();
+                if (usernames.isEmpty() || StringUtils.isBlank(usernames.get(0).toString())) {
+                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + usernames + "` attribute");
                 }
 
                 User user = new User(
                     firstNames.get(0).toString(),
                     lastNames.get(0).toString(),
-                    emails.get(0).toString()
+                    usernames.get(0).toString()
                 );
 
                 user.setActive(true);
