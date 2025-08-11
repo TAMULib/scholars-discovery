@@ -16,6 +16,11 @@ middleware:
       server-secret: wKFkxTX54UzKx6xCYnC8WlEI2wtOy0PR
       pseudo-random-number-bytes: 64
     registration-token-duration: 14
+    saml2:
+      attributeMap:
+        firstName: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname
+        lastName: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name
   mail:
     from: scholarsdiscovery@gmail.com
     replyTo: scholarsdiscovery@gmail.com
@@ -85,11 +90,31 @@ server:
   max-http-header-size: 16384
   port: 9001
   servlet:
-    contextPath:
+    context-path:
+    session:
+      cookie:
+        # this must match the domain for secure session cookies
+        domain: localhost
   tomcat:
     connection-timeout: 900000
 
 spring:
+  security:
+    saml2:
+      relyingparty:
+        registration:
+          entraid:
+            identityprovider:
+              entity-id: https://sts.windows.net/68f381e3-46da-47b9-ba57-6f322b8f0da1/
+              metadata-uri: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/federationmetadata/2007-06/federationmetadata.xml?appid=2f88008b-4c85-496d-8b96-f5ee076d8dc8
+              verification:
+                credentials:
+                - certificate-location: classpath:LIBR - Scholars local.cer
+              singlesignon:
+                url: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/saml2
+                sign-request: true
+            acs:
+              location: http://localhost:9000/login/saml2/sso/entraid
   data:
     rest:
       return-body-on-create: true
