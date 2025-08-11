@@ -25,7 +25,7 @@ middleware:
       attributeMap:
         firstName: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname
         lastName: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname
-        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
   mail:
     from: noreply@library.tamu.edu
     replyTo: helpdesk@library.tamu.edu
