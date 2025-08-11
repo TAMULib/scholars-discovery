@@ -261,7 +261,7 @@ public class WebSecurityConfig {
                     throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + lastNameKey + "` attribute");
                 }
                 List<Object> emails = attributes.containsKey(emailKey) ? attributes.get(emailKey) : Arrays.asList();
-                if (!emails.isEmpty() || StringUtils.isBlank(emails.get(0).toString())) {
+                if (emails.isEmpty() || StringUtils.isBlank(emails.get(0).toString())) {
                     throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + emailKey + "` attribute");
                 }
 
