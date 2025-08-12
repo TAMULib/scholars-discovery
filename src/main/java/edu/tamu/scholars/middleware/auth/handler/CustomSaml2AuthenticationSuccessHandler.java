@@ -1,8 +1,8 @@
 package edu.tamu.scholars.middleware.auth.handler;
 
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
-public class CustomSaml2AuthenticationSuccessHandler extends  SavedRequestAwareAuthenticationSuccessHandler  {
+public class CustomSaml2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     public CustomSaml2AuthenticationSuccessHandler(String defaultTargetUrl) {
         setDefaultTargetUrl(defaultTargetUrl);
