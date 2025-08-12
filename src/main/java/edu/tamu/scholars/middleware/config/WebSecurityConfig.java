@@ -264,7 +264,7 @@ public class WebSecurityConfig {
                 }
                 List<Object> usernames = attributes.containsKey(usernameKey) ? attributes.get(usernameKey) : Arrays.asList();
                 if (usernames.isEmpty() || StringUtils.isBlank(usernames.get(0).toString())) {
-                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + usernames + "` attribute");
+                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + usernameKey + "` attribute");
                 }
 
                 User user = new User(
