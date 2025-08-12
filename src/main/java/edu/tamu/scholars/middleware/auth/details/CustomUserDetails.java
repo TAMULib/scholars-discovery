@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -46,10 +47,11 @@ public class CustomUserDetails extends User implements AuthenticatedPrincipal, U
     @Override
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
-        return ChronoUnit.DAYS.between(
-            getTimestamp().toInstant(),
-            Calendar.getInstance().toInstant()
-        ) < PASSWORD_DURATION_IN_DAYS;
+        return StringUtils.isNotBlank(getPassword())
+            && ChronoUnit.DAYS.between(
+                getTimestamp().toInstant(),
+                Calendar.getInstance().toInstant()
+            ) < PASSWORD_DURATION_IN_DAYS;
     }
 
     @Override
