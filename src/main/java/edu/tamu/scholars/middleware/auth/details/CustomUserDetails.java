@@ -47,8 +47,8 @@ public class CustomUserDetails extends User implements AuthenticatedPrincipal, U
     @Override
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
-        return StringUtils.isNotBlank(getPassword())
-            && ChronoUnit.DAYS.between(
+        return StringUtils.isBlank(getPassword())
+            || ChronoUnit.DAYS.between(
                 getTimestamp().toInstant(),
                 Calendar.getInstance().toInstant()
             ) < PASSWORD_DURATION_IN_DAYS;
