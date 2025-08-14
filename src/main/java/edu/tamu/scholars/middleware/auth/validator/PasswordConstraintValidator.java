@@ -3,8 +3,8 @@ package edu.tamu.scholars.middleware.auth.validator;
 import static edu.tamu.scholars.middleware.auth.AuthConstants.PASSWORD_MAX_LENGTH;
 import static edu.tamu.scholars.middleware.auth.AuthConstants.PASSWORD_MIN_LENGTH;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.ArrayList;
 import java.util.List;

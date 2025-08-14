@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import java.time.Duration;
 import java.time.Instant;

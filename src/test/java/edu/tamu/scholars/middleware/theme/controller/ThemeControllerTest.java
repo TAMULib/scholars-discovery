@@ -17,7 +17,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,7 +167,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                         pathParameters(
                             describeTheme.withParameter("id", "The Theme id.")
                         ),
-                        requestParameters(
+                        queryParameters(
                             describeTheme.withParameter("active", "Designates the theme currently in use.").optional(),
                             describeTheme.withParameter("name", "The name of the theme.").optional(),
                             describeTheme.withParameter("organization", "An organization the theme belongs to.").optional(),
@@ -382,7 +382,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
                 .andDo(
                     document(
                         "themes/directory",
-                        requestParameters(
+                        queryParameters(
                             parameterWithName("page").description("The page number."),
                             parameterWithName("size").description("The page size."),
                             parameterWithName("sort").description("The page sort.")

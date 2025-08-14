@@ -3,8 +3,8 @@ package edu.tamu.scholars.middleware.export.service;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
-import javax.servlet.ServletContext;
-import javax.xml.bind.JAXBException;
+import jakarta.servlet.ServletContext;
+import jakarta.xml.bind.JAXBException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

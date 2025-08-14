@@ -1,7 +1,7 @@
 package edu.tamu.scholars.middleware.view.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 /**
  * Embeddable domain model for {@link CollectionView} result set term relevancy boosting.

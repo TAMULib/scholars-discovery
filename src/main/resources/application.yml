@@ -38,8 +38,8 @@ middleware:
     name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    schematize: true
-    onStartup: true
+    schematize: false
+    onStartup: false
     enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
@@ -70,6 +70,16 @@ middleware:
     individualKey: individual
     individualBaseUri: ${ui.url}/display
 
+# Solr Connection Settings
+solr:
+  host: http://localhost:8983/solr
+  operator: OR
+  parser: edismax
+  connection:
+    timeout: 15000 # Connection timeout in milliseconds (15 seconds)
+  request:
+    timeout: 120000 # Request timeout in milliseconds (2 minutes)
+
 vivo:
   email: vivo_root@school.edu
   password:
@@ -96,7 +106,7 @@ server:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
     min-response-size: 1024
-  max-http-header-size: 16384
+  max-http-request-header-size: 16384
   port: 9000
   servlet:
     context-path:
@@ -116,12 +126,13 @@ spring:
       relyingparty:
         registration:
           entraid:
-            identityprovider:
+            entity-id: http://localhost:9000/saml2/service-provider-metadata/entraid
+            assertingparty:
               entity-id: https://sts.windows.net/68f381e3-46da-47b9-ba57-6f322b8f0da1/
               metadata-uri: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/federationmetadata/2007-06/federationmetadata.xml?appid=2f88008b-4c85-496d-8b96-f5ee076d8dc8
               singlesignon:
                 url: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/saml2
-                sign-request: true
+                sign-request: false
             acs:
               location: http://localhost:9000/login/saml2/sso/entraid
   data:
@@ -129,11 +140,6 @@ spring:
       return-body-on-create: true
       return-body-on-update: true
       max-page-size: 10000
-    solr:
-      host: http://localhost:8983/solr
-      operator: OR
-      parser: edismax
-    # NOTE: this does not work yet, https://jira.spring.io/browse/DATAREST-1290
     web:
       pageable:
         one-indexed-parameters: true

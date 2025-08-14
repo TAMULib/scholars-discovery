@@ -77,10 +77,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     @Value("${middleware.index.name}")
     private String collectionName;
 
-    @Value("${spring.data.solr.parser:edismax}")
+    @Value("${solr.parser:edismax}")
     private String defType;
 
-    @Value("${spring.data.solr.operator:AND}")
+    @Value("${solr.operator:AND}")
     private String defaultOperator;
 
     @Lazy

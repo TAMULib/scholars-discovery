@@ -12,6 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -29,11 +32,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.token.Token;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import edu.tamu.scholars.middleware.auth.RegistrationIntegrationTest;
 import edu.tamu.scholars.middleware.auth.config.AuthConfig;
@@ -109,13 +108,13 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     @Autowired
     private RegistrationService registrationService;
 
-    @MockBean
+    @MockitoBean
     private TemplateService templateService;
 
-    @MockBean
+    @MockitoBean
     private EmailService emailService;
 
-    @MockBean
+    @MockitoBean
     private MessageSource messageSource;
 
     @BeforeEach

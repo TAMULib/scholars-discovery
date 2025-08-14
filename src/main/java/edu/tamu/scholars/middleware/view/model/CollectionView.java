@@ -1,11 +1,11 @@
 package edu.tamu.scholars.middleware.view.model;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.MappedSuperclass;
 
 import java.util.ArrayList;
 import java.util.HashMap;

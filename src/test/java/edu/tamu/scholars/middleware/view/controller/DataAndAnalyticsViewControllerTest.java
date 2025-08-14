@@ -17,12 +17,12 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -152,7 +152,7 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
                             pathParameters(
                                 describeDataAndAnalyticsView.withParameter("id", "The Data And Analytics View id.")
                             ),
-                            requestParameters(
+                            queryParameters(
                                 describeDataAndAnalyticsView.withParameter("id", "The Data And Analytics View id.").optional(),
                                 describeDataAndAnalyticsView.withParameter("name", "The name of the Data And Analytics View.").optional(),
                                 describeDataAndAnalyticsView.withParameter("layout", "The layout of the Data And Analytics View.").optional(),
@@ -244,7 +244,7 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
                 .andDo(
                     document(
                         "dataAndAnalyticsViews/directory",
-                        requestParameters(
+                        queryParameters(
                             parameterWithName("page").description("The page number."),
                             parameterWithName("size").description("The page size."),
                             parameterWithName("sort").description("The page sort.")

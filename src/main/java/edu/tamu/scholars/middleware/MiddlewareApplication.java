@@ -5,7 +5,7 @@ import static edu.tamu.scholars.middleware.auth.AuthConstants.PASSWORD_MAX_LENGT
 import static edu.tamu.scholars.middleware.auth.AuthConstants.PASSWORD_MIN_LENGTH;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.EXPORT_INDIVIDUAL_KEY;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import java.util.TimeZone;
 

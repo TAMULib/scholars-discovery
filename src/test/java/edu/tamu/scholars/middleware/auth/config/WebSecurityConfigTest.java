@@ -15,8 +15,8 @@ import edu.tamu.scholars.middleware.config.SolrTestConfig;
 @SpringBootTest(properties = {
     "spring.profiles.active=default",
     "spring.h2.console.enabled=true",
-    "spring.data.solr.host=",
-    "spring.data.solr.repositories.enabled=false"
+    "solr.host=",
+    "solr.repositories.enabled=false"
 })
 // @formatter:on
 public class WebSecurityConfigTest {

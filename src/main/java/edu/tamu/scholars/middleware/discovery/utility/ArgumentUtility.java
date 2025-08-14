@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.utility;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;

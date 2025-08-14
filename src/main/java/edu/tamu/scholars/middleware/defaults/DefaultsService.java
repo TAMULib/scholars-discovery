@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.defaults;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import java.io.IOException;
 import java.util.List;

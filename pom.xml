@@ -7,17 +7,17 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.6.15</version>
+    <version>3.5.4</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <groupId>edu.tamu.scholars</groupId>
   <artifactId>middleware</artifactId>
-  <version>1.4.2</version>
+  <version>1.5.0-SNAPSHOT</version>
 
-  <name>middleware</name>
-
-  <description>VIVO Scholars Middleware</description>
+  <name>VIVO Scholars Middleware</name>
+  <description>VIVO Scholars Discovery Middleware - A Spring Boot application for managing scholarly individual, directory, discovery and data and analytic views.</description>
+  <url>https://github.com/TAMULib/scholars-discovery</url>
 
   <organization>
     <name>Texas A&amp;M University Libraries</name>
@@ -25,33 +25,57 @@
   </organization>
 
   <developers>
-
+    <developer>
+      <name>Texas A&amp;M University Libraries Development Team</name>
+      <organization>Texas A&amp;M University Libraries</organization>
+      <organizationUrl>https://library.tamu.edu</organizationUrl>
+    </developer>
   </developers>
-
-  <contributors>
-
-  </contributors>
 
   <licenses>
     <license>
-      <name>MIT</name>
+      <name>MIT License</name>
       <url>https://raw.githubusercontent.com/TAMULib/scholars-discovery/tamu-main/LICENSE</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
+  <scm>
+    <url>https://github.com/TAMULib/scholars-discovery</url>
+    <connection>scm:git:git://github.com/TAMULib/scholars-discovery.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/TAMULib/scholars-discovery.git</developerConnection>
+  </scm>
+
   <properties>
+    <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <jena.version>4.9.0</jena.version>
-    <liquibase.version>4.23.2</liquibase.version>
-    <log4j2.version>2.17.2</log4j2.version>
+    <!-- Dependency versions -->
+    <jena.version>5.3.0</jena.version>
+    <liquibase.version>4.33.0</liquibase.version>
+    <springdoc.version>2.8.9</springdoc.version>
+    <solr.version>9.9.0</solr.version>
+    <solr-solrj.version>9.9.0</solr-solrj.version>
+    <jsonpath.version>2.8.0</jsonpath.version>
+    <commons-collections4.version>4.5.0-M2</commons-collections4.version>
+    <commons-compress.version>1.27.1</commons-compress.version>
+    <commons-csv.version>1.12.0</commons-csv.version>
+    <jsonld-java.version>0.13.6</jsonld-java.version>
+    <caffeine.version>3.1.8</caffeine.version>
+    <passay.version>1.6.4</passay.version>
+    <handlebars.version>4.3.1</handlebars.version>
+    <nashorn.version>15.4</nashorn.version>
+    <docx4j.version>11.5.4</docx4j.version>
 
-    <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
-
-    <springdoc.version>2.0.0</springdoc.version>
-
-    <solr.version>9.1.1</solr.version>
+    <!-- Plugin versions -->
+    <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+    <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+    <asciidoctor-maven-plugin.version>3.1.0</asciidoctor-maven-plugin.version>
+    <dependency-check-maven.version>11.1.0</dependency-check-maven.version>
+    <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+    <versions-maven-plugin.version>2.17.1</versions-maven-plugin.version>
   </properties>
 
   <packaging>jar</packaging>
@@ -59,16 +83,48 @@
   <repositories>
     <repository>
       <id>tamu-releases</id>
+      <name>TAMU Maven Releases</name>
       <url>https://artifacts.library.tamu.edu/repository/maven-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>shibboleth-releases</id>
+      <name>Shibboleth Releases</name>
       <url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
   </repositories>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- Force consistent SLF4J version to avoid conflicts -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.16</version>
+      </dependency>
+      <!-- Exclude log4j dependencies that conflict with Spring Boot's Logback -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-to-slf4j</artifactId>
+        <version>2.24.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
+    <!-- Spring Boot Starters -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
@@ -119,11 +175,11 @@
       <artifactId>spring-boot-starter-websocket</artifactId>
     </dependency>
 
+    <!-- Spring Session and Security -->
     <dependency>
       <groupId>org.springframework.session</groupId>
       <artifactId>spring-session-jdbc</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-messaging</artifactId>
@@ -133,82 +189,85 @@
       <artifactId>spring-security-saml2-service-provider</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-core</artifactId>
-      <version>4.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-saml-api</artifactId>
-      <version>4.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-saml-impl</artifactId>
-      <version>4.2.0</version>
-    </dependency>
-
+    <!-- Spring Data REST HAL Explorer -->
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-rest-hal-explorer</artifactId>
     </dependency>
 
+    <!-- SpringDoc OpenAPI -->
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>${springdoc.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
       <version>${springdoc.version}</version>
     </dependency>
 
+    <!-- Jackson Dependencies -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
     </dependency>
-
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
-
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
     </dependency>
 
+    <!-- Apache Commons -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>${commons-collections4.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>${commons-compress.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>${commons-csv.version}</version>
+    </dependency>
 
+    <!-- Apache Solr -->
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-solrj</artifactId>
+      <version>${solr-solrj.version}</version>
+      <exclusions>
+        <!-- Exclude all Log4j dependencies to prevent conflicts with Spring Boot's Logback -->
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-core</artifactId>
+      <version>${solr.version}</version>
       <exclusions>
+        <!-- Exclude all Log4j dependencies to prevent conflicts with Spring Boot's Logback -->
         <exclusion>
           <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-1.2-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-slf4j-impl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-web</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>commons-lang</groupId>
@@ -217,40 +276,16 @@
       </exclusions>
     </dependency>
 
+    <!-- JSON Processing -->
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
-      <version>2.8.0</version>
+      <version>${jsonpath.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-compress</artifactId>
-      <version>1.24.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-csv</artifactId>
-      <version>1.10.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.h2database</groupId>
-          <artifactId>h2</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <dependency>
       <groupId>com.github.jsonld-java</groupId>
       <artifactId>jsonld-java</artifactId>
-      <version>0.13.4</version>
+      <version>${jsonld-java.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -259,6 +294,7 @@
       </exclusions>
     </dependency>
 
+    <!-- Apache Jena -->
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>apache-jena-libs</artifactId>
@@ -273,37 +309,49 @@
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-compress</artifactId>
         </exclusion>
+        <!-- Exclude Log4j dependencies -->
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-serviceenhancer</artifactId>
       <version>${jena.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
+    <!-- Caching -->
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
-      <version>3.1.8</version>
+      <version>${caffeine.version}</version>
     </dependency>
 
+    <!-- Password validation -->
     <dependency>
       <groupId>org.passay</groupId>
       <artifactId>passay</artifactId>
-      <version>1.6.4</version>
+      <version>${passay.version}</version>
     </dependency>
 
+    <!-- Template engine -->
     <dependency>
       <groupId>com.github.jknack</groupId>
       <artifactId>handlebars</artifactId>
-      <version>4.3.1</version>
+      <version>${handlebars.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.github.jknack</groupId>
       <artifactId>handlebars-jackson2</artifactId>
-      <version>4.3.1</version>
+      <version>${handlebars.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -312,24 +360,38 @@
       </exclusions>
     </dependency>
 
+    <!-- JavaScript engine -->
     <dependency>
       <groupId>org.openjdk.nashorn</groupId>
       <artifactId>nashorn-core</artifactId>
-      <version>15.4</version>
+      <version>${nashorn.version}</version>
     </dependency>
 
+    <!-- Document processing -->
     <dependency>
       <groupId>org.docx4j</groupId>
-      <artifactId>docx4j-ImportXHTML</artifactId>
-      <version>8.2.1</version>
+      <artifactId>docx4j-core</artifactId>
+      <version>${docx4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.docx4j</groupId>
+      <artifactId>docx4j-ImportXHTML-core</artifactId>
+      <version>${docx4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.docx4j</groupId>
+      <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
+      <version>${docx4j.version}</version>
     </dependency>
 
+    <!-- Database migration -->
     <dependency>
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
       <version>${liquibase.version}</version>
     </dependency>
 
+    <!-- Database drivers -->
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
@@ -338,30 +400,30 @@
     <dependency>
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
+    <!-- Test Dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.restdocs</groupId>
       <artifactId>spring-restdocs-mockmvc</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
@@ -371,9 +433,46 @@
   </dependencies>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
 
     <plugins>
 
+      <!-- Maven Enforcer Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.6.3</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>[21,)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Versions Maven Plugin -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${versions-maven-plugin.version}</version>
+        <configuration>
+          <generateBackupPoms>false</generateBackupPoms>
+        </configuration>
+      </plugin>
+
+      <!-- Checkstyle Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -391,7 +490,7 @@
         <executions>
           <execution>
             <id>validate</id>
-            <phase>prepare-package</phase>
+            <phase>validate</phase>
             <goals>
               <goal>check</goal>
             </goals>
@@ -399,7 +498,32 @@
         </executions>
       </plugin>
 
-      <!-- USE: mvn liquibase:generateChangeLog -->
+      <!-- OWASP Dependency Check Plugin -->
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>${dependency-check-maven.version}</version>
+        <configuration>
+          <format>ALL</format>
+          <outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
+          <suppressionFile>owasp-dependency-check-suppressions.xml</suppressionFile>
+          <failBuildOnCVSS>7</failBuildOnCVSS>
+          <skipTestScope>true</skipTestScope>
+          <skipProvidedScope>true</skipProvidedScope>
+          <skipRuntimeScope>false</skipRuntimeScope>
+          <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+          <archiveAnalyzerEnabled>false</archiveAnalyzerEnabled>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Liquibase Plugin -->
       <plugin>
         <groupId>org.liquibase</groupId>
         <artifactId>liquibase-maven-plugin</artifactId>
@@ -413,15 +537,25 @@
         </configuration>
       </plugin>
 
+      <!-- Spring Boot Maven Plugin -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
       </plugin>
 
+      <!-- JaCoCo Code Coverage Plugin -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>${jacoco-maven-plugin.version}</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -429,29 +563,31 @@
               <goal>prepare-agent</goal>
             </goals>
           </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
 
+      <!-- Coveralls Plugin -->
       <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
-        <version>4.3.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-          </dependency>
-        </dependencies>
+        <version>${coveralls-maven-plugin.version}</version>
         <configuration>
           <repoToken/>
         </configuration>
       </plugin>
 
+      <!-- AsciiDoctor Plugin -->
       <plugin>
         <groupId>org.asciidoctor</groupId>
         <artifactId>asciidoctor-maven-plugin</artifactId>
-        <version>1.6.0</version>
+        <version>${asciidoctor-maven-plugin.version}</version>
         <executions>
           <execution>
             <id>generate-docs</id>
@@ -470,11 +606,12 @@
           <dependency>
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-asciidoctor</artifactId>
-            <version>2.0.6.RELEASE</version>
+            <version>3.0.1</version>
           </dependency>
         </dependencies>
       </plugin>
 
+      <!-- Maven Resources Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -500,5 +637,27 @@
     </plugins>
 
   </build>
+
+  <profiles>
+    <!-- Security Profile for running OWASP Dependency Check -->
+    <profile>
+      <id>security</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
