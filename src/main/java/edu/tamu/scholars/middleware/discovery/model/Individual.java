@@ -1,6 +1,8 @@
 package edu.tamu.scholars.middleware.discovery.model;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ABSTRACT;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ABSTRACT_TEXT;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.SYNC_IDS;
@@ -42,10 +44,16 @@ public class Individual extends AbstractIndexDocument {
         return content;
     }
 
+    public String getAbstract() {
+        return (String) content.get(ABSTRACT_TEXT);
+    }
+
+    @Override
     public String getProxy() {
         return (String) content.get(CLASS);
     }
 
+    @Override
     public void setProxy(String proxy) {
         this.content.put(CLASS, proxy);
     }
@@ -110,6 +118,10 @@ public class Individual extends AbstractIndexDocument {
                     content.put(field, normalize(document.getFirstValue(field)));
                 }
             });
+
+        if (document.containsKey(ABSTRACT_TEXT)) {
+            content.put(ABSTRACT, normalize(document.getFirstValue(ABSTRACT_TEXT)));
+        }
 
         return Individual.from(content);
     }
