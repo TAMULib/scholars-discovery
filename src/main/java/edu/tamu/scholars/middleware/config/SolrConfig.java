@@ -3,10 +3,11 @@ package edu.tamu.scholars.middleware.config;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 /**
@@ -27,10 +28,11 @@ public class SolrConfig {
     private int requestTimeout;
 
     @Bean
-    SolrClient createHttpSolrClient() {
-        return new HttpSolrClient.Builder(solrHost)
+    @Primary
+    SolrClient createHttp2SolrClient() {
+        return new Http2SolrClient.Builder(solrHost)
             .withConnectionTimeout(connectionTimeout, TimeUnit.MILLISECONDS)
-            .withSocketTimeout(requestTimeout, TimeUnit.MILLISECONDS)
+            .withRequestTimeout(requestTimeout, TimeUnit.MILLISECONDS)
             .withFollowRedirects(true)
             .build();
     }
