@@ -38,8 +38,8 @@ middleware:
     name: scholars-discovery
     cron: 0 0 0 * * SUN
     zone: America/Chicago
-    schematize: false
-    onStartup: false
+    schematize: true
+    onStartup: true
     enableIndividualOnBatchFail: true
     onStartupDelay: 10000
     batchSize: 10000
