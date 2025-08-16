@@ -1,6 +1,7 @@
 package edu.tamu.scholars.middleware.config;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
@@ -37,14 +38,22 @@ public class AsyncConfig implements AsyncConfigurer {
     @Primary
     ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(8);
-        executor.setMaxPoolSize(32);
-        executor.setQueueCapacity(200);
+
+        executor.setDaemon(true);
+
+        executor.setCorePoolSize(16);
+        executor.setMaxPoolSize(128);
+        executor.setQueueCapacity(2048);
         executor.setKeepAliveSeconds(60);
         executor.setThreadNamePrefix("async-task-executor-");
+
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(60);
+
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+
         executor.initialize();
+
         return executor;
     }
 

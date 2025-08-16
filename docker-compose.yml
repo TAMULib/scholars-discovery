@@ -1,7 +1,8 @@
 services:
 
-  db:
-    container_name: scholars-db
+  # PostreSQL
+  pg:
+    container_name: scholars-pg
     image: postgres
     environment:
        - POSTGRES_DB=scholars
@@ -11,16 +12,15 @@ services:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
-
-  solr:
-    container_name: scholars-solr
-    build:
-      context: ./solr/
-      dockerfile: Dockerfile
-    volumes:
-      - ./solr/data:/var/solr/data
-    ports:
-      - 8983:8983
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scholars -d scholars"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - cloud
+    restart: unless-stopped
 
   # pgAdmin web interface for managing development database in container network
   # To register server
@@ -41,6 +41,7 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@tamu.edu
       - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_DISABLE_POSTFIX=true
     volumes:
       - ./pgadmin:/var/lib/pgadmin
       # ./pgadmin/pgpass must match scholars-db db, user, and password
@@ -48,4 +49,226 @@ services:
     ports:
       - 8080:80
     depends_on:
-      - db
+      pg:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/misc/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - cloud
+    restart: unless-stopped
+
+  # SolrCloud Node 1 (Primary - handles collection creation)
+  solr1:
+    image: solr:latest
+    container_name: scholars-solr1
+    hostname: scholars-solr1
+    volumes:
+      - ./solr/solr1/data:/var/solr/data
+      - ./solr/configsets:/opt/solr/server/solr/configsets:ro
+    ports:
+      - 8983:8983
+    environment:
+      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
+      - SOLR_HOST=scholars-solr1
+      - SOLR_HEAP=1g
+      - SOLR_OPTS=-Dsolr.advertised.host=localhost -Dsolr.advertised.port=8983
+    networks:
+      - cloud
+    depends_on:
+      zoo1:
+        condition: service_healthy
+      zoo2:
+        condition: service_healthy
+      zoo3:
+        condition: service_healthy
+    healthcheck:
+      test: |
+        solr status &&
+        solr healthcheck -c scholars-discovery 2>/dev/null || 
+        (echo "Collection 'scholars-discovery' not found or unhealthy" && exit 1)
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 120s
+    restart: unless-stopped
+    command: |
+      bash -c "
+      # Start Solr in SolrCloud mode
+      solr-foreground -cloud &
+      SOLR_PID=\$$!
+      
+      # Wait for Solr to be ready
+      until solr status > /dev/null 2>&1; do
+        echo 'Waiting for Solr to be ready...'
+        sleep 5
+      done
+      
+      # Wait for ZooKeeper connection
+      until solr zk ls / -z \$$ZK_HOST > /dev/null 2>&1; do
+        echo 'Waiting for ZooKeeper connection...'
+        sleep 5
+      done
+      
+      # Create collection if it doesn't exist
+      if ! solr healthcheck -c scholars-discovery > /dev/null 2>&1; then
+        echo 'Creating scholars-discovery collection...'
+        # Use environment variable for config set name
+        solr create -c scholars-discovery -d scholars-discovery -shards 3 -replicationFactor 1 -V
+        echo 'Collection created successfully'
+      else
+        echo 'Collection scholars-discovery already exists and is healthy'
+      fi
+      
+      wait \$$SOLR_PID
+      "
+
+  # SolrCloud Node 2
+  solr2:
+    image: solr:latest
+    container_name: scholars-solr2
+    hostname: scholars-solr2
+    volumes:
+      - ./solr/solr2/data:/var/solr/data
+      - ./solr/configsets:/opt/solr/server/solr/configsets:ro
+    ports:
+      - 8984:8983
+    environment:
+      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
+      - SOLR_HOST=scholars-solr2
+      - SOLR_HEAP=1g
+      - SOLR_OPTS=-Dsolr.advertised.host=localhost -Dsolr.advertised.port=8984
+    networks:
+      - cloud
+    depends_on:
+      zoo1:
+        condition: service_healthy
+      zoo2:
+        condition: service_healthy
+      zoo3:
+        condition: service_healthy
+      solr1:
+        condition: service_healthy
+    healthcheck:
+      test: |
+        solr status &&
+        (solr healthcheck -c scholars-discovery 2>/dev/null || echo "Collection not ready yet")
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+    command: ["solr-foreground", "-cloud"]
+
+  # SolrCloud Node 3
+  solr3:
+    image: solr:latest
+    container_name: scholars-solr3
+    hostname: scholars-solr3
+    volumes:
+      - ./solr/solr3/data:/var/solr/data
+      - ./solr/configsets:/opt/solr/server/solr/configsets:ro
+    ports:
+      - 8985:8983
+    environment:
+      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
+      - SOLR_HOST=scholars-solr3
+      - SOLR_HEAP=1g
+      - SOLR_OPTS=-Dsolr.advertised.host=localhost -Dsolr.advertised.port=8983
+    networks:
+      - cloud
+    depends_on:
+      zoo1:
+        condition: service_healthy
+      zoo2:
+        condition: service_healthy
+      zoo3:
+        condition: service_healthy
+      solr1:
+        condition: service_healthy
+    healthcheck:
+      test: |
+        solr status &&
+        (solr healthcheck -c scholars-discovery 2>/dev/null || echo "Collection not ready yet")
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+    command: ["solr-foreground", "-cloud"]
+
+
+  zoo1:
+    image: zookeeper:latest
+    container_name: zoo1
+    hostname: zoo1
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+      ZOO_4LW_COMMANDS_WHITELIST: mntr,conf,ruok
+    volumes:
+      - ./zoo/zoo1/data:/data
+      - ./zoo/zoo1/logs:/logs
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - cloud
+    restart: unless-stopped
+
+  zoo2:
+    image: zookeeper:latest
+    container_name: zoo2
+    hostname: zoo2
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
+      ZOO_4LW_COMMANDS_WHITELIST: mntr,conf,ruok
+    volumes:
+      - ./zoo/zoo2/data:/data
+      - ./zoo/zoo2/logs:/logs
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - cloud
+    restart: unless-stopped
+
+  zoo3:
+    image: zookeeper:latest
+    container_name: zoo3
+    hostname: zoo3
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+      ZOO_4LW_COMMANDS_WHITELIST: mntr,conf,ruok
+    volumes:
+      - ./zoo/zoo3/data:/data
+      - ./zoo/zoo3/logs:/logs
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - cloud
+    restart: unless-stopped
+
+networks:
+  cloud:

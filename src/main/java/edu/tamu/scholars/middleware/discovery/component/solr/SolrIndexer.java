@@ -98,7 +98,7 @@ public class SolrIndexer implements Indexer {
             solrClient.commit(collectionName);
             logger.info("Saved {} batch of {}", name(), individuals.size());
         } catch (Exception e) {
-            logger.debug("Error saving batch", e);
+            logger.error("Error saving batch", e);
             if (enableIndividualOnBatchFail) {
                 logger.warn("Failed to save batch of {}. Attempting individually.", name());
                 individuals.stream().forEach(this::index);

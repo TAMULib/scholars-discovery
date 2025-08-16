@@ -111,22 +111,19 @@ docker run -d -p 9000:9000 -e SPRING_APPLICATION_JSON="{\"spring\":{\"data\":{\"
 docker-compose up
 ```
 
-This will provide Postgres database at localhost:5432 and Solr at localhost:8983. There should be two volume mounts at relative path `pgdata` and `solr/data`.
+This will provide Postgres database at localhost:5432, pgAdmin at localhost:8080, Solr at localhost:8983 with Zookeeper at localhost:2181. There should be multiple volume mounts at relative path `pgdata`, `pgadmin`, `solr/solr1`, `solr/solr2`, `solr/solr3`, `zoo/zoo1`, `zoo/zoo2`, and `zoo/zoo3`.
 
 To run the `mvn spring-boot:run` command with `SPRING_APPLICATION_JSON` defined, you can use the following approach:
 
 ```
-SPRING_APPLICATION_JSON='{"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres"}' mvn spring-boot:run
+SPRING_APPLICATION_JSON='{"solr.client":"cloud"}' mvn spring-boot:run
 ```
 
 Save the following as `config.json`.
 
 ```json
 {
-  "spring.datasource.driver-class-name": "org.postgresql.Driver",
-  "spring.datasource.url": "jdbc:postgresql://localhost:5432/scholars",
-  "spring.jpa.database-platform": "org.hibernate.dialect.PostgreSQLDialect",
-  "spring.sql.init.platform": "postgres"
+  "solr.client": "cloud"
 }
 ```
 
@@ -138,13 +135,13 @@ SPRING_APPLICATION_JSON=$(cat config.json) mvn spring-boot:run
 For Windows Command Prompt, the syntax is slightly different:
 
 ```
-set SPRING_APPLICATION_JSON={"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres"} && mvn spring-boot:run
+set SPRING_APPLICATION_JSON={"solr.client":"cloud"} && mvn spring-boot:run
 ```
 
 For Windows PowerShell:
 
 ```
-$env:SPRING_APPLICATION_JSON='{"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres"}'; mvn spring-boot:run
+$env:SPRING_APPLICATION_JSON='{"solr.client":"cloud"}'; mvn spring-boot:run
 ```
 
 ## Verify Installation
