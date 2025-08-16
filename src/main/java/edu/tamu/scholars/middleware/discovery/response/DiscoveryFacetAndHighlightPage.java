@@ -25,8 +25,6 @@ import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
  */
 public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
 
-    private static final long serialVersionUID = 1932430579005159735L;
-
     private static final Pattern REFERENCE_PATTERN = Pattern.compile("^(.*?)::([\\w\\-\\:]*)(.*)$");
 
     private final List<Highlight> highlights;
