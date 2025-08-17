@@ -2,7 +2,8 @@ services:
 
   # PostreSQL
   pg:
-    container_name: scholars-pg
+    container_name: pg
+    hostname: scholars-pg
     image: postgres
     environment:
        - POSTGRES_DB=scholars
@@ -36,7 +37,8 @@ services:
   #         Username: scholars
   #         Password: scholars
   pgadmin:
-    container_name: scholars-pgadmin
+    container_name: pgadmin
+    hostname: scholars-pgadmin
     image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@tamu.edu
@@ -64,7 +66,7 @@ services:
   # SolrCloud Node 1 (Primary - handles collection creation)
   solr1:
     image: solr:latest
-    container_name: scholars-solr1
+    container_name: solr1
     hostname: scholars-solr1
     volumes:
       - ./solr/solr1/data:/var/solr/data
@@ -72,7 +74,7 @@ services:
     ports:
       - 8983:8983
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
+      - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr1
       - SOLR_HEAP=1g
       - SOLR_OPTS=-Dsolr.advertised.host=localhost -Dsolr.advertised.port=8983
@@ -129,7 +131,7 @@ services:
   # SolrCloud Node 2
   solr2:
     image: solr:latest
-    container_name: scholars-solr2
+    container_name: solr2
     hostname: scholars-solr2
     volumes:
       - ./solr/solr2/data:/var/solr/data
@@ -137,7 +139,7 @@ services:
     ports:
       - 8984:8983
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
+      - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr2
       - SOLR_HEAP=1g
       - SOLR_OPTS=-Dsolr.advertised.host=localhost -Dsolr.advertised.port=8984
@@ -166,7 +168,7 @@ services:
   # SolrCloud Node 3
   solr3:
     image: solr:latest
-    container_name: scholars-solr3
+    container_name: solr3
     hostname: scholars-solr3
     volumes:
       - ./solr/solr3/data:/var/solr/data
@@ -174,7 +176,7 @@ services:
     ports:
       - 8985:8983
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
+      - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr3
       - SOLR_HEAP=1g
       - SOLR_OPTS=-Dsolr.advertised.host=localhost -Dsolr.advertised.port=8983
@@ -204,12 +206,12 @@ services:
   zoo1:
     image: zookeeper:latest
     container_name: zoo1
-    hostname: zoo1
+    hostname: scholars-zoo1
     ports:
       - 2181:2181
     environment:
       ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=scholars-zoo2:2888:3888;2181 server.3=scholars-zoo3:2888:3888;2181
       ZOO_4LW_COMMANDS_WHITELIST: mntr,conf,ruok
     volumes:
       - ./zoo/zoo1/data:/data
@@ -227,12 +229,12 @@ services:
   zoo2:
     image: zookeeper:latest
     container_name: zoo2
-    hostname: zoo2
+    hostname: scholars-zoo2
     ports:
       - 2182:2181
     environment:
       ZOO_MY_ID: 2
-      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
+      ZOO_SERVERS: server.1=scholars-zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=scholars-zoo3:2888:3888;2181
       ZOO_4LW_COMMANDS_WHITELIST: mntr,conf,ruok
     volumes:
       - ./zoo/zoo2/data:/data
@@ -250,12 +252,12 @@ services:
   zoo3:
     image: zookeeper:latest
     container_name: zoo3
-    hostname: zoo3
+    hostname: scholars-zoo3
     ports:
       - 2183:2181
     environment:
       ZOO_MY_ID: 3
-      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+      ZOO_SERVERS: server.1=scholars-zoo1:2888:3888;2181 server.2=scholars-zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
       ZOO_4LW_COMMANDS_WHITELIST: mntr,conf,ruok
     volumes:
       - ./zoo/zoo3/data:/data
