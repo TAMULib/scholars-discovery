@@ -111,7 +111,9 @@ docker run -d -p 9000:9000 -e SPRING_APPLICATION_JSON="{\"spring\":{\"data\":{\"
 docker-compose up
 ```
 
-This will provide Postgres database at localhost:5432, pgAdmin at localhost:8080, Solr at localhost:8983 with Zookeeper at localhost:2181. There should be multiple volume mounts at relative path `pgdata`, `pgadmin`, `solr/solr1`, `solr/solr2`, `solr/solr3`, `zoo/zoo1`, `zoo/zoo2`, and `zoo/zoo3`.
+This will provide Postgres database at localhost:5432, pgAdmin at localhost:8080, Solr at localhost:8983/8984/8985 with Zookeeper at localhost:2181/2182/2183. There should be multiple volume mounts at relative path `pgdata`, `pgadmin`, `solr/solr1`, `solr/solr2`, `solr/solr3`, `zoo/zoo1`, `zoo/zoo2`, and `zoo/zoo3`.
+
+> `pgadmin\pgpass` and `pgadmin\servers.json` are required for authentication and initial registration of scholars postgres database.
 
 To run the `mvn spring-boot:run` command with `SPRING_APPLICATION_JSON` defined, you can use the following approach:
 
