@@ -37,4 +37,6 @@ public class DiscoveryConstants {
 
     public static final String PARENTHESES_TEMPLATE = "(%s)";
 
+    public static final int MAX_ROWS = 2147483630;
+
 }

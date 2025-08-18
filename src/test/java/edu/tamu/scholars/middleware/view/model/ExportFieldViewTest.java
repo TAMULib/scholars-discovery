@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.view.model;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_ROWS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,7 +24,7 @@ public class ExportFieldViewTest {
         assertNotNull(exportField.getSort());
         assertTrue(exportField.getFilters().isEmpty());
         assertTrue(exportField.getSort().isEmpty());
-        assertEquals(Integer.MAX_VALUE, exportField.getLimit());
+        assertEquals(MAX_ROWS, exportField.getLimit());
     }
 
     @Test
