@@ -141,6 +141,7 @@ spring:
     saml2:
       relyingparty:
         registration:
+          # TAMU Azure EntraID SAML Enterprise App Registration for localhost.
           entraid:
             entity-id: http://localhost:9000/saml2/service-provider-metadata/entraid
             assertingparty:
