@@ -5,28 +5,47 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.security.config.Customizer.withDefaults;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.core.token.TokenService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.saml2.provider.service.authentication.AbstractSaml2AuthenticationRequest;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider.ResponseToken;
+import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticatedPrincipal;
+import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
+import org.springframework.security.saml2.provider.service.web.Saml2AuthenticationRequestRepository;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
@@ -37,12 +56,19 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import edu.tamu.scholars.middleware.auth.config.AuthConfig;
+import edu.tamu.scholars.middleware.auth.config.Saml2Config;
 import edu.tamu.scholars.middleware.auth.config.TokenConfig;
+import edu.tamu.scholars.middleware.auth.details.CustomUserDetails;
 import edu.tamu.scholars.middleware.auth.handler.CustomAccessDeniedExceptionHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationEntryPoint;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationFailureHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationSuccessHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomLogoutSuccessHandler;
+import edu.tamu.scholars.middleware.auth.handler.CustomSaml2AuthenticationSuccessHandler;
+import edu.tamu.scholars.middleware.auth.model.Role;
+import edu.tamu.scholars.middleware.auth.model.User;
+import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 
 /**
@@ -59,8 +85,11 @@ public class WebSecurityConfig {
     @Value("${spring.h2.console.enabled:false}")
     private boolean h2ConsoleEnabled;
 
-    @Value("${server.servlet.session.cookie.domain:library.tamu.edu}")
+    @Value("${server.servlet.session.cookie.domain:localhost}")
     private String domainName;
+
+    @Value("${ui.url:http://localhost:4200}")
+    protected String uiUrl;
 
     @Autowired
     private MiddlewareConfig config;
@@ -75,6 +104,9 @@ public class WebSecurityConfig {
     private UserDetailsService userDetailsService;
 
     @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
     private SecurityExpressionHandler<FilterInvocation> securityExpressionHandler;
 
     @Autowired
@@ -83,12 +115,12 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public TokenService tokenService() throws NoSuchAlgorithmException {
+    TokenService tokenService() throws NoSuchAlgorithmException {
         KeyBasedPersistenceTokenService tokenService = new KeyBasedPersistenceTokenService();
         TokenConfig tokenConfig = config.getAuth().getToken();
         tokenService.setServerInteger(tokenConfig.getServerInteger());
@@ -99,7 +131,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    CorsFilter corsFilter() {
         CorsConfiguration embedConfig = new CorsConfiguration();
         embedConfig.setAllowCredentials(true);
         embedConfig.setAllowedOriginPatterns(Arrays.asList("*"));
@@ -112,6 +144,18 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/displayViews/search/findByName", embedConfig);
         source.registerCorsConfiguration("/individual/{id}", embedConfig);
         source.registerCorsConfiguration("/individual/search/findByIdIn", embedConfig);
+
+        CorsConfiguration samlConfig = new CorsConfiguration();
+        samlConfig.setAllowCredentials(false);
+        samlConfig.setAllowedOriginPatterns(Arrays.asList("*"));
+        samlConfig.addAllowedHeader("*");
+        samlConfig.addAllowedMethod("POST");
+        samlConfig.addAllowedMethod("GET");
+        samlConfig.addAllowedMethod("OPTIONS");
+        samlConfig.setMaxAge(3600L);
+
+        source.registerCorsConfiguration("/login/saml2/**", samlConfig);
+        source.registerCorsConfiguration("/saml2/**", samlConfig);
 
         CorsConfiguration primaryConfig = new CorsConfiguration();
         primaryConfig.setAllowCredentials(true);
@@ -138,25 +182,107 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public LocalValidatorFactoryBean getValidator() {
+    LocalValidatorFactoryBean getValidator() {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource);
         return bean;
     }
 
     @Bean
-    public CookieSerializer cookieSerializer() {
+    CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-        serializer.setUseHttpOnlyCookie(false);
-        serializer.setUseSecureCookie(false);
+        serializer.setUseHttpOnlyCookie(true);
+        serializer.setUseSecureCookie(true);
         serializer.setCookiePath("/");
         serializer.setCookieName("SESSION");
         serializer.setDomainName(domainName);
         return serializer;
     }
 
+    // NoOp persistence of SAML request/response
+    @Bean
+    Saml2AuthenticationRequestRepository<AbstractSaml2AuthenticationRequest> authenticationRequestRepository() {
+       return new Saml2AuthenticationRequestRepository() {
+        @Override
+        public AbstractSaml2AuthenticationRequest loadAuthenticationRequest(HttpServletRequest request) {
+            return null;
+        }
+        @Override
+        public void saveAuthenticationRequest(AbstractSaml2AuthenticationRequest authenticationRequest,
+                HttpServletRequest request, HttpServletResponse response) {
+
+        }
+        @Override
+        public AbstractSaml2AuthenticationRequest removeAuthenticationRequest(HttpServletRequest request,
+                HttpServletResponse response) {
+            return null;
+        }
+       };
+    }
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+
+        AuthConfig authConfig = config.getAuth();
+        Saml2Config saml2Config = authConfig.getSaml2();
+
+        OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
+
+        Converter<ResponseToken, Saml2Authentication> delegate =
+            OpenSaml4AuthenticationProvider.createDefaultResponseAuthenticationConverter();
+
+        authenticationProvider.setResponseAuthenticationConverter(responseToken -> {
+
+            final Saml2Authentication authentication = delegate.convert(responseToken);
+
+            final String username = authentication.getName();
+            UserDetails userDetails;
+            try {
+                userDetails = userDetailsService.loadUserByUsername(username);
+            } catch(UsernameNotFoundException e) {
+                Saml2AuthenticatedPrincipal principal = (Saml2AuthenticatedPrincipal) authentication.getPrincipal();
+
+                Map<String, String> attributeMap = saml2Config.getAttributeMap();
+
+                Map<String, List<Object>> attributes = principal.getAttributes();
+
+                final String FIRST_NAME = "firstName";
+                final String LAST_NAME = "lastName";
+                final String USERNAME = "username";
+
+                String firstNameKey = attributeMap.containsKey(FIRST_NAME) ? attributeMap.get(FIRST_NAME) : FIRST_NAME;
+                String lastNameKey = attributeMap.containsKey(LAST_NAME) ? attributeMap.get(LAST_NAME) : LAST_NAME;
+                String usernameKey = attributeMap.containsKey(USERNAME) ? attributeMap.get(USERNAME) : USERNAME;
+
+                List<Object> firstNames = attributes.containsKey(firstNameKey) ? attributes.get(firstNameKey) : Arrays.asList();
+                if (firstNames.isEmpty() || StringUtils.isBlank(firstNames.get(0).toString())) {
+                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + firstNameKey + "` attribute");
+                }
+                List<Object> lastNames = attributes.containsKey(lastNameKey) ? attributes.get(lastNameKey) : Arrays.asList();
+                if (lastNames.isEmpty() || StringUtils.isBlank(lastNames.get(0).toString())) {
+                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + lastNameKey + "` attribute");
+                }
+                List<Object> usernames = attributes.containsKey(usernameKey) ? attributes.get(usernameKey) : Arrays.asList();
+                if (usernames.isEmpty() || StringUtils.isBlank(usernames.get(0).toString())) {
+                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + usernameKey + "` attribute");
+                }
+
+                User user = new User(
+                    firstNames.get(0).toString(),
+                    lastNames.get(0).toString(),
+                    usernames.get(0).toString()
+                );
+
+                user.setActive(true);
+                user.setConfirmed(true);
+                user.setEnabled(true);
+                user.setRole(Role.ROLE_USER);
+                userDetails = new CustomUserDetails(userRepo.save(user));
+            }
+
+            return new Saml2Authentication((AuthenticatedPrincipal) userDetails, responseToken.getToken().getSaml2Response(), userDetails.getAuthorities());
+        });
+
         if (enableH2Console()) {
             // NOTE: permit all access to h2console
             http
@@ -166,6 +292,9 @@ public class WebSecurityConfig {
         }
         http
             .authorizeRequests()
+                .antMatchers("/login/saml2/**", "/saml2/**")
+                    .permitAll()
+
                 .expressionHandler(securityExpressionHandler)
 
                 .antMatchers(PATCH,
@@ -235,11 +364,16 @@ public class WebSecurityConfig {
                     .permitAll()
 
             .and()
+                .saml2Login(saml2 -> saml2
+                    .authenticationManager(new ProviderManager(authenticationProvider))
+                    .successHandler(new CustomSaml2AuthenticationSuccessHandler(uiUrl))
+                    .failureHandler(authenticationFailureHandler()))
                 .formLogin()
                     .successHandler(authenticationSuccessHandler())
                     .failureHandler(authenticationFailureHandler())
                         .permitAll()
             .and()
+                .saml2Logout(withDefaults())
                 .logout()
                     .deleteCookies("SESSION")
                     .invalidateHttpSession(true)
