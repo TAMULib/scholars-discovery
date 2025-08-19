@@ -892,16 +892,16 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-api</id>
+            <id>copy-site</id>
             <phase>test</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.outputDirectory}/static/api</outputDirectory>
+              <outputDirectory>${project.build.outputDirectory}/static/site</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${project.build.directory}/generated-docs</directory>
+                  <directory>${project.build.directory}/site</directory>
                 </resource>
               </resources>
             </configuration>
