@@ -24,6 +24,8 @@ jobs:
 
     - name: Maven Install Site
       run: mvn clean install site
+      env:
+        NVDAPIKEY: ${{ secrets.NVDAPIKEY }}
 
     - name: Submit Coveralls
       uses: MikeEdgar/github-action@raw_coverage_file
