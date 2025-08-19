@@ -76,6 +76,10 @@ services:
     environment:
       - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr1
+      - SOLR_HEAP=4g
+      - SOLR_OPTS=-Xms4g -Xmx4g -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -XX:+DisableExplicitGC -XX:+ExitOnOutOfMemoryError
+      - SOLR_JAVA_MEM=-Xms4g -Xmx4g
+      - ENABLE_REMOTE_JMX_OPTS=false
     networks:
       - cloud
     depends_on:
