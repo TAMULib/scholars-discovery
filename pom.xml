@@ -647,20 +647,6 @@
         </configuration>
         <executions>
           <execution>
-            <id>checkstyle-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>checkstyle</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>checkstyle-prepare-package</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>checkstyle</goal>
-            </goals>
-          </execution>
-          <execution>
             <id>checkstyle-pre-site</id>
             <phase>pre-site</phase>
             <goals>
@@ -709,20 +695,6 @@
         </configuration>
         <executions>
           <execution>
-            <id>javadoc-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>javadoc</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>javadoc-prepare-package</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>javadoc</goal>
-            </goals>
-          </execution>
-          <execution>
             <id>javadoc-pre-site</id>
             <phase>pre-site</phase>
             <goals>
@@ -745,13 +717,6 @@
         <artifactId>maven-site-plugin</artifactId>
         <version>${maven-site-plugin.version}</version>
         <executions>
-          <execution>
-            <id>site-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>site</goal>
-            </goals>
-          </execution>
           <execution>
             <id>site-prepare-package</id>
             <phase>prepare-package</phase>
@@ -788,20 +753,6 @@
         </configuration>
         <executions>
           <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>dependency-check-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>dependency-check-prepare-package</id>
-            <phase>prepare-package</phase>
             <goals>
               <goal>check</goal>
             </goals>
@@ -888,20 +839,6 @@
             </goals>
           </execution>
           <execution>
-            <id>report-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>report-prepare-package</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-          <execution>
             <id>report-site</id>
             <phase>pre-site</phase>
             <goals>
@@ -929,20 +866,6 @@
         </configuration>
         <executions>
           <execution>
-            <id>coveralls-test-report</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>coveralls-prepare-package-report</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-          <execution>
             <id>coveralls-site-report</id>
             <phase>site</phase>
             <goals>
@@ -959,34 +882,8 @@
         <version>${asciidoctor-maven-plugin.version}</version>
         <executions>
           <execution>
-            <id>generate-docs-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>process-asciidoc</goal>
-            </goals>
-            <configuration>
-              <backend>html</backend>
-              <doctype>book</doctype>
-              <sourceDocumentName>index.adoc</sourceDocumentName>
-              <outputDirectory>${project.build.directory}/site/docs</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
             <id>generate-docs-prepare-package</id>
             <phase>prepare-package</phase>
-            <goals>
-              <goal>process-asciidoc</goal>
-            </goals>
-            <configuration>
-              <backend>html</backend>
-              <doctype>book</doctype>
-              <sourceDocumentName>index.adoc</sourceDocumentName>
-              <outputDirectory>${project.build.directory}/site/docs</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>generate-docs-pre-site</id>
-            <phase>pre-site</phase>
             <goals>
               <goal>process-asciidoc</goal>
             </goals>
@@ -1013,40 +910,8 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-site-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.outputDirectory}/static/site</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/site</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
             <id>copy-site-prepare-package</id>
             <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.outputDirectory}/static/site</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/site</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-site</id>
-            <phase>post-site</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
