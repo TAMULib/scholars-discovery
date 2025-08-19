@@ -36,11 +36,10 @@
       <item name="Dependency Management" href="dependency-management.html"/>
       <item name="Plugins" href="plugins.html"/>
       <item name="Plugin Management" href="plugin-management.html"/>
-      <item name="Project Summary" href="project-summary.html"/>
+      <item name="Project Summary" href="summary.html"/>
       <item name="License" href="license.html"/>
       <item name="SCM" href="scm.html"/>
       <item name="Team" href="team.html"/>
-      <item name="Issue Tracking" href="issue-tracking.html"/>
     </menu> -->
 
     <!-- Optional QA Reports -->
