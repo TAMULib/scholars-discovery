@@ -150,8 +150,12 @@ $env:SPRING_APPLICATION_JSON='{"solr.client":"cloud"}'; mvn spring-boot:run
 
 With the above installation instructions, the following service endpoints can be verified:
 
-1. [HAL Explorer (9000/explorer)](http://localhost:9000)
-2. [REST API (9000/individual)](http://localhost:9000/individual)
-3. [Documentation (9000/site)](http://localhost:9000/site)
+1. [HAL Explorer (9000)](http://localhost:9000)
+2. [Service Documentation (9000/site)](http://localhost:9000/site) *
+3. [REST Docs (9000/site/docs)](http://localhost:9000/site/docs/index.html) *
+4. [OpanAPI Docs (9000/api-docs)](http://localhost:9000/api-docs)
+5. [Swagger UI (9000/swagger-ui)](http://localhost:9000/swagger-ui/index.html)
+
+> *Not available with `mvn spring-boot:run` alone. Run `mvn clean install site` before and do no clear target directory.
 
 The [HAL(Hypertext Application Language)](https://docs.spring.io/spring-data/rest/docs/current/reference/html/#tools.hal-explorer) explorer can be used to browse scholars-discovery resources.
