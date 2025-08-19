@@ -12,7 +12,7 @@ Existing frontend applications include:
 
 # API
 
-[Scholars Middleware REST Service API Documentation](https://tamulib.github.io/scholars-discovery/)
+[Scholars Discovery REST Service API Documentation](https://tamulib.github.io/scholars-discovery/)
 
 # Background
 
@@ -152,6 +152,6 @@ With the above installation instructions, the following service endpoints can be
 
 1. [HAL Explorer (9000/explorer)](http://localhost:9000)
 2. [REST API (9000/individual)](http://localhost:9000/individual)
-3. [REST API Docs (9000/api)](http://localhost:9000/api)
+3. [Documentation (9000/site)](http://localhost:9000/site)
 
 The [HAL(Hypertext Application Language)](https://docs.spring.io/spring-data/rest/docs/current/reference/html/#tools.hal-explorer) explorer can be used to browse scholars-discovery resources.

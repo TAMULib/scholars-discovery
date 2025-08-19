@@ -21,7 +21,6 @@
   <version position="right"/>
 
   <body>
-    <!-- Main navigation for custom documentation -->
     <menu name="Project Documentation">
       <item name="API Docs" href="apidocs/index.html"/>
       <item name="REST Docs" href="docs/index.html"/>
@@ -29,20 +28,8 @@
       <item name="Vulnerability Report" href="security/dependency-check-report.html"/>
     </menu>
 
-    <!-- Standard Maven reports -->
     <menu name="Project Reports" ref="reports"/>
-    <!-- <menu name="Project Reports">
-      <item name="Dependencies" href="dependencies.html"/>
-      <item name="Dependency Management" href="dependency-management.html"/>
-      <item name="Plugins" href="plugins.html"/>
-      <item name="Plugin Management" href="plugin-management.html"/>
-      <item name="Project Summary" href="summary.html"/>
-      <item name="License" href="license.html"/>
-      <item name="SCM" href="scm.html"/>
-      <item name="Team" href="team.html"/>
-    </menu> -->
 
-    <!-- Optional QA Reports -->
     <menu name="Quality Reports">
       <item name="Checkstyle" href="checkstyle.html"/>
     </menu>

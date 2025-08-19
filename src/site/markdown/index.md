@@ -1,10 +1,10 @@
-# VIVO Scholars Middleware
+# VIVO Scholars Discovery
 
-Welcome to the VIVO Scholars Discovery Middleware documentation site.
+Welcome to the VIVO Scholars Discovery documentation site.
 
 ## Overview
 
-VIVO Scholars Discovery Middleware is a Spring Boot application for managing scholarly individual, directory, discovery and data and analytic views.
+VIVO Scholars Discovery is a Spring Boot application for managing scholarly individual, directory, discovery and data and analytic views.
 
 ## Quick Links
 
@@ -21,7 +21,7 @@ VIVO Scholars Discovery Middleware is a Spring Boot application for managing sch
 
 ## Getting Started
 
-This middleware application provides:
+This application provides:
 
 - Scholarly data management and discovery
 - RESTful APIs for data access

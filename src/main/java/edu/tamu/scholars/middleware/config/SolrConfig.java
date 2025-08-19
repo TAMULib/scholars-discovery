@@ -1,8 +1,11 @@
 package edu.tamu.scholars.middleware.config;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +30,7 @@ import edu.tamu.scholars.middleware.config.model.IndexConfig;
 @Configuration
 public class SolrConfig {
 
-    private final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
+    private static final Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
 
     @Value("${solr.host:http://localhost:8983/solr}")
     private String solrHost;
@@ -120,15 +123,23 @@ public class SolrConfig {
 
     @Bean("embeddedSolrClient")
     @ConditionalOnProperty(value = "solr.client", havingValue = "embedded", matchIfMissing = false)
-    public SolrClient solrServer(IndexConfig index) throws Exception {
+    public SolrClient solrServer(IndexConfig index) throws IOException {
         final File solrDir = new File("solr");
+
         final File solrHome = SOLR_HOME.toFile();
 
         if (solrHome.exists()) {
             FileUtils.deleteDirectory(solrHome);
         }
+        Files.createDirectories(solrHome.toPath());
 
-        FileUtils.copyDirectory(solrDir, solrHome);
+        Path solrXmlSource = solrDir.toPath().resolve("solr.xml");
+        Path solrXmlTarget = solrHome.toPath().resolve("solr.xml");
+        Files.copy(solrXmlSource, solrXmlTarget, StandardCopyOption.REPLACE_EXISTING);
+
+        File configsetsSource = new File(solrDir, "configsets");
+        File configsetsTarget = new File(solrHome, "configsets");
+        FileUtils.copyDirectory(configsetsSource, configsetsTarget);
 
         System.setProperty("solr.solr.home", SOLR_HOME.toString());
         System.setProperty("solr.install.dir", SOLR_HOME.toString());
