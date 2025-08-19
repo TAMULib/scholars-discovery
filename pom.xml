@@ -893,7 +893,7 @@
         <executions>
           <execution>
             <id>copy-site</id>
-            <phase>test</phase>
+            <phase>post-site</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
