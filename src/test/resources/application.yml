@@ -68,7 +68,7 @@ middleware:
 
 solr:
   host: http://localhost:8983/solr
-  client: http1
+  client: embedded
   default-collection: scholars-discovery
   connection-timeout: 15000
   request-timeout: 120000
@@ -155,7 +155,8 @@ spring:
       pageable:
         one-indexed-parameters: true
   liquibase:
-    enabled: true
+    contexts: h2
+    enabled: false
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true
@@ -174,7 +175,7 @@ spring:
     password: scholars
   jpa:
     generate-ddl: false
-    hibernate.ddl-auto: none
+    hibernate.ddl-auto: create-drop
     open-in-view: false
     properties:
       hibernate:

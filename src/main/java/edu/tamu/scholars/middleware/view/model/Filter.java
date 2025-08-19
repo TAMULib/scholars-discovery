@@ -16,7 +16,7 @@ public class Filter {
     @Column(nullable = false)
     private String field;
 
-    @Column(nullable = false)
+    @Column(name = "\"value\"", nullable = false)
     private String value;
 
     @Column(nullable = false)

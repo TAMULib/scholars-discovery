@@ -76,7 +76,6 @@ services:
     environment:
       - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr1
-      - SOLR_HEAP=4g
     networks:
       - cloud
     depends_on:
@@ -140,7 +139,6 @@ services:
     environment:
       - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr2
-      - SOLR_HEAP=2g
     networks:
       - cloud
     depends_on:
@@ -176,7 +174,6 @@ services:
     environment:
       - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr3
-      - SOLR_HEAP=2g
     networks:
       - cloud
     depends_on:

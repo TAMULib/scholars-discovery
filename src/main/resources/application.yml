@@ -161,6 +161,10 @@ spring:
       pageable:
         one-indexed-parameters: true
   liquibase:
+    # h2
+    # contexts: h2
+    # postgres
+    contexts: postgres
     enabled: true
   main:
     allow-bean-definition-overriding: false
@@ -177,17 +181,13 @@ spring:
 
     # h2
     # driver-class-name: org.h2.Driver
-
-    # postgres
-    driver-class-name: org.postgresql.Driver
-
     # h2 in memory
     # url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-
     # h2 file
     # url: jdbc:h2:./h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 
     # postgres
+    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/scholars
 
     username: scholars

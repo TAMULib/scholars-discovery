@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import jakarta.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -134,7 +133,7 @@ public class UserControllerTest extends UserIntegrationTest {
         // @formatter:off
         mockMvc.perform(patch("/users/{id}", user.getId()).cookie(login(user)).content("{\"role\": \"ROLE_USER\", \"active\": false}"))
             .andExpect(status().isUnauthorized())
-            .andExpect(content().string(equalTo("Access is denied")));
+            .andExpect(content().string(equalTo("Access Denied")));
         // @formatter:on
     }
 
@@ -173,7 +172,7 @@ public class UserControllerTest extends UserIntegrationTest {
         // @formatter:off
         mockMvc.perform(delete("/users/{id}", user.getId()).cookie(login(admin)))
             .andExpect(status().isUnauthorized())
-            .andExpect(content().string(equalTo("Access is denied")));
+            .andExpect(content().string(equalTo("Access Denied")));
         // @formatter:on
     }
 
@@ -192,7 +191,7 @@ public class UserControllerTest extends UserIntegrationTest {
         // @formatter:off
         mockMvc.perform(get("/users").cookie(login(user)))
             .andExpect(status().isUnauthorized())
-            .andExpect(content().string(equalTo("Access is denied")));
+            .andExpect(content().string(equalTo("Access Denied")));
         // @formatter:on
     }
 
@@ -243,7 +242,7 @@ public class UserControllerTest extends UserIntegrationTest {
         // @formatter:off
         mockMvc.perform(get("/users/{id}", user.getId()).cookie(login(user)))
             .andExpect(status().isUnauthorized())
-            .andExpect(content().string(equalTo("Access is denied")));
+            .andExpect(content().string(equalTo("Access Denied")));
         // @formatter:on
     }
 

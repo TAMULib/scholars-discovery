@@ -9,10 +9,10 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class Style {
 
-    @Column
+    @Column(name = "\"key\"")
     private String key;
 
-    @Column
+    @Column(name = "\"value\"")
     private String value;
 
     public Style() {

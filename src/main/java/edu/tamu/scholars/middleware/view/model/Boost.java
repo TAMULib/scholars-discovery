@@ -12,7 +12,7 @@ public class Boost {
     @Column(nullable = false)
     private String field;
 
-    @Column(nullable = false)
+    @Column(name = "\"value\"", nullable = false)
     private float value;
 
     public Boost() {

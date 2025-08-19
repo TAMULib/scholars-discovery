@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         runs-on: [ubuntu-latest]
-        java-version: [17]
+        java-version: [21]
 
     runs-on: ${{ matrix.runs-on }}
 
@@ -22,21 +22,21 @@ jobs:
         architecture: x64
         cache: 'maven'
 
-    - name: Tests with Coveralls coverage report
-      run: mvn clean test jacoco:report coveralls:report -DdryRun=true
+    - name: Maven Install Site
+      run: mvn clean install site
 
-    - name: Coveralls coverage report
+    - name: Submit Coveralls
       uses: MikeEdgar/github-action@raw_coverage_file
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-file: ./target/coveralls.json
         coverage-format: raw
 
-    - name: Deploy to GitHub pages
+    - name: Deploy GitHub Pages
       if: ${{ github.ref == 'refs/heads/tamu-main' && matrix.runs-on == 'ubuntu-latest' &&  matrix.java-version == '17' }}
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: target/generated-docs
+        folder: target/site
         branch: gh-pages
         clean: true
         single-commit: true

@@ -1,26 +1,33 @@
 package edu.tamu.scholars.middleware.config;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.core.CoreContainer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
+
+import edu.tamu.scholars.middleware.config.model.IndexConfig;
 
 /**
  * Solr clients configuration for connecting to Apache Solr.
  */
 @Configuration
-@Profile("!test")
 public class SolrConfig {
+
+    private final static Path SOLR_HOME = Paths.get("target/solr").toAbsolutePath();
 
     @Value("${solr.host:http://localhost:8983/solr}")
     private String solrHost;
@@ -84,10 +91,6 @@ public class SolrConfig {
             .build();
     }
 
-    /**
-     * 
-     * @return
-     */
     @Bean("http2SolrClient")
     @ConditionalOnProperty(value = "solr.client", havingValue = "http2", matchIfMissing = true)
     SolrClient http2SolrClient() {
@@ -101,11 +104,6 @@ public class SolrConfig {
             .build();
     }
 
-    /**
-     * 
-     * @return
-     */
-    @Primary
     @Bean("cloudHttp2SolrClient")
     @ConditionalOnProperty(value = "solr.client", havingValue = "cloud", matchIfMissing = false)
     SolrClient cloudHttp2SolrClient() {
@@ -118,6 +116,26 @@ public class SolrConfig {
             .withZkClientTimeout(zkClientTimeout, TimeUnit.MILLISECONDS)
             .withZkConnectTimeout(zkConnectTimeout, TimeUnit.MILLISECONDS)
             .build();
+    }
+
+    @Bean("embeddedSolrClient")
+    @ConditionalOnProperty(value = "solr.client", havingValue = "embedded", matchIfMissing = false)
+    public SolrClient solrServer(IndexConfig index) throws Exception {
+        final File solrDir = new File("solr");
+        final File solrHome = SOLR_HOME.toFile();
+
+        if (solrHome.exists()) {
+            FileUtils.deleteDirectory(solrHome);
+        }
+
+        FileUtils.copyDirectory(solrDir, solrHome);
+
+        System.setProperty("solr.solr.home", SOLR_HOME.toString());
+        System.setProperty("solr.install.dir", SOLR_HOME.toString());
+
+        CoreContainer cores = CoreContainer.createAndLoad(SOLR_HOME);
+
+        return new EmbeddedSolrServer(cores, index.getName());
     }
 
 }
