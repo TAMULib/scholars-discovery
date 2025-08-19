@@ -75,20 +75,6 @@ solr:
   idle-timeout: 120000
   max-connections-per-host: 8
   follow-redirects: true
-
-  cloud:
-    zk-hosts:
-    - localhost:2181
-    - localhost:2182
-    - localhost:2183
-    zk-chroot: /
-    collection-cache-ttl: 60000
-    parallel-updates: true
-    parallel-cache-refreshes: 8
-    retry-expiry-time: 30000
-    zk-client-timeout: 15000
-    zk-connection-timeout: 10000
-
   operator: OR
   parser: edismax
 
@@ -195,19 +181,13 @@ spring:
     init:
       platform: h2
 
+# spring-boot actuator endpoint: health set to true
 management:
   endpoints:
-    enabled-by-default: false
+    access:
+      default: none
     web:
+      discovery:
+        enabled: false
       exposure:
-        # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, mappings
-  endpoint:
-    health:
-      enabled: true
-      show-details: always
-      show-components: always
-    info:
-      enabled: true
-    mappings:
-      enabled: true
+        include:

@@ -214,19 +214,37 @@ spring:
       # platform: h2
       platform: postgres
 
+springdoc:
+  show-actuator: true
+  use-management-port: false
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+# spring-boot actuator endpoint: health set to true
 management:
   endpoints:
-    enabled-by-default: true
+    access:
+      default: read-only
     web:
+      discovery:
+        enabled: true
       exposure:
-        # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, index
+        include: health, info, logfile, openapi, swagger-ui
   endpoint:
     health:
-      enabled: true
       show-details: always
-      show-components: always
     info:
-      enabled: true
-    index:
-      enabled: true
+      access: read-only
+
+  server:
+    port: 9000
+    base-path: /actuator
+
+info:
+  java-version: ${java.version}
+  java-vendor: ${java.vendor}
+  environment:
+    os:
+      name: ${os.name}
