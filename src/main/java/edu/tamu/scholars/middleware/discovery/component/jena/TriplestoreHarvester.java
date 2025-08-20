@@ -226,24 +226,40 @@ public class TriplestoreHarvester implements Harvester {
 
     private List<Object> queryForProperty(FieldSource source, Resource resource, Property property) {
         List<Object> values = new ArrayList<>();
+        Set<String> uniqueCheck = source.unique() ? new HashSet<>() : null;
         StmtIterator statements = resource.listProperties(property);
+        boolean shouldParse = source.parse();
+        boolean shouldSplit = source.split();
 
         while (statements.hasNext()) {
             Statement statement = statements.next();
             String object = statement.getObject().toString();
-            String value = source.parse() ? parse(object) : object;
+            String value = shouldParse ? parse(object) : object;
+
             value = value.replace("\\\"", "\"");
-            if (value.contains("^^")) {
-                value = value.substring(0, value.indexOf("^^"));
-            }
-            if (source.unique() && values.stream().map(v -> v.toString()).anyMatch(value::equalsIgnoreCase)) {
-                logger.debug("duplicate value {}", value);
-            } else {
-                if (source.split()) {
-                    values.addAll(Arrays.asList(value.split("\\|\\|")));
+
+            int indexOfTypeToken = value.indexOf("^^");
+            if (indexOfTypeToken >= 0) {
+                int endQuoteIndex = indexOfTypeToken - 1;
+                if (value.charAt(0) == '"' && value.charAt(endQuoteIndex) == '"') {
+                    value = value.substring(1, endQuoteIndex);
                 } else {
-                    values.add(value);
+                    value = value.substring(0, indexOfTypeToken);
                 }
+            }
+
+            if (uniqueCheck != null && !uniqueCheck.add(value.toLowerCase())) {
+                logger.debug("duplicate value {}", value);
+                continue;
+            }
+
+            if (shouldSplit) {
+                String[] parts = value.split("\\|\\|");
+                for (String part : parts) {
+                    values.add(part);
+                }
+            } else {
+                values.add(value);
             }
         }
 

@@ -40,5 +40,6 @@ pgadmin/*
 !pgadmin/servers.json
 !pgadmin/pgpass
 pgdata/
+zoo/
 
 config.json

@@ -1,9 +1,9 @@
 package edu.tamu.scholars.middleware.view.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import edu.tamu.scholars.middleware.model.OpKey;
 
@@ -16,7 +16,7 @@ public class Filter {
     @Column(nullable = false)
     private String field;
 
-    @Column(nullable = false)
+    @Column(name = "\"value\"", nullable = false)
     private String value;
 
     @Column(nullable = false)

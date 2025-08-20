@@ -7,9 +7,6 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -24,13 +21,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
@@ -40,13 +37,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.saml2.provider.service.authentication.AbstractSaml2AuthenticationRequest;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider.ResponseToken;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticatedPrincipal;
 import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
-import org.springframework.security.saml2.provider.service.web.Saml2AuthenticationRequestRepository;
-import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.session.web.http.CookieSerializer;
@@ -72,11 +66,11 @@ import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 
 /**
- * 
+ * Spring Security Configuration for Spring Boot 4.0.0-M1
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
 
     @Value("${spring.profiles.active:default}")
@@ -105,9 +99,6 @@ public class WebSecurityConfig {
 
     @Autowired
     private UserRepo userRepo;
-
-    @Autowired
-    private SecurityExpressionHandler<FilterInvocation> securityExpressionHandler;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -146,7 +137,7 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/individual/search/findByIdIn", embedConfig);
 
         CorsConfiguration samlConfig = new CorsConfiguration();
-        samlConfig.setAllowCredentials(false);
+        samlConfig.setAllowCredentials(true);
         samlConfig.setAllowedOriginPatterns(Arrays.asList("*"));
         samlConfig.addAllowedHeader("*");
         samlConfig.addAllowedMethod("POST");
@@ -193,31 +184,11 @@ public class WebSecurityConfig {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
         serializer.setUseHttpOnlyCookie(true);
         serializer.setUseSecureCookie(true);
+        serializer.setSameSite("None"); // Add this line
         serializer.setCookiePath("/");
         serializer.setCookieName("SESSION");
         serializer.setDomainName(domainName);
         return serializer;
-    }
-
-    // NoOp persistence of SAML request/response
-    @Bean
-    Saml2AuthenticationRequestRepository<AbstractSaml2AuthenticationRequest> authenticationRequestRepository() {
-       return new Saml2AuthenticationRequestRepository() {
-        @Override
-        public AbstractSaml2AuthenticationRequest loadAuthenticationRequest(HttpServletRequest request) {
-            return null;
-        }
-        @Override
-        public void saveAuthenticationRequest(AbstractSaml2AuthenticationRequest authenticationRequest,
-                HttpServletRequest request, HttpServletResponse response) {
-
-        }
-        @Override
-        public AbstractSaml2AuthenticationRequest removeAuthenticationRequest(HttpServletRequest request,
-                HttpServletResponse response) {
-            return null;
-        }
-       };
     }
 
     @Bean
@@ -286,18 +257,17 @@ public class WebSecurityConfig {
         if (enableH2Console()) {
             // NOTE: permit all access to h2console
             http
-                .headers()
-                    .frameOptions()
-                        .sameOrigin();
+                .headers(headers -> headers
+                    .frameOptions(FrameOptionsConfig::sameOrigin)
+                );
         }
+
         http
-            .authorizeRequests()
-                .antMatchers("/login/saml2/**", "/saml2/**")
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/login/saml2/**", "/saml2/**")
                     .permitAll()
-
-                .expressionHandler(securityExpressionHandler)
-
-                .antMatchers(PATCH,
+                
+                .requestMatchers(PATCH,
                     "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
@@ -306,15 +276,13 @@ public class WebSecurityConfig {
                     )
                     .hasRole("ADMIN")
 
-                .antMatchers(PATCH,
-                    "/users/{id}"
-                ).hasRole("SUPER_ADMIN")
+                .requestMatchers(PATCH, "/users/{id}")
+                    .hasRole("SUPER_ADMIN")
 
-                .antMatchers(POST,
-                    "/registration")
+                .requestMatchers(POST, "/registration")
                     .permitAll()
 
-                .antMatchers(POST,
+                .requestMatchers(POST,
                     "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
@@ -322,13 +290,13 @@ public class WebSecurityConfig {
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(POST, "/users/{id}")
+                .requestMatchers(POST, "/users/{id}")
                     .denyAll()
 
-                .antMatchers(PUT, "/registration")
+                .requestMatchers(PUT, "/registration")
                     .permitAll()
 
-                .antMatchers(PUT,
+                .requestMatchers(PUT,
                     "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
@@ -336,20 +304,20 @@ public class WebSecurityConfig {
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(PUT, "/users/{id}")
+                .requestMatchers(PUT, "/users/{id}")
                     .denyAll()
 
-                .antMatchers(GET, "/user")
+                .requestMatchers(GET, "/user")
                     .hasRole("USER")
 
-                .antMatchers(GET,
+                .requestMatchers(GET,
                     "/users",
                     "/users/{id}",
                     "/themes",
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(DELETE,
+                .requestMatchers(DELETE,
                     "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
@@ -357,45 +325,38 @@ public class WebSecurityConfig {
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(DELETE, "/users/{id}")
+                .requestMatchers(DELETE, "/users/{id}")
                     .hasRole("SUPER_ADMIN")
 
                 .anyRequest()
                     .permitAll()
+            )
+            .saml2Login(saml2 -> saml2
+                .authenticationManager(new ProviderManager(authenticationProvider))
+                .successHandler(new CustomSaml2AuthenticationSuccessHandler(uiUrl))
+                .failureHandler(authenticationFailureHandler()))
+            .formLogin(form -> form
+                .successHandler(authenticationSuccessHandler())
+                .failureHandler(authenticationFailureHandler())
+                .permitAll())
+            .saml2Logout(withDefaults())
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .deleteCookies("SESSION")
+                .invalidateHttpSession(true)
+                .logoutSuccessHandler(logoutSuccessHandler())
+                .permitAll())
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(authenticationEntryPoint())
+                .accessDeniedHandler(accessDeniedHandler()))
+            .requestCache(cache -> cache
+                .requestCache(nullRequestCache()))
+            .cors(withDefaults())
+            .csrf(csrf -> csrf.disable());
 
-            .and()
-                .saml2Login(saml2 -> saml2
-                    .authenticationManager(new ProviderManager(authenticationProvider))
-                    .successHandler(new CustomSaml2AuthenticationSuccessHandler(uiUrl))
-                    .failureHandler(authenticationFailureHandler()))
-                .formLogin()
-                    .successHandler(authenticationSuccessHandler())
-                    .failureHandler(authenticationFailureHandler())
-                        .permitAll()
-            .and()
-                .saml2Logout(withDefaults())
-                .logout()
-                    .deleteCookies("SESSION")
-                    .invalidateHttpSession(true)
-                    .logoutSuccessHandler(logoutSuccessHandler())
-                        .permitAll()
-            .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint())
-                    .accessDeniedHandler(accessDeniedHandler())
-            .and()
-                .requestCache()
-                    .requestCache(nullRequestCache())
-            .and()
-                .cors()
-            .and()
-                .csrf()
-                    .disable();
-
-        http.sessionManagement()
-            .sessionFixation()
-                .migrateSession()
-            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+        http.sessionManagement(session -> session
+            .sessionFixation().migrateSession()
+            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
         return http.build();
     }

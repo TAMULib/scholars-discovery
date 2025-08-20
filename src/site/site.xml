@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="VIVO Scholars Discovery" 
+         xmlns="http://maven.apache.org/DECORATION/1.8.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 
+                             http://maven.apache.org/xsd/decoration-1.8.0.xsd">
+  
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>2.0.0-M10</version>
+  </skin>
+
+  <bannerLeft>
+    <name>VIVO Scholars Discovery</name>
+    <src>https://raw.githubusercontent.com/TAMULib/scholars-angular/tamu-main/src/assets/images/temporal_graph_icon.png</src>
+    <href>https://github.com/TAMULib/scholars-discovery</href>
+  </bannerLeft>
+
+  <publishDate position="right"/>
+  <version position="right"/>
+
+  <body>
+    <menu name="Project Documentation">
+      <item name="API Docs" href="apidocs/index.html"/>
+      <item name="REST Docs" href="docs/index.html"/>
+      <item name="Coverage Report" href="jacoco/index.html"/>
+      <item name="Vulnerability Report" href="security/dependency-check-report.html"/>
+    </menu>
+
+    <menu name="Project Reports" ref="reports"/>
+
+    <menu name="Quality Reports">
+      <item name="Checkstyle" href="checkstyle.html"/>
+    </menu>
+  </body>
+</project>

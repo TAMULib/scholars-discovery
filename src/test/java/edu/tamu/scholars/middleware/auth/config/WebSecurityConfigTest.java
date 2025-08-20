@@ -6,17 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 
-import edu.tamu.scholars.middleware.config.SolrTestConfig;
-
-@ContextConfiguration(classes = SolrTestConfig.class)
 // @formatter:off
 @SpringBootTest(properties = {
     "spring.profiles.active=default",
     "spring.h2.console.enabled=true",
-    "spring.data.solr.host=",
-    "spring.data.solr.repositories.enabled=false"
+    "solr.host=",
+    "solr.repositories.enabled=false"
 })
 // @formatter:on
 public class WebSecurityConfigTest {

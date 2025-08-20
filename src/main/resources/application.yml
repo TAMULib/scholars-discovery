@@ -70,6 +70,32 @@ middleware:
     individualKey: individual
     individualBaseUri: ${ui.url}/display
 
+solr:
+  host: http://localhost:8983/solr
+  client: http1
+  default-collection: scholars-discovery
+  connection-timeout: 15000
+  request-timeout: 120000
+  idle-timeout: 120000
+  max-connections-per-host: 8
+  follow-redirects: true
+
+  cloud:
+    zk-hosts:
+    - localhost:2181
+    - localhost:2182
+    - localhost:2183
+    zk-chroot: /
+    collection-cache-ttl: 60000
+    parallel-updates: true
+    parallel-cache-refreshes: 8
+    retry-expiry-time: 30000
+    zk-client-timeout: 15000
+    zk-connection-timeout: 10000
+
+  operator: OR
+  parser: edismax
+
 vivo:
   email: vivo_root@school.edu
   password:
@@ -96,7 +122,7 @@ server:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
     min-response-size: 1024
-  max-http-header-size: 16384
+  max-http-request-header-size: 16384
   port: 9000
   servlet:
     context-path:
@@ -117,12 +143,13 @@ spring:
         registration:
           # TAMU Azure EntraID SAML Enterprise App Registration for localhost.
           entraid:
-            identityprovider:
+            entity-id: http://localhost:9000/saml2/service-provider-metadata/entraid
+            assertingparty:
               entity-id: https://sts.windows.net/68f381e3-46da-47b9-ba57-6f322b8f0da1/
               metadata-uri: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/federationmetadata/2007-06/federationmetadata.xml?appid=2f88008b-4c85-496d-8b96-f5ee076d8dc8
               singlesignon:
                 url: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/saml2
-                sign-request: true
+                sign-request: false
             acs:
               location: http://localhost:9000/login/saml2/sso/entraid
   data:
@@ -130,15 +157,14 @@ spring:
       return-body-on-create: true
       return-body-on-update: true
       max-page-size: 10000
-    solr:
-      host: http://localhost:8983/solr
-      operator: OR
-      parser: edismax
-    # NOTE: this does not work yet, https://jira.spring.io/browse/DATAREST-1290
     web:
       pageable:
         one-indexed-parameters: true
   liquibase:
+    # h2
+    # contexts: h2
+    # postgres
+    contexts: postgres
     enabled: true
   main:
     allow-bean-definition-overriding: false
@@ -155,29 +181,18 @@ spring:
 
     # h2
     # driver-class-name: org.h2.Driver
-
-    # postgres
-    driver-class-name: org.postgresql.Driver
-
     # h2 in memory
     # url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-
     # h2 file
     # url: jdbc:h2:./h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 
     # postgres
+    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/scholars
 
     username: scholars
     password: scholars
   jpa:
-
-    # h2
-    # database-platform: org.hibernate.dialect.H2Dialect
-
-    # postgres
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-
     generate-ddl: false
     hibernate.ddl-auto: none
     open-in-view: false
@@ -199,19 +214,46 @@ spring:
       # platform: h2
       platform: postgres
 
+springdoc:
+  show-actuator: true
+  use-management-port: false
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+# spring-boot actuator endpoint: health set to true
 management:
   endpoints:
-    enabled-by-default: true
+    access:
+      default: read-only
     web:
+      discovery:
+        enabled: true
       exposure:
-        # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, index
+        include: health, info, logfile, openapi, swagger-ui
   endpoint:
     health:
-      enabled: true
       show-details: always
-      show-components: always
     info:
+      access: read-only
+  info:
+    build:
       enabled: true
-    index:
+    env:
       enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+
+  server:
+    port: 9000
+    base-path: /actuator
+
+info:
+  java-version: ${java.version}
+  java-vendor: ${java.vendor}
+  environment:
+    os:
+      name: ${os.name}

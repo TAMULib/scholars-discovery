@@ -1,20 +1,18 @@
 package edu.tamu.scholars.middleware.view.model;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 
 /**
  * 
@@ -37,13 +35,12 @@ public class ExportView extends View {
 
     @OrderBy("order")
     @JoinColumn(name = "export_field_id")
-    @OneToMany(cascade = CascadeType.ALL)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ExportFieldView> lazyReferences;
 
     public ExportView() {
         super();
-        lazyReferences = new ArrayList<ExportFieldView>();
+        lazyReferences = new ArrayList<>();
     }
 
     public String getContentTemplate() {

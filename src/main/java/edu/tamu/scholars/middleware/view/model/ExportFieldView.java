@@ -1,9 +1,11 @@
 package edu.tamu.scholars.middleware.view.model;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_ROWS;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * 
@@ -20,7 +22,7 @@ public class ExportFieldView extends FieldView {
 
     public ExportFieldView() {
         super();
-        limit = Integer.MAX_VALUE;
+        limit = MAX_ROWS;
     }
 
     public int getLimit() {

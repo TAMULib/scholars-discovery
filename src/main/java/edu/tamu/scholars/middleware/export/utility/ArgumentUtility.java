@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.export.utility;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Arrays;
 import java.util.Collections;

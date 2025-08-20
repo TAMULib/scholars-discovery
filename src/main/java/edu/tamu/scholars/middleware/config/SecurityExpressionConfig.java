@@ -18,9 +18,7 @@ public class SecurityExpressionConfig {
 
     @Bean
     public RoleHierarchy roleHierarchy() {
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy(buildRoleHierarchy());
-        return roleHierarchy;
+        return RoleHierarchyImpl.fromHierarchy(buildRoleHierarchy());
     }
 
     @Bean

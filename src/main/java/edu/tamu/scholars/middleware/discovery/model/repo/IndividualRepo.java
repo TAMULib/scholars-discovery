@@ -3,6 +3,7 @@ package edu.tamu.scholars.middleware.discovery.model.repo;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_ROWS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
@@ -77,10 +78,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     @Value("${middleware.index.name}")
     private String collectionName;
 
-    @Value("${spring.data.solr.parser:edismax}")
+    @Value("${solr.parser:edismax}")
     private String defType;
 
-    @Value("${spring.data.solr.operator:AND}")
+    @Value("${solr.operator:AND}")
     private String defaultOperator;
 
     @Lazy
@@ -122,14 +123,14 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty());
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(Arrays.asList(filter))
-            .withRows(Integer.MAX_VALUE);
+            .withRows(MAX_ROWS);
 
         return findAllQuery(builder.query());
     }
 
     @Override
     public List<Individual> findByIdIn(List<String> ids) {
-        return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), Integer.MAX_VALUE);
+        return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
     }
 
     @Override
@@ -208,7 +209,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             .withFilters(filters)
             .withBoosts(boosts)
             .withSort(sort)
-            .withRows(Integer.MAX_VALUE);
+            .withRows(MAX_ROWS);
 
         logger.info("{}: Exporting {} {} {} {}", builder.getId(), query, filters, boosts, sort);
 
@@ -353,7 +354,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 add(FacetArg.of(
                     field, 
                     Optional.of("COUNT,DESC"),
-                    Optional.of(String.valueOf(Integer.MAX_VALUE)),
+                    Optional.of(String.valueOf(MAX_ROWS)),
                     Optional.empty(),
                     Optional.of("STRING"),
                     Optional.empty(),

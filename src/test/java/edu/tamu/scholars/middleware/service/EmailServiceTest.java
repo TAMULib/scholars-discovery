@@ -5,18 +5,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import javax.mail.Address;
-import javax.mail.internet.MimeMessage;
-
+import jakarta.mail.Address;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import edu.tamu.scholars.middleware.config.model.MailConfig;
@@ -47,10 +46,10 @@ public class EmailServiceTest {
     @Autowired
     private EmailService emailService;
 
-    @MockBean
+    @MockitoBean
     private JavaMailSender emailSender;
 
-    @MockBean
+    @MockitoBean
     private MailConfig mailConfig;
 
     @Test

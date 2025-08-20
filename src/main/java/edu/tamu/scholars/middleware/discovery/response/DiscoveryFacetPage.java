@@ -29,8 +29,6 @@ import edu.tamu.scholars.middleware.view.model.FacetSort;
  */
 public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
 
-    private static final long serialVersionUID = 8673698977219588493L;
-
     private final List<Facet> facets;
 
     public DiscoveryFacetPage(List<T> content, Pageable pageable, long total, List<Facet> facets) {
