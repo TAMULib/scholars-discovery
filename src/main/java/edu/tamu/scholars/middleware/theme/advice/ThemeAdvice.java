@@ -4,7 +4,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,13 +19,13 @@ public class ThemeAdvice {
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(CreateActiveThemeException.class)
-    public @ResponseBody String handleCreateActiveThemeException(CreateActiveThemeException exception) {
+    public String handleCreateActiveThemeException(CreateActiveThemeException exception) {
         return exception.getMessage();
     }
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(DeleteActiveThemeException.class)
-    public @ResponseBody String handleDeleteActiveThemeException(DeleteActiveThemeException exception) {
+    public String handleDeleteActiveThemeException(DeleteActiveThemeException exception) {
         return exception.getMessage();
     }
 

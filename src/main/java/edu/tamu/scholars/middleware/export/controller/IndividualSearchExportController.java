@@ -44,13 +44,13 @@ public class IndividualSearchExportController implements RepresentationModelProc
 
     private static final Logger logger = LoggerFactory.getLogger(IndividualSearchExportController.class);
 
-    @Lazy
-    @Autowired
-    private IndividualRepo repo;
+    private final IndividualRepo repo;
+    private final ExporterRegistry exporterRegistry;
 
-    @Lazy
-    @Autowired
-    private ExporterRegistry exporterRegistry;
+    public IndividualSearchExportController(@Lazy IndividualRepo repo, @Lazy ExporterRegistry exporterRegistry) {
+        this.repo = repo;
+        this.exporterRegistry = exporterRegistry;
+    }
 
     @GetMapping("/individual/search/export")
     public ResponseEntity<StreamingResponseBody> export(
@@ -61,7 +61,7 @@ public class IndividualSearchExportController implements RepresentationModelProc
         List<FilterArg> filters,
         List<BoostArg> boosts,
         List<ExportArg> export
-    ) throws UnknownExporterTypeException, InterruptedException, ExecutionException {
+    ) throws UnknownExporterTypeException {
         logger.info("/individual/search/export {} {} {} {} {} {} {}", view, type, query, sort, filters, boosts, export);
         Exporter exporter = exporterRegistry.getExporter(type);
 
@@ -87,11 +87,11 @@ public class IndividualSearchExportController implements RepresentationModelProc
                         Optional.empty()
                     ),
                     Sort.unsorted(),
-                    new ArrayList<FilterArg>(),
-                    new ArrayList<BoostArg>(),
-                    new ArrayList<ExportArg>()
+                    new ArrayList<>(),
+                    new ArrayList<>(),
+                    new ArrayList<>()
                 )).withRel("export").withTitle("Discovery export"));
-            } catch (UnknownExporterTypeException | InterruptedException | ExecutionException e) {
+            } catch (UnknownExporterTypeException e) {
                 e.printStackTrace();
             }
         }

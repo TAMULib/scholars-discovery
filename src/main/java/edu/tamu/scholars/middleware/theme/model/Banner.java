@@ -26,7 +26,7 @@ public class Banner {
 
     public Banner() {
         super();
-        this.variables = new ArrayList<Style>();
+        this.variables = new ArrayList<>();
     }
 
     public String getImageUri() {

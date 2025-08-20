@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,26 +21,20 @@ import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
 @Configuration
 public class HarvestingConfig {
 
-    @Autowired
-    private MiddlewareConfig middleware;
-
-    @Autowired
-    private AutowireCapableBeanFactory beanFactory;
-
     @Bean
-    public List<Harvester> harvesters()
+    List<Harvester> harvesters(MiddlewareConfig middleware, AutowireCapableBeanFactory beanFactory)
         throws InstantiationException, IllegalAccessException, IllegalArgumentException,
         InvocationTargetException, NoSuchMethodException, SecurityException {
-        List<Harvester> harvesters = new ArrayList<Harvester>();
+        List<Harvester> harvesters = new ArrayList<>();
         for (HarvesterConfig config : middleware.getHarvesters()) {
             for (Class<? extends AbstractIndexDocument> documentType : config.getDocumentTypes()) {
-                harvesters.add(harvester(config.getType(), documentType));
+                harvesters.add(harvester(beanFactory, config.getType(), documentType));
             }
         }
         return harvesters;
     }
 
-    public Harvester harvester(Class<? extends Harvester> type, Class<? extends AbstractIndexDocument> documentType)
+    private Harvester harvester(AutowireCapableBeanFactory beanFactory, Class<? extends Harvester> type, Class<? extends AbstractIndexDocument> documentType)
         throws InstantiationException, IllegalAccessException, IllegalArgumentException,
         InvocationTargetException, NoSuchMethodException, SecurityException {
         Harvester harvester = type.getConstructor(Class.class).newInstance(documentType);

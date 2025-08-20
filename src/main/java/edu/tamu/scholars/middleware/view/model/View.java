@@ -12,7 +12,7 @@ public abstract class View extends Named {
 
     private static final long serialVersionUID = 413593021970972190L;
 
-    public View() {
+    protected View() {
         super();
     }
 

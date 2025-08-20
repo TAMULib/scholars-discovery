@@ -12,7 +12,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 public class InternationalizationConfig {
 
     @Bean
-    public MessageSource messageSource() {
+    MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.addBasenames("i18n/messages");
         return messageSource;

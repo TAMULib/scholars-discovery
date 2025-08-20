@@ -27,10 +27,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.token.Token;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -40,6 +42,8 @@ import edu.tamu.scholars.middleware.auth.controller.exception.RegistrationExcept
 import edu.tamu.scholars.middleware.auth.controller.request.Registration;
 import edu.tamu.scholars.middleware.auth.model.Role;
 import edu.tamu.scholars.middleware.auth.model.User;
+import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
+import edu.tamu.scholars.middleware.config.model.MailConfig;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 import edu.tamu.scholars.middleware.service.EmailService;
 import edu.tamu.scholars.middleware.service.TemplateService;
@@ -51,47 +55,57 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     static class RegistrationServiceTestContextConfiguration {
 
         @Bean
-        public MiddlewareConfig middlewareConfig() {
+        MiddlewareConfig middlewareConfig() {
             return new MiddlewareConfig();
         }
 
         @Bean
-        public AuthConfig authConfig() {
+        AuthConfig authConfig() {
             return new AuthConfig();
         }
 
         @Bean
-        public RegistrationService registrationService() {
-            return new RegistrationService();
+        RegistrationService registrationService(UserRepo userRepo, TokenService tokenService, EmailService emailService) {
+            return new RegistrationService(
+                this.authConfig(),
+                userRepo,
+                this.templateService(),
+                emailService,
+                tokenService,
+                this.messageSource(),
+                this.objectMapper(),
+                this.passwordEncoder(),
+                this.simpMessageTemplate()
+            );
         }
 
         @Bean
-        public TemplateService templateService() {
+        TemplateService templateService() {
             return new TemplateService();
         }
 
         @Bean
-        public EmailService emailService() {
-            return new EmailService();
+        EmailService emailService(JavaMailSender emailSender, MailConfig mailConfig) {
+            return new EmailService(emailSender, mailConfig);
         }
 
         @Bean
-        public MessageSource messageSource() {
+        MessageSource messageSource() {
             return new ResourceBundleMessageSource();
         }
 
         @Bean
-        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder passwordEncoder() {
             return new BCryptPasswordEncoder();
         }
 
         @Bean
-        public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper() {
             return new ObjectMapper();
         }
 
         @Bean
-        public SimpMessagingTemplate simpMessageTemplate() {
+        SimpMessagingTemplate simpMessageTemplate() {
             return new SimpMessagingTemplate(new MessageChannel() {
                 @Override
                 public boolean send(Message<?> message, long timeout) {

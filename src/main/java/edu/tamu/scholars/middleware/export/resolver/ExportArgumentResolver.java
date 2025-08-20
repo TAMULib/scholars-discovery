@@ -1,9 +1,10 @@
 package edu.tamu.scholars.middleware.export.resolver;
 
-import static edu.tamu.scholars.middleware.export.utility.ArgumentUtility.getExportArguments;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
@@ -19,6 +20,8 @@ import edu.tamu.scholars.middleware.export.argument.ExportArg;
  */
 public final class ExportArgumentResolver implements HandlerMethodArgumentResolver {
 
+    private static final String EXPORT_QUERY_PARAM_KEY = "export";
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         ResolvableType resolvableType = ResolvableType.forMethodParameter(parameter);
@@ -33,7 +36,14 @@ public final class ExportArgumentResolver implements HandlerMethodArgumentResolv
         @Nullable WebDataBinderFactory binderFactory
     ) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        return getExportArguments(request);
+
+        return Collections.list(request.getParameterNames()).stream()
+            .filter(paramName -> paramName.equals(EXPORT_QUERY_PARAM_KEY))
+            .map(request::getParameterValues)
+            .map(Arrays::asList)
+            .flatMap(Collection::stream)
+            .map(ExportArg::of)
+            .toList();
     }
 
 }

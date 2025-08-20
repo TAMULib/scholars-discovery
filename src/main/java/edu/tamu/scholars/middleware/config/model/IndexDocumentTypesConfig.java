@@ -12,7 +12,7 @@ public abstract class IndexDocumentTypesConfig {
 
     private List<Class<? extends AbstractIndexDocument>> documentTypes = new ArrayList<>();
 
-    public IndexDocumentTypesConfig() {
+    protected IndexDocumentTypesConfig() {
 
     }
 

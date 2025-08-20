@@ -1,6 +1,5 @@
 package edu.tamu.scholars.middleware.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -14,11 +13,13 @@ import edu.tamu.scholars.middleware.config.model.MailConfig;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender emailSender;
+    private final JavaMailSender emailSender;
+    private final MailConfig mailConfig;
 
-    @Autowired
-    private MailConfig mailConfig;
+    public EmailService(JavaMailSender emailSender, MailConfig mailConfig) {
+        this.emailSender = emailSender;
+        this.mailConfig = mailConfig;
+    }
 
     public void send(String to, String subject, String message) {
         send(to, subject, message, mailConfig.getFrom(), mailConfig.getReplyTo());

@@ -2,7 +2,6 @@ package edu.tamu.scholars.middleware.export.service;
 
 import jakarta.xml.bind.JAXBException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,7 +76,7 @@ public class DocxExporter extends AbstractDocxExporter {
 
                 pkg.save(outputStream);
 
-            } catch (IOException | JAXBException | Docx4JException e) {
+            } catch (JAXBException | Docx4JException e) {
                 throw new ExportException(e.getMessage());
             }
         };
