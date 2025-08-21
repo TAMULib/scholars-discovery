@@ -9,11 +9,9 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.RepositorySearchesResource;
@@ -54,8 +52,8 @@ public class IndividualSearchExportController implements RepresentationModelProc
 
     @GetMapping("/individual/search/export")
     public ResponseEntity<StreamingResponseBody> export(
-        @RequestParam(value = "view", required = false, defaultValue = "People") String view,
-        @RequestParam(value = "type", required = false, defaultValue = "csv") String type,
+        @RequestParam(required = false, defaultValue = "People") String view,
+        @RequestParam(required = false, defaultValue = "csv") String type,
         QueryArg query,
         @SortDefault Sort sort,
         List<FilterArg> filters,
