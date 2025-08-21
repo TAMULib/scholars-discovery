@@ -21,7 +21,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
   # pgAdmin web interface for managing development database in container network
   # To register server
@@ -61,7 +60,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
   # SolrCloud Node 1 (Primary - handles collection creation)
   solr1:
@@ -98,7 +96,6 @@ services:
       timeout: 15s
       retries: 5
       start_period: 120s
-    restart: unless-stopped
     command: |
       bash -c "
       # Start Solr in SolrCloud mode
@@ -162,7 +159,6 @@ services:
       timeout: 15s
       retries: 5
       start_period: 90s
-    restart: unless-stopped
     command: ["solr-foreground", "-cloud"]
 
   # SolrCloud Node 3
@@ -197,7 +193,6 @@ services:
       timeout: 15s
       retries: 5
       start_period: 90s
-    restart: unless-stopped
     command: ["solr-foreground", "-cloud"]
 
 
@@ -222,7 +217,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
   zoo2:
     image: zookeeper:latest
@@ -245,7 +239,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
   zoo3:
     image: zookeeper:latest
@@ -268,7 +261,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
 networks:
   cloud:
