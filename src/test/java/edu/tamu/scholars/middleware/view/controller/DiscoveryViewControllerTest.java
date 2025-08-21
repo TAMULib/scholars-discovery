@@ -23,13 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import jakarta.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.tamu.scholars.middleware.auth.model.User;
 import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
@@ -37,12 +34,12 @@ import edu.tamu.scholars.middleware.view.ResourceViewIntegrationTest;
 import edu.tamu.scholars.middleware.view.model.DiscoveryView;
 import edu.tamu.scholars.middleware.view.model.repo.DiscoveryViewRepo;
 
-public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<DiscoveryView, DiscoveryViewRepo> {
+class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<DiscoveryView, DiscoveryViewRepo> {
 
     private static final ConstraintDescriptionsHelper describeDiscoveryView = new ConstraintDescriptionsHelper(DiscoveryView.class);
 
     @Test
-    public void testCreateDiscoveryView() throws JsonProcessingException, Exception {
+    void testCreateDiscoveryView() throws Exception {
         // @formatter:off
         performCreateDiscoveryView()
             .andDo(
@@ -91,7 +88,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
     }
 
     @Test
-    public void testUpdateDiscoveryView() throws JsonProcessingException, Exception {
+    void testUpdateDiscoveryView() throws Exception {
         performCreateDiscoveryView();
 
         // @formatter:off
@@ -146,7 +143,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
     }
 
     @Test
-    public void testPatchTheme() throws JsonProcessingException, Exception {
+    void testPatchTheme() throws Exception {
         performCreateDiscoveryView();
         DiscoveryView discoveryView = viewRepo.findByName(MOCK_VIEW_NAME).get();
 
@@ -208,7 +205,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
     }
 
     @Test
-    public void testGetDiscoveryView() throws JsonProcessingException, Exception {
+    void testGetDiscoveryView() throws Exception {
         performCreateDiscoveryView();
         DiscoveryView discoveryView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         // @formatter:off
@@ -250,7 +247,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
     }
 
     @Test
-    public void testGetDiscoveryViews() throws JsonProcessingException, Exception {
+    void testGetDiscoveryViews() throws Exception {
         performCreateDiscoveryView();
         // @formatter:off
         mockMvc.perform(
@@ -285,7 +282,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
     }
 
     @Test
-    public void testDeleteTheme() throws JsonProcessingException, Exception {
+    void testDeleteTheme() throws Exception {
         performCreateDiscoveryView();
         DiscoveryView discoveryView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         // @formatter:off
@@ -310,7 +307,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
         return discovery.getResponse().getCookie("SESSION");
     }
 
-    private ResultActions performCreateDiscoveryView() throws JsonProcessingException, Exception {
+    private ResultActions performCreateDiscoveryView() throws Exception {
         createMockAdmin();
         DiscoveryView discoveryView = getMockView();
 
@@ -326,7 +323,7 @@ public class DiscoveryViewControllerTest extends ResourceViewIntegrationTest<Dis
         // @formatter:on
     }
 
-    private ResultActions performUpdateDiscoveryView() throws JsonProcessingException, Exception {
+    private ResultActions performUpdateDiscoveryView() throws Exception {
         DiscoveryView discoveryView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         discoveryView.setName("Organizations");
         // @formatter:off

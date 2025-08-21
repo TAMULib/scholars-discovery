@@ -14,10 +14,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class ExportFieldViewTest {
+class ExportFieldViewTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         ExportFieldView exportField = new ExportFieldView();
         assertNotNull(exportField);
         assertNotNull(exportField.getFilters());
@@ -28,7 +28,7 @@ public class ExportFieldViewTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         ExportFieldView exportField = new ExportFieldView();
 
         exportField.setName("Test");

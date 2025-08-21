@@ -38,7 +38,6 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -191,14 +190,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .map(Individual::from)
                 .toList();
 
-            return DiscoveryFacetAndHighlightPage.from(
-                individuals,
-                response,
-                page,
-                facets,
-                highlight,
-                Individual.class
-            );
+            return DiscoveryFacetAndHighlightPage.from(individuals, response, page, facets);
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to search documents", e);
         }

@@ -16,10 +16,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import edu.tamu.scholars.middleware.model.OpKey;
 
 @ExtendWith(SpringExtension.class)
-public class DirectoryViewTest {
+class DirectoryViewTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         DirectoryView directoryView = new DirectoryView();
         assertNotNull(directoryView);
         assertNotNull(directoryView.getFacets());
@@ -32,7 +32,7 @@ public class DirectoryViewTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         DirectoryView directoryView = getMockDirectoryView();
         directoryView.setId(1L);
 

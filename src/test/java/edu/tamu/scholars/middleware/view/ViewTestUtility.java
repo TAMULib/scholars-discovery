@@ -31,7 +31,7 @@ import edu.tamu.scholars.middleware.view.model.Sort;
 
 public class ViewTestUtility {
 
-    public static String MOCK_VIEW_NAME = "View";
+    public static final String MOCK_VIEW_NAME = "View";
 
     public static DataAndAnalyticsView getMockDataAndAnalyticsView() {
         DataAndAnalyticsView dataAndAnalyticsView = new DataAndAnalyticsView();

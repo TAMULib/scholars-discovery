@@ -23,13 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import jakarta.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.tamu.scholars.middleware.auth.model.User;
 import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
@@ -37,12 +34,12 @@ import edu.tamu.scholars.middleware.view.ResourceViewIntegrationTest;
 import edu.tamu.scholars.middleware.view.model.DataAndAnalyticsView;
 import edu.tamu.scholars.middleware.view.model.repo.DataAndAnalyticsViewRepo;
 
-public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<DataAndAnalyticsView, DataAndAnalyticsViewRepo> {
+class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<DataAndAnalyticsView, DataAndAnalyticsViewRepo> {
 
     private static final ConstraintDescriptionsHelper describeDataAndAnalyticsView = new ConstraintDescriptionsHelper(DataAndAnalyticsView.class);
 
     @Test
-    public void testCreateDataAndAnalyticsView() throws JsonProcessingException, Exception {
+    void testCreateDataAndAnalyticsView() throws Exception {
         // @formatter:off
         performCreateDataAndAnalyticsView()
             .andDo(
@@ -85,7 +82,7 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
     }
 
     @Test
-    public void testUpdateDataAndAnalyticsView() throws JsonProcessingException, Exception {
+    void testUpdateDataAndAnalyticsView() throws Exception {
         performCreateDataAndAnalyticsView();
 
         // @formatter:off
@@ -134,7 +131,7 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
     }
 
     @Test
-    public void testPatchTheme() throws JsonProcessingException, Exception {
+    void testPatchTheme() throws Exception {
         performCreateDataAndAnalyticsView();
         DataAndAnalyticsView dataAndAnalyticsView = viewRepo.findByName(MOCK_VIEW_NAME).get();
 
@@ -190,7 +187,7 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
     }
 
     @Test
-    public void testGetDataAndAnalyticsView() throws JsonProcessingException, Exception {
+    void testGetDataAndAnalyticsView() throws Exception {
         performCreateDataAndAnalyticsView();
         DataAndAnalyticsView dataAndAnalyticsView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         // @formatter:off
@@ -229,7 +226,7 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
     }
 
     @Test
-    public void testGetDataAndAnalyticsViews() throws JsonProcessingException, Exception {
+    void testGetDataAndAnalyticsViews() throws Exception {
         performCreateDataAndAnalyticsView();
         // @formatter:off
         mockMvc.perform(
@@ -264,7 +261,7 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
     }
 
     @Test
-    public void testDeleteTheme() throws JsonProcessingException, Exception {
+    void testDeleteTheme() throws Exception {
         performCreateDataAndAnalyticsView();
         DataAndAnalyticsView dataAndAnalyticsView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         // @formatter:off
@@ -289,7 +286,7 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
         return directory.getResponse().getCookie("SESSION");
     }
 
-    private ResultActions performCreateDataAndAnalyticsView() throws JsonProcessingException, Exception {
+    private ResultActions performCreateDataAndAnalyticsView() throws Exception {
         createMockAdmin();
         DataAndAnalyticsView dataAndAnalyticsView = getMockView();
 
@@ -305,10 +302,9 @@ public class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationT
         // @formatter:on
     }
 
-    private ResultActions performUpdateDataAndAnalyticsView() throws JsonProcessingException, Exception {
+    private ResultActions performUpdateDataAndAnalyticsView() throws Exception {
         DataAndAnalyticsView dataAndAnalyticsView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         dataAndAnalyticsView.setName("Organizations");
-        // dataAndAnalyticsView.setCollection("organizations");
 
         // @formatter:off
         return mockMvc.perform(

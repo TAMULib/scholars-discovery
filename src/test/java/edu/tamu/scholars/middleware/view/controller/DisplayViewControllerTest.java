@@ -25,13 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import jakarta.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.tamu.scholars.middleware.auth.model.User;
 import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
@@ -39,12 +36,12 @@ import edu.tamu.scholars.middleware.view.ResourceViewIntegrationTest;
 import edu.tamu.scholars.middleware.view.model.DisplayView;
 import edu.tamu.scholars.middleware.view.model.repo.DisplayViewRepo;
 
-public class DisplayViewControllerTest extends ResourceViewIntegrationTest<DisplayView, DisplayViewRepo> {
+class DisplayViewControllerTest extends ResourceViewIntegrationTest<DisplayView, DisplayViewRepo> {
 
     private static final ConstraintDescriptionsHelper describeDisplayView = new ConstraintDescriptionsHelper(DisplayView.class);
 
     @Test
-    public void testCreateDisplayView() throws JsonProcessingException, Exception {
+    void testCreateDisplayView() throws Exception {
         // @formatter:off
         performCreateDisplayView()
             .andDo(
@@ -87,7 +84,7 @@ public class DisplayViewControllerTest extends ResourceViewIntegrationTest<Displ
     }
 
     @Test
-    public void testUpdateDisplayView() throws JsonProcessingException, Exception {
+    void testUpdateDisplayView() throws Exception {
         performCreateDisplayView();
 
         // @formatter:off
@@ -136,7 +133,7 @@ public class DisplayViewControllerTest extends ResourceViewIntegrationTest<Displ
     }
 
     @Test
-    public void testPatchTheme() throws JsonProcessingException, Exception {
+    void testPatchTheme() throws Exception {
         performCreateDisplayView();
         DisplayView displayView = viewRepo.findByName(MOCK_VIEW_NAME).get();
 
@@ -192,7 +189,7 @@ public class DisplayViewControllerTest extends ResourceViewIntegrationTest<Displ
     }
 
     @Test
-    public void testGetDisplayView() throws JsonProcessingException, Exception {
+    void testGetDisplayView() throws Exception {
         performCreateDisplayView();
         DisplayView displayView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         // @formatter:off
@@ -231,7 +228,7 @@ public class DisplayViewControllerTest extends ResourceViewIntegrationTest<Displ
     }
 
     @Test
-    public void testFindDisplayViewByTypesIn() throws JsonProcessingException, Exception {
+    void testFindDisplayViewByTypesIn() throws Exception {
         performCreateDisplayView();
         // @formatter:off
         mockMvc.perform(
@@ -269,7 +266,7 @@ public class DisplayViewControllerTest extends ResourceViewIntegrationTest<Displ
     }
 
     @Test
-    public void testGetDisplayViews() throws JsonProcessingException, Exception {
+    void testGetDisplayViews() throws Exception {
         performCreateDisplayView();
         // @formatter:off
         mockMvc.perform(
@@ -305,7 +302,7 @@ public class DisplayViewControllerTest extends ResourceViewIntegrationTest<Displ
     }
 
     @Test
-    public void testDeleteTheme() throws JsonProcessingException, Exception {
+    void testDeleteTheme() throws Exception {
         performCreateDisplayView();
         DisplayView displayView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         // @formatter:off
@@ -330,7 +327,7 @@ public class DisplayViewControllerTest extends ResourceViewIntegrationTest<Displ
         return display.getResponse().getCookie("SESSION");
     }
 
-    private ResultActions performCreateDisplayView() throws JsonProcessingException, Exception {
+    private ResultActions performCreateDisplayView() throws Exception {
         createMockAdmin();
         DisplayView displayView = getMockView();
 
@@ -346,7 +343,7 @@ public class DisplayViewControllerTest extends ResourceViewIntegrationTest<Displ
         // @formatter:on
     }
 
-    private ResultActions performUpdateDisplayView() throws JsonProcessingException, Exception {
+    private ResultActions performUpdateDisplayView() throws Exception {
         DisplayView displayView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         displayView.setName("Organizations");
 

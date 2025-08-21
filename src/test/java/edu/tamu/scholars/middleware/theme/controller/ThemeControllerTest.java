@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -37,9 +37,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.tamu.scholars.middleware.auth.model.User;
 import edu.tamu.scholars.middleware.theme.ThemeIntegrationTest;
 import edu.tamu.scholars.middleware.theme.model.Style;
@@ -49,7 +46,7 @@ import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-public class ThemeControllerTest extends ThemeIntegrationTest {
+class ThemeControllerTest extends ThemeIntegrationTest {
 
     private static final ConstraintDescriptionsHelper describeTheme = new ConstraintDescriptionsHelper(Theme.class);
 
@@ -60,7 +57,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Test
-    public void testCreateTheme() throws JsonProcessingException, Exception {
+    void testCreateTheme() throws Exception {
         // @formatter:off
         performCreateTheme()
             .andDo(
@@ -101,7 +98,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testUpdateTheme() throws JsonProcessingException, Exception {
+    void testUpdateTheme() throws Exception {
         performCreateTheme();
 
         // @formatter:off
@@ -148,7 +145,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testPatchTheme() throws JsonProcessingException, Exception {
+    void testPatchTheme() throws Exception {
         performCreateTheme();
         Theme theme = themeRepo.findByName("Test").get();
         // @formatter:off
@@ -202,7 +199,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testPatchThemeColors() throws JsonProcessingException, Exception {
+    void testPatchThemeColors() throws Exception {
         performCreateTheme();
         Theme theme = themeRepo.findByName("Test").get();
 
@@ -227,7 +224,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testPatchThemeVariants() throws JsonProcessingException, Exception {
+    void testPatchThemeVariants() throws Exception {
         performCreateTheme();
         Theme theme = themeRepo.findByName("Test").get();
 
@@ -252,7 +249,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testPatchThemeVariables() throws JsonProcessingException, Exception {
+    void testPatchThemeVariables() throws Exception {
         performCreateTheme();
         Theme theme = themeRepo.findByName("Test").get();
 
@@ -277,7 +274,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testGetTheme() throws JsonProcessingException, Exception {
+    void testGetTheme() throws Exception {
         performCreateTheme();
         Theme theme = themeRepo.findByName("Test").get();
         // @formatter:off
@@ -317,7 +314,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testGetThemes() throws JsonProcessingException, Exception {
+    void testGetThemes() throws Exception {
         performCreateTheme();
         // @formatter:off
         mockMvc.perform(
@@ -403,7 +400,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testGetActiveTheme() throws JsonProcessingException, Exception {
+    void testGetActiveTheme() throws Exception {
         performCreateTheme();
         performUpdateTheme();
         // @formatter:off
@@ -418,7 +415,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testDeleteTheme() throws JsonProcessingException, Exception {
+    void testDeleteTheme() throws Exception {
         performCreateTheme();
         Theme theme = themeRepo.findByName("Test").get();
         // @formatter:off
@@ -436,7 +433,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testChangeActiveTheme() throws JsonProcessingException, Exception {
+    void testChangeActiveTheme() throws Exception {
         performCreateTheme();
         performUpdateTheme();
         Theme theme = getMockTheme();
@@ -451,7 +448,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testCreateActiveTheme() throws JsonProcessingException, Exception {
+    void testCreateActiveTheme() throws Exception {
         createMockAdmin();
         Theme theme = getMockTheme();
         theme.setActive(true);
@@ -465,7 +462,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testDeleteActiveTheme() throws JsonProcessingException, Exception {
+    void testDeleteActiveTheme() throws Exception {
         performCreateTheme();
         performUpdateTheme();
         Theme theme = themeRepo.findByName("Test").get();
@@ -483,7 +480,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
         return result.getResponse().getCookie("SESSION");
     }
 
-    private ResultActions performCreateTheme() throws JsonProcessingException, Exception {
+    private ResultActions performCreateTheme() throws Exception {
         createMockAdmin();
         Theme theme = getMockTheme();
         // @formatter:off
@@ -544,7 +541,7 @@ public class ThemeControllerTest extends ThemeIntegrationTest {
         // @formatter:on
     }
 
-    private ResultActions performUpdateTheme() throws JsonProcessingException, Exception {
+    private ResultActions performUpdateTheme() throws Exception {
         Theme theme = themeRepo.findByName("Test").get();
         theme.setActive(true);
         theme.setOrganization("Testing Limited");

@@ -8,16 +8,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class StyleTest {
+class StyleTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Style style = new Style();
         assertNotNull(style);
     }
 
     @Test
-    public void testBasicConstructor() {
+    void testBasicConstructor() {
         Style style = new Style("--variable", "test");
         assertNotNull(style);
         assertEquals("--variable", style.getKey());
@@ -25,7 +25,7 @@ public class StyleTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Style style = new Style();
         style.setKey("--variable");
         style.setValue("test");

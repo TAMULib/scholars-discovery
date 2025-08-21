@@ -13,16 +13,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import edu.tamu.scholars.middleware.model.OpKey;
 
 @ExtendWith(SpringExtension.class)
-public class IndexTest {
+class IndexTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Index index = new Index();
         assertNotNull(index);
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Index index = new Index();
 
         index.setField("test");

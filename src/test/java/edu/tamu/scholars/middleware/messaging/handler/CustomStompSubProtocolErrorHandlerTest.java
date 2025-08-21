@@ -13,12 +13,12 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class CustomStompSubProtocolErrorHandlerTest {
+class CustomStompSubProtocolErrorHandlerTest {
 
     private CustomStompSubProtocolErrorHandler customStompSubProtocolErrorHandler = new CustomStompSubProtocolErrorHandler();
 
     @Test
-    public void testHandleInternal() {
+    void testHandleInternal() {
         String errorMessage = "Access denied!";
         StompHeaderAccessor clientHeaderAccessor = getMockStompHeaderAccessor(SUBSCRIBE);
         StompHeaderAccessor errorHeaderAccessor = getMockStompHeaderAccessor(ERROR);

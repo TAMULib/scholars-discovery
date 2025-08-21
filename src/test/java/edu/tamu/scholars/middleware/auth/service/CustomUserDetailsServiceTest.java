@@ -16,13 +16,13 @@ import edu.tamu.scholars.middleware.auth.UserIntegrationTest;
 import edu.tamu.scholars.middleware.auth.model.User;
 
 @SpringBootTest
-public class CustomUserDetailsServiceTest extends UserIntegrationTest {
+class CustomUserDetailsServiceTest extends UserIntegrationTest {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
     @Test
-    public void testLoadUserByUsername() {
+    void testLoadUserByUsername() {
         User user = createMockUser();
         UserDetails userDetails = customUserDetailsService.loadUserByUsername("bboring@mailinator.com");
         assertNotNull(userDetails);
@@ -33,7 +33,7 @@ public class CustomUserDetailsServiceTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testLoadUserByUsernameNotFound() {
+    void testLoadUserByUsernameNotFound() {
         assertThrows(UsernameNotFoundException.class, () -> {
             customUserDetailsService.loadUserByUsername("eexciting@mailinator.com");
         });

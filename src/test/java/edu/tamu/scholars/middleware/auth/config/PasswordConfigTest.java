@@ -8,10 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class PasswordConfigTest {
+class PasswordConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         PasswordConfig passwordConfig = new PasswordConfig();
         assertNotNull(passwordConfig);
         assertEquals(180, passwordConfig.getDuration());
@@ -20,21 +20,21 @@ public class PasswordConfigTest {
     }
 
     @Test
-    public void testDurationGetterSetter() {
+    void testDurationGetterSetter() {
         PasswordConfig passwordConfig = new PasswordConfig();
         passwordConfig.setDuration(90);
         assertEquals(90, passwordConfig.getDuration());
     }
 
     @Test
-    public void testMinLengthGetterSetter() {
+    void testMinLengthGetterSetter() {
         PasswordConfig passwordConfig = new PasswordConfig();
         passwordConfig.setMinLength(12);
         assertEquals(12, passwordConfig.getMinLength());
     }
 
     @Test
-    public void testMaxLengthGetterSetter() {
+    void testMaxLengthGetterSetter() {
         PasswordConfig passwordConfig = new PasswordConfig();
         passwordConfig.setMaxLength(32);
         assertEquals(32, passwordConfig.getMaxLength());

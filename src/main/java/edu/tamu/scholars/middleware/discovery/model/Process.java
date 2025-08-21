@@ -318,10 +318,6 @@ public class Process extends Common {
     )
     private List<String> hasParticipant;
 
-    public Process() {
-
-    }
-
     public String getTitle() {
         return title;
     }

@@ -13,10 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class ThemeTest {
+class ThemeTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Theme theme = new Theme();
         assertNotNull(theme);
         assertFalse(theme.isActive());
@@ -32,7 +32,7 @@ public class ThemeTest {
     }
 
     @Test
-    public void testBasicConstructor() {
+    void testBasicConstructor() {
         Theme theme = new Theme("Test", "Testing Unlimited", "n000001");
         assertEquals("Test", theme.getName());
         assertEquals("Testing Unlimited", theme.getOrganization());
@@ -40,7 +40,7 @@ public class ThemeTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Theme theme = new Theme();
 
         theme.setId(1L);

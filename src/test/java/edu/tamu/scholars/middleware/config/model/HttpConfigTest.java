@@ -8,10 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class HttpConfigTest {
+class HttpConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         HttpConfig httpConfig = new HttpConfig();
         assertNotNull(httpConfig);
         assertEquals(60000, httpConfig.getTimeout());
@@ -21,7 +21,7 @@ public class HttpConfigTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         HttpConfig httpConfig = new HttpConfig();
         httpConfig.setTimeout(120000);
         httpConfig.setTimeToLive(90000);

@@ -21,10 +21,10 @@ import edu.tamu.scholars.middleware.discovery.model.Process;
 import edu.tamu.scholars.middleware.discovery.model.Relationship;
 
 @ExtendWith(SpringExtension.class)
-public class HarvesterConfigTest {
+class HarvesterConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         HarvesterConfig harvesterConfig = new HarvesterConfig();
         assertNotNull(harvesterConfig);
         assertEquals(TriplestoreHarvester.class, harvesterConfig.getType());
@@ -33,14 +33,14 @@ public class HarvesterConfigTest {
     }
 
     @Test
-    public void testTypeGetterSetter() {
+    void testTypeGetterSetter() {
         HarvesterConfig harvesterConfig = new HarvesterConfig();
         harvesterConfig.setType(TriplestoreHarvester.class);
         assertEquals(TriplestoreHarvester.class, harvesterConfig.getType());
     }
 
     @Test
-    public void testDocumentTypesGetterSetter() {
+    void testDocumentTypesGetterSetter() {
         HarvesterConfig harvesterConfig = new HarvesterConfig();
         List<Class<? extends AbstractIndexDocument>> documentTypes = new ArrayList<Class<? extends AbstractIndexDocument>>();
         documentTypes.add(Collection.class);

@@ -33,15 +33,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 import edu.tamu.scholars.middleware.service.request.HttpRequest;
 
 @ExtendWith(SpringExtension.class)
-public final class HttpServiceTest {
+final class HttpServiceTest {
 
-    private final static String MOCK_URL_VALID = "http://localhost:9100/mock";
-    private final static String MOCK_URL_INVALID = "\\/\\/localhost@9100 /mock";
-    private final static String MOCK_RESPONSE_CONTENT = "mock content";
-    private final static String MOCK_RESPONSE_CONTENT_NORMALIZATION = "\u2013mock norm\u0308\u0041\u0301lization\u2014";
+    private static final String MOCK_URL_VALID = "http://localhost:9100/mock";
+    private static final String MOCK_URL_INVALID = "\\/\\/localhost@9100 /mock";
+    private static final String MOCK_RESPONSE_CONTENT = "mock content";
+    private static final String MOCK_RESPONSE_CONTENT_NORMALIZATION = "\u2013mock norm\u0308\u0041\u0301lization\u2014";
 
-    private final static List<Header> mockHeaders = new ArrayList<Header>();
-    private final static List<NameValuePair> mockParameters = new ArrayList<NameValuePair>();
+    private static final List<Header> mockHeaders = new ArrayList<Header>();
+    private static final List<NameValuePair> mockParameters = new ArrayList<NameValuePair>();
 
     private HttpService service;
 
@@ -54,7 +54,7 @@ public final class HttpServiceTest {
     private CloseableHttpClient mockHttpClient;
 
     @BeforeEach
-    public void beforeEach() throws ClientProtocolException, IOException {
+    void beforeEach() throws IOException {
         service = new HttpService();
 
         mockRequest = new HttpRequest();
@@ -68,13 +68,13 @@ public final class HttpServiceTest {
     }
 
     @Test
-    public void testGetSuccess() throws UnsupportedOperationException, IOException {
+    void testGetSuccess() throws UnsupportedOperationException, IOException {
         mockHttpResponse(200, MOCK_RESPONSE_CONTENT);
         assertEquals(MOCK_RESPONSE_CONTENT, service.get(mockRequest));
     }
 
     @Test
-    public void testGetWithNormalization() throws UnsupportedOperationException, IOException {
+    void testGetWithNormalization() throws UnsupportedOperationException, IOException {
         mockHttpResponse(200, MOCK_RESPONSE_CONTENT_NORMALIZATION);
         String response = service.get(mockRequest);
         assertEquals(Normalizer.normalize(MOCK_RESPONSE_CONTENT_NORMALIZATION, Normalizer.Form.NFC), response);
@@ -82,20 +82,20 @@ public final class HttpServiceTest {
     }
 
     @Test
-    public void testGetFailure() throws UnsupportedOperationException, IOException {
+    void testGetFailure() throws UnsupportedOperationException, IOException {
         mockHttpResponse(500, MOCK_RESPONSE_CONTENT);
         assertNull(service.get(mockRequest));
     }
 
     @Test
-    public void testUriSyntaxException() throws UnsupportedOperationException, IOException {
+    void testUriSyntaxException() throws UnsupportedOperationException, IOException {
         mockRequest.setUrl(MOCK_URL_INVALID);
         mockHttpResponse(200, MOCK_RESPONSE_CONTENT);
         assertNull(service.get(mockRequest));
     }
 
     @Test
-    public void testIllegalStateException() throws UnsupportedOperationException, IOException, IllegalStateException {
+    void testIllegalStateException() throws UnsupportedOperationException, IOException, IllegalStateException {
         when(mockHttpClient.execute(any(HttpRequestBase.class))).thenThrow(new IllegalStateException());
         mockHttpResponse(200, MOCK_RESPONSE_CONTENT);
         assertNull(service.get(mockRequest));

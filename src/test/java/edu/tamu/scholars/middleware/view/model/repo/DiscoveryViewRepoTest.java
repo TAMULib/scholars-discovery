@@ -9,18 +9,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 import edu.tamu.scholars.middleware.view.model.DiscoveryView;
 
-public class DiscoveryViewRepoTest extends ViewRepoTest<DiscoveryView, DiscoveryViewRepo> {
+class DiscoveryViewRepoTest extends ViewRepoTest<DiscoveryView, DiscoveryViewRepo> {
 
     @TestConfiguration
     static class DiscoveryViewRepoTestContextConfiguration {
 
         @Bean
-        public MiddlewareConfig middlewareConfig() {
+        MiddlewareConfig middlewareConfig() {
             return new MiddlewareConfig();
         }
 
         @Bean
-        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder() {
             return new BCryptPasswordEncoder();
         }
 

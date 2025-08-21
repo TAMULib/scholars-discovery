@@ -20,32 +20,32 @@ import edu.tamu.scholars.middleware.auth.model.User;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 
 @DataJpaTest
-public class UserRepoTest extends UserIntegrationTest {
+class UserRepoTest extends UserIntegrationTest {
 
     @TestConfiguration
     static class UserRepoTestContextConfiguration {
 
         @Bean
-        public MiddlewareConfig middlewareConfig() {
+        MiddlewareConfig middlewareConfig() {
             return new MiddlewareConfig();
         }
 
         @Bean
-        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder() {
             return new BCryptPasswordEncoder();
         }
 
     }
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         assertEquals(0, userRepo.count());
         createMockUser();
         assertEquals(1, userRepo.count());
     }
 
     @Test
-    public void testRead() {
+    void testRead() {
         testCreate();
         Optional<User> user = userRepo.findByEmail("bboring@mailinator.com");
         assertTrue(user.isPresent());
@@ -61,7 +61,7 @@ public class UserRepoTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testUpdate() {
+    void testUpdate() {
         testCreate();
         Optional<User> user = userRepo.findByEmail("bboring@mailinator.com");
         user.get().setFirstName("Robert");
@@ -88,7 +88,7 @@ public class UserRepoTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testDelete() {
+    void testDelete() {
         testCreate();
         assertEquals(1, userRepo.count());
         Optional<User> user = userRepo.findByEmail("bboring@mailinator.com");

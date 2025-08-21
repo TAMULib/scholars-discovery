@@ -1351,10 +1351,6 @@ public class Person extends Common {
     )
     private String publicationToInterfolio;
 
-    public Person() {
-
-    }
-
     public String getName() {
         return name;
     }

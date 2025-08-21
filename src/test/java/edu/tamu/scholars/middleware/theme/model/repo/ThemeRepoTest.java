@@ -16,25 +16,25 @@ import edu.tamu.scholars.middleware.theme.ThemeIntegrationTest;
 import edu.tamu.scholars.middleware.theme.model.Theme;
 
 @DataJpaTest
-public class ThemeRepoTest extends ThemeIntegrationTest {
+class ThemeRepoTest extends ThemeIntegrationTest {
 
     @TestConfiguration
     static class ThemeRepoTestContextConfiguration {
 
         @Bean
-        public MiddlewareConfig middlewareConfig() {
+        MiddlewareConfig middlewareConfig() {
             return new MiddlewareConfig();
         }
 
         @Bean
-        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder() {
             return new BCryptPasswordEncoder();
         }
 
     }
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         assertEquals(0, themeRepo.count());
         Theme theme = getMockTheme();
         themeRepo.save(theme);
@@ -42,14 +42,14 @@ public class ThemeRepoTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testRead() {
+    void testRead() {
         testCreate();
         Optional<Theme> theme = themeRepo.findByName("Test");
         assertTrue(theme.isPresent());
     }
 
     @Test
-    public void testUpdate() {
+    void testUpdate() {
         testCreate();
         Optional<Theme> theme = themeRepo.findByName("Test");
         theme.get().setActive(true);
@@ -64,7 +64,7 @@ public class ThemeRepoTest extends ThemeIntegrationTest {
     }
 
     @Test
-    public void testDelete() {
+    void testDelete() {
         testCreate();
         assertEquals(1, themeRepo.count());
         Optional<Theme> theme = themeRepo.findByName("Test");

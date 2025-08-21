@@ -9,17 +9,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class RegistrationExceptionTest {
+class RegistrationExceptionTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         RegistrationException exception = new RegistrationException("Test registration exception!");
         assertNotNull(exception);
         assertEquals("Test registration exception!", exception.getMessage());
     }
 
     @Test
-    public void testThrow() throws RegistrationException {
+    void testThrow() {
         assertThrows(RegistrationException.class, () -> {
             throw new RegistrationException("Test registration exception!");
         });

@@ -21,18 +21,19 @@ public class DisplayViewRepoTest extends ViewRepoTest<DisplayView, DisplayViewRe
     static class DisplayViewRepoTestContextConfiguration {
 
         @Bean
-        public MiddlewareConfig middlewareConfig() {
+        MiddlewareConfig middlewareConfig() {
             return new MiddlewareConfig();
         }
 
         @Bean
-        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder() {
             return new BCryptPasswordEncoder();
         }
 
     }
 
     @Test
+    @Override
     public void testRead() {
         testCreate();
         List<String> types = new ArrayList<String>();

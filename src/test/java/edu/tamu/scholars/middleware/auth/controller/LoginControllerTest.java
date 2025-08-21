@@ -25,7 +25,7 @@ import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-public class LoginControllerTest extends UserIntegrationTest {
+class LoginControllerTest extends UserIntegrationTest {
 
     private static final ConstraintDescriptionsHelper describeUser = new ConstraintDescriptionsHelper(User.class);
 
@@ -33,7 +33,7 @@ public class LoginControllerTest extends UserIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    public void testLogin() throws Exception {
+    void testLogin() throws Exception {
         User user = createMockUser();
         // @formatter:off
         mockMvc.perform(post("/login")
@@ -67,7 +67,7 @@ public class LoginControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testLoginCredentialsExpired() throws Exception {
+    void testLoginCredentialsExpired() throws Exception {
         User user = createMockUser();
 
         PASSWORD_DURATION_IN_DAYS = 0;
@@ -84,7 +84,7 @@ public class LoginControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testLoginInactive() throws Exception {
+    void testLoginInactive() throws Exception {
         User user = getMockUser();
 
         user.setActive(false);
@@ -101,7 +101,7 @@ public class LoginControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testLoginDisabled() throws Exception {
+    void testLoginDisabled() throws Exception {
         User user = getMockUser();
 
         user.setEnabled(false);
@@ -118,7 +118,7 @@ public class LoginControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testLoginNotConfirmed() throws Exception {
+    void testLoginNotConfirmed() throws Exception {
         User user = getMockUser();
 
         user.setConfirmed(false);
@@ -135,7 +135,7 @@ public class LoginControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testLoginFailure() throws Exception {
+    void testLoginFailure() throws Exception {
         // @formatter:off
         mockMvc.perform(post("/login")
             .param("username", "admin@test.com")

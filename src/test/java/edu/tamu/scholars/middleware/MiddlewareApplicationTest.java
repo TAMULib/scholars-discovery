@@ -5,6 +5,7 @@ import static edu.tamu.scholars.middleware.auth.AuthConstants.PASSWORD_MAX_LENGT
 import static edu.tamu.scholars.middleware.auth.AuthConstants.PASSWORD_MIN_LENGTH;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.EXPORT_INDIVIDUAL_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ import edu.tamu.scholars.middleware.discovery.component.jena.TriplestoreHarveste
 import edu.tamu.scholars.middleware.discovery.component.solr.SolrIndexer;
 
 @SpringBootTest
-public class MiddlewareApplicationTest {
+class MiddlewareApplicationTest {
 
     @Value("${spring.profiles.active}")
     private String activeProfile;
@@ -53,12 +54,12 @@ public class MiddlewareApplicationTest {
     private ExportConfig exportConfig;
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
         assertEquals("test", activeProfile);
     }
 
     @Test
-    public void testStaticConstants() {
+    void testStaticConstants() {
         assertEquals(180, PASSWORD_DURATION_IN_DAYS);
         assertEquals(8, PASSWORD_MIN_LENGTH);
         assertEquals(64, PASSWORD_MAX_LENGTH);
@@ -67,33 +68,33 @@ public class MiddlewareApplicationTest {
     }
 
     @Test
-    public void testMiddlewareConfig() {
-        AuthConfig authConfig = middlewareConfig.getAuth();
-        assertEquals(14, authConfig.getRegistrationTokenDuration());
+    void testMiddlewareConfig() {
+        AuthConfig auth = middlewareConfig.getAuth();
+        assertEquals(14, auth.getRegistrationTokenDuration());
 
-        PasswordConfig passwordConfig = authConfig.getPassword();
-        assertEquals(180, passwordConfig.getDuration());
-        assertEquals(8, passwordConfig.getMinLength());
-        assertEquals(64, passwordConfig.getMaxLength());
+        PasswordConfig password = auth.getPassword();
+        assertEquals(180, password.getDuration());
+        assertEquals(8, password.getMinLength());
+        assertEquals(64, password.getMaxLength());
 
-        TokenConfig tokenConfig = authConfig.getToken();
-        assertEquals(1, tokenConfig.getServerInteger());
-        assertEquals("wKFkxTX54UzKx6xCYnC8WlEI2wtOy0PR", tokenConfig.getServerSecret());
-        assertEquals(64, tokenConfig.getPseudoRandomNumberBytes());
+        TokenConfig token = auth.getToken();
+        assertEquals(1, token.getServerInteger());
+        assertEquals("wKFkxTX54UzKx6xCYnC8WlEI2wtOy0PR", token.getServerSecret());
+        assertEquals(64, token.getPseudoRandomNumberBytes());
 
-        MailConfig mailConfig = middlewareConfig.getMail();
-        assertEquals("scholarsdiscovery@gmail.com", mailConfig.getFrom());
-        assertEquals("scholarsdiscovery@gmail.com", mailConfig.getReplyTo());
+        MailConfig mail = middlewareConfig.getMail();
+        assertEquals("scholarsdiscovery@gmail.com", mail.getFrom());
+        assertEquals("scholarsdiscovery@gmail.com", mail.getReplyTo());
 
-        HttpConfig httpConfig = middlewareConfig.getHttp();
-        assertEquals(60000, httpConfig.getTimeout());
-        assertEquals(60000, httpConfig.getTimeToLive());
-        assertEquals(30000, httpConfig.getRequestTimeout());
-        assertEquals(60000, httpConfig.getSocketTimeout());
+        HttpConfig http = middlewareConfig.getHttp();
+        assertEquals(60000, http.getTimeout());
+        assertEquals(60000, http.getTimeToLive());
+        assertEquals(30000, http.getRequestTimeout());
+        assertEquals(60000, http.getSocketTimeout());
 
-        ExportConfig exportConfig = middlewareConfig.getExport();
-        assertEquals("individual", exportConfig.getIndividualKey());
-        assertEquals("http://localhost:4200/display", exportConfig.getIndividualBaseUri());
+        ExportConfig export = middlewareConfig.getExport();
+        assertEquals("individual", export.getIndividualKey());
+        assertEquals("http://localhost:4200/display", export.getIndividualBaseUri());
 
         List<HarvesterConfig> harvesterConfigs = middlewareConfig.getHarvesters();
         assertEquals(1, harvesterConfigs.size());
@@ -109,40 +110,40 @@ public class MiddlewareApplicationTest {
     }
 
     @Test
-    public void testAuthConfig() {
-        PasswordConfig passwordConfig = authConfig.getPassword();
+    void testAuthConfig() {
+        PasswordConfig password = authConfig.getPassword();
         assertEquals(14, authConfig.getRegistrationTokenDuration());
+        assertEquals(180, password.getDuration());
+        assertEquals(8, password.getMinLength());
+        assertEquals(64, password.getMaxLength());
+        TokenConfig token = authConfig.getToken();
+        assertEquals(1, token.getServerInteger());
+        assertEquals("wKFkxTX54UzKx6xCYnC8WlEI2wtOy0PR", token.getServerSecret());
+        assertEquals(64, token.getPseudoRandomNumberBytes());
+    }
+
+    @Test
+    void testPasswordConfig() {
         assertEquals(180, passwordConfig.getDuration());
         assertEquals(8, passwordConfig.getMinLength());
         assertEquals(64, passwordConfig.getMaxLength());
-        TokenConfig tokenConfig = authConfig.getToken();
+    }
+
+    @Test
+    void testTokenConfig() {
         assertEquals(1, tokenConfig.getServerInteger());
         assertEquals("wKFkxTX54UzKx6xCYnC8WlEI2wtOy0PR", tokenConfig.getServerSecret());
         assertEquals(64, tokenConfig.getPseudoRandomNumberBytes());
     }
 
     @Test
-    public void testPasswordConfig() {
-        assertEquals(180, passwordConfig.getDuration());
-        assertEquals(8, passwordConfig.getMinLength());
-        assertEquals(64, passwordConfig.getMaxLength());
-    }
-
-    @Test
-    public void testTokenConfig() {
-        assertEquals(1, tokenConfig.getServerInteger());
-        assertEquals("wKFkxTX54UzKx6xCYnC8WlEI2wtOy0PR", tokenConfig.getServerSecret());
-        assertEquals(64, tokenConfig.getPseudoRandomNumberBytes());
-    }
-
-    @Test
-    public void testMailConfig() {
+    void testMailConfig() {
         assertEquals("scholarsdiscovery@gmail.com", mailConfig.getFrom());
         assertEquals("scholarsdiscovery@gmail.com", mailConfig.getReplyTo());
     }
 
     @Test
-    public void testHttpConfig() {
+    void testHttpConfig() {
         assertEquals(60000, httpConfig.getTimeout());
         assertEquals(60000, httpConfig.getTimeToLive());
         assertEquals(30000, httpConfig.getRequestTimeout());
@@ -150,14 +151,15 @@ public class MiddlewareApplicationTest {
     }
 
     @Test
-    public void testExportConfig() {
+    void testExportConfig() {
         assertEquals("individual", exportConfig.getIndividualKey());
         assertEquals("http://localhost:4200/display", exportConfig.getIndividualBaseUri());
     }
 
     @Test
-    public void testMain() {
+    void testMain() {
         MiddlewareApplication.main(new String[0]);
+        assertTrue(true);
     }
 
 }

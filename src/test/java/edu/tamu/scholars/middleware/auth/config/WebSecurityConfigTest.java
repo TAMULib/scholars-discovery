@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     "solr.repositories.enabled=false"
 })
 // @formatter:on
-public class WebSecurityConfigTest {
+class WebSecurityConfigTest {
 
     @Value("${spring.profiles.active:default}")
     private String profile;
@@ -24,12 +24,12 @@ public class WebSecurityConfigTest {
     private boolean h2ConsoleEnabled;
 
     @Test
-    public void testDefaultProfile() {
+    void testDefaultProfile() {
         assertEquals("default", profile);
     }
 
     @Test
-    public void testH2ConsoleEnabled() {
+    void testH2ConsoleEnabled() {
         assertTrue(h2ConsoleEnabled);
     }
 
