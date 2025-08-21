@@ -88,10 +88,7 @@ services:
       zoo3:
         condition: service_healthy
     healthcheck:
-      test: |
-        solr status &&
-        solr healthcheck -c scholars-discovery 2>/dev/null || 
-        (echo "Collection 'scholars-discovery' not found or unhealthy" && exit 1)
+      test: ["CMD-SHELL", "solr status > /dev/null 2>&1"]
       interval: 30s
       timeout: 15s
       retries: 5
@@ -143,12 +140,6 @@ services:
     networks:
       - cloud
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
       solr1:
         condition: service_healthy
     healthcheck:
@@ -177,12 +168,6 @@ services:
     networks:
       - cloud
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
       solr1:
         condition: service_healthy
     healthcheck:
