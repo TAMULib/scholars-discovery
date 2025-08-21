@@ -35,7 +35,6 @@ import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, Registration> {
 
     private final UserRepo userRepo;
-
     private final MessageSource messageSource;
 
     public PasswordConstraintValidator(UserRepo userRepo, MessageSource messageSource) {

@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
+import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 import edu.tamu.scholars.middleware.view.model.DiscoveryView;
 import edu.tamu.scholars.middleware.view.model.repo.DiscoveryViewRepo;
 
@@ -16,8 +18,12 @@ import edu.tamu.scholars.middleware.view.model.repo.DiscoveryViewRepo;
 @Service
 public class DiscoveryViewsDefaults extends AbstractDefaults<DiscoveryView, DiscoveryViewRepo> {
 
-    public DiscoveryViewsDefaults() {
-        super();
+    public DiscoveryViewsDefaults(
+        MiddlewareConfig middleware,
+        ResourcePatternResolver resolver,
+        DiscoveryViewRepo repo
+    ) {
+        super(middleware, resolver, repo);
     }
 
     @Override

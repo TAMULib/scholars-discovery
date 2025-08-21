@@ -26,10 +26,6 @@ public class VivoConfig {
 
     private TriplestoreConfig triplestore;
 
-    public VivoConfig() {
-
-    }
-
     public String getEmail() {
         return email;
     }

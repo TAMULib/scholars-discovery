@@ -15,6 +15,7 @@ public class InternationalizationConfig {
     MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.addBasenames("i18n/messages");
+
         return messageSource;
     }
 

@@ -23,7 +23,7 @@ public class MiddlewareConfig {
 
     private boolean updateDefaults = false;
 
-    private List<String> allowedOrigins = new ArrayList<String>();
+    private List<String> allowedOrigins = new ArrayList<>();
 
     private AuthConfig auth = new AuthConfig();
 
@@ -37,9 +37,9 @@ public class MiddlewareConfig {
 
     private TriplestoreConfig triplestore = new TriplestoreConfig();
 
-    private List<HarvesterConfig> harvesters = new ArrayList<HarvesterConfig>();
+    private List<HarvesterConfig> harvesters = new ArrayList<>();
 
-    private List<IndexerConfig> indexers = new ArrayList<IndexerConfig>();
+    private List<IndexerConfig> indexers = new ArrayList<>();
 
     public MiddlewareConfig() {
         this.allowedOrigins.add("http://localhost:4200");

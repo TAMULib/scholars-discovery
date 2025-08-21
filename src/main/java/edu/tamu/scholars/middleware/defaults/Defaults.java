@@ -22,4 +22,6 @@ public interface Defaults<E extends Named, R extends NamedRepo<E>> {
 
     public void update(E entity, E existingEntity);
 
+    public R repo();
+
 }

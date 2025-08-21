@@ -1,15 +1,14 @@
 package edu.tamu.scholars.middleware.discovery.utility;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
@@ -62,11 +61,11 @@ public class ArgumentUtility {
             .filter(paramName -> paramName.equals(FACET_QUERY_PARAM_KEY))
             .map(request::getParameterValues)
             .map(Arrays::asList)
-            .flatMap(list -> list.stream())
+            .flatMap(Collection::stream)
             .map(s -> s.split(","))
             .map(Arrays::asList)
-            .flatMap(list -> list.stream())
-            .collect(Collectors.toList());
+            .flatMap(Collection::stream)
+            .toList();
         return fields.stream().map(field -> {
             final String sortFacet = String.format(FACET_SORT_FORMAT, field);
             final String pageSizeFacet = String.format(FACET_PAGE_SIZE_FORMAT, field);
@@ -108,7 +107,7 @@ public class ArgumentUtility {
                 }
             }
             return FacetArg.of(field, sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap);
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     public static List<FilterArg> getFilterArguments(HttpServletRequest request) {
@@ -117,12 +116,12 @@ public class ArgumentUtility {
             .filter(paramName -> paramName.equals(FILTER_QUERY_PARAM_KEY))
             .map(request::getParameterValues)
             .map(Arrays::asList)
-            .flatMap(list -> list.stream())
+            .flatMap(Collection::stream)
             .map(s -> s.split(","))
             .map(Arrays::asList)
-            .flatMap(list -> list.stream())
-            .collect(Collectors.toList());
-        List<FilterArg> filters = new ArrayList<FilterArg>();
+            .flatMap(Collection::stream)
+            .toList();
+        List<FilterArg> filters = new ArrayList<>();
         fields.stream().forEach(field -> {
             final String valueFilter = String.format(FILTER_VALUE_FORMAT, field);
             final String opKeyFilter = String.format(FILTER_OPKEY_FORMAT, field);
@@ -154,9 +153,9 @@ public class ArgumentUtility {
             .filter(paramName -> paramName.equals(BOOST_QUERY_PARAM_KEY))
             .map(request::getParameterValues)
             .map(Arrays::asList) 
-            .flatMap(list -> list.stream())
+            .flatMap(Collection::stream)
             .map(BoostArg::of)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public static HighlightArg getHightlightArgument(HttpServletRequest request) {

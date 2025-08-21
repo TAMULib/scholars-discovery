@@ -4,7 +4,6 @@ import static org.springframework.web.socket.server.support.HttpSessionHandshake
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -29,8 +28,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final String SPRING_SESSION_ID_ATTR_NAME = "SPRING.SESSION.ID";
 
-    @Autowired
-    private MiddlewareConfig config;
+    private final MiddlewareConfig config;
+
+    public WebSocketConfig(MiddlewareConfig config) {
+        super();
+        this.config = config;
+    }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -64,7 +67,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         WebSocketHandler wsHandler,
                         @Nullable Exception exception
                     ) {
-
+                        // nothing to do here
                     }
 
                 }

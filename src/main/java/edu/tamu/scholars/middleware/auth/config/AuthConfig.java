@@ -23,10 +23,6 @@ public class AuthConfig {
 
     private int registrationTokenDuration = 14;
 
-    public AuthConfig() {
-
-    }
-
     public PasswordConfig getPassword() {
         return password;
     }
