@@ -197,6 +197,9 @@ class RegistrationServiceTest extends RegistrationIntegrationTest {
     @Test
     void testComplete() throws IOException, RegistrationException {
         Token token = testToken();
+
+        testConfirm();
+
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HelloWorld123!");
         registration.setConfirm("HelloWorld123!");
