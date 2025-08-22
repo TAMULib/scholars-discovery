@@ -54,7 +54,7 @@ public class SolrIndexer implements Indexer {
                 : field.getName();
 
             if (!fieldType.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
-                Map<String, Object> fieldAttributes = new HashMap<String,Object>();
+                Map<String, Object> fieldAttributes = new HashMap<>();
 
                 fieldAttributes.put("type", fieldType.type());
                 fieldAttributes.put("stored", fieldType.stored());

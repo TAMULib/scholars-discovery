@@ -3,7 +3,8 @@ package edu.tamu.scholars.middleware.discovery.model.repo;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_ROWS;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_PARTITIONS;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_PER_TYPE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
@@ -124,7 +125,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty());
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(Arrays.asList(filter))
-            .withRows(MAX_ROWS);
+            .withRows(MAX_PER_TYPE);
 
         return findAllQuery(builder.query());
     }
@@ -345,21 +346,17 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         String field = quantityDistributionDescriptor.getField();
 
-        List<FacetArg> facets = new ArrayList<FacetArg>() {
-            {
-                add(FacetArg.of(
-                    field, 
-                    Optional.of("COUNT,DESC"),
-                    Optional.of(String.valueOf(MAX_ROWS)),
-                    Optional.empty(),
-                    Optional.of("STRING"),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty()
-                ));
-            }
-        };
+        List<FacetArg> facets = Arrays.asList(
+            FacetArg.of(
+                field, 
+                Optional.of("COUNT,DESC"),
+                Optional.of(String.valueOf(MAX_PARTITIONS)),
+                Optional.empty(),
+                Optional.of("STRING"),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()));
 
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
