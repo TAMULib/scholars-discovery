@@ -8,10 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class ExportConfigTest {
+class ExportConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         ExportConfig exportConfig = new ExportConfig();
         assertNotNull(exportConfig);
         assertEquals("individual", exportConfig.getIndividualKey());
@@ -19,14 +19,14 @@ public class ExportConfigTest {
     }
 
     @Test
-    public void testIndividualKeyGetterSetter() {
+    void testIndividualKeyGetterSetter() {
         ExportConfig exportConfig = new ExportConfig();
         exportConfig.setIndividualKey("link");
         assertEquals("link", exportConfig.getIndividualKey());
     }
 
     @Test
-    public void testIndividualBaseUriGetterSetter() {
+    void testIndividualBaseUriGetterSetter() {
         ExportConfig exportConfig = new ExportConfig();
         exportConfig.setIndividualBaseUri("http://localhost:8080/vivo/display");
         assertEquals("http://localhost:8080/vivo/display", exportConfig.getIndividualBaseUri());

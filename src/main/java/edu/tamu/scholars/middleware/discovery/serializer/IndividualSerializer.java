@@ -3,7 +3,6 @@ package edu.tamu.scholars.middleware.discovery.serializer;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -31,7 +30,7 @@ public class IndividualSerializer extends StdSerializer<Individual> {
         Individual document,
         JsonGenerator jsonGenerator,
         SerializerProvider serializerProvider
-    ) throws IOException, JsonProcessingException {
+    ) throws IOException {
         jsonGenerator.writeStartObject();
         delegate.serialize(document, jsonGenerator, serializerProvider);
         jsonGenerator.writeEndObject();

@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -16,18 +17,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import edu.tamu.scholars.middleware.config.SecurityExpressionConfig;
 
 @ExtendWith(SpringExtension.class)
-public class SecurityExpressionConfigTest {
+class SecurityExpressionConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         SecurityExpressionConfig securityExpressionConfig = new SecurityExpressionConfig();
         assertNotNull(securityExpressionConfig);
     }
 
     @Test
-    public void testRoleHierarchy() {
-        SecurityExpressionConfig securityExpressionConfig = new SecurityExpressionConfig();
-        RoleHierarchy roleHierarchy = securityExpressionConfig.roleHierarchy();
+    void testRoleHierarchy() {
+        RoleHierarchy roleHierarchy = RoleHierarchyImpl.fromHierarchy(SecurityExpressionConfig.ROLE_HIERARCHY);
         testRoleSuperAdminHierarchy(roleHierarchy);
         testRoleAdminHierarchy(roleHierarchy);
         testRoleUserHierarchy(roleHierarchy);

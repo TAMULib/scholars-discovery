@@ -11,10 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class FacetTest {
+class FacetTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Facet facet = new Facet();
         assertNotNull(facet);
         assertEquals(10, facet.getPageSize());
@@ -24,7 +24,7 @@ public class FacetTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Facet facet = new Facet();
 
         facet.setName("Test");

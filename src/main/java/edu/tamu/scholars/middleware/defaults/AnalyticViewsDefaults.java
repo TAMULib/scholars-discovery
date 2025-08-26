@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
+import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 import edu.tamu.scholars.middleware.view.model.DataAndAnalyticsView;
 import edu.tamu.scholars.middleware.view.model.repo.DataAndAnalyticsViewRepo;
 
@@ -16,8 +18,12 @@ import edu.tamu.scholars.middleware.view.model.repo.DataAndAnalyticsViewRepo;
 @Service
 public class AnalyticViewsDefaults extends AbstractDefaults<DataAndAnalyticsView, DataAndAnalyticsViewRepo> {
 
-    public AnalyticViewsDefaults() {
-        super();
+    public AnalyticViewsDefaults(
+        MiddlewareConfig middleware,
+        ResourcePatternResolver resolver,
+        DataAndAnalyticsViewRepo repo
+    ) {
+        super(middleware, resolver, repo);
     }
 
     @Override

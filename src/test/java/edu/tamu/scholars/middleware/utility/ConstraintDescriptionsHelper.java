@@ -10,6 +10,7 @@ import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.util.StringUtils;
 
 public final class ConstraintDescriptionsHelper {
+
     private final ConstraintDescriptions constraintDescriptions;
 
     public ConstraintDescriptionsHelper(Class<?> model) {
@@ -30,6 +31,7 @@ public final class ConstraintDescriptionsHelper {
 
     private String getConstraintDescription(String path) {
         String description = StringUtils.collectionToDelimitedString(constraintDescriptions.descriptionsForProperty(path), ". ");
-        return description.length() > 0 ? " " + description + "." : "";
+
+        return !description.isEmpty() ? " " + description + "." : "";
     }
 }

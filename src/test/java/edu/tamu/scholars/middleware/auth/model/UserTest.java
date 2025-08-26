@@ -15,10 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class UserTest {
+class UserTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         User user = new User();
         assertNotNull(user);
         assertTrue(user.getOldPasswords().isEmpty());
@@ -29,7 +29,7 @@ public class UserTest {
     }
 
     @Test
-    public void testBasicConstructor() {
+    void testBasicConstructor() {
         User user = new User("Bob", "Boring", "bboring@mailinator.com");
         assertNotNull(user);
         assertEquals("Bob", user.getFirstName());
@@ -43,7 +43,7 @@ public class UserTest {
     }
 
     @Test
-    public void testCreateFromUser() {
+    void testCreateFromUser() {
         List<String> oldPasswords = new ArrayList<String>(Arrays.asList(new String[] { "$2y$04$BQnhPFasttVxAva5XEFSEu2rH/7GoqChxVQ7zxtDgUDQ8k4qFOzYe", "$2y$04$1GbY8kcFY8hDhsedNGYFduocc7/v.7T2mkapUKvxoIpBCSU8fj51u" }));
         Calendar timestamp = Calendar.getInstance();
 

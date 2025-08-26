@@ -8,16 +8,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class FilterTest {
+class FilterTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Filter filter = new Filter();
         assertNotNull(filter);
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Filter filter = new Filter();
 
         filter.setField("test");

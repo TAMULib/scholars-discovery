@@ -1,11 +1,9 @@
 package edu.tamu.scholars.middleware.defaults;
 
-import jakarta.annotation.PostConstruct;
-
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +16,13 @@ import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 @Profile("!test")
 public class DefaultsService {
 
-    @Autowired
-    private MiddlewareConfig middleware;
+    private final MiddlewareConfig middleware;
+    private final List<Defaults<?, ?>> defaults;
 
-    @Autowired
-    private List<Defaults<?, ?>> defaults;
+    public DefaultsService(MiddlewareConfig middleware, List<Defaults<?, ?>> defaults) {
+        this.middleware = middleware;
+        this.defaults = defaults;
+    }
 
     @PostConstruct
     public void init() throws IOException {

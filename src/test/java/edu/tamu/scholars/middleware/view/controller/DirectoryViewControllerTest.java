@@ -23,13 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import jakarta.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.tamu.scholars.middleware.auth.model.User;
 import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
@@ -37,12 +34,12 @@ import edu.tamu.scholars.middleware.view.ResourceViewIntegrationTest;
 import edu.tamu.scholars.middleware.view.model.DirectoryView;
 import edu.tamu.scholars.middleware.view.model.repo.DirectoryViewRepo;
 
-public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<DirectoryView, DirectoryViewRepo> {
+class DirectoryViewControllerTest extends ResourceViewIntegrationTest<DirectoryView, DirectoryViewRepo> {
 
     private static final ConstraintDescriptionsHelper describeDirectoryView = new ConstraintDescriptionsHelper(DirectoryView.class);
 
     @Test
-    public void testCreateDirectoryView() throws JsonProcessingException, Exception {
+    void testCreateDirectoryView() throws Exception {
         // @formatter:off
         performCreateDirectoryView()
             .andDo(
@@ -85,7 +82,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
     }
 
     @Test
-    public void testUpdateDirectoryView() throws JsonProcessingException, Exception {
+    void testUpdateDirectoryView() throws Exception {
         performCreateDirectoryView();
 
         // @formatter:off
@@ -134,7 +131,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
     }
 
     @Test
-    public void testPatchTheme() throws JsonProcessingException, Exception {
+    void testPatchTheme() throws Exception {
         performCreateDirectoryView();
         DirectoryView directoryView = viewRepo.findByName(MOCK_VIEW_NAME).get();
 
@@ -190,7 +187,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
     }
 
     @Test
-    public void testGetDirectoryView() throws JsonProcessingException, Exception {
+    void testGetDirectoryView() throws Exception {
         performCreateDirectoryView();
         DirectoryView directoryView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         // @formatter:off
@@ -229,7 +226,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
     }
 
     @Test
-    public void testGetDirectoryViews() throws JsonProcessingException, Exception {
+    void testGetDirectoryViews() throws Exception {
         performCreateDirectoryView();
         // @formatter:off
         mockMvc.perform(
@@ -264,7 +261,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
     }
 
     @Test
-    public void testDeleteTheme() throws JsonProcessingException, Exception {
+    void testDeleteTheme() throws Exception {
         performCreateDirectoryView();
         DirectoryView directoryView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         // @formatter:off
@@ -289,7 +286,7 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
         return directory.getResponse().getCookie("SESSION");
     }
 
-    private ResultActions performCreateDirectoryView() throws JsonProcessingException, Exception {
+    private ResultActions performCreateDirectoryView() throws Exception {
         createMockAdmin();
         DirectoryView directoryView = getMockView();
 
@@ -305,10 +302,9 @@ public class DirectoryViewControllerTest extends ResourceViewIntegrationTest<Dir
         // @formatter:on
     }
 
-    private ResultActions performUpdateDirectoryView() throws JsonProcessingException, Exception {
+    private ResultActions performUpdateDirectoryView() throws Exception {
         DirectoryView directoryView = viewRepo.findByName(MOCK_VIEW_NAME).get();
         directoryView.setName("Organizations");
-        // directoryView.setCollection("organizations");
 
         // @formatter:off
         return mockMvc.perform(

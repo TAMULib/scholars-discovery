@@ -22,13 +22,13 @@ import edu.tamu.scholars.middleware.auth.model.User;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-public class LogoutControllerTest extends UserIntegrationTest {
+class LogoutControllerTest extends UserIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void testLogout() throws Exception {
+    void testLogout() throws Exception {
         User user = createMockUser();
         MvcResult result = mockMvc.perform(post("/login").param("username", user.getEmail()).param("password", "HelloWorld123!")).andReturn();
         Cookie cookie = result.getResponse().getCookie("SESSION");
@@ -43,7 +43,7 @@ public class LogoutControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testLogoutNotLoggedIn() throws Exception {
+    void testLogoutNotLoggedIn() throws Exception {
         // @formatter:off
         mockMvc.perform(post("/logout"))
             .andExpect(status().isResetContent())

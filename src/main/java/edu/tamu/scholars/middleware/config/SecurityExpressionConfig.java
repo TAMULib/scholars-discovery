@@ -16,13 +16,15 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 @Configuration
 public class SecurityExpressionConfig {
 
+    public static final String ROLE_HIERARCHY = "ROLE_SUPER_ADMIN > ROLE_ADMIN\nROLE_ADMIN > ROLE_USER\n";
+
     @Bean
-    public RoleHierarchy roleHierarchy() {
+    RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.fromHierarchy(buildRoleHierarchy());
     }
 
     @Bean
-    public SecurityExpressionHandler<FilterInvocation> securityExpressionHandler() {
+    SecurityExpressionHandler<FilterInvocation> securityExpressionHandler() {
         DefaultWebSecurityExpressionHandler seh = new DefaultWebSecurityExpressionHandler();
         seh.setRoleHierarchy(roleHierarchy());
 
@@ -31,7 +33,7 @@ public class SecurityExpressionConfig {
 
     @Bean
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public SecurityExpressionHandler<Message<Object>> messageSecurityExpressionHandler() {
+    SecurityExpressionHandler<Message<Object>> messageSecurityExpressionHandler() {
         DefaultMessageSecurityExpressionHandler seh = new DefaultMessageSecurityExpressionHandler<Message<Object>>();
         seh.setRoleHierarchy(roleHierarchy());
 
@@ -39,7 +41,7 @@ public class SecurityExpressionConfig {
     }
 
     private String buildRoleHierarchy() {
-        return "ROLE_SUPER_ADMIN > ROLE_ADMIN\nROLE_ADMIN > ROLE_USER\n";
+        return ROLE_HIERARCHY;
     }
 
 }

@@ -40,17 +40,16 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
         List<T> documents,
         QueryResponse response,
         Pageable pageable,
-        List<FacetArg> facetArguments,
-        Class<T> type
+        List<FacetArg> facetArguments
     ) {
         List<Facet> facets = buildFacets(response, facetArguments);
         SolrDocumentList results = response.getResults();
 
-        return new DiscoveryFacetPage<T>(documents, pageable, results.getNumFound(), facets);
+        return new DiscoveryFacetPage<>(documents, pageable, results.getNumFound(), facets);
     }
 
-    public static <T> List<Facet> buildFacets(QueryResponse response, List<FacetArg> facetArguments) {
-        List<Facet> facets = new ArrayList<Facet>();
+    public static List<Facet> buildFacets(QueryResponse response, List<FacetArg> facetArguments) {
+        List<Facet> facets = new ArrayList<>();
 
         facetArguments.forEach(facetArgument -> {
             String name = facetArgument.getField();
@@ -65,14 +64,14 @@ public class DiscoveryFacetPage<T> extends DiscoveryPage<T> {
                         .values()
                         .parallelStream()
                     .sorted(FacetEntryComparator.of(facetArgument.getSort()))
-                    .collect(Collectors.toList());
+                    .toList();
 
                 int pageSize = facetArgument.getPageSize();
                 // convert to zero-based numbering page number
                 int pageNumber = facetArgument.getPageNumber() - 1;
                 int offset = pageSize * pageNumber;
 
-                int totalElements = (int) entries.size();
+                int totalElements = entries.size();
 
                 int start = offset;
 

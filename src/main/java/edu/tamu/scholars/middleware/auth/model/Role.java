@@ -22,7 +22,7 @@ public enum Role {
 
     private final String value;
 
-    private static Map<String, Role> map = new HashMap<String, Role>();
+    private static Map<String, Role> map = new HashMap<>();
 
     static {
         for (Role role : Role.values()) {

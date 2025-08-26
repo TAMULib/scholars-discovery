@@ -8,16 +8,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class HeroTest {
+class HeroTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Hero hero = new Hero();
         assertNotNull(hero);
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Hero hero = new Hero();
         hero.setImageUri("/assets/images/hero.png");
         hero.setImageAlt("Hero");

@@ -618,10 +618,6 @@ public class Document extends Common {
     )
     private String newsOutlet;
 
-    public Document() {
-
-    }
-
     public String getTitle() {
         return title;
     }

@@ -12,10 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class BannerTest {
+class BannerTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Banner banner = new Banner();
         assertNotNull(banner);
         assertNotNull(banner.getVariables());
@@ -23,7 +23,7 @@ public class BannerTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Banner banner = new Banner();
 
         banner.setImageUri("/assets/images/banner.png");

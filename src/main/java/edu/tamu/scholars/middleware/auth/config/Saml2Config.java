@@ -20,10 +20,6 @@ public class Saml2Config {
 
     private Map<String, String> attributeMap = new HashMap<>();
 
-    public Saml2Config() {
-
-    }
-
     public Map<String, String> getAttributeMap() {
         return attributeMap;
     }

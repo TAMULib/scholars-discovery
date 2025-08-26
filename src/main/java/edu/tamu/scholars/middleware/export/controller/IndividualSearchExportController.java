@@ -9,11 +9,9 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.RepositorySearchesResource;
@@ -44,24 +42,24 @@ public class IndividualSearchExportController implements RepresentationModelProc
 
     private static final Logger logger = LoggerFactory.getLogger(IndividualSearchExportController.class);
 
-    @Lazy
-    @Autowired
-    private IndividualRepo repo;
+    private final IndividualRepo repo;
+    private final ExporterRegistry exporterRegistry;
 
-    @Lazy
-    @Autowired
-    private ExporterRegistry exporterRegistry;
+    public IndividualSearchExportController(@Lazy IndividualRepo repo, @Lazy ExporterRegistry exporterRegistry) {
+        this.repo = repo;
+        this.exporterRegistry = exporterRegistry;
+    }
 
     @GetMapping("/individual/search/export")
     public ResponseEntity<StreamingResponseBody> export(
-        @RequestParam(value = "view", required = false, defaultValue = "People") String view,
-        @RequestParam(value = "type", required = false, defaultValue = "csv") String type,
+        @RequestParam(required = false, defaultValue = "People") String view,
+        @RequestParam(required = false, defaultValue = "csv") String type,
         QueryArg query,
         @SortDefault Sort sort,
         List<FilterArg> filters,
         List<BoostArg> boosts,
         List<ExportArg> export
-    ) throws UnknownExporterTypeException, InterruptedException, ExecutionException {
+    ) throws UnknownExporterTypeException {
         logger.info("/individual/search/export {} {} {} {} {} {} {}", view, type, query, sort, filters, boosts, export);
         Exporter exporter = exporterRegistry.getExporter(type);
 
@@ -87,11 +85,11 @@ public class IndividualSearchExportController implements RepresentationModelProc
                         Optional.empty()
                     ),
                     Sort.unsorted(),
-                    new ArrayList<FilterArg>(),
-                    new ArrayList<BoostArg>(),
-                    new ArrayList<ExportArg>()
+                    new ArrayList<>(),
+                    new ArrayList<>(),
+                    new ArrayList<>()
                 )).withRel("export").withTitle("Discovery export"));
-            } catch (UnknownExporterTypeException | InterruptedException | ExecutionException e) {
+            } catch (UnknownExporterTypeException e) {
                 e.printStackTrace();
             }
         }

@@ -8,10 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class VivoConfigTest {
+class VivoConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         VivoConfig vivoConfig = new VivoConfig();
         assertNotNull(vivoConfig);
         assertEquals("vivo_root@school.edu", vivoConfig.getEmail());
@@ -26,7 +26,7 @@ public class VivoConfigTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         VivoConfig vivoConfig = new VivoConfig();
         vivoConfig.setEmail("vivoadmin@tamu.edu");
         vivoConfig.setPassword("abc123");

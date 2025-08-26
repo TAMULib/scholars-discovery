@@ -9,10 +9,10 @@ import edu.tamu.scholars.middleware.service.Triplestore;
 
 @Configuration
 @Profile("test")
-public class HarvesterTestConfig {
+class HarvesterTestConfig {
 
     @Bean
-    public Triplestore triplestore() throws Exception {
+    Triplestore triplestore() {
         return new TestTriplestore();
     }
 

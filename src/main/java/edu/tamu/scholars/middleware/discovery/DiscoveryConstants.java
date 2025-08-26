@@ -39,6 +39,16 @@ public class DiscoveryConstants {
 
     public static final String PARENTHESES_TEMPLATE = "(%s)";
 
-    public static final int MAX_ROWS = 2147483630;
+    public static final int MAX_PER_TYPE = 16777216;
+
+    public static final int MAX_SYNCED_IDS = 65536;
+
+    public static final int MAX_PARTITIONS = 16384;
+
+    public static final int MAX_LIMIT = 268435456;
+
+    private DiscoveryConstants() {
+
+    }
 
 }

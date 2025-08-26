@@ -33,8 +33,8 @@ public class Navbar {
 
     public Navbar() {
         super();
-        this.links = new ArrayList<Link>();
-        this.variables = new ArrayList<Style>();
+        this.links = new ArrayList<>();
+        this.variables = new ArrayList<>();
     }
 
     public String getBrandText() {

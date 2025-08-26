@@ -37,13 +37,13 @@ import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-public class RegistrationControllerTest extends RegistrationIntegrationTest {
+class RegistrationControllerTest extends RegistrationIntegrationTest {
 
     @TestConfiguration
     static class RegistrationControllerTestContextConfiguration {
 
         @Bean
-        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder() {
             return new BCryptPasswordEncoder();
         }
 
@@ -58,12 +58,12 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     private EmailService emailService;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         doNothing().when(emailService).send(any(String.class), any(String.class), any(String.class));
     }
 
     @Test
-    public void testSubmit() throws Exception {
+    void testSubmit() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
 
         String body = objectMapper.writeValueAsString(registration);
@@ -88,7 +88,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testSubmitFirstNameToShort() throws Exception {
+    void testSubmitFirstNameToShort() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setFirstName("B");
 
@@ -102,7 +102,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testSubmitFirstNameToLong() throws Exception {
+    void testSubmitFirstNameToLong() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setFirstName("Bobobobobobobobobobobobobobobobobobobobbobobobobobobobobbobobobobobobobob");
 
@@ -116,7 +116,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testSubmitLastNameToShort() throws Exception {
+    void testSubmitLastNameToShort() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setLastName("B");
 
@@ -130,7 +130,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testSubmitLastNameToLong() throws Exception {
+    void testSubmitLastNameToLong() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setLastName("Boringinginginginginginginginginginginginginginginginginginginginginginginging");
 
@@ -144,7 +144,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testSubmitEmailAlreadyInUse() throws Exception {
+    void testSubmitEmailAlreadyInUse() throws Exception {
         createMockUser();
 
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
@@ -159,7 +159,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testConfirm() throws Exception {
+    void testConfirm() throws Exception {
         testSubmit();
         Token token = getMockToken("Bob", "Boring", "bboring@mailinator.com");
         // @formatter:off
@@ -178,7 +178,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testConfirmAlreadyConfirmed() throws Exception {
+    void testConfirmAlreadyConfirmed() throws Exception {
         testConfirm();
         Token token = getMockToken("Bob", "Boring", "bboring@mailinator.com");
         // @formatter:off
@@ -189,7 +189,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testConfirmWithoutSubmit() throws Exception {
+    void testConfirmWithoutSubmit() throws Exception {
         Token token = getMockToken("Bob", "Boring", "bboring@mailinator.com");
         // @formatter:off
         mockMvc.perform(get("/registration").param("key", token.getKey()))
@@ -199,7 +199,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testComplete() throws Exception {
+    void testComplete() throws Exception {
         testConfirm();
 
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
@@ -234,7 +234,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteWithoutSubmit() throws Exception {
+    void testCompleteWithoutSubmit() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HelloWorld123!");
         registration.setConfirm("HelloWorld123!");
@@ -253,7 +253,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteWithoutConfirm() throws Exception {
+    void testCompleteWithoutConfirm() throws Exception {
         testSubmit();
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HelloWorld123!");
@@ -273,7 +273,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteInvalidPasswordToShort() throws Exception {
+    void testCompleteInvalidPasswordToShort() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("aA1~");
         registration.setConfirm("aA1~");
@@ -292,7 +292,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteInvalidPasswordToLong() throws Exception {
+    void testCompleteInvalidPasswordToLong() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789~!@#$%^&*()_+");
         registration.setConfirm("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789~!@#$%^&*()_+");
@@ -311,7 +311,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteInvalidPasswordWithWhitespace() throws Exception {
+    void testCompleteInvalidPasswordWithWhitespace() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("Hello, World 123!");
         registration.setConfirm("Hello, World 123!");
@@ -330,7 +330,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteInvalidPasswordMissingLowercase() throws Exception {
+    void testCompleteInvalidPasswordMissingLowercase() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HELLOWORLD123!");
         registration.setConfirm("HELLOWORLD123!");
@@ -349,7 +349,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteInvalidPasswordMissingUppercase() throws Exception {
+    void testCompleteInvalidPasswordMissingUppercase() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("helloworld123!");
         registration.setConfirm("helloworld123!");
@@ -368,7 +368,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteInvalidPasswordMissingSpecialCharacter() throws Exception {
+    void testCompleteInvalidPasswordMissingSpecialCharacter() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HelloWorld123");
         registration.setConfirm("HelloWorld123");
@@ -387,7 +387,7 @@ public class RegistrationControllerTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompletePasswordDoNotMatch() throws Exception {
+    void testCompletePasswordDoNotMatch() throws Exception {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HelloWorld123!");
         registration.setConfirm("HelloWorld123~");

@@ -3,14 +3,13 @@ package edu.tamu.scholars.middleware.auth.validator;
 import static edu.tamu.scholars.middleware.auth.AuthConstants.PASSWORD_MAX_LENGTH;
 import static edu.tamu.scholars.middleware.auth.AuthConstants.PASSWORD_MIN_LENGTH;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.HistoryRule;
@@ -22,7 +21,6 @@ import org.passay.PasswordValidator;
 import org.passay.RuleResult;
 import org.passay.WhitespaceRule;
 import org.passay.spring.SpringMessageResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -36,11 +34,13 @@ import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
  */
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, Registration> {
 
-    @Autowired
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
+    private final MessageSource messageSource;
 
-    @Autowired
-    private MessageSource messageSource;
+    public PasswordConstraintValidator(UserRepo userRepo, MessageSource messageSource) {
+        this.userRepo = userRepo;
+        this.messageSource = messageSource;
+    }
 
     @Override
     public boolean isValid(Registration registration, ConstraintValidatorContext context) {
@@ -82,10 +82,10 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
             passwordReferences = user.get()
                 .getOldPasswords()
                 .stream()
-                .map(pw -> new HistoricalReference(pw))
+                .map(HistoricalReference::new)
                 .collect(Collectors.toList());
         } else {
-            passwordReferences = new ArrayList<Reference>();
+            passwordReferences = new ArrayList<>();
         }
 
         passwordData.setPasswordReferences(passwordReferences);

@@ -21,7 +21,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
   # pgAdmin web interface for managing development database in container network
   # To register server
@@ -61,7 +60,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
   # SolrCloud Node 1 (Primary - handles collection creation)
   solr1:
@@ -70,6 +68,7 @@ services:
     hostname: scholars-solr1
     volumes:
       - ./solr/solr1/data:/var/solr/data
+      - ./solr/solr1/logs:/var/solr/logs
       - ./solr/configsets:/opt/solr/server/solr/configsets:ro
     ports:
       - 8983:8983
@@ -80,6 +79,8 @@ services:
       - SOLR_OPTS=-Xms4g -Xmx4g -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -XX:+DisableExplicitGC -XX:+ExitOnOutOfMemoryError
       - SOLR_JAVA_MEM=-Xms4g -Xmx4g
       - ENABLE_REMOTE_JMX_OPTS=false
+      - SOLR_ENABLE_CLOUD_MODE=true
+      - SOLR_WAIT_FOR_ZK=30
     networks:
       - cloud
     depends_on:
@@ -90,35 +91,28 @@ services:
       zoo3:
         condition: service_healthy
     healthcheck:
-      test: |
-        solr status &&
-        solr healthcheck -c scholars-discovery 2>/dev/null || 
-        (echo "Collection 'scholars-discovery' not found or unhealthy" && exit 1)
+      test: ["CMD-SHELL", "solr status > /dev/null 2>&1"]
       interval: 30s
       timeout: 15s
       retries: 5
       start_period: 120s
-    restart: unless-stopped
     command: |
       bash -c "
       # Start Solr in SolrCloud mode
       solr-foreground -cloud &
       SOLR_PID=\$$!
-      
       # Wait for Solr to be ready
       until solr status > /dev/null 2>&1; do
         echo 'Waiting for Solr to be ready...'
         sleep 5
       done
-      
       # Wait for ZooKeeper connection
       until solr zk ls / -z \$$ZK_HOST > /dev/null 2>&1; do
         echo 'Waiting for ZooKeeper connection...'
         sleep 5
       done
-      
       # Create collection if it doesn't exist
-      if ! solr healthcheck -c scholars-discovery > /dev/null 2>&1; then
+      if ! solr zk ls /collections/scholars-discovery -z $ZK_HOST > /dev/null 2>&1; then
         echo 'Creating scholars-discovery collection...'
         # Use environment variable for config set name
         solr create -c scholars-discovery -d scholars-discovery -shards 3 -replicationFactor 1 -V
@@ -126,7 +120,6 @@ services:
       else
         echo 'Collection scholars-discovery already exists and is healthy'
       fi
-      
       wait \$$SOLR_PID
       "
 
@@ -137,21 +130,18 @@ services:
     hostname: scholars-solr2
     volumes:
       - ./solr/solr2/data:/var/solr/data
+      - ./solr/solr2/logs:/var/solr/logs
       - ./solr/configsets:/opt/solr/server/solr/configsets:ro
     ports:
       - 8984:8983
     environment:
       - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr2
+      - SOLR_ENABLE_CLOUD_MODE=true
+      - SOLR_WAIT_FOR_ZK=30
     networks:
       - cloud
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
       solr1:
         condition: service_healthy
     healthcheck:
@@ -162,7 +152,6 @@ services:
       timeout: 15s
       retries: 5
       start_period: 90s
-    restart: unless-stopped
     command: ["solr-foreground", "-cloud"]
 
   # SolrCloud Node 3
@@ -172,21 +161,18 @@ services:
     hostname: scholars-solr3
     volumes:
       - ./solr/solr3/data:/var/solr/data
+      - ./solr/solr3/logs:/var/solr/logs
       - ./solr/configsets:/opt/solr/server/solr/configsets:ro
     ports:
       - 8985:8983
     environment:
       - ZK_HOST=scholars-zoo1:2181,scholars-zoo2:2181,scholars-zoo3:2181
       - SOLR_HOST=scholars-solr3
+      - SOLR_ENABLE_CLOUD_MODE=true
+      - SOLR_WAIT_FOR_ZK=30
     networks:
       - cloud
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
       solr1:
         condition: service_healthy
     healthcheck:
@@ -197,7 +183,6 @@ services:
       timeout: 15s
       retries: 5
       start_period: 90s
-    restart: unless-stopped
     command: ["solr-foreground", "-cloud"]
 
 
@@ -222,7 +207,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
   zoo2:
     image: zookeeper:latest
@@ -245,7 +229,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
   zoo3:
     image: zookeeper:latest
@@ -268,7 +251,6 @@ services:
       start_period: 60s
     networks:
       - cloud
-    restart: unless-stopped
 
 networks:
   cloud:

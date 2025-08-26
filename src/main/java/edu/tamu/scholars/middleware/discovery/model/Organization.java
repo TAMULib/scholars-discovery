@@ -481,10 +481,6 @@ public class Organization extends Common {
     )
     private String orgId;
 
-    public Organization() {
-
-    }
-
     public String getName() {
         return name;
     }

@@ -9,17 +9,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class CreateActiveThemeExceptionTest {
+class CreateActiveThemeExceptionTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         CreateActiveThemeException exception = new CreateActiveThemeException("Test create active theme exception!");
         assertNotNull(exception);
         assertEquals("Test create active theme exception!", exception.getMessage());
     }
 
     @Test
-    public void testThrow() throws CreateActiveThemeException {
+    void testThrow() {
         assertThrows(CreateActiveThemeException.class, () -> {
             throw new CreateActiveThemeException("Test create active theme exception!");
         });

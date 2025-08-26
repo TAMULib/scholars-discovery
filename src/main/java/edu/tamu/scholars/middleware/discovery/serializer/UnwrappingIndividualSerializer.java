@@ -61,7 +61,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
         Individual individual,
         JsonGenerator jsonGenerator,
         SerializerProvider serializerProvider
-    ) throws IOException, JsonProcessingException {
+    ) throws IOException {
         Class<?> type = getDiscoveryDocumentType(individual.getProxy());
         Map<String, Object> content = individual.getContent();
         jsonGenerator.writeObjectField(nameTransformer.transform(ID), individual.getId());
@@ -152,7 +152,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
                     @SuppressWarnings("unchecked")
                     List<String> nestedValues = (List<String>) nestedValue;
 
-                    if (nestedValues.size() > 0) {
+                    if (!nestedValues.isEmpty()) {
                         boolean multiValued = nestedField.getAnnotation(NestedMultiValuedProperty.class) != null;
 
                         ArrayNode array;

@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 
 import edu.tamu.scholars.middleware.discovery.DiscoveryConstants;
 import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
-import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 
 /**
  * 
@@ -44,18 +42,16 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
         List<T> documents,
         QueryResponse response,
         Pageable pageable,
-        List<FacetArg> facetArguments,
-        HighlightArg highlightArg,
-        Class<T> type
+        List<FacetArg> facetArguments
     ) {
         List<Facet> facets = buildFacets(response, facetArguments);
-        List<Highlight> highlights = buildHighlights(response, highlightArg);
+        List<Highlight> highlights = buildHighlights(response);
         SolrDocumentList results = response.getResults();
 
-        return new DiscoveryFacetAndHighlightPage<T>(documents, pageable, results.getNumFound(), facets, highlights);
+        return new DiscoveryFacetAndHighlightPage<>(documents, pageable, results.getNumFound(), facets, highlights);
     }
 
-    public static <T> List<Highlight> buildHighlights(QueryResponse response, HighlightArg highlightArg) {
+    public static <T> List<Highlight> buildHighlights(QueryResponse response) {
         List<Highlight> highlights = new ArrayList<>();
         Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
         if (Objects.nonNull(highlighting)) {
@@ -82,7 +78,7 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
                                         }
 
                                         return s;
-                                    }).collect(Collectors.toList()));
+                                    }).toList());
                                 });
 
                         highlights.add(new Highlight(id, snippets));
@@ -92,11 +88,11 @@ public class DiscoveryFacetAndHighlightPage<T> extends DiscoveryFacetPage<T> {
         return highlights;
     }
 
-    public static <T> boolean hasHighlights(Entry<String, Map<String, List<String>>> entry) {
+    public static boolean hasHighlights(Entry<String, Map<String, List<String>>> entry) {
         return !entry.getValue().isEmpty();
     }
 
-    public static <T> boolean hasSnippets(Entry<String, List<String>> entry) {
+    public static boolean hasSnippets(Entry<String, List<String>> entry) {
         return !entry.getValue().isEmpty();
     }
 

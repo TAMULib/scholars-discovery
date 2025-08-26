@@ -1,6 +1,6 @@
 package edu.tamu.scholars.middleware.view.model;
 
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_ROWS;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_LIMIT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,21 +14,21 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class ExportFieldViewTest {
+class ExportFieldViewTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         ExportFieldView exportField = new ExportFieldView();
         assertNotNull(exportField);
         assertNotNull(exportField.getFilters());
         assertNotNull(exportField.getSort());
         assertTrue(exportField.getFilters().isEmpty());
         assertTrue(exportField.getSort().isEmpty());
-        assertEquals(MAX_ROWS, exportField.getLimit());
+        assertEquals(MAX_LIMIT, exportField.getLimit());
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         ExportFieldView exportField = new ExportFieldView();
 
         exportField.setName("Test");

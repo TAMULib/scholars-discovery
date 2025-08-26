@@ -2,10 +2,7 @@ package edu.tamu.scholars.middleware.auth.controller;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -41,9 +38,11 @@ import edu.tamu.scholars.middleware.auth.validator.group.SubmitRegistration;
 @RequestMapping("/registration")
 public class RegistrationController {
 
-    @Lazy
-    @Autowired
-    private RegistrationService registrationService;
+    private final RegistrationService registrationService;
+
+    public RegistrationController(@Lazy RegistrationService registrationService) {
+        this.registrationService = registrationService;
+    }
 
     @PostMapping
     public ResponseEntity<Registration> submit(
@@ -53,9 +52,8 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public ResponseEntity<Registration> confirm(
-            @RequestParam(required = true) String key)
-            throws JsonParseException, JsonMappingException, IOException, RegistrationException {
+    public ResponseEntity<Registration> confirm(@RequestParam(required = true) String key)
+            throws IOException, RegistrationException {
         return ResponseEntity.ok(registrationService.confirm(key));
     }
 

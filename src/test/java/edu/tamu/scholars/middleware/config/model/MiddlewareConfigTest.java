@@ -26,10 +26,10 @@ import edu.tamu.scholars.middleware.discovery.model.Relationship;
 import edu.tamu.scholars.middleware.service.TDBTriplestore;
 
 @ExtendWith(SpringExtension.class)
-public class MiddlewareConfigTest {
+class MiddlewareConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         assertNotNull(middlewareConfig);
         AuthConfig authConfig = middlewareConfig.getAuth();
@@ -68,7 +68,7 @@ public class MiddlewareConfigTest {
     }
 
     @Test
-    public void testAuthGetterSetter() {
+    void testAuthGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         AuthConfig newAuthConfig = new AuthConfig();
         PasswordConfig passwordConfig = new PasswordConfig();
@@ -93,7 +93,7 @@ public class MiddlewareConfigTest {
     }
 
     @Test
-    public void testMailGetterSetter() {
+    void testMailGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         MailConfig newMailConfig = new MailConfig();
         newMailConfig.setFrom("bborring@mailinator.com");
@@ -106,7 +106,7 @@ public class MiddlewareConfigTest {
     }
 
     @Test
-    public void testHttpGetterSetter() {
+    void testHttpGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         HttpConfig newHttpConfig = new HttpConfig();
         newHttpConfig.setTimeout(120000);
@@ -122,7 +122,7 @@ public class MiddlewareConfigTest {
     }
 
     @Test
-    public void testIndexGetterSetter() {
+    void testIndexGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         IndexConfig newIndexConfig = new IndexConfig();
         newIndexConfig.setCron("0 0 0 * * MON");
@@ -140,7 +140,7 @@ public class MiddlewareConfigTest {
     }
 
     @Test
-    public void testExportGetterSetter() {
+    void testExportGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         ExportConfig newExportConfig = new ExportConfig();
         newExportConfig.setIndividualKey("link");
@@ -152,7 +152,7 @@ public class MiddlewareConfigTest {
     }
 
     @Test
-    public void testTriplestoreGetterSetter() {
+    void testTriplestoreGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         TriplestoreConfig newTriplestoreConfig = new TriplestoreConfig();
         newTriplestoreConfig.setType(TDBTriplestore.class);
@@ -193,7 +193,7 @@ public class MiddlewareConfigTest {
     }
 
     @Test
-    public void testHarvestersGetterSetter() {
+    void testHarvestersGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         HarvesterConfig newHarvesterConfig = new HarvesterConfig();
         List<Class<? extends AbstractIndexDocument>> documentTypes = new ArrayList<Class<? extends AbstractIndexDocument>>();
@@ -214,7 +214,7 @@ public class MiddlewareConfigTest {
     }
 
     @Test
-    public void testIndexersGetterSetter() {
+    void testIndexersGetterSetter() {
         MiddlewareConfig middlewareConfig = new MiddlewareConfig();
         IndexerConfig newIndexerConfig = new IndexerConfig();
         List<Class<? extends AbstractIndexDocument>> documentTypes = new ArrayList<Class<? extends AbstractIndexDocument>>();

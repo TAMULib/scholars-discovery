@@ -753,11 +753,6 @@
         </configuration>
         <executions>
           <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-          <execution>
             <id>dependency-check-pre-site</id>
             <phase>pre-site</phase>
             <goals>

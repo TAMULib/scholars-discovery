@@ -1,7 +1,5 @@
 package edu.tamu.scholars.middleware.discovery.service;
 
-import jakarta.annotation.PostConstruct;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -9,9 +7,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
@@ -31,22 +29,27 @@ public class IndexService {
 
     private static final AtomicBoolean indexing = new AtomicBoolean(false);
 
-    public static final List<String> CREATED_FIELDS = new CopyOnWriteArrayList<String>();
+    public static final List<String> CREATED_FIELDS = new CopyOnWriteArrayList<>();
 
-    @Autowired
     private IndexConfig index;
-
-    @Autowired
     private List<Harvester> harvesters;
-
-    @Autowired
     private List<Indexer> indexers;
-
-    @Autowired
     private Triplestore triplestore;
-
-    @Autowired
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
+    public IndexService(
+        IndexConfig index,
+        List<Harvester> harvesters,
+        List<Indexer> indexers,
+        Triplestore triplestore,
+        ThreadPoolTaskScheduler threadPoolTaskScheduler
+    ) {
+        this.index = index;
+        this.harvesters = harvesters;
+        this.indexers = indexers;
+        this.triplestore = triplestore;
+        this.threadPoolTaskScheduler = threadPoolTaskScheduler;
+    }
 
     public Boolean isIndexing() {
         return indexing.get();

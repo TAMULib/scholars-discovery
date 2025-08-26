@@ -190,10 +190,6 @@ public class Collection extends Common {
     )
     private List<String> supportedBy;
 
-    public Collection() {
-
-    }
-
     public String getName() {
         return name;
     }

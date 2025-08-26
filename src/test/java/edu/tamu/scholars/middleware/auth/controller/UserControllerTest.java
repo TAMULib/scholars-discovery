@@ -34,7 +34,7 @@ import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-public class UserControllerTest extends UserIntegrationTest {
+class UserControllerTest extends UserIntegrationTest {
 
     private static final ConstraintDescriptionsHelper describeUser = new ConstraintDescriptionsHelper(User.class);
 
@@ -42,7 +42,7 @@ public class UserControllerTest extends UserIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    public void testGetUsers() throws Exception {
+    void testGetUsers() throws Exception {
         User admin = createMockAdmin();
         // @formatter:off
         mockMvc.perform(
@@ -77,7 +77,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testPatchUser() throws Exception {
+    void testPatchUser() throws Exception {
         User superAdmin = createMockSuperAdmin();
         // @formatter:off
         mockMvc.perform(patch("/users/{id}", superAdmin.getId()).cookie(login(superAdmin)).content("{\"role\": \"ROLE_USER\", \"active\": false}"))
@@ -118,7 +118,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testPatchUserUnauthorized() throws Exception {
+    void testPatchUserUnauthorized() throws Exception {
         User user = createMockUser();
         // @formatter:off
         mockMvc.perform(patch("/users/{id}", user.getId()).content("{\"role\": \"ROLE_USER\", \"active\": false}"))
@@ -128,7 +128,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testPatchUserForbidden() throws Exception {
+    void testPatchUserForbidden() throws Exception {
         User user = createMockUser();
         // @formatter:off
         mockMvc.perform(patch("/users/{id}", user.getId()).cookie(login(user)).content("{\"role\": \"ROLE_USER\", \"active\": false}"))
@@ -138,7 +138,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testDeleteUser() throws Exception {
+    void testDeleteUser() throws Exception {
         User admin = createMockAdmin();
         User superAdmin = createMockSuperAdmin();
         // @formatter:off
@@ -156,7 +156,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testDeleteUserUnauthorized() throws Exception {
+    void testDeleteUserUnauthorized() throws Exception {
         User user = createMockUser();
         // @formatter:off
         mockMvc.perform(delete("/users/{id}", user.getId()))
@@ -166,7 +166,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testDeleteUserForbidden() throws Exception {
+    void testDeleteUserForbidden() throws Exception {
         User user = createMockUser();
         User admin = createMockAdmin();
         // @formatter:off
@@ -177,7 +177,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testGetUsersUnauthorized() throws Exception {
+    void testGetUsersUnauthorized() throws Exception {
         // @formatter:off
         mockMvc.perform(get("/users"))
             .andExpect(status().isUnauthorized())
@@ -186,7 +186,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testGetUsersForbidden() throws Exception {
+    void testGetUsersForbidden() throws Exception {
         User user = createMockUser();
         // @formatter:off
         mockMvc.perform(get("/users").cookie(login(user)))
@@ -196,7 +196,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testGetUser() throws Exception {
+    void testGetUser() throws Exception {
         User admin = createMockAdmin();
         // @formatter:off
         mockMvc.perform(get("/users/{id}", admin.getId()).cookie(login(admin)))
@@ -227,7 +227,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testGetUserUnauthorized() throws Exception {
+    void testGetUserUnauthorized() throws Exception {
         User user = createMockUser();
         // @formatter:off
         mockMvc.perform(get("/users/{id}", user.getId()))
@@ -237,7 +237,7 @@ public class UserControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testGetUserForbidden() throws Exception {
+    void testGetUserForbidden() throws Exception {
         User user = createMockUser();
         // @formatter:off
         mockMvc.perform(get("/users/{id}", user.getId()).cookie(login(user)))

@@ -1,6 +1,5 @@
 package edu.tamu.scholars.middleware.auth.model.repo.handler;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
 import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
@@ -18,8 +17,11 @@ public class UserEventHandler {
 
     public static final String USERS_CHANNEL = "/queue/users";
 
-    @Autowired
-    private SimpMessagingTemplate simpMessageTemplate;
+    private final SimpMessagingTemplate simpMessageTemplate;
+
+    public UserEventHandler(SimpMessagingTemplate simpMessageTemplate) {
+        this.simpMessageTemplate = simpMessageTemplate;
+    }
 
     @HandleAfterSave
     public void broadcastUserUpdate(User user) {

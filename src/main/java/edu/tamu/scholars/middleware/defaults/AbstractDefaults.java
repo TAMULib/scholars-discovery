@@ -14,7 +14,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
@@ -39,17 +38,21 @@ public abstract class AbstractDefaults<E extends Named, R extends NamedRepo<E>> 
 
     protected final ObjectMapper mapper;
 
-    @Autowired
-    private MiddlewareConfig middleware;
+    protected final MiddlewareConfig middleware;
 
-    @Autowired
-    protected ResourcePatternResolver resolver;
+    protected final ResourcePatternResolver resolver;
 
-    @Autowired
-    protected R repo;
+    protected final R repo;
 
-    public AbstractDefaults() {
-        mapper = new ObjectMapper(new YAMLFactory());
+    protected AbstractDefaults(
+        MiddlewareConfig middleware,
+        ResourcePatternResolver resolver,
+        R repo
+    ) {
+        this.mapper = new ObjectMapper(new YAMLFactory());
+        this.middleware = middleware;
+        this.resolver = resolver;
+        this.repo = repo;
     }
 
     @Override
@@ -81,6 +84,11 @@ public abstract class AbstractDefaults<E extends Named, R extends NamedRepo<E>> 
             repo.save(existingEntity);
             logger.info(UPDATED_DEFAULTS, this.getClass().getSimpleName(), entity.getName());
         }
+    }
+
+    @Override
+    public R repo() {
+        return this.repo;
     }
 
     protected void loadTemplateMap(Map<String, String> templateMap) throws IOException {

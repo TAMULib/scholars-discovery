@@ -2,7 +2,6 @@ package edu.tamu.scholars.middleware.messaging.listener;
 
 import static org.springframework.messaging.simp.stomp.StompCommand.RECEIPT;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -19,8 +18,11 @@ public class SubscriptionListener implements ApplicationListener<SessionSubscrib
 
     private static final byte[] EMPTY_PAYLOAD = new byte[0];
 
-    @Autowired
-    private AbstractSubscribableChannel clientOutboundChannel;
+    private final AbstractSubscribableChannel clientOutboundChannel;
+
+    public SubscriptionListener(AbstractSubscribableChannel clientOutboundChannel) {
+        this.clientOutboundChannel = clientOutboundChannel;
+    }
 
     @Override
     public void onApplicationEvent(SessionSubscribeEvent event) {

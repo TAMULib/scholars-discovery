@@ -10,18 +10,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -33,13 +29,11 @@ import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider.ResponseToken;
-import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticatedPrincipal;
 import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
@@ -50,28 +44,28 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import edu.tamu.scholars.middleware.auth.config.AuthConfig;
-import edu.tamu.scholars.middleware.auth.config.Saml2Config;
 import edu.tamu.scholars.middleware.auth.config.TokenConfig;
-import edu.tamu.scholars.middleware.auth.details.CustomUserDetails;
 import edu.tamu.scholars.middleware.auth.handler.CustomAccessDeniedExceptionHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationEntryPoint;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationFailureHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationSuccessHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomLogoutSuccessHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomSaml2AuthenticationSuccessHandler;
-import edu.tamu.scholars.middleware.auth.model.Role;
-import edu.tamu.scholars.middleware.auth.model.User;
-import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
+import edu.tamu.scholars.middleware.auth.service.ExternalAuthUserDetailsService;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 
 /**
- * Spring Security Configuration for Spring Boot 4.0.0-M1
+ * Spring Web Security autoconfiguration.
  */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
+
+    private final MiddlewareConfig config;
+    private final ObjectMapper objectMapper;
+    private final MessageSource messageSource;
+    private final ExternalAuthUserDetailsService<Saml2Authentication> userDetailsService;
 
     @Value("${spring.profiles.active:default}")
     private String profile;
@@ -85,20 +79,17 @@ public class WebSecurityConfig {
     @Value("${ui.url:http://localhost:4200}")
     protected String uiUrl;
 
-    @Autowired
-    private MiddlewareConfig config;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private UserRepo userRepo;
+    public WebSecurityConfig(
+        MiddlewareConfig config,
+        ObjectMapper objectMapper,
+        MessageSource messageSource,
+        ExternalAuthUserDetailsService<Saml2Authentication> userDetailsService
+    ) {
+        this.config = config;
+        this.objectMapper = objectMapper;
+        this.messageSource = messageSource;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -191,12 +182,10 @@ public class WebSecurityConfig {
         return serializer;
     }
 
+    
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-
-        AuthConfig authConfig = config.getAuth();
-        Saml2Config saml2Config = authConfig.getSaml2();
-
         OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
 
         Converter<ResponseToken, Saml2Authentication> delegate =
@@ -211,44 +200,7 @@ public class WebSecurityConfig {
             try {
                 userDetails = userDetailsService.loadUserByUsername(username);
             } catch(UsernameNotFoundException e) {
-                Saml2AuthenticatedPrincipal principal = (Saml2AuthenticatedPrincipal) authentication.getPrincipal();
-
-                Map<String, String> attributeMap = saml2Config.getAttributeMap();
-
-                Map<String, List<Object>> attributes = principal.getAttributes();
-
-                final String FIRST_NAME = "firstName";
-                final String LAST_NAME = "lastName";
-                final String USERNAME = "username";
-
-                String firstNameKey = attributeMap.containsKey(FIRST_NAME) ? attributeMap.get(FIRST_NAME) : FIRST_NAME;
-                String lastNameKey = attributeMap.containsKey(LAST_NAME) ? attributeMap.get(LAST_NAME) : LAST_NAME;
-                String usernameKey = attributeMap.containsKey(USERNAME) ? attributeMap.get(USERNAME) : USERNAME;
-
-                List<Object> firstNames = attributes.containsKey(firstNameKey) ? attributes.get(firstNameKey) : Arrays.asList();
-                if (firstNames.isEmpty() || StringUtils.isBlank(firstNames.get(0).toString())) {
-                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + firstNameKey + "` attribute");
-                }
-                List<Object> lastNames = attributes.containsKey(lastNameKey) ? attributes.get(lastNameKey) : Arrays.asList();
-                if (lastNames.isEmpty() || StringUtils.isBlank(lastNames.get(0).toString())) {
-                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + lastNameKey + "` attribute");
-                }
-                List<Object> usernames = attributes.containsKey(usernameKey) ? attributes.get(usernameKey) : Arrays.asList();
-                if (usernames.isEmpty() || StringUtils.isBlank(usernames.get(0).toString())) {
-                    throw new InsufficientAuthenticationException("SAML2 authentication response is missing required `" + usernameKey + "` attribute");
-                }
-
-                User user = new User(
-                    firstNames.get(0).toString(),
-                    lastNames.get(0).toString(),
-                    usernames.get(0).toString()
-                );
-
-                user.setActive(true);
-                user.setConfirmed(true);
-                user.setEnabled(true);
-                user.setRole(Role.ROLE_USER);
-                userDetails = new CustomUserDetails(userRepo.save(user));
+                userDetails = userDetailsService.loadUserFromExternalAuthentication(authentication);
             }
 
             return new Saml2Authentication((AuthenticatedPrincipal) userDetails, responseToken.getToken().getSaml2Response(), userDetails.getAuthorities());

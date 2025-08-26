@@ -31,7 +31,7 @@ public abstract class Named implements Serializable {
     @Column(nullable = false, unique = true)
     protected String name;
 
-    public Named() {
+    protected Named() {
         super();
     }
 

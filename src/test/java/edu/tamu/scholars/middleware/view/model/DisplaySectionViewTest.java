@@ -14,10 +14,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class DisplaySectionViewTest {
+class DisplaySectionViewTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         DisplaySectionView section = new DisplaySectionView();
         assertNotNull(section);
         assertFalse(section.isHidden());
@@ -27,7 +27,7 @@ public class DisplaySectionViewTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         DisplaySectionView section = new DisplaySectionView();
 
         section.setName("Test");

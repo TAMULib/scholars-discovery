@@ -3,7 +3,6 @@ package edu.tamu.scholars.middleware.export.utility;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -17,7 +16,7 @@ public class ZipUtility {
 
     }
 
-    public static long zipFile(ZipOutputStream zos, File file) throws FileNotFoundException, IOException {
+    public static long zipFile(ZipOutputStream zos, File file) throws IOException {
         zos.putNextEntry(new ZipEntry(file.getName()));
 
         long bytesRead = 0;
