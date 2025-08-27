@@ -8,8 +8,10 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
+import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 import edu.tamu.scholars.middleware.view.model.DisplaySectionView;
 import edu.tamu.scholars.middleware.view.model.DisplaySubsectionView;
 import edu.tamu.scholars.middleware.view.model.DisplayTabView;
@@ -23,8 +25,12 @@ import edu.tamu.scholars.middleware.view.model.repo.DisplayViewRepo;
 @Service
 public class DisplayViewDefaults extends AbstractDefaults<DisplayView, DisplayViewRepo> {
 
-    public DisplayViewDefaults() {
-        super();
+    public DisplayViewDefaults(
+        MiddlewareConfig middleware,
+        ResourcePatternResolver resolver,
+        DisplayViewRepo repo
+    ) {
+        super(middleware, resolver, repo);
     }
 
     @Override
@@ -36,28 +42,28 @@ public class DisplayViewDefaults extends AbstractDefaults<DisplayView, DisplayVi
     public List<DisplayView> read(InputStream is) throws IOException {
         List<DisplayView> views = mapper.readValue(is, new TypeReference<List<DisplayView>>() {});
         for (DisplayView view : views) {
-            if (view.getMainContentTemplate() != null && view.getMainContentTemplate().length() > 0) {
+            if (view.getMainContentTemplate() != null && !view.getMainContentTemplate().isEmpty()) {
                 try {
                     view.setMainContentTemplate(getTemplate(view.getMainContentTemplate()));
                 } catch (IOException e) {
                     logger.warn(String.format(IO_EXCEPTION_MESSAGE, view.getMainContentTemplate()));
                 }
             }
-            if (view.getLeftScanTemplate() != null && view.getLeftScanTemplate().length() > 0) {
+            if (view.getLeftScanTemplate() != null && !view.getLeftScanTemplate().isEmpty()) {
                 try {
                     view.setLeftScanTemplate(getTemplate(view.getLeftScanTemplate()));
                 } catch (IOException e) {
                     logger.warn(String.format(IO_EXCEPTION_MESSAGE, view.getLeftScanTemplate()));
                 }
             }
-            if (view.getRightScanTemplate() != null && view.getRightScanTemplate().length() > 0) {
+            if (view.getRightScanTemplate() != null && !view.getRightScanTemplate().isEmpty()) {
                 try {
                     view.setRightScanTemplate(getTemplate(view.getRightScanTemplate()));
                 } catch (IOException e) {
                     logger.warn(String.format(IO_EXCEPTION_MESSAGE, view.getRightScanTemplate()));
                 }
             }
-            if (view.getAsideTemplate() != null && view.getAsideTemplate().length() > 0) {
+            if (view.getAsideTemplate() != null && !view.getAsideTemplate().isEmpty()) {
                 try {
                     view.setAsideTemplate(getTemplate(view.getAsideTemplate()));
                 } catch (IOException e) {
@@ -80,14 +86,14 @@ public class DisplayViewDefaults extends AbstractDefaults<DisplayView, DisplayVi
             }
 
             for (ExportView exportView : view.getExportViews()) {
-                if (exportView.getContentTemplate() != null && exportView.getContentTemplate().length() > 0) {
+                if (exportView.getContentTemplate() != null && !exportView.getContentTemplate().isEmpty()) {
                     try {
                         exportView.setContentTemplate(getTemplate(exportView.getContentTemplate()));
                     } catch (IOException e) {
                         logger.warn(String.format(IO_EXCEPTION_MESSAGE, exportView.getContentTemplate()));
                     }
                 }
-                if (exportView.getHeaderTemplate() != null && exportView.getHeaderTemplate().length() > 0) {
+                if (exportView.getHeaderTemplate() != null && !exportView.getHeaderTemplate().isEmpty()) {
                     try {
                         exportView.setHeaderTemplate(getTemplate(exportView.getHeaderTemplate()));
                     } catch (IOException e) {

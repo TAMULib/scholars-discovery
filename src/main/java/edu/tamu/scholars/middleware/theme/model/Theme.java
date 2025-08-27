@@ -1,10 +1,10 @@
 package edu.tamu.scholars.middleware.theme.model;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +53,9 @@ public class Theme extends Named {
         this.home = new Home();
         this.header = new Header();
         this.footer = new Footer();
-        this.colors = new ArrayList<Style>();
-        this.variants = new ArrayList<Style>();
-        this.variables = new ArrayList<Style>();
+        this.colors = new ArrayList<>();
+        this.variants = new ArrayList<>();
+        this.variables = new ArrayList<>();
     }
 
     public Theme(String name, String organization, String organizationId) {

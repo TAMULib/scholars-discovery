@@ -12,10 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class NavbarTest {
+class NavbarTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Navbar navbar = new Navbar();
         assertNotNull(navbar);
         assertNotNull(navbar.getLinks());
@@ -25,7 +25,7 @@ public class NavbarTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Navbar navbar = new Navbar();
 
         navbar.setBrandText("Hello, World!");

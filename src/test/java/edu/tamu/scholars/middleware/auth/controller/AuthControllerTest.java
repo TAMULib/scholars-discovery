@@ -8,7 +8,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import edu.tamu.scholars.middleware.utility.ConstraintDescriptionsHelper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-public class AuthControllerTest extends UserIntegrationTest {
+class AuthControllerTest extends UserIntegrationTest {
 
     private static final ConstraintDescriptionsHelper describeUser = new ConstraintDescriptionsHelper(User.class);
 
@@ -35,7 +35,7 @@ public class AuthControllerTest extends UserIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    public void testUser() throws Exception {
+    void testUser() throws Exception {
         User user = getMockUser();
 
         user.setRole(Role.ROLE_ADMIN);
@@ -68,7 +68,7 @@ public class AuthControllerTest extends UserIntegrationTest {
     }
 
     @Test
-    public void testUserUnauthorized() throws Exception {
+    void testUserUnauthorized() throws Exception {
         // @formatter:off
         mockMvc.perform(get("/user"))
             .andExpect(status().isUnauthorized())

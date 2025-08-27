@@ -4,17 +4,15 @@ import static org.springframework.web.socket.server.support.HttpSessionHandshake
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.session.Session;
-import org.springframework.session.web.socket.config.annotation.AbstractSessionWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
@@ -26,15 +24,19 @@ import edu.tamu.scholars.middleware.messaging.handler.CustomStompSubProtocolErro
  */
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final String SPRING_SESSION_ID_ATTR_NAME = "SPRING.SESSION.ID";
 
-    @Autowired
-    private MiddlewareConfig config;
+    private final MiddlewareConfig config;
+
+    public WebSocketConfig(MiddlewareConfig config) {
+        super();
+        this.config = config;
+    }
 
     @Override
-    protected void configureStompEndpoints(StompEndpointRegistry registry) {
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.setErrorHandler(new CustomStompSubProtocolErrorHandler());
         registry
             .addEndpoint("/connect")
@@ -65,7 +67,7 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
                         WebSocketHandler wsHandler,
                         @Nullable Exception exception
                     ) {
-
+                        // nothing to do here
                     }
 
                 }

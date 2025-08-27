@@ -6,12 +6,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
-import javax.persistence.EntityNotFoundException;
-
 import java.util.Objects;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.http.ResponseEntity;
@@ -40,20 +38,20 @@ import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
 @RestController
 public class IndividualExportController implements RepresentationModelProcessor<IndividualModel> {
 
-    @Lazy
-    @Autowired
-    private IndividualRepo repo;
+    private final IndividualRepo repo;
+    private final ExporterRegistry exporterRegistry;
 
-    @Lazy
-    @Autowired
-    private ExporterRegistry exporterRegistry;
+    public IndividualExportController(@Lazy IndividualRepo repo, @Lazy ExporterRegistry exporterRegistry) {
+        this.repo = repo;
+        this.exporterRegistry = exporterRegistry;
+    }
 
     @GetMapping("/individual/{id}/export")
     public ResponseEntity<StreamingResponseBody> export(
         @PathVariable String id,
-        @RequestParam(value = "type", required = false, defaultValue = "docx") String type,
-        @RequestParam(value = "name", required = true) String name
-    ) throws UnknownExporterTypeException, IllegalArgumentException, IllegalAccessException {
+        @RequestParam(required = false, defaultValue = "docx") String type,
+        @RequestParam(required = true) String name
+    ) throws UnknownExporterTypeException, IllegalArgumentException {
 
         if (type.equals("zip")) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -133,8 +131,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
                 .withTitle(link.getTitle()));
         } catch (NullPointerException
             | UnknownExporterTypeException
-            | IllegalArgumentException
-            | IllegalAccessException e
+            | IllegalArgumentException e
         ) {
             e.printStackTrace();
         }

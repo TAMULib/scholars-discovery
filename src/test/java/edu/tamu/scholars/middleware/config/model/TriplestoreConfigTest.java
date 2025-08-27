@@ -13,10 +13,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import edu.tamu.scholars.middleware.service.TDBTriplestore;
 
 @ExtendWith(SpringExtension.class)
-public class TriplestoreConfigTest {
+class TriplestoreConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         TriplestoreConfig triplestoreConfig = new TriplestoreConfig();
         assertNotNull(triplestoreConfig);
         assertEquals(TDBTriplestore.class, triplestoreConfig.getType());
@@ -33,7 +33,7 @@ public class TriplestoreConfigTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         TriplestoreConfig triplestoreConfig = new TriplestoreConfig();
         triplestoreConfig.setType(TDBTriplestore.class);
         assertEquals(TDBTriplestore.class, triplestoreConfig.getType());

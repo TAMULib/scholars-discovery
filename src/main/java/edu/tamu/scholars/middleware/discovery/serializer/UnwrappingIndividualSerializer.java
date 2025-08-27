@@ -1,5 +1,6 @@
 package edu.tamu.scholars.middleware.discovery.serializer;
 
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ABSTRACT;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_DELIMITER;
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.NameTransformer;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import edu.tamu.scholars.middleware.discovery.annotation.FieldSource;
@@ -59,11 +61,15 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
         Individual individual,
         JsonGenerator jsonGenerator,
         SerializerProvider serializerProvider
-    ) throws IOException, JsonProcessingException {
+    ) throws IOException {
         Class<?> type = getDiscoveryDocumentType(individual.getProxy());
         Map<String, Object> content = individual.getContent();
         jsonGenerator.writeObjectField(nameTransformer.transform(ID), individual.getId());
         jsonGenerator.writeObjectField(nameTransformer.transform(CLASS), individual.getProxy());
+        String abstractText = individual.getAbstract();
+        if (StringUtils.isNotEmpty(abstractText)) {
+            jsonGenerator.writeObjectField(nameTransformer.transform(ABSTRACT), abstractText);
+        }
         for (Field field : FieldUtils.getFieldsListWithAnnotation(type, FieldSource.class)) {
             JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
             String name = nameTransformer.transform(jsonProperty != null ? jsonProperty.value() : field.getName());
@@ -146,7 +152,7 @@ public class UnwrappingIndividualSerializer extends JsonSerializer<Individual> {
                     @SuppressWarnings("unchecked")
                     List<String> nestedValues = (List<String>) nestedValue;
 
-                    if (nestedValues.size() > 0) {
+                    if (!nestedValues.isEmpty()) {
                         boolean multiValued = nestedField.getAnnotation(NestedMultiValuedProperty.class) != null;
 
                         ArrayNode array;

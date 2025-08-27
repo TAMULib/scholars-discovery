@@ -18,10 +18,6 @@ public class TokenConfig {
 
     private int pseudoRandomNumberBytes = 64;
 
-    public TokenConfig() {
-
-    }
-
     public int getServerInteger() {
         return serverInteger;
     }

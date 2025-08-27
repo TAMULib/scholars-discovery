@@ -3,6 +3,8 @@ package edu.tamu.scholars.middleware.discovery.model.repo;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.CLASS;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_PARTITIONS;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_PER_TYPE;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MOD_TIME;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.QUERY_DELIMETER;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.REQUEST_PARAM_DELIMETER;
@@ -37,7 +39,6 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -77,15 +78,17 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     @Value("${middleware.index.name}")
     private String collectionName;
 
-    @Value("${spring.data.solr.parser:edismax}")
+    @Value("${solr.parser:edismax}")
     private String defType;
 
-    @Value("${spring.data.solr.operator:AND}")
+    @Value("${solr.operator:AND}")
     private String defaultOperator;
 
-    @Lazy
-    @Autowired
-    private SolrClient solrClient;
+    private final SolrClient solrClient;
+
+    public IndividualRepo(@Lazy SolrClient solrClient) {
+        this.solrClient = solrClient;
+    }
 
     @Override
     public long count(QueryArg query, List<FilterArg> filters) {
@@ -122,14 +125,14 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty());
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(Arrays.asList(filter))
-            .withRows(Integer.MAX_VALUE);
+            .withRows(MAX_PER_TYPE);
 
         return findAllQuery(builder.query());
     }
 
     @Override
     public List<Individual> findByIdIn(List<String> ids) {
-        return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), Integer.MAX_VALUE);
+        return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
     }
 
     @Override
@@ -147,7 +150,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             return response.getResults()
                 .stream()
                 .map(Individual::from)
-                .collect(Collectors.toList());
+                .toList();
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to find documents from ids", e);
         }
@@ -186,16 +189,9 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             List<Individual> individuals = response.getResults()
                 .stream()
                 .map(Individual::from)
-                .collect(Collectors.toList());
+                .toList();
 
-            return DiscoveryFacetAndHighlightPage.from(
-                individuals,
-                response,
-                page,
-                facets,
-                highlight,
-                Individual.class
-            );
+            return DiscoveryFacetAndHighlightPage.from(individuals, response, page, facets);
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to search documents", e);
         }
@@ -203,14 +199,16 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public Flux<Individual> export(QueryArg query, List<FilterArg> filters, List<BoostArg> boosts, Sort sort) {
+        long count = this.count(query, filters);
+
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
             .withFilters(filters)
             .withBoosts(boosts)
             .withSort(sort)
-            .withRows(Integer.MAX_VALUE);
+            .withRows((int) count);
 
-        logger.info("{}: Exporting {} {} {} {}", builder.getId(), query, filters, boosts, sort);
+        logger.info("{}: Exporting {} individuals for {} {} {} {}", builder.getId(), count, query, filters, boosts, sort);
 
         return Flux.create(emitter -> {
             try {
@@ -348,21 +346,17 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         String field = quantityDistributionDescriptor.getField();
 
-        List<FacetArg> facets = new ArrayList<FacetArg>() {
-            {
-                add(FacetArg.of(
-                    field, 
-                    Optional.of("COUNT,DESC"),
-                    Optional.of(String.valueOf(Integer.MAX_VALUE)),
-                    Optional.empty(),
-                    Optional.of("STRING"),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty()
-                ));
-            }
-        };
+        List<FacetArg> facets = Arrays.asList(
+            FacetArg.of(
+                field, 
+                Optional.of("COUNT,DESC"),
+                Optional.of(String.valueOf(MAX_PARTITIONS)),
+                Optional.empty(),
+                Optional.of("STRING"),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()));
 
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
@@ -383,14 +377,13 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     private boolean validateAndCountDateField(DiscoveryNetwork dataNetwork, Object dateFieldFromDocument) {
         String year = null;
-        if (dateFieldFromDocument instanceof Date) {
-            Date publicationDate = (Date) dateFieldFromDocument;
+        if (dateFieldFromDocument instanceof Date publicationDate) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(publicationDate);
             year = String.valueOf(calendar.get(Calendar.YEAR));
-        } else if (dateFieldFromDocument instanceof String) {
+        } else if (dateFieldFromDocument instanceof String publicationYear) {
             try {
-                year = DateFormatUtility.parseYear((String) dateFieldFromDocument);
+                year = DateFormatUtility.parseYear(publicationYear);
             } catch (Exception e) {
                 logger.warn("Unable to format {}. {}", year, e.getMessage());
                 if (logger.isDebugEnabled()) {
@@ -433,7 +426,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             return solrClient.query(collectionName, query).getResults()
                 .stream()
                 .map(Individual::from)
-                .collect(Collectors.toList());
+                .toList();
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to query documents", e);
         }
@@ -447,9 +440,9 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .getResults()
                 .stream()
                 .map(Individual::from)
-                .collect(Collectors.toList());
+                .toList();
 
-            return new PageImpl<Individual>(individuals, pageable, documents.getNumFound());
+            return new PageImpl<>(individuals, pageable, documents.getNumFound());
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to query documents", e);
         }
@@ -460,7 +453,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             .filter(document::containsKey)
             .flatMap(v -> document.getFieldValues(v).stream())
             .map(v -> (String) v)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private class SolrQueryBuilder {
@@ -766,8 +759,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                     break;
                 case CONTAINS:
                     throw new UnsupportedOperationException("CONTAINS: Solr contains query not yet supported");
-                case EXPRESSION:
-                case RAW:
+                case RAW, EXPRESSION:
                     filterQuery
                         .append(value);
                     break;

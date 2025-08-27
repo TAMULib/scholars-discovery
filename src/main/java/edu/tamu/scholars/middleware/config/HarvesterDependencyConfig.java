@@ -2,7 +2,6 @@ package edu.tamu.scholars.middleware.config;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,11 +19,8 @@ import edu.tamu.scholars.middleware.service.Triplestore;
 @Profile("!test")
 public class HarvesterDependencyConfig {
 
-    @Autowired
-    private MiddlewareConfig middleware;
-
     @Bean
-    public Triplestore triplestore()
+    Triplestore triplestore(MiddlewareConfig middleware)
         throws InstantiationException, IllegalAccessException, IllegalArgumentException,
         InvocationTargetException, NoSuchMethodException, SecurityException {
 

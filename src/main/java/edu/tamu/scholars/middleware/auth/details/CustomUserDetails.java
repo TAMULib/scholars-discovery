@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +18,7 @@ import edu.tamu.scholars.middleware.auth.model.User;
 /**
  * Custom {@link UserDetails} that encapsulates the {@link User}.
  */
-public class CustomUserDetails extends User implements UserDetails {
+public class CustomUserDetails extends User implements AuthenticatedPrincipal, UserDetails {
 
     private static final long serialVersionUID = 6674712962625174202L;
 
@@ -45,15 +47,22 @@ public class CustomUserDetails extends User implements UserDetails {
     @Override
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
-        return ChronoUnit.DAYS.between(
-            getTimestamp().toInstant(),
-            Calendar.getInstance().toInstant()
-        ) < PASSWORD_DURATION_IN_DAYS;
+        return StringUtils.isBlank(getPassword())
+            || ChronoUnit.DAYS.between(
+                getTimestamp().toInstant(),
+                Calendar.getInstance().toInstant()
+            ) < PASSWORD_DURATION_IN_DAYS;
     }
 
     @Override
     @JsonIgnore
     public String getUsername() {
+        return getEmail();
+    }
+
+    @Override
+    @JsonIgnore
+    public String getName() {
         return getEmail();
     }
 

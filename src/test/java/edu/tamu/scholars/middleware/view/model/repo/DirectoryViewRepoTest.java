@@ -9,18 +9,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 import edu.tamu.scholars.middleware.view.model.DirectoryView;
 
-public class DirectoryViewRepoTest extends ViewRepoTest<DirectoryView, DirectoryViewRepo> {
+class DirectoryViewRepoTest extends ViewRepoTest<DirectoryView, DirectoryViewRepo> {
 
     @TestConfiguration
     static class DirectoryViewRepoTestContextConfiguration {
 
         @Bean
-        public MiddlewareConfig middlewareConfig() {
+        MiddlewareConfig middlewareConfig() {
             return new MiddlewareConfig();
         }
 
         @Bean
-        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder() {
             return new BCryptPasswordEncoder();
         }
 

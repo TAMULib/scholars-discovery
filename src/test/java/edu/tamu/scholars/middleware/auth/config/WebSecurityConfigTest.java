@@ -6,20 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 
-import edu.tamu.scholars.middleware.config.SolrTestConfig;
-
-@ContextConfiguration(classes = SolrTestConfig.class)
 // @formatter:off
 @SpringBootTest(properties = {
     "spring.profiles.active=default",
     "spring.h2.console.enabled=true",
-    "spring.data.solr.host=",
-    "spring.data.solr.repositories.enabled=false"
+    "solr.host=",
+    "solr.repositories.enabled=false"
 })
 // @formatter:on
-public class WebSecurityConfigTest {
+class WebSecurityConfigTest {
 
     @Value("${spring.profiles.active:default}")
     private String profile;
@@ -28,12 +24,12 @@ public class WebSecurityConfigTest {
     private boolean h2ConsoleEnabled;
 
     @Test
-    public void testDefaultProfile() {
+    void testDefaultProfile() {
         assertEquals("default", profile);
     }
 
     @Test
-    public void testH2ConsoleEnabled() {
+    void testH2ConsoleEnabled() {
         assertTrue(h2ConsoleEnabled);
     }
 

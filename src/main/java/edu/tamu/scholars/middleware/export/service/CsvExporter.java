@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -19,7 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import reactor.core.publisher.Flux;
 
 import edu.tamu.scholars.middleware.config.model.ExportConfig;
-import edu.tamu.scholars.middleware.discovery.exception.InvalidValuePathException;
 import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.export.argument.ExportArg;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
@@ -67,7 +65,7 @@ public class CsvExporter implements Exporter {
                 .build();
             List<String> properties = export.stream()
                 .map(e -> e.getField())
-                .collect(Collectors.toList());
+                .toList();
             try (CSVPrinter printer = new CSVPrinter(outputStreamWriter, format)) {
                 individuals.doOnComplete(() -> {
                     try {
@@ -81,11 +79,7 @@ public class CsvExporter implements Exporter {
                         try {
                             List<Object> row = getRow(individual, properties);
                             printer.printRecord(row.toArray(new Object[row.size()]));
-                        } catch (IllegalArgumentException
-                            | IllegalAccessException
-                            | InvalidValuePathException
-                            | IOException e
-                        ) {
+                        } catch (IllegalArgumentException | IOException e) {
                             e.printStackTrace();
                             throw new RuntimeException("Failed mapping and printing individuals", e);
                         }
@@ -103,7 +97,7 @@ public class CsvExporter implements Exporter {
     }
 
     private String[] getColumnHeaders(List<ExportArg> export) {
-        List<String> columnHeaders = new ArrayList<String>();
+        List<String> columnHeaders = new ArrayList<>();
         for (ExportArg exp : export) {
             columnHeaders.add(exp.getLabel());
         }
@@ -113,9 +107,9 @@ public class CsvExporter implements Exporter {
     private List<Object> getRow(
         Individual individual,
         List<String> properties
-    ) throws InvalidValuePathException, IllegalArgumentException, IllegalAccessException {
+    ) throws IllegalArgumentException {
         Map<String, Object> content = individual.getContent();
-        List<Object> row = new ArrayList<Object>();
+        List<Object> row = new ArrayList<>();
         for (String property : properties) {
             if (property.equals(config.getIndividualKey())) {
                 row.add(String.format("%s/%s", config.getIndividualBaseUri(), individual.getId()));
@@ -133,11 +127,10 @@ public class CsvExporter implements Exporter {
                     @SuppressWarnings("unchecked")
                     List<String> values = (List<String>) value;
 
-                    if (values.size() > 0) {
+                    if (!values.isEmpty()) {
                         data = String.join(DELIMITER, values.stream()
-                            .map(v -> (String) v)
                             .map(this::serialize)
-                            .collect(Collectors.toList()));
+                            .toList());
                     }
 
                 } else if (Date.class.isAssignableFrom(value.getClass())) {

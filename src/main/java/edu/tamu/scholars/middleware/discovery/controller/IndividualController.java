@@ -5,7 +5,7 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Arrays;
 import java.util.List;

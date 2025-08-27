@@ -54,7 +54,7 @@ public class SolrIndexer implements Indexer {
                 : field.getName();
 
             if (!fieldType.readonly() && !CREATED_FIELDS.contains(name) && CREATED_FIELDS.add(name)) {
-                Map<String, Object> fieldAttributes = new HashMap<String,Object>();
+                Map<String, Object> fieldAttributes = new HashMap<>();
 
                 fieldAttributes.put("type", fieldType.type());
                 fieldAttributes.put("stored", fieldType.stored());
@@ -98,7 +98,7 @@ public class SolrIndexer implements Indexer {
             solrClient.commit(collectionName);
             logger.info("Saved {} batch of {}", name(), individuals.size());
         } catch (Exception e) {
-            logger.debug("Error saving batch", e);
+            logger.error("Error saving batch", e);
             if (enableIndividualOnBatchFail) {
                 logger.warn("Failed to save batch of {}. Attempting individually.", name());
                 individuals.stream().forEach(this::index);

@@ -6,6 +6,7 @@ middleware:
   update-defaults: false
   allowed-origins:
   - ${ui.url}
+  - https://login.microsoftonline.com
   auth:
     password:
       duration: 180
@@ -16,6 +17,11 @@ middleware:
       server-secret: wKFkxTX54UzKx6xCYnC8WlEI2wtOy0PR
       pseudo-random-number-bytes: 64
     registration-token-duration: 14
+    saml2:
+      attributeMap:
+        firstName: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname
+        lastName: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname
+        username: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name
   mail:
     from: scholarsdiscovery@gmail.com
     replyTo: scholarsdiscovery@gmail.com
@@ -60,6 +66,18 @@ middleware:
     individualKey: individual
     individualBaseUri: ${ui.url}/display
 
+solr:
+  host: http://localhost:8983/solr
+  client: embedded
+  default-collection: scholars-discovery
+  connection-timeout: 15000
+  request-timeout: 120000
+  idle-timeout: 120000
+  max-connections-per-host: 8
+  follow-redirects: true
+  operator: OR
+  parser: edismax
+
 vivo:
   email: vivo_root@school.edu
   password:
@@ -82,20 +100,40 @@ logging:
         web: INFO
 
 server:
-  max-http-header-size: 16384
+  max-http-request-header-size: 16384
   port: 9001
   servlet:
-    contextPath:
+    context-path:
+    session:
+      cookie:
+        # this must match the domain for secure session cookies
+        domain: localhost
   tomcat:
     connection-timeout: 900000
 
 spring:
+  security:
+    saml2:
+      relyingparty:
+        registration:
+          # TAMU Azure EntraID SAML Enterprise App Registration for localhost.
+          entraid:
+            entity-id: http://localhost:9000/saml2/service-provider-metadata/entraid
+            assertingparty:
+              entity-id: https://sts.windows.net/68f381e3-46da-47b9-ba57-6f322b8f0da1/
+              metadata-uri: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/federationmetadata/2007-06/federationmetadata.xml?appid=2f88008b-4c85-496d-8b96-f5ee076d8dc8
+              singlesignon:
+                url: https://login.microsoftonline.com/68f381e3-46da-47b9-ba57-6f322b8f0da1/saml2
+                sign-request: false
+            acs:
+              location: http://localhost:9000/login/saml2/sso/entraid
   data:
     rest:
       return-body-on-create: true
       return-body-on-update: true
       max-page-size: 1000
     solr:
+      host: http://localhost:8983/solr
       operator: OR
       parser: edismax
     # NOTE: this does not work yet, https://jira.spring.io/browse/DATAREST-1290
@@ -103,7 +141,8 @@ spring:
       pageable:
         one-indexed-parameters: true
   liquibase:
-    enabled: true
+    contexts: h2
+    enabled: false
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true
@@ -121,9 +160,8 @@ spring:
     username: scholars
     password: scholars
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     generate-ddl: false
-    hibernate.ddl-auto: none
+    hibernate.ddl-auto: create-drop
     open-in-view: false
     properties:
       hibernate:
@@ -143,19 +181,13 @@ spring:
     init:
       platform: h2
 
+# spring-boot actuator endpoint: health set to true
 management:
   endpoints:
-    enabled-by-default: false
+    access:
+      default: none
     web:
+      discovery:
+        enabled: false
       exposure:
-        # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
-        include: health, info, mappings
-  endpoint:
-    health:
-      enabled: true
-      show-details: always
-      show-components: always
-    info:
-      enabled: true
-    mappings:
-      enabled: true
+        include:

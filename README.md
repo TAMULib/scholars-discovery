@@ -12,7 +12,7 @@ Existing frontend applications include:
 
 # API
 
-[Scholars Middleware REST Service API Documentation](https://tamulib.github.io/scholars-discovery/)
+[Scholars Discovery REST Service API Documentation](https://tamulib.github.io/scholars-discovery/)
 
 # Background
 
@@ -111,22 +111,21 @@ docker run -d -p 9000:9000 -e SPRING_APPLICATION_JSON="{\"spring\":{\"data\":{\"
 docker-compose up
 ```
 
-This will provide Postgres database at localhost:5432 and Solr at localhost:8983. There should be two volume mounts at relative path `pgdata` and `solr/data`.
+This will provide Postgres database at localhost:5432, pgAdmin at localhost:8080, Solr at localhost:8983/8984/8985 with Zookeeper at localhost:2181/2182/2183. There should be multiple volume mounts at relative path `pgdata`, `pgadmin`, `solr/solr1`, `solr/solr2`, `solr/solr3`, `zoo/zoo1`, `zoo/zoo2`, and `zoo/zoo3`.
+
+> `pgadmin\pgpass` and `pgadmin\servers.json` are required for authentication and initial registration of scholars postgres database.
 
 To run the `mvn spring-boot:run` command with `SPRING_APPLICATION_JSON` defined, you can use the following approach:
 
 ```
-SPRING_APPLICATION_JSON='{"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres"}' mvn spring-boot:run
+SPRING_APPLICATION_JSON='{"solr.client":"cloud"}' mvn spring-boot:run
 ```
 
 Save the following as `config.json`.
 
 ```json
 {
-  "spring.datasource.driver-class-name": "org.postgresql.Driver",
-  "spring.datasource.url": "jdbc:postgresql://localhost:5432/scholars",
-  "spring.jpa.database-platform": "org.hibernate.dialect.PostgreSQLDialect",
-  "spring.sql.init.platform": "postgres"
+  "solr.client": "cloud"
 }
 ```
 
@@ -138,21 +137,25 @@ SPRING_APPLICATION_JSON=$(cat config.json) mvn spring-boot:run
 For Windows Command Prompt, the syntax is slightly different:
 
 ```
-set SPRING_APPLICATION_JSON={"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres"} && mvn spring-boot:run
+set SPRING_APPLICATION_JSON={"solr.client":"cloud"} && mvn spring-boot:run
 ```
 
 For Windows PowerShell:
 
 ```
-$env:SPRING_APPLICATION_JSON='{"spring.datasource.driver-class-name":"org.postgresql.Driver","spring.datasource.url":"jdbc:postgresql://localhost:5432/scholars","spring.jpa.database-platform":"org.hibernate.dialect.PostgreSQLDialect","spring.sql.init.platform":"postgres"}'; mvn spring-boot:run
+$env:SPRING_APPLICATION_JSON='{"solr.client":"cloud"}'; mvn spring-boot:run
 ```
 
 ## Verify Installation
 
 With the above installation instructions, the following service endpoints can be verified:
 
-1. [HAL Explorer (9000/explorer)](http://localhost:9000)
-2. [REST API (9000/individual)](http://localhost:9000/individual)
-3. [REST API Docs (9000/api)](http://localhost:9000/api)
+1. [HAL Explorer (9000)](http://localhost:9000)
+2. [Service Documentation (9000/site)](http://localhost:9000/site) *
+3. [REST Docs (9000/site/docs)](http://localhost:9000/site/docs/index.html) *
+4. [OpanAPI Docs (9000/api-docs)](http://localhost:9000/api-docs)
+5. [Swagger UI (9000/swagger-ui)](http://localhost:9000/swagger-ui/index.html)
+
+> *Not available with `mvn spring-boot:run` alone. Run `mvn clean install site` before and do no clear target directory.
 
 The [HAL(Hypertext Application Language)](https://docs.spring.io/spring-data/rest/docs/current/reference/html/#tools.hal-explorer) explorer can be used to browse scholars-discovery resources.

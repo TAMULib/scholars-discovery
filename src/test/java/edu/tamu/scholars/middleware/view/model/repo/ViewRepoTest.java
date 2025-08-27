@@ -13,10 +13,10 @@ import edu.tamu.scholars.middleware.view.ViewIntegrationTest;
 import edu.tamu.scholars.middleware.view.model.View;
 
 @DataJpaTest
-public abstract class ViewRepoTest<V extends View, R extends ViewRepo<V>> extends ViewIntegrationTest<V, R> {
+abstract class ViewRepoTest<V extends View, R extends ViewRepo<V>> extends ViewIntegrationTest<V, R> {
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         assertEquals(0, viewRepo.count());
         V view = getMockView();
         viewRepo.save(view);
@@ -24,14 +24,14 @@ public abstract class ViewRepoTest<V extends View, R extends ViewRepo<V>> extend
     }
 
     @Test
-    public void testRead() {
+    void testRead() {
         testCreate();
         Optional<V> view = viewRepo.findByName(MOCK_VIEW_NAME);
         assertTrue(view.isPresent());
     }
 
     @Test
-    public void testUpdate() {
+    void testUpdate() {
         testCreate();
         Optional<V> view = viewRepo.findByName(MOCK_VIEW_NAME);
         view.get().setName("Scholars");
@@ -45,7 +45,7 @@ public abstract class ViewRepoTest<V extends View, R extends ViewRepo<V>> extend
     }
 
     @Test
-    public void testDelete() {
+    void testDelete() {
         testCreate();
         assertEquals(1, viewRepo.count());
         Optional<V> view = viewRepo.findByName(MOCK_VIEW_NAME);

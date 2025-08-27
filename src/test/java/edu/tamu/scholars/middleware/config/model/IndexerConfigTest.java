@@ -21,10 +21,10 @@ import edu.tamu.scholars.middleware.discovery.model.Process;
 import edu.tamu.scholars.middleware.discovery.model.Relationship;
 
 @ExtendWith(SpringExtension.class)
-public class IndexerConfigTest {
+class IndexerConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         IndexerConfig indexerConfig = new IndexerConfig();
         assertNotNull(indexerConfig);
         assertEquals(SolrIndexer.class, indexerConfig.getType());
@@ -33,14 +33,14 @@ public class IndexerConfigTest {
     }
 
     @Test
-    public void testTypeGetterSetter() {
+    void testTypeGetterSetter() {
         IndexerConfig indexerConfig = new IndexerConfig();
         indexerConfig.setType(SolrIndexer.class);
         assertEquals(SolrIndexer.class, indexerConfig.getType());
     }
 
     @Test
-    public void testDocumentTypesGetterSetter() {
+    void testDocumentTypesGetterSetter() {
         IndexerConfig indexerConfig = new IndexerConfig();
         List<Class<? extends AbstractIndexDocument>> documentTypes = new ArrayList<Class<? extends AbstractIndexDocument>>();
         documentTypes.add(Collection.class);

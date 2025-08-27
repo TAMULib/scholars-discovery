@@ -8,16 +8,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class RegistrationTest {
+class RegistrationTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Registration registration = new Registration();
         assertNotNull(registration);
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Registration registration = new Registration();
         registration.setFirstName("Bob");
         registration.setLastName("Boring");

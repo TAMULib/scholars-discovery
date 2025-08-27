@@ -32,10 +32,6 @@ public class TriplestoreConfig {
 
     private boolean annotateGeneratedSql = false;
 
-    public TriplestoreConfig() {
-
-    }
-
     public Class<? extends Triplestore> getType() {
         return type;
     }

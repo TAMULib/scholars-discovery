@@ -2,6 +2,7 @@ package edu.tamu.scholars.middleware.discovery.argument;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.DEFAULT_QUERY;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
+import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.MAX_SYNCED_IDS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class DiscoveryNetworkDescriptor {
     public SolrParams getSolrParams() {
         final Map<String, String> queryParamMap = new HashMap<>();
         queryParamMap.put("q", DEFAULT_QUERY);
-        queryParamMap.put("rows", String.valueOf(Integer.MAX_VALUE));
+        queryParamMap.put("rows", String.valueOf(MAX_SYNCED_IDS));
         queryParamMap.put("sort", getSort());
         queryParamMap.put("fl", getFieldList());
         queryParamMap.put("fq", getFilterQuery());

@@ -10,10 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class DisplayTabViewTest {
+class DisplayTabViewTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         DisplayTabView tab = new DisplayTabView();
         assertNotNull(tab);
         assertNotNull(tab.getSections());
@@ -22,7 +22,7 @@ public class DisplayTabViewTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         DisplayTabView tab = getMockDisplayTabView();
         tab.setId(1L);
 

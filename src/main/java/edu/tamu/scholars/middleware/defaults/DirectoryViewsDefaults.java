@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
+import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 import edu.tamu.scholars.middleware.view.model.DirectoryView;
 import edu.tamu.scholars.middleware.view.model.repo.DirectoryViewRepo;
 
@@ -16,8 +18,12 @@ import edu.tamu.scholars.middleware.view.model.repo.DirectoryViewRepo;
 @Service
 public class DirectoryViewsDefaults extends AbstractDefaults<DirectoryView, DirectoryViewRepo> {
 
-    public DirectoryViewsDefaults() {
-        super();
+    public DirectoryViewsDefaults(
+        MiddlewareConfig middleware,
+        ResourcePatternResolver resolver,
+        DirectoryViewRepo repo
+    ) {
+        super(middleware, resolver, repo);
     }
 
     @Override

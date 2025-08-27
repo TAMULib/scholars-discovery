@@ -13,17 +13,17 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class ExportViewTest {
+class ExportViewTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         ExportView export = new ExportView();
         assertNotNull(export);
         assertEquals(0, export.getLazyReferences().size());
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         ExportView export = new ExportView();
 
         export.setName("Test");

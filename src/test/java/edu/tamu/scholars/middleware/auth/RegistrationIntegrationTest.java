@@ -5,15 +5,14 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.token.DefaultToken;
 import org.springframework.security.core.token.Token;
 import org.springframework.security.core.token.TokenService;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import edu.tamu.scholars.middleware.auth.controller.request.Registration;
 
@@ -22,7 +21,7 @@ public abstract class RegistrationIntegrationTest extends UserIntegrationTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private TokenService tokenService;
 
     @BeforeEach

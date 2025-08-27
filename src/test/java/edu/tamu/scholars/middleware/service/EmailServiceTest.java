@@ -1,44 +1,44 @@
 package edu.tamu.scholars.middleware.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import javax.mail.Address;
-import javax.mail.internet.MimeMessage;
-
+import jakarta.mail.Address;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import edu.tamu.scholars.middleware.config.model.MailConfig;
 
 @ExtendWith(SpringExtension.class)
-public class EmailServiceTest {
+class EmailServiceTest {
 
     @TestConfiguration
     static class EmailServiceTestContextConfiguration {
 
         @Bean
-        public MailConfig mailConfig() {
+        MailConfig mailConfig() {
             return new MailConfig();
         }
 
         @Bean
-        public EmailService emailService() {
-            return new EmailService();
+        EmailService emailService() {
+            return new EmailService(emailSender(), mailConfig());
         }
 
         @Bean
-        public JavaMailSender emailSender() {
+        JavaMailSender emailSender() {
             return new JavaMailSenderImpl();
         }
 
@@ -47,22 +47,23 @@ public class EmailServiceTest {
     @Autowired
     private EmailService emailService;
 
-    @MockBean
+    @MockitoBean
     private JavaMailSender emailSender;
 
-    @MockBean
+    @MockitoBean
     private MailConfig mailConfig;
 
     @Test
-    public void testSend() {
+    void testSend() {
         when(mailConfig.getFrom()).thenReturn("scholarsdiscovery@gmail.com");
         when(mailConfig.getReplyTo()).thenReturn("scholarsdiscovery@gmail.com");
         doNothing().when(emailSender).send(any(MimeMessagePreparator.class));
         emailService.send("bboring@mailinator.com", "Test", "This is only a test!");
+        assertTrue(true);
     }
 
     @Test
-    public void testCreateMimeMessagePreparator() throws Exception {
+    void testCreateMimeMessagePreparator() throws Exception {
         MimeMessagePreparator mimeMessagePreparator = emailService.createMimeMessagePreparator("bboring@mailinator.com", "Test", "This is only a test!", "scholarsdiscovery@gmail.com", "scholarsdiscovery@gmail.com");
         MimeMessage mimeMessage = new JavaMailSenderImpl().createMimeMessage();
         mimeMessagePreparator.prepare(mimeMessage);

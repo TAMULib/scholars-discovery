@@ -57,7 +57,7 @@ public class Common extends AbstractIndexDocument {
     )
     private List<String> sameAs;
 
-    @FieldType(type = "pdate")
+    @FieldType(type = "pdate", stored = true)
     @FieldSource(
         template = "common/modTime",
         predicate = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#modTime"

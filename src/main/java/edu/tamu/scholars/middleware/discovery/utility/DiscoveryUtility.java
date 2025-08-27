@@ -37,7 +37,7 @@ public class DiscoveryUtility {
 
     private static final Map<String, Map<String, Class<?>>> TYPE_FIELDS = new HashMap<>();
 
-    private static final BidiMap<String, String> MAPPING = new DualHashBidiMap<String, String>();
+    private static final BidiMap<String, String> MAPPING = new DualHashBidiMap<>();
 
     static {
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
@@ -55,7 +55,7 @@ public class DiscoveryUtility {
                         return StringUtils.isNotEmpty(fieldType.value())
                             ? fieldType.value()
                             : field.getName();
-                    }, field -> field.getType()));
+                    }, Field::getType));
 
                 fields.put(CLASS, String.class);
                 TYPE_FIELDS.put(type.getSimpleName(), fields);
@@ -95,16 +95,16 @@ public class DiscoveryUtility {
         return fields
             .stream()
             .map(DiscoveryUtility::findProperty)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public static String processFields(String fields) {
         if (StringUtils.isNoneEmpty(fields)) {
-            String parameter = StringUtils.EMPTY;
+            StringBuilder parameter = new StringBuilder();
             for (String field : fields.split(REQUEST_PARAM_DELIMETER)) {
-                parameter += findProperty(field) + REQUEST_PARAM_DELIMETER;
+                parameter.append(findProperty(field)).append(REQUEST_PARAM_DELIMETER);
             }
-            return StringUtils.removeEnd(parameter, REQUEST_PARAM_DELIMETER);
+            return parameter.substring(0, parameter.length() - 1);
         }
         return StringUtils.EMPTY;
     }
@@ -122,7 +122,7 @@ public class DiscoveryUtility {
         if (StringUtils.isNotEmpty(actualPath)) {
             return actualPath;
         }
-        List<String> properties = new ArrayList<String>(Arrays.asList(path.split(PATH_DELIMETER_REGEX)));
+        List<String> properties = new ArrayList<>(Arrays.asList(path.split(PATH_DELIMETER_REGEX)));
         for (Class<?> type : TYPES.values()) {
             Optional<String> property = findProperty(type, properties);
             if (property.isPresent()) {

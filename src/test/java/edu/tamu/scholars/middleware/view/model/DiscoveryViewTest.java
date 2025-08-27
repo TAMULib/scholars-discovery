@@ -14,10 +14,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class DiscoveryViewTest {
+class DiscoveryViewTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         DiscoveryView discoveryView = new DiscoveryView();
         assertNotNull(discoveryView);
         assertNotNull(discoveryView.getFacets());
@@ -30,7 +30,7 @@ public class DiscoveryViewTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         DiscoveryView discoveryView = getMockDiscoveryView();
         discoveryView.setId(1L);
 

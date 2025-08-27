@@ -15,6 +15,8 @@ public class DiscoveryConstants {
 
     public static final String ABSTRACT = "abstract";
 
+    public static final String ABSTRACT_TEXT = "abstractText";
+
     public static final String TYPE = "type";
 
     public static final String SNIPPET = "snippet";
@@ -36,5 +38,17 @@ public class DiscoveryConstants {
     public static final String DISCOVERY_MODEL_PACKAGE = "edu.tamu.scholars.middleware.discovery.model";
 
     public static final String PARENTHESES_TEMPLATE = "(%s)";
+
+    public static final int MAX_PER_TYPE = 16777216;
+
+    public static final int MAX_SYNCED_IDS = 65536;
+
+    public static final int MAX_PARTITIONS = 16384;
+
+    public static final int MAX_LIMIT = 268435456;
+
+    private DiscoveryConstants() {
+
+    }
 
 }

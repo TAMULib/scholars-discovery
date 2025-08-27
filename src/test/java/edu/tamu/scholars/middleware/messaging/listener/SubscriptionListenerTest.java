@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 @ExtendWith(SpringExtension.class)
-public class SubscriptionListenerTest {
+class SubscriptionListenerTest {
 
     private static Message<?> message;
 
@@ -29,12 +29,12 @@ public class SubscriptionListenerTest {
     static class SubscriptionListenerTestContextConfiguration {
 
         @Bean
-        public SubscriptionListener subscriptionListener() {
-            return new SubscriptionListener();
+        SubscriptionListener subscriptionListener() {
+            return new SubscriptionListener(clientOutboundChannel());
         }
 
         @Bean
-        public AbstractSubscribableChannel clientOutboundChannel() {
+        AbstractSubscribableChannel clientOutboundChannel() {
             return new AbstractSubscribableChannel() {
                 @Override
                 protected boolean sendInternal(Message<?> message, long timeout) {
@@ -47,12 +47,12 @@ public class SubscriptionListenerTest {
     }
 
     @Test
-    public void testOnApplicationEvent() {
+    void testOnApplicationEvent() {
 
         StompHeaderAccessor accessor = getMockStompHeaderAccessor(SUBSCRIBE);
 
-        Message<byte[]> message = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
-        SessionSubscribeEvent event = new SessionSubscribeEvent("This is only a test!", message);
+        Message<byte[]> subMessage = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
+        SessionSubscribeEvent event = new SessionSubscribeEvent("This is only a test!", subMessage);
 
         subscriptionListener.onApplicationEvent(event);
 

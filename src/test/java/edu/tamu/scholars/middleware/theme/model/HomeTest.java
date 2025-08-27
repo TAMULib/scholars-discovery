@@ -13,10 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class HomeTest {
+class HomeTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Home home = new Home();
         assertNotNull(home);
         assertNotNull(home.getVariables());
@@ -25,7 +25,7 @@ public class HomeTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Home home = new Home();
 
         home.setHeroesNavigable(true);

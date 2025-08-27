@@ -41,7 +41,7 @@ public class IndexHealthIndicator implements HealthIndicator {
     public Health health() {
         Health.Builder status = Health.down();
 
-        Map<String, Object> details = new HashMap<String, Object>();
+        Map<String, Object> details = new HashMap<>();
 
         try {
             SolrPingResponse response = solrClient.ping(index.getName());

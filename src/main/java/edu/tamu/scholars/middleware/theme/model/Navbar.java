@@ -1,9 +1,9 @@
 package edu.tamu.scholars.middleware.theme.model;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embeddable;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embeddable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +33,8 @@ public class Navbar {
 
     public Navbar() {
         super();
-        this.links = new ArrayList<Link>();
-        this.variables = new ArrayList<Style>();
+        this.links = new ArrayList<>();
+        this.variables = new ArrayList<>();
     }
 
     public String getBrandText() {

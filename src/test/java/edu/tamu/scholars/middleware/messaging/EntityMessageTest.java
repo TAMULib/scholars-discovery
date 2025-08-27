@@ -13,10 +13,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import edu.tamu.scholars.middleware.theme.model.Theme;
 
 @ExtendWith(SpringExtension.class)
-public class EntityMessageTest {
+class EntityMessageTest {
 
     @Test
-    public void testCreateEntityMessage() {
+    void testCreateEntityMessage() {
         CreateEntityMessage<Theme> createThemeMessage = new CreateEntityMessage<Theme>(new Theme("Test", "Testing Unlimited", "n000001"));
         assertNotNull(createThemeMessage);
         assertEquals("Test", createThemeMessage.getEntity().getName());
@@ -26,7 +26,7 @@ public class EntityMessageTest {
     }
 
     @Test
-    public void testUpdateEntityMessage() {
+    void testUpdateEntityMessage() {
         UpdateEntityMessage<Theme> updateThemeMessage = new UpdateEntityMessage<Theme>(new Theme("Test", "Testing Unlimited", "n000001"));
         assertNotNull(updateThemeMessage);
         assertEquals("Test", updateThemeMessage.getEntity().getName());
@@ -36,7 +36,7 @@ public class EntityMessageTest {
     }
 
     @Test
-    public void testDeleteMessage() {
+    void testDeleteMessage() {
         DeleteEntityMessage<String> deleteThemeMessage = new DeleteEntityMessage<String>("Test");
         assertNotNull(deleteThemeMessage);
         assertEquals("Test", deleteThemeMessage.getIdentifier());

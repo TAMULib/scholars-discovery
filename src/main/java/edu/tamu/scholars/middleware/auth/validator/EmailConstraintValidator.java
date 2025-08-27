@@ -1,9 +1,7 @@
 package edu.tamu.scholars.middleware.auth.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import edu.tamu.scholars.middleware.auth.annotation.AvailableEmail;
 import edu.tamu.scholars.middleware.auth.model.User;
@@ -14,8 +12,11 @@ import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
  */
 public class EmailConstraintValidator implements ConstraintValidator<AvailableEmail, String> {
 
-    @Autowired
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
+
+    public EmailConstraintValidator(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {

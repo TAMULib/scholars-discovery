@@ -12,10 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class HeaderTest {
+class HeaderTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Header header = new Header();
         assertNotNull(header);
         assertNotNull(header.getNavbar());
@@ -25,7 +25,7 @@ public class HeaderTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Header header = new Header();
 
         Navbar navbar = new Navbar();

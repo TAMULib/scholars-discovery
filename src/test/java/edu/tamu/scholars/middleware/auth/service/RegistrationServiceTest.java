@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,21 +21,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.token.Token;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import edu.tamu.scholars.middleware.auth.RegistrationIntegrationTest;
 import edu.tamu.scholars.middleware.auth.config.AuthConfig;
@@ -41,58 +40,70 @@ import edu.tamu.scholars.middleware.auth.controller.exception.RegistrationExcept
 import edu.tamu.scholars.middleware.auth.controller.request.Registration;
 import edu.tamu.scholars.middleware.auth.model.Role;
 import edu.tamu.scholars.middleware.auth.model.User;
+import edu.tamu.scholars.middleware.auth.model.repo.UserRepo;
+import edu.tamu.scholars.middleware.config.model.MailConfig;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 import edu.tamu.scholars.middleware.service.EmailService;
 import edu.tamu.scholars.middleware.service.TemplateService;
 
 @DataJpaTest
-public class RegistrationServiceTest extends RegistrationIntegrationTest {
+class RegistrationServiceTest extends RegistrationIntegrationTest {
 
     @TestConfiguration
     static class RegistrationServiceTestContextConfiguration {
 
         @Bean
-        public MiddlewareConfig middlewareConfig() {
+        MiddlewareConfig middlewareConfig() {
             return new MiddlewareConfig();
         }
 
         @Bean
-        public AuthConfig authConfig() {
+        AuthConfig authConfig() {
             return new AuthConfig();
         }
 
         @Bean
-        public RegistrationService registrationService() {
-            return new RegistrationService();
+        RegistrationService registrationService(UserRepo userRepo, TokenService tokenService, EmailService emailService) {
+            return new RegistrationService(
+                this.authConfig(),
+                userRepo,
+                this.templateService(),
+                emailService,
+                tokenService,
+                this.messageSource(),
+                this.objectMapper(),
+                this.passwordEncoder(),
+                this.simpMessageTemplate()
+            );
         }
 
         @Bean
-        public TemplateService templateService() {
+        TemplateService templateService() {
             return new TemplateService();
         }
 
         @Bean
-        public EmailService emailService() {
-            return new EmailService();
+        EmailService emailService(JavaMailSender emailSender, MailConfig mailConfig) {
+            return new EmailService(emailSender, mailConfig);
         }
 
         @Bean
-        public MessageSource messageSource() {
+        MessageSource messageSource() {
             return new ResourceBundleMessageSource();
         }
 
         @Bean
-        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder passwordEncoder() {
             return new BCryptPasswordEncoder();
         }
 
         @Bean
-        public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper() {
             return new ObjectMapper();
         }
 
         @Bean
-        public SimpMessagingTemplate simpMessageTemplate() {
+        SimpMessagingTemplate simpMessageTemplate() {
             return new SimpMessagingTemplate(new MessageChannel() {
                 @Override
                 public boolean send(Message<?> message, long timeout) {
@@ -109,17 +120,17 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     @Autowired
     private RegistrationService registrationService;
 
-    @MockBean
+    @MockitoBean
     private TemplateService templateService;
 
-    @MockBean
+    @MockitoBean
     private EmailService emailService;
 
-    @MockBean
+    @MockitoBean
     private MessageSource messageSource;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         doReturn(Files.contentOf(new File("src/test/resources/mock/templates/email/confirm-registration.html"), Charset.defaultCharset())).when(templateService).templateConfirmRegistrationMessage(any(Registration.class), any(String.class));
         doNothing().when(emailService).send(any(String.class), any(String.class), any(String.class));
         doReturn("VIVO Scholars Discovery Confirm Registration").when(messageSource).getMessage("RegistrationService.confirmationEmailSubject", new Object[0], LocaleContextHolder.getLocale());
@@ -132,14 +143,14 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCreateFirstThreeUsers() throws RegistrationException, IOException {
+    void testCreateFirstThreeUsers() throws RegistrationException, IOException {
         createUser("Bob", "Boring", "bboring@mailinator.com", "HelloWorld123~");
         createUser("Eddie", "Exciting", "eexciting@mailinator.com", "HelloWorld123!");
         createUser("Carl", "Calamitous", "ccalamitous@mailinator.com", "HelloWorld123@");
     }
 
     @Test
-    public void testSubmit() throws JsonProcessingException {
+    void testSubmit() throws JsonProcessingException {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration = registrationService.submit(registration);
         assertEquals("bboring@mailinator.com", registration.getEmail());
@@ -148,18 +159,17 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public Token testConfirm() throws JsonParseException, JsonMappingException, IOException, RegistrationException {
+    void testConfirm() throws IOException, RegistrationException {
         testSubmit();
         Token token = getMockToken("Bob", "Boring", "bboring@mailinator.com");
         Registration registration = registrationService.confirm(token.getKey());
         assertEquals("bboring@mailinator.com", registration.getEmail());
         assertEquals("Bob", registration.getFirstName());
         assertEquals("Boring", registration.getLastName());
-        return token;
     }
 
     @Test
-    public void testConfirmEmailNotFound() throws JsonParseException, JsonMappingException, IOException, RegistrationException {
+    void testConfirmEmailNotFound() throws IOException {
         Token token = getMockToken("Bob", "Boring", "bboring@mailinator.com");
         assertThrows(RegistrationException.class, () -> {
             registrationService.confirm(token.getKey());
@@ -167,15 +177,15 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testConfirmEmailAlreadyConfirmed() throws JsonParseException, JsonMappingException, IOException, RegistrationException {
-        Token token = testConfirm();
+    void testConfirmEmailAlreadyConfirmed() throws IOException {
+        Token token = testToken();
         assertThrows(RegistrationException.class, () -> {
             registrationService.confirm(token.getKey());
         });
     }
 
     @Test
-    public void testConfirmTokenExpired() throws JsonParseException, JsonMappingException, IOException, RegistrationException {
+    void testConfirmTokenExpired() throws IOException {
         testSubmit();
         authConfig.setRegistrationTokenDuration(0);
         Token token = getMockToken("Bob", "Boring", "bboring@mailinator.com");
@@ -185,8 +195,11 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public Token testComplete() throws IOException, RegistrationException {
-        Token token = testConfirm();
+    void testComplete() throws IOException, RegistrationException {
+        Token token = testToken();
+
+        testConfirm();
+
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HelloWorld123!");
         registration.setConfirm("HelloWorld123!");
@@ -200,11 +213,10 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
         assertTrue(user.isConfirmed());
         assertTrue(user.isActive());
         assertTrue(user.isEnabled());
-        return token;
     }
 
     @Test
-    public void testCompleteWithoutSubmit() throws IOException, RegistrationException {
+    void testCompleteWithoutSubmit() throws IOException {
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HelloWorld123!");
         registration.setConfirm("HelloWorld123!");
@@ -215,7 +227,7 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     }
 
     @Test
-    public void testCompleteWithoutConfirm() throws JsonParseException, JsonMappingException, IOException, RegistrationException {
+    void testCompleteWithoutConfirm() throws IOException {
         testSubmit();
         Registration registration = getMockRegistration("Bob", "Boring", "bboring@mailinator.com");
         registration.setPassword("HelloWorld123!");
@@ -227,7 +239,7 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
     }
 
     @AfterEach
-    public void cleanup() {
+    void cleanup() {
         authConfig.setRegistrationTokenDuration(14);
     }
 
@@ -265,6 +277,10 @@ public class RegistrationServiceTest extends RegistrationIntegrationTest {
         assertTrue(user.isConfirmed());
         assertTrue(user.isActive());
         assertTrue(user.isEnabled());
+    }
+
+    private Token testToken() throws IOException {
+        return getMockToken("Bob", "Boring", "bboring@mailinator.com");
     }
 
 }

@@ -334,10 +334,6 @@ public class Relationship extends Common {
     )
     private List<String> participatesIn;
 
-    public Relationship() {
-
-    }
-
     public String getTitle() {
         return title;
     }

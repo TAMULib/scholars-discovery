@@ -7,6 +7,10 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 
 public class MessagingTestUtility {
 
+    private MessagingTestUtility() {
+
+    }
+
     public static StompHeaderAccessor getMockStompHeaderAccessor(StompCommand command) {
         StompHeaderAccessor accessor = StompHeaderAccessor.create(command);
         accessor.setReceipt("receipt-0");

@@ -190,10 +190,6 @@ public class Concept extends Common {
     )
     private String createdDate;
 
-    public Concept() {
-
-    }
-
     public String getName() {
         return name;
     }

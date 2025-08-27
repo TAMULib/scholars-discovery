@@ -8,16 +8,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class LinkTest {
+class LinkTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Link link = new Link();
         assertNotNull(link);
     }
 
     @Test
-    public void testBasicConstructor() {
+    void testBasicConstructor() {
         Link link = new Link("Home", "http://localhost:4200");
         assertNotNull(link);
         assertEquals("Home", link.getLabel());
@@ -25,7 +25,7 @@ public class LinkTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Link link = new Link();
         link.setLabel("Home");
         link.setUri("http://localhost:4200");

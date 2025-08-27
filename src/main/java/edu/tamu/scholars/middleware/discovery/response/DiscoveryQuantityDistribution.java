@@ -50,14 +50,8 @@ public class DiscoveryQuantityDistribution {
             .getFacetField(field)
             .getValues()
             .stream()
-            .sorted(new Comparator<Count>() {
-
-                @Override
-                public int compare(Count o1, Count o2) {
-                    return Long.compare(o2.getCount(), o1.getCount());
-                }
-
-            }).forEach(value -> {
+            .sorted((o1, o2) -> Long.compare(o2.getCount(), o1.getCount()))
+            .forEach(value -> {
                 distribution.add(new Slice(value.getName(), value.getCount()));
                 total += value.getCount();
             });

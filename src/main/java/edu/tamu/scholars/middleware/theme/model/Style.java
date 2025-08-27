@@ -1,7 +1,7 @@
 package edu.tamu.scholars.middleware.theme.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 /**
  * 
@@ -9,10 +9,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Style {
 
-    @Column
+    @Column(name = "\"key\"")
     private String key;
 
-    @Column
+    @Column(name = "\"value\"")
     private String value;
 
     public Style() {

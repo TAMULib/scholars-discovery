@@ -8,10 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class AuthConfigTest {
+class AuthConfigTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         AuthConfig authConfig = new AuthConfig();
         assertNotNull(authConfig);
         assertEquals(14, authConfig.getRegistrationTokenDuration());
@@ -28,7 +28,7 @@ public class AuthConfigTest {
     }
 
     @Test
-    public void testAuthGetterSetter() {
+    void testAuthGetterSetter() {
         AuthConfig authConfig = new AuthConfig();
         PasswordConfig passwordConfig = new PasswordConfig();
         passwordConfig.setDuration(90);
@@ -41,7 +41,7 @@ public class AuthConfigTest {
     }
 
     @Test
-    public void testTokenGetterSetter() {
+    void testTokenGetterSetter() {
         AuthConfig authConfig = new AuthConfig();
         TokenConfig tokenConfig = new TokenConfig();
         tokenConfig.setServerInteger(2);
@@ -54,7 +54,7 @@ public class AuthConfigTest {
     }
 
     @Test
-    public void testRegistrationTokenDurationGetterSetter() {
+    void testRegistrationTokenDurationGetterSetter() {
         AuthConfig authConfig = new AuthConfig();
         authConfig.setRegistrationTokenDuration(3);
         assertEquals(3, authConfig.getRegistrationTokenDuration());

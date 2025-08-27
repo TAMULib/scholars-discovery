@@ -18,10 +18,6 @@ public class PasswordConfig {
 
     private int maxLength = 64;
 
-    public PasswordConfig() {
-
-    }
-
     public int getDuration() {
         return duration;
     }

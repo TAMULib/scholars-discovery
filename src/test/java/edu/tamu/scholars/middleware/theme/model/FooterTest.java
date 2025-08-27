@@ -12,10 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class FooterTest {
+class FooterTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Footer footer = new Footer();
         assertNotNull(footer);
         assertNotNull(footer.getLinks());
@@ -25,7 +25,7 @@ public class FooterTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Footer footer = new Footer();
         List<Link> footerLinks = new ArrayList<Link>();
         footerLinks.add(new Link("About", "http://localhost:4200/about"));

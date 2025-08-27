@@ -5,6 +5,7 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -16,18 +17,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.expression.SecurityExpressionHandler;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.core.token.TokenService;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider.ResponseToken;
+import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.session.web.http.CookieSerializer;
@@ -43,15 +50,22 @@ import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationEntryPoint;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationFailureHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomAuthenticationSuccessHandler;
 import edu.tamu.scholars.middleware.auth.handler.CustomLogoutSuccessHandler;
+import edu.tamu.scholars.middleware.auth.handler.CustomSaml2AuthenticationSuccessHandler;
+import edu.tamu.scholars.middleware.auth.service.ExternalAuthUserDetailsService;
 import edu.tamu.scholars.middleware.config.model.MiddlewareConfig;
 
 /**
- * 
+ * Spring Web Security autoconfiguration.
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
+
+    private final MiddlewareConfig config;
+    private final ObjectMapper objectMapper;
+    private final MessageSource messageSource;
+    private final ExternalAuthUserDetailsService<Saml2Authentication> userDetailsService;
 
     @Value("${spring.profiles.active:default}")
     private String profile;
@@ -59,23 +73,23 @@ public class WebSecurityConfig {
     @Value("${spring.h2.console.enabled:false}")
     private boolean h2ConsoleEnabled;
 
-    @Value("${server.servlet.session.cookie.domain:library.tamu.edu}")
+    @Value("${server.servlet.session.cookie.domain:localhost}")
     private String domainName;
 
-    @Autowired
-    private MiddlewareConfig config;
+    @Value("${ui.url:http://localhost:4200}")
+    protected String uiUrl;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private SecurityExpressionHandler<FilterInvocation> securityExpressionHandler;
+    public WebSecurityConfig(
+        MiddlewareConfig config,
+        ObjectMapper objectMapper,
+        MessageSource messageSource,
+        ExternalAuthUserDetailsService<Saml2Authentication> userDetailsService
+    ) {
+        this.config = config;
+        this.objectMapper = objectMapper;
+        this.messageSource = messageSource;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -83,12 +97,12 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public TokenService tokenService() throws NoSuchAlgorithmException {
+    TokenService tokenService() throws NoSuchAlgorithmException {
         KeyBasedPersistenceTokenService tokenService = new KeyBasedPersistenceTokenService();
         TokenConfig tokenConfig = config.getAuth().getToken();
         tokenService.setServerInteger(tokenConfig.getServerInteger());
@@ -99,7 +113,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    CorsFilter corsFilter() {
         CorsConfiguration embedConfig = new CorsConfiguration();
         embedConfig.setAllowCredentials(true);
         embedConfig.setAllowedOriginPatterns(Arrays.asList("*"));
@@ -112,6 +126,18 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/displayViews/search/findByName", embedConfig);
         source.registerCorsConfiguration("/individual/{id}", embedConfig);
         source.registerCorsConfiguration("/individual/search/findByIdIn", embedConfig);
+
+        CorsConfiguration samlConfig = new CorsConfiguration();
+        samlConfig.setAllowCredentials(true);
+        samlConfig.setAllowedOriginPatterns(Arrays.asList("*"));
+        samlConfig.addAllowedHeader("*");
+        samlConfig.addAllowedMethod("POST");
+        samlConfig.addAllowedMethod("GET");
+        samlConfig.addAllowedMethod("OPTIONS");
+        samlConfig.setMaxAge(3600L);
+
+        source.registerCorsConfiguration("/login/saml2/**", samlConfig);
+        source.registerCorsConfiguration("/saml2/**", samlConfig);
 
         CorsConfiguration primaryConfig = new CorsConfiguration();
         primaryConfig.setAllowCredentials(true);
@@ -138,37 +164,62 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public LocalValidatorFactoryBean getValidator() {
+    LocalValidatorFactoryBean getValidator() {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource);
         return bean;
     }
 
     @Bean
-    public CookieSerializer cookieSerializer() {
+    CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-        serializer.setUseHttpOnlyCookie(false);
-        serializer.setUseSecureCookie(false);
+        serializer.setUseHttpOnlyCookie(true);
+        serializer.setUseSecureCookie(true);
+        serializer.setSameSite("None"); // Add this line
         serializer.setCookiePath("/");
         serializer.setCookieName("SESSION");
         serializer.setDomainName(domainName);
         return serializer;
     }
 
+    
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
+
+        Converter<ResponseToken, Saml2Authentication> delegate =
+            OpenSaml4AuthenticationProvider.createDefaultResponseAuthenticationConverter();
+
+        authenticationProvider.setResponseAuthenticationConverter(responseToken -> {
+
+            final Saml2Authentication authentication = delegate.convert(responseToken);
+
+            final String username = authentication.getName();
+            UserDetails userDetails;
+            try {
+                userDetails = userDetailsService.loadUserByUsername(username);
+            } catch(UsernameNotFoundException e) {
+                userDetails = userDetailsService.loadUserFromExternalAuthentication(authentication);
+            }
+
+            return new Saml2Authentication((AuthenticatedPrincipal) userDetails, responseToken.getToken().getSaml2Response(), userDetails.getAuthorities());
+        });
+
         if (enableH2Console()) {
             // NOTE: permit all access to h2console
             http
-                .headers()
-                    .frameOptions()
-                        .sameOrigin();
+                .headers(headers -> headers
+                    .frameOptions(FrameOptionsConfig::sameOrigin)
+                );
         }
-        http
-            .authorizeRequests()
-                .expressionHandler(securityExpressionHandler)
 
-                .antMatchers(PATCH,
+        http
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/login/saml2/**", "/saml2/**")
+                    .permitAll()
+                
+                .requestMatchers(PATCH,
                     "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
@@ -177,15 +228,13 @@ public class WebSecurityConfig {
                     )
                     .hasRole("ADMIN")
 
-                .antMatchers(PATCH,
-                    "/users/{id}"
-                ).hasRole("SUPER_ADMIN")
+                .requestMatchers(PATCH, "/users/{id}")
+                    .hasRole("SUPER_ADMIN")
 
-                .antMatchers(POST,
-                    "/registration")
+                .requestMatchers(POST, "/registration")
                     .permitAll()
 
-                .antMatchers(POST,
+                .requestMatchers(POST,
                     "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
@@ -193,13 +242,13 @@ public class WebSecurityConfig {
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(POST, "/users/{id}")
+                .requestMatchers(POST, "/users/{id}")
                     .denyAll()
 
-                .antMatchers(PUT, "/registration")
+                .requestMatchers(PUT, "/registration")
                     .permitAll()
 
-                .antMatchers(PUT,
+                .requestMatchers(PUT,
                     "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
@@ -207,20 +256,20 @@ public class WebSecurityConfig {
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(PUT, "/users/{id}")
+                .requestMatchers(PUT, "/users/{id}")
                     .denyAll()
 
-                .antMatchers(GET, "/user")
+                .requestMatchers(GET, "/user")
                     .hasRole("USER")
 
-                .antMatchers(GET,
+                .requestMatchers(GET,
                     "/users",
                     "/users/{id}",
                     "/themes",
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(DELETE,
+                .requestMatchers(DELETE,
                     "/dataAndAnalyticsViews/{id}",
                     "/directoryViews/{id}",
                     "/discoveryViews/{id}",
@@ -228,40 +277,38 @@ public class WebSecurityConfig {
                     "/themes/{id}")
                     .hasRole("ADMIN")
 
-                .antMatchers(DELETE, "/users/{id}")
+                .requestMatchers(DELETE, "/users/{id}")
                     .hasRole("SUPER_ADMIN")
 
                 .anyRequest()
                     .permitAll()
+            )
+            .saml2Login(saml2 -> saml2
+                .authenticationManager(new ProviderManager(authenticationProvider))
+                .successHandler(new CustomSaml2AuthenticationSuccessHandler(uiUrl))
+                .failureHandler(authenticationFailureHandler()))
+            .formLogin(form -> form
+                .successHandler(authenticationSuccessHandler())
+                .failureHandler(authenticationFailureHandler())
+                .permitAll())
+            .saml2Logout(withDefaults())
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .deleteCookies("SESSION")
+                .invalidateHttpSession(true)
+                .logoutSuccessHandler(logoutSuccessHandler())
+                .permitAll())
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(authenticationEntryPoint())
+                .accessDeniedHandler(accessDeniedHandler()))
+            .requestCache(cache -> cache
+                .requestCache(nullRequestCache()))
+            .cors(withDefaults())
+            .csrf(csrf -> csrf.disable());
 
-            .and()
-                .formLogin()
-                    .successHandler(authenticationSuccessHandler())
-                    .failureHandler(authenticationFailureHandler())
-                        .permitAll()
-            .and()
-                .logout()
-                    .deleteCookies("SESSION")
-                    .invalidateHttpSession(true)
-                    .logoutSuccessHandler(logoutSuccessHandler())
-                        .permitAll()
-            .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint())
-                    .accessDeniedHandler(accessDeniedHandler())
-            .and()
-                .requestCache()
-                    .requestCache(nullRequestCache())
-            .and()
-                .cors()
-            .and()
-                .csrf()
-                    .disable();
-
-        http.sessionManagement()
-            .sessionFixation()
-                .migrateSession()
-            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+        http.sessionManagement(session -> session
+            .sessionFixation().migrateSession()
+            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
         return http.build();
     }
