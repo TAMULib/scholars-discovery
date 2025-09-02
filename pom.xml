@@ -13,7 +13,7 @@
 
   <groupId>edu.tamu.scholars</groupId>
   <artifactId>middleware</artifactId>
-  <version>1.5.0-SNAPSHOT</version>
+  <version>1.5.0-RC1</version>
 
   <name>VIVO Scholars Discovery</name>
   <description>VIVO Scholars Discovery - A Spring Boot application for managing scholarly individual, directory, discovery and data and analytic views.</description>
