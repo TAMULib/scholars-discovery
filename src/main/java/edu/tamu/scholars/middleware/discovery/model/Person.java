@@ -1135,7 +1135,7 @@ public class Person extends Common {
     @FieldType(type = "tokenized_string")
     @FieldSource(
         template = "person/middleName",
-        predicate = "http://www.w3.org/2006/vcard/ns#middleName"
+        predicate = "http://vivoweb.org/ontology/core#middleName"
     )
     private String middleName;
 
