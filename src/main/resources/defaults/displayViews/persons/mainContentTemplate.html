@@ -1,5 +1,9 @@
 <div>
-  <span class="h3">{{lastName}}{{#if firstName}}, {{firstName}}{{/if}}{{#if middleName}} {{middleName}}{{/if}}</span>
+  {{#allNamesPresent lastName firstName middleName}}
+    <span class="h6">{{lastName}}, {{firstName}} {{middleName}}</span>
+  {{else}}
+    <span class="h2">{{name}}</span>
+  {{/allNamesPresent}}
   <span class="ml-1"><a href="{{serviceUrl}}/individual/{{id}}" title="View individual in JSON format" download target="_blank"><i class="fa fa-link"><span class="d-none">individual record</span></i></a></span>
   <div class="mt-1">
     <span class="h5">{{preferredTitle}}</span>
