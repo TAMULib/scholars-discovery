@@ -1,8 +1,8 @@
 <div>
   {{#allNamesPresent lastName firstName middleName}}
-    <span class="h6">{{lastName}}, {{firstName}} {{middleName}}</span>
+    <span class="h3">{{lastName}}, {{firstName}} {{middleName}}</span>
   {{else}}
-    <span class="h2">{{name}}</span>
+    <span class="h3">{{name}}</span>
   {{/allNamesPresent}}
   <span class="ml-1"><a href="{{serviceUrl}}/individual/{{id}}" title="View individual in JSON format" download target="_blank"><i class="fa fa-link"><span class="d-none">individual record</span></i></a></span>
   <div class="mt-1">
