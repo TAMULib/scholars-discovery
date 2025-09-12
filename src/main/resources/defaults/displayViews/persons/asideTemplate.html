@@ -83,29 +83,54 @@
   {{/if}}
 
   {{#if orcidId}}
-  <div>
-    <hr />
-    <div>
-      <span class="label">ORCID</span>
-    </div>
-    <div>
-      <span><a href="https://orcid.org/{{orcidId}}" target="_blank">{{orcidId}}</a></span>
-    </div>
+   <span class="label">Researcher Identifiers</span
+  {{/if}}
+
+  {{#if orcidId}}
+  <div class="id-row">
+      <a href="https://orcid.org/{{orcidId}}" target="_blank" class="id-link">
+        <img src="/assets/images/icons/orcid.svg" alt="orcidId" class="id-icon" />
+        <span class="id-value">{{orcidId}}</span>
+      </a>
   </div>
   {{/if}}
 
+  {{#if orcidId}}
+  <div class="id-row">
+    <a href="https://www.webofscience.com/wos/author/record/{{isiResearcherId}}" target="_blank" class="id-link">
+      <img src="/assets/images/icons/dimensionsicon.svg" alt="dimensionsId" class="id-icon" />
+      <span class="id-value">Test dimensionsId</span>
+    </a>
+  </div>
+  {{/if}}
+
+  {{#if isiResearcherId}}
+  <div class="id-row">
+    <a href="https://www.webofscience.com/wos/author/record/{{isiResearcherId}}" target="_blank" class="id-link">
+      <img src="/assets/images/icons/researcherid.svg" alt="researcherId" class="id-icon" />
+      <span class="id-value">{{isiResearcherId}}</span>
+    </a>
+  </div>
+  {{/if}}
+
+  {{#if scopusId}}
+    <div class="id-row">
+      <a href="https://www.scopus.com/authid/detail.uri?authorId={{scopusId}}" target="_blank" class="id-link">
+        <img src="/assets/images/icons/scopusId.ico" alt="scopusId" class="id-icon" />
+        <span class="id-value">{{scopusId}}</span>
+      </a>
+    </div>
+  {{/if}}
+
   {{#if twitter}}
-  <div>
-    <hr />
-    <div>
+    <div class="id-row">
       <span class="label x-logo">
         <svg viewBox="0 0 32 32" aria-hidden="true" class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1r8g8re r-emhjjp r-1acpoxo"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></g></svg>
       </span>
+      <span class="id-value">
+        <a href="https://x.com/{{twitter}}" target="_blank">{{twitter}}</a>
+      </span>
     </div>
-    <div>
-      <span><a href="https://x.com/{{twitter}}" target="_blank">{{twitter}}</a></span>
-    </div>
-  </div>
   {{/if}}
 
   {{#if futureResearchIdeas}}
@@ -167,7 +192,30 @@
     margin: auto;
   }
 
+  .id-row {
+    display: flex;
+    align-items: center;
+  }
+
   .x-logo svg {
     height: 23px;
   }
+
+  .id-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .id-link img {
+    height: 23px;
+  }
+
+  .id-value {
+    margin-left: 4px;
+    text-decoration: none;
+    color: inherit;
+  }
+
 </style>
