@@ -113,6 +113,15 @@
     </div>
   {{/if}}
 
+  {{#if dimensionsId}}
+    <div class="id-row">
+      <a href="https://app.dimensions.ai/details/entities/publication/author/{{dimensionsId}}" target="_blank" class="id-link">
+        <img src="/assets/images/icons/dimensionsicon.svg" alt="dimensionsId" class="id-icon" />
+        <span class="id-value">{{dimensionsId}}</span>
+      </a>
+    </div>
+  {{/if}}
+
   {{#if twitter}}
     <div class="id-row">
       <a href="https://x.com/{{twitter}}" target="_blank" target="_blank" class="id-link">
@@ -122,16 +131,6 @@
         <span class="id-value">{{twitter}}</span>
       </a>
     </div>
-  {{/if}}
-
-
-  {{#if dimensionsId}}
-  <div class="id-row">
-      <a href="https://app.dimensions.ai/details/entities/publication/author/{{dimensionsId}}" target="_blank" class="id-link">
-        <img src="/assets/images/icons/dimensionsicon.svg" alt="dimensionsId" class="id-icon" />
-        <span class="id-value">{{dimensionsId}}</span>
-      </a>
-  </div>
   {{/if}}
 
   {{#if futureResearchIdeas}}
