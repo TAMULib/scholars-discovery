@@ -1051,6 +1051,10 @@
           template: "defaults/displayViews/persons/identity/healthCareProviderId.html"
           field: healthCareProviderId
           order: 13
+        - name: Dimensions ID
+          template: "defaults/displayViews/persons/identity/dimensionsId.html"
+          field: dimensionsId
+          order: 14
     - name: Contact
       sections:
         - name: Email

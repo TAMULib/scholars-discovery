@@ -1106,6 +1106,13 @@ public class Person extends Common {
 
     @FieldType(type = "whole_string")
     @FieldSource(
+        template = "person/dimensionsId",
+        predicate = "http://vivo.library.tamu.edu/ontology/TAMU#DimensionsID"
+    )
+    private String dimensionsId;
+
+    @FieldType(type = "whole_string")
+    @FieldSource(
         template = "person/scopusId",
         predicate = "http://vivoweb.org/ontology/core#scopusId"
     )

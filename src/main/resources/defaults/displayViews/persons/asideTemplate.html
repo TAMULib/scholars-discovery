@@ -82,8 +82,11 @@
   </div>
   {{/if}}
 
-  <div class="id-row">
-    <span class="label">Researcher Identifiers</span>
+  <div>
+    <hr />
+    <div class="id-row">
+      <span class="label">Researcher Identifiers</span>
+    </div>
   </div>
 
   {{#if orcidId}}
@@ -109,6 +112,15 @@
       <a href="https://www.scopus.com/authid/detail.uri?authorId={{scopusId}}" target="_blank" class="id-link">
         <img src="/assets/images/icons/scopusId.ico" alt="scopusId" class="id-icon" />
         <span class="id-value">{{scopusId}}</span>
+      </a>
+    </div>
+  {{/if}}
+
+  {{#if dimensionsId}}
+    <div class="id-row">
+      <a href="https://app.dimensions.ai/details/entities/publication/author/{{dimensionsId}}" target="_blank" class="id-link">
+        <img src="/assets/images/icons/dimensionsicon.svg" alt="dimensionsId" class="id-icon" />
+        <span class="id-value">{{dimensionsId}}</span>
       </a>
     </div>
   {{/if}}
@@ -186,16 +198,20 @@
   .id-row {
     display: flex;
     align-items: center;
+    line-height: 2.2em;;
   }
 
   .x-logo svg, .id-link img {
-    height: 23px;
+    height: 25px;
+    width: 25px;
+    margin-right: 5px;
   }
 
   .id-link {
     display: flex;
     text-decoration: none;
-    color: inherit;
+    color: var(--link-color);
+    margin-left: 3px;
   }
 
   .id-value {
