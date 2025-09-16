@@ -1,7 +1,7 @@
-PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
 
 CONSTRUCT {
-    <{{uri}}> vcard:middleName ?middleName .
+    <{{uri}}> vivo:middleName ?middleName .
 } WHERE {
-    <{{uri}}> vcard:middleName ?middleName .
+    <{{uri}}> vivo:middleName ?middleName .
 }
