@@ -2402,6 +2402,14 @@ public class Person extends Common {
         this.isiResearcherId = isiResearcherId;
     }
 
+    public String getDimensionsId() {
+        return dimensionsId;
+    }
+
+    public void setDimensionsId(String dimensionsId) {
+        this.dimensionsId = dimensionsId;
+    }
+
     public String getScopusId() {
         return scopusId;
     }
