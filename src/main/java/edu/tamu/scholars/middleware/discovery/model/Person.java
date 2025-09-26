@@ -1106,6 +1106,13 @@ public class Person extends Common {
 
     @FieldType(type = "whole_string")
     @FieldSource(
+        template = "person/dimensionsId",
+        predicate = "http://vivo.library.tamu.edu/ontology/TAMU#DimensionsID"
+    )
+    private String dimensionsId;
+
+    @FieldType(type = "whole_string")
+    @FieldSource(
         template = "person/scopusId",
         predicate = "http://vivoweb.org/ontology/core#scopusId"
     )
@@ -1135,7 +1142,7 @@ public class Person extends Common {
     @FieldType(type = "tokenized_string")
     @FieldSource(
         template = "person/middleName",
-        predicate = "http://www.w3.org/2006/vcard/ns#middleName"
+        predicate = "http://vivoweb.org/ontology/core#middleName"
     )
     private String middleName;
 
@@ -2393,6 +2400,14 @@ public class Person extends Common {
 
     public void setIsiResearcherId(String isiResearcherId) {
         this.isiResearcherId = isiResearcherId;
+    }
+
+    public String getDimensionsId() {
+        return dimensionsId;
+    }
+
+    public void setDimensionsId(String dimensionsId) {
+        this.dimensionsId = dimensionsId;
     }
 
     public String getScopusId() {

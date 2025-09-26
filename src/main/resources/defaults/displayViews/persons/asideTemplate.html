@@ -82,30 +82,60 @@
   </div>
   {{/if}}
 
-  {{#if orcidId}}
+  {{#if (or orcidId isiResearcherId scopusId dimensionsId twitter)}}
   <div>
     <hr />
-    <div>
-      <span class="label">ORCID</span>
-    </div>
-    <div>
-      <span><a href="https://orcid.org/{{orcidId}}" target="_blank">{{orcidId}}</a></span>
+    <div class="id-row">
+      <span class="label">Researcher Identifiers</span>
     </div>
   </div>
   {{/if}}
 
-  {{#if twitter}}
-  <div>
-    <hr />
-    <div>
-      <span class="label x-logo">
-        <svg viewBox="0 0 32 32" aria-hidden="true" class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1r8g8re r-emhjjp r-1acpoxo"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></g></svg>
-      </span>
-    </div>
-    <div>
-      <span><a href="https://x.com/{{twitter}}" target="_blank">{{twitter}}</a></span>
-    </div>
+  {{#if orcidId}}
+  <div class="id-row">
+      <a href="https://orcid.org/{{orcidId}}" target="_blank" class="id-link">
+        <img src="assets/images/icons/orcid.svg" alt="orcidId" class="id-icon" />
+        <span class="id-value">{{orcidId}}</span>
+      </a>
   </div>
+  {{/if}}
+
+  {{#if isiResearcherId}}
+  <div class="id-row">
+    <a href="https://www.webofscience.com/wos/author/record/{{isiResearcherId}}" target="_blank" class="id-link">
+      <img src="assets/images/icons/researcherid.svg" alt="researcherId" class="id-icon" />
+      <span class="id-value">{{isiResearcherId}}</span>
+    </a>
+  </div>
+  {{/if}}
+
+  {{#if scopusId}}
+    <div class="id-row">
+      <a href="https://www.scopus.com/authid/detail.uri?authorId={{scopusId}}" target="_blank" class="id-link">
+        <img src="assets/images/icons/scopusId.ico" alt="scopusId" class="id-icon" />
+        <span class="id-value">{{scopusId}}</span>
+      </a>
+    </div>
+  {{/if}}
+
+  {{#if dimensionsId}}
+    <div class="id-row">
+      <a href="https://app.dimensions.ai/details/entities/publication/author/{{dimensionsId}}" target="_blank" class="id-link">
+        <img src="assets/images/icons/dimensionsicon.svg" alt="dimensionsId" class="id-icon" />
+        <span class="id-value">{{dimensionsId}}</span>
+      </a>
+    </div>
+  {{/if}}
+
+  {{#if twitter}}
+    <div class="id-row">
+      <a href="https://x.com/{{twitter}}" target="_blank" class="id-link">
+        <span class="label x-logo">
+          <svg viewBox="0 0 32 32" aria-hidden="true" class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1r8g8re r-emhjjp r-1acpoxo"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></g></svg>
+        </span>
+        <span class="id-value">{{twitter}}</span>
+      </a>
+    </div>
   {{/if}}
 
   {{#if futureResearchIdeas}}
@@ -167,7 +197,30 @@
     margin: auto;
   }
 
-  .x-logo svg {
-    height: 23px;
+  .id-row {
+    display: flex;
+    align-items: center;
+    line-height: 2.2em;;
   }
+
+  .x-logo svg, .id-link img {
+    height: 25px;
+    width: 25px;
+    margin-right: 5px;
+  }
+
+  .id-link {
+    display: flex;
+    text-decoration: none;
+    color: var(--link-color);
+    margin-left: 3px;
+  }
+
+  .id-value {
+    margin-left: 4px;
+    margin-top: -2px;
+    text-decoration: none;
+    color: inherit;
+  }
+
 </style>
