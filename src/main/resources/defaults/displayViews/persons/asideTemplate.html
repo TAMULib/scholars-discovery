@@ -82,12 +82,14 @@
   </div>
   {{/if}}
 
+  {{#if (or orcidId isiResearcherId scopusId dimensionsId twitter)}}
   <div>
     <hr />
     <div class="id-row">
       <span class="label">Researcher Identifiers</span>
     </div>
   </div>
+  {{/if}}
 
   {{#if orcidId}}
   <div class="id-row">
