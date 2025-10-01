@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -17,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -44,6 +47,33 @@ public class IndividualExportController implements RepresentationModelProcessor<
     public IndividualExportController(@Lazy IndividualRepo repo, @Lazy ExporterRegistry exporterRegistry) {
         this.repo = repo;
         this.exporterRegistry = exporterRegistry;
+    }
+
+    @PostMapping("/individual/{orgId}/export")
+    public ResponseEntity<StreamingResponseBody> exportMultiple(
+        @PathVariable String orgId,
+        @RequestBody List<String> ids,
+        @RequestParam(required = false, defaultValue = "docx") String type,
+        @RequestParam(required = true) String name
+        ) throws UnknownExporterTypeException, IllegalArgumentException {
+
+            if ("zip".equals(type)) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (Objects.isNull(authentication) || !this.isAdmin(authentication)) {
+              throw new UnauthorizedExportException("Must be administrator to use zip exporter.");
+            }
+            }
+
+            List<Individual> individuals = repo.findIndividualsByIds(ids);
+            if (individuals.isEmpty()) {
+                throw new EntityNotFoundException("No individuals found for the provided IDs");
+            }
+
+            Exporter exporter = exporterRegistry.getExporter(type);
+            return ResponseEntity.ok()
+                .header(CONTENT_DISPOSITION, exporter.contentDisposition(name))
+                .header(CONTENT_TYPE, exporter.contentType())
+                .body(exporter.streamIndividualsByOrg(individuals, name));
     }
 
     @GetMapping("/individual/{id}/export")
@@ -80,13 +110,13 @@ public class IndividualExportController implements RepresentationModelProcessor<
                 addResource(resource, new ResourceLink(
                     individual,
                     "docx",
-                     "Single Page Bio", 
-                     "Individual single page bio export"));
+                    "Single Page Bio",
+                    "Individual single page bio export"));
                 addResource(resource, new ResourceLink(
                     individual,
                     "docx",
-                     "Profile Summary", 
-                     "Individual profile summary export"));
+                    "Profile Summary",
+                    "Individual profile summary export"));
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip", 
