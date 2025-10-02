@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -152,7 +153,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
                 link.getIndividual().getId(),
                 link.getType(),
                 link.getName(),
-                null
+                new ArrayList<>()
             )).withRel(link.getName().toLowerCase().replace(" ", "_"))
                 .withTitle(link.getTitle()));
         } catch (NullPointerException

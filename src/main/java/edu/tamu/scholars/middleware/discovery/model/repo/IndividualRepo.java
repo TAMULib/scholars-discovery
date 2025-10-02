@@ -137,7 +137,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     public List<Individual> findIndividualsByIds(List<String> ids) {
-        if (ids == null || ids.isEmpty()) {
+        if (ids.isEmpty()) {
             return new ArrayList<>();
         }
 
