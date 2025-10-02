@@ -27,7 +27,7 @@ public interface Exporter {
         ));
     }
 
-    public default StreamingResponseBody streamIndividualsByOrg(List<Individual> individuals, String name) {
+    public default StreamingResponseBody streamIndividuals(List<Individual> individuals, String name) {
       throw new UnsupportedExporterTypeException(
         String.format("%s exporter does not support exporting multiple individuals", type())
       );

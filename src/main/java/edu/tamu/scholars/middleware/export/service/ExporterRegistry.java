@@ -24,7 +24,6 @@ public class ExporterRegistry {
             return exporter.get();
         }
 
-        exporters.forEach(e -> System.out.println("Registered exporter: " + e.type()));
         throw new UnknownExporterTypeException(String.format("Could not find exporter of type %s", type));
     }
 

@@ -16,10 +16,10 @@ import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -49,57 +49,47 @@ public class IndividualExportController implements RepresentationModelProcessor<
         this.exporterRegistry = exporterRegistry;
     }
 
-    @PostMapping("/individual/{orgId}/export")
-    public ResponseEntity<StreamingResponseBody> exportMultiple(
-        @PathVariable String orgId,
-        @RequestBody List<String> ids,
-        @RequestParam(required = false, defaultValue = "docx") String type,
-        @RequestParam(required = true) String name
-        ) throws UnknownExporterTypeException, IllegalArgumentException {
-
-            if ("zip".equals(type)) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (Objects.isNull(authentication) || !this.isAdmin(authentication)) {
-              throw new UnauthorizedExportException("Must be administrator to use zip exporter.");
-            }
-            }
-
-            List<Individual> individuals = repo.findIndividualsByIds(ids);
-            if (individuals.isEmpty()) {
-                throw new EntityNotFoundException("No individuals found for the provided IDs");
-            }
-
-            Exporter exporter = exporterRegistry.getExporter(type);
-            return ResponseEntity.ok()
-                .header(CONTENT_DISPOSITION, exporter.contentDisposition(name))
-                .header(CONTENT_TYPE, exporter.contentType())
-                .body(exporter.streamIndividualsByOrg(individuals, name));
-    }
-
-    @GetMapping("/individual/{id}/export")
+    @RequestMapping(
+        value = "/individual/{id}/export",
+        method = {RequestMethod.GET, RequestMethod.POST}
+        )
     public ResponseEntity<StreamingResponseBody> export(
         @PathVariable String id,
         @RequestParam(required = false, defaultValue = "docx") String type,
-        @RequestParam(required = true) String name
+        @RequestParam(required = true) String name,
+        @RequestBody(required = false) List<String> ids
     ) throws UnknownExporterTypeException, IllegalArgumentException {
 
-        if (type.equals("zip")) {
+        if ("zip".equals(type)) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (Objects.isNull(authentication) || !this.isAdmin(authentication)) {
                 throw new UnauthorizedExportException("Must be administrator to use zip exporter.");
             }
         }
 
-        Optional<Individual> individual = repo.findById(id);
-        if (individual.isPresent()) {
-            Individual document = individual.get();
+        List<Individual> individuals;
+        if( !ids.isEmpty() ) {
+            individuals = repo.findIndividualsByIds(ids);
+            if (individuals.isEmpty()) {
+                throw new EntityNotFoundException("No individuals found for the provided IDs");
+            }
             Exporter exporter = exporterRegistry.getExporter(type);
             return ResponseEntity.ok()
-                .header(CONTENT_DISPOSITION, exporter.contentDisposition(normalizeExportFilename(document)))
+                .header(CONTENT_DISPOSITION, exporter.contentDisposition(name))
                 .header(CONTENT_TYPE, exporter.contentType())
-                .body(exporter.streamIndividual(document, name));
+                .body(exporter.streamIndividuals(individuals, name));
+        } else {
+            Optional<Individual> individual = repo.findById(id);
+            if (individual.isPresent()) {
+                Individual document = individual.get();
+                Exporter exporter = exporterRegistry.getExporter(type);
+                return ResponseEntity.ok()
+                    .header(CONTENT_DISPOSITION, exporter.contentDisposition(normalizeExportFilename(document)))
+                    .header(CONTENT_TYPE, exporter.contentType())
+                    .body(exporter.streamIndividual(document, name));
+            }
+            throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
         }
-        throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
     }
 
     @Override
@@ -156,7 +146,8 @@ public class IndividualExportController implements RepresentationModelProcessor<
             resource.add(linkTo(methodOn(this.getClass()).export(
                 link.getIndividual().getId(),
                 link.getType(),
-                link.getName()
+                link.getName(),
+                null
             )).withRel(link.getName().toLowerCase().replace(" ", "_"))
                 .withTitle(link.getTitle()));
         } catch (NullPointerException
