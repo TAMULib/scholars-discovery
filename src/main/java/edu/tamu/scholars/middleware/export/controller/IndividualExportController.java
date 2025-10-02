@@ -60,7 +60,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
         @RequestBody(required = false) List<String> ids
     ) throws UnknownExporterTypeException, IllegalArgumentException {
 
-        if ("zip".equals(type)) {
+        if (type.equals("zip")) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (Objects.isNull(authentication) || !this.isAdmin(authentication)) {
                 throw new UnauthorizedExportException("Must be administrator to use zip exporter.");
