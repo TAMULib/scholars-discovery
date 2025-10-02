@@ -126,11 +126,9 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/displayViews/search/findByName", embedConfig);
         source.registerCorsConfiguration("/individual/{id}", embedConfig);
-        source.registerCorsConfiguration("/individual/search/findByIdIn", embedConfig);
-        source.registerCorsConfiguration("/individual/*/export", embedConfig);
-        source.registerCorsConfiguration("/individual/{id}", embedConfig);
+        source.registerCorsConfiguration("/individual/{id}/export", embedConfig);
         source.registerCorsConfiguration("/individual/export", embedConfig);
-        source.registerCorsConfiguration("/individual/**", embedConfig);
+        source.registerCorsConfiguration("/individual/search/findByIdIn", embedConfig);
 
         CorsConfiguration samlConfig = new CorsConfiguration();
         samlConfig.setAllowCredentials(true);

@@ -58,55 +58,10 @@ public class ZipDocxExporter extends AbstractDocxExporter {
     public StreamingResponseBody streamIndividuals(List<Individual> individuals, String name) {
 
         return outputStream -> {
+
             try (ZipOutputStream zos = new ZipOutputStream(outputStream)) {
                 for (Individual individual : individuals) {
-                    final List<String> type = individual.getType();
-                    Optional<DisplayView> displayView = displayViewRepo.findByTypesIn(type);
-
-                    if (!displayView.isPresent()) {
-                        throw new ExportException(String.format("Could not find a display view for types: %s", String.join(", ", type)));
-                    }
-
-                    Optional<ExportView> exportView = displayView.get()
-                        .getExportViews()
-                        .stream()
-                        .filter(ev -> ev.getName().equalsIgnoreCase(name))
-                        .findAny();
-
-                    if (!exportView.isPresent()) {
-                        throw new ExportException(String.format("%s display view does not have an export view named %s", displayView.get().getName(), name));
-                    }
-
-                    final ObjectNode node = mapper.valueToTree(individual);
-
-                    Optional<ExportFieldView> multipleReference = Optional.ofNullable(exportView.get().getMultipleReference());
-                    List<Individual> referenceDocuments = new ArrayList<>();
-
-                    if (multipleReference.isPresent()) {
-                        JsonNode reference = node.get(multipleReference.get().getField());
-                        List<String> ids = extractIds(reference);
-                        referenceDocuments.addAll(fetchLazyReference(multipleReference.get(), ids));
-                    } else {
-                        referenceDocuments.add(individual);
-                    }
-
-                    for (AbstractIndexDocument refDoc : referenceDocuments) {
-                        final ObjectNode refNode = mapper.valueToTree(refDoc);
-                        String filename = FilenameUtility.normalizeExportFilename(refDoc);
-                        File refDocFile = File.createTempFile(filename, ".docx");
-
-                        try {
-
-                            final WordprocessingMLPackage pkg = createDocx(refNode, exportView.get());
-
-                            pkg.save(refDocFile, Docx4J.FLAG_SAVE_ZIP_FILE);
-
-                            ZipUtility.zipFile(zos, refDocFile);
-
-                        } catch (IOException | JAXBException | Docx4JException e) {
-                            throw new ExportException(e.getMessage());
-                        }
-                    }
+                    processIndividualExport(individual, name, zos);
                 }
             }
         };
@@ -114,14 +69,27 @@ public class ZipDocxExporter extends AbstractDocxExporter {
 
     @Override
     public StreamingResponseBody streamIndividual(Individual individual, String name) {
-        final List<String> type = individual.getType();
 
+        return outputStream -> {
+
+            File zipFile = File.createTempFile(individual.getId(), ".zip");
+
+            try (
+                FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
+                ZipOutputStream zos = new ZipOutputStream(outputStream)
+            ) {
+                processIndividualExport(individual, name, zos);
+            }
+        };
+    }
+
+    private void processIndividualExport(Individual individual, String name, ZipOutputStream zos) throws IOException {
+
+        final List<String> type = individual.getType();
         Optional<DisplayView> displayView = displayViewRepo.findByTypesIn(type);
 
         if (!displayView.isPresent()) {
-            throw new ExportException(String.format(
-                "Could not find a display view for types: %s", String.join(", ", type))
-            );
+            throw new ExportException(String.format("Could not find a display view for types: %s", String.join(", ", type)));
         }
 
         Optional<ExportView> exportView = displayView.get()
@@ -131,54 +99,42 @@ public class ZipDocxExporter extends AbstractDocxExporter {
             .findAny();
 
         if (!exportView.isPresent()) {
-            throw new ExportException(String.format(
-                "%s display view does not have an export view named %s", displayView.get().getName(), name)
-            );
+            throw new ExportException(String.format("%s display view does not have an export view named %s", displayView.get().getName(), name));
         }
 
-        return outputStream -> {
+        final ObjectNode node = mapper.valueToTree(individual);
 
-            final ObjectNode node = mapper.valueToTree(individual);
+        Optional<ExportFieldView> multipleReference = Optional.ofNullable(exportView.get().getMultipleReference());
 
-            Optional<ExportFieldView> multipleReference = Optional.ofNullable(exportView.get().getMultipleReference());
+        List<Individual> referenceDocuments = new ArrayList<>();
 
-            List<Individual> referenceDocuments = new ArrayList<>();
+        if (multipleReference.isPresent()) {
+            JsonNode reference = node.get(multipleReference.get().getField());
+            List<String> ids = extractIds(reference);
+            referenceDocuments.addAll(fetchLazyReference(multipleReference.get(), ids));
+        } else {
+            referenceDocuments.add(individual);
+        }
 
-            if (multipleReference.isPresent()) {
-                JsonNode reference = node.get(multipleReference.get().getField());
-                List<String> ids = extractIds(reference);
-                referenceDocuments.addAll(fetchLazyReference(multipleReference.get(), ids));
-            } else {
-                referenceDocuments.add(individual);
+        for (AbstractIndexDocument refDoc : referenceDocuments) {
+            final ObjectNode refNode = mapper.valueToTree(refDoc);
+
+            String filename = FilenameUtility.normalizeExportFilename(refDoc);
+
+            File refDocFile = File.createTempFile(filename, ".docx");
+
+            try {
+
+                final WordprocessingMLPackage pkg = createDocx(refNode, exportView.get());
+
+                pkg.save(refDocFile, Docx4J.FLAG_SAVE_ZIP_FILE);
+
+                ZipUtility.zipFile(zos, refDocFile);
+
+            } catch (IOException | JAXBException | Docx4JException e) {
+                throw new ExportException(e.getMessage());
             }
-
-            File zipFile = File.createTempFile(individual.getId(), ".zip");
-
-            try (
-                FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
-                ZipOutputStream zos = new ZipOutputStream(outputStream)
-            ) {
-                for (AbstractIndexDocument refDoc : referenceDocuments) {
-                    final ObjectNode refNode = mapper.valueToTree(refDoc);
-
-                    String filename = FilenameUtility.normalizeExportFilename(refDoc);
-
-                    File refDocFile = File.createTempFile(filename, ".docx");
-
-                    try {
-
-                        final WordprocessingMLPackage pkg = createDocx(refNode, exportView.get());
-
-                        pkg.save(refDocFile, Docx4J.FLAG_SAVE_ZIP_FILE);
-
-                        ZipUtility.zipFile(zos, refDocFile);
-
-                    } catch (IOException | JAXBException | Docx4JException e) {
-                        throw new ExportException(e.getMessage());
-                    }
-                }
-            }
-        };
+        }
     }
 
 }

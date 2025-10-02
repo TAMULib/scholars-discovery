@@ -60,6 +60,10 @@ public class IndividualExportController implements RepresentationModelProcessor<
         @RequestBody(required = false) List<String> ids
     ) throws UnknownExporterTypeException, IllegalArgumentException {
 
+        List<Individual> individuals;
+        String contentName;
+        StreamingResponseBody responseBody;
+
         if (type.equals("zip")) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (Objects.isNull(authentication) || !this.isAdmin(authentication)) {
@@ -67,29 +71,30 @@ public class IndividualExportController implements RepresentationModelProcessor<
             }
         }
 
-        List<Individual> individuals;
+        Exporter exporter = exporterRegistry.getExporter(type);
+
         if( !ids.isEmpty() ) {
             individuals = repo.findIndividualsByIds(ids);
             if (individuals.isEmpty()) {
                 throw new EntityNotFoundException("No individuals found for the provided IDs");
             }
-            Exporter exporter = exporterRegistry.getExporter(type);
-            return ResponseEntity.ok()
-                .header(CONTENT_DISPOSITION, exporter.contentDisposition(name))
-                .header(CONTENT_TYPE, exporter.contentType())
-                .body(exporter.streamIndividuals(individuals, name));
+            contentName = name;
+            responseBody = exporter.streamIndividuals(individuals, name);
         } else {
             Optional<Individual> individual = repo.findById(id);
-            if (individual.isPresent()) {
-                Individual document = individual.get();
-                Exporter exporter = exporterRegistry.getExporter(type);
-                return ResponseEntity.ok()
-                    .header(CONTENT_DISPOSITION, exporter.contentDisposition(normalizeExportFilename(document)))
-                    .header(CONTENT_TYPE, exporter.contentType())
-                    .body(exporter.streamIndividual(document, name));
+
+            if (!individual.isPresent()) {
+                throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
             }
-            throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
+            Individual document = individual.get();
+            contentName = normalizeExportFilename(document);
+            responseBody = exporter.streamIndividual(document, name);
         }
+
+        return ResponseEntity.ok()
+            .header(CONTENT_DISPOSITION, exporter.contentDisposition(contentName))
+            .header(CONTENT_TYPE, exporter.contentType())
+            .body(responseBody);
     }
 
     @Override
