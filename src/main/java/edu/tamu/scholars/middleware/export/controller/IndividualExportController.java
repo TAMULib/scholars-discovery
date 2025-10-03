@@ -65,37 +65,42 @@ public class IndividualExportController implements RepresentationModelProcessor<
         String contentName;
         StreamingResponseBody responseBody;
 
-        if (type.equals("zip")) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (Objects.isNull(authentication) || !this.isAdmin(authentication)) {
-                throw new UnauthorizedExportException("Must be administrator to use zip exporter.");
+        try {
+            if (type.equals("zip")) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                if (Objects.isNull(authentication) || !this.isAdmin(authentication)) {
+                    throw new UnauthorizedExportException("Must be administrator to use zip exporter.");
+                }
             }
+
+            Exporter exporter = exporterRegistry.getExporter(type);
+
+            if (ids != null && !ids.isEmpty()) {
+                individuals = repo.findIndividualsByIds(ids);
+                if (individuals.isEmpty()) {
+                    throw new EntityNotFoundException("No individuals found for the provided IDs");
+                }
+                contentName = name;
+                responseBody = exporter.streamIndividuals(individuals, name);
+            } else {
+                Optional<Individual> individual = repo.findById(id);
+
+                if (!individual.isPresent()) {
+                    throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
+                }
+                Individual document = individual.get();
+                contentName = normalizeExportFilename(document);
+                responseBody = exporter.streamIndividual(document, name);
+            }
+
+            return ResponseEntity.ok()
+                .header(CONTENT_DISPOSITION, exporter.contentDisposition(contentName))
+                .header(CONTENT_TYPE, exporter.contentType())
+                .body(responseBody);
+            
+        } catch(NullPointerException npe) {
+            throw new IllegalArgumentException("Request body for IDs is missing or invalid", npe);
         }
-
-        Exporter exporter = exporterRegistry.getExporter(type);
-
-        if( !ids.isEmpty() ) {
-            individuals = repo.findIndividualsByIds(ids);
-            if (individuals.isEmpty()) {
-                throw new EntityNotFoundException("No individuals found for the provided IDs");
-            }
-            contentName = name;
-            responseBody = exporter.streamIndividuals(individuals, name);
-        } else {
-            Optional<Individual> individual = repo.findById(id);
-
-            if (!individual.isPresent()) {
-                throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
-            }
-            Individual document = individual.get();
-            contentName = normalizeExportFilename(document);
-            responseBody = exporter.streamIndividual(document, name);
-        }
-
-        return ResponseEntity.ok()
-            .header(CONTENT_DISPOSITION, exporter.contentDisposition(contentName))
-            .header(CONTENT_TYPE, exporter.contentType())
-            .body(responseBody);
     }
 
     @Override
