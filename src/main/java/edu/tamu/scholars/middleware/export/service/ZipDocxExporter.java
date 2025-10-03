@@ -76,7 +76,7 @@ public class ZipDocxExporter extends AbstractDocxExporter {
 
             try (
                 FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
-                ZipOutputStream zos = new ZipOutputStream(outputStream)
+                ZipOutputStream zos = new ZipOutputStream(outputStream);
             ) {
                 processIndividualExport(individual, name, zos);
             }
