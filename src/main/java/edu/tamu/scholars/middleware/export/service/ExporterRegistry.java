@@ -20,8 +20,10 @@ public class ExporterRegistry {
     public Exporter getExporter(String type) throws UnknownExporterTypeException {
         Optional<Exporter> exporter = exporters.stream().filter(e -> e.type().equals(type)).findAny();
         if (exporter.isPresent()) {
+
             return exporter.get();
         }
+
         throw new UnknownExporterTypeException(String.format("Could not find exporter of type %s", type));
     }
 
