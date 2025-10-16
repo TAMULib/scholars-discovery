@@ -24,14 +24,27 @@
     <div class="mt-1">
       <span class="label">Research Areas:</span>
     </div>
-    <div>
-      {{#each researchAreas}}
-      <span><a href="display/{{id}}">{{#if ./snippet}}{{{./snippet}}}{{else}}{{label}}</a>{{/if}}{{#if @last}}{{else}}, {{/if}}</span>
-      {{/each}}
+    <div class="research-areas-wrapper">
+      <div class="research-areas-list clamped">
+        {{#each researchAreas}}
+          <span><a href="display/{{id}}">{{#if ./snippet}}{{{./snippet}}}{{else}}{{label}}</a>{{/if}}{{#if @last}}{{else}}, {{/if}}</span>
+        {{/each}}
+      </div>
+      <a href="#" class="toggle-more" onclick="toggleResearchAreas(this); return false;">more...</a>
     </div>
     {{/if}}
   </div>
 </div>
+
+<script>
+  function toggleResearchAreas(link) {
+    const wrapper = link.closest('.research-areas-wrapper');
+    const list = wrapper.querySelector('.research-areas-list');
+    const isExpanded = list.classList.toggle('expanded');
+    link.textContent = isExpanded ? 'less' : 'more...';
+  }
+</script>
+
 <style>
   .highlighted em {
     background: #E3D67F;
