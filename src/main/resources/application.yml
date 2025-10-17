@@ -194,7 +194,7 @@ spring:
     password: scholars
   jpa:
     generate-ddl: false
-    hibernate.ddl-auto: none
+    hibernate.ddl-auto: update
     open-in-view: false
     properties:
       hibernate:

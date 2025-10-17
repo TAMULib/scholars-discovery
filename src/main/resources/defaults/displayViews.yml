@@ -1393,6 +1393,13 @@
           template: "defaults/displayViews/organizations/affiliation/people.html"
           field: people
           order: 2
+          export:
+            - columnHeader: First name
+              valuePath: firstName
+            - columnHeader: Last name
+              valuePath: lastName
+            - columnHeader: Preferred title
+              valuePath: preferredTitle
           subsections:
             - name: People
               field: people
