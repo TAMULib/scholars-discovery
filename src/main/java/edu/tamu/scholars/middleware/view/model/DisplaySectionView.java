@@ -5,7 +5,6 @@ import java.util.List;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -67,16 +66,7 @@ public class DisplaySectionView extends FieldView {
         requiredFields = new ArrayList<String>();
         lazyReferences = new ArrayList<String>();
         subsections = new ArrayList<DisplaySubsectionView>();
-        exportViews = new ArrayList<>();
         export = new ArrayList<ExportField>();
-    }
-
-    public List<ExportView> getExportViews() {
-        return exportViews;
-    }
-
-    public void setExportViews(List<ExportView> exportViews) {
-        this.exportViews = exportViews;
     }
 
     public List<ExportField> getExport() {
