@@ -1398,10 +1398,10 @@
               valuePath: emailAddress
             - columnHeader: Orcid
               valuePath: orcidId
-            - columnHeader: First name
-              valuePath: firstName
             - columnHeader: Last name
               valuePath: lastName
+            - columnHeader: First name
+              valuePath: firstName
             - columnHeader: Preferred title
               valuePath: preferredTitle
             - columnHeader: Position
