@@ -12,11 +12,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.persistence.EntityNotFoundException;
+import reactor.core.publisher.Flux;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,11 +33,12 @@ import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.model.Organization;
 import edu.tamu.scholars.middleware.discovery.model.Person;
 import edu.tamu.scholars.middleware.discovery.model.repo.IndividualRepo;
+import edu.tamu.scholars.middleware.export.argument.ExportArg;
 import edu.tamu.scholars.middleware.export.exception.UnauthorizedExportException;
 import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
 import edu.tamu.scholars.middleware.export.service.Exporter;
 import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
-
+import edu.tamu.scholars.middleware.export.utility.FilenameUtility;
 
 /**
  * REST controller for exporting
@@ -101,6 +105,21 @@ public class IndividualExportController implements RepresentationModelProcessor<
         } catch(NullPointerException npe) {
             throw new IllegalArgumentException("Request body for IDs is missing or invalid", npe);
         }
+    }
+
+    @GetMapping("/individual/{id}/export/section")
+    public ResponseEntity<StreamingResponseBody> exportSectionPeople(
+        @PathVariable String id,
+        @RequestParam(required = false, defaultValue = "People") String view,
+        @RequestParam(required = false, defaultValue = "csv") String type,
+        List<ExportArg> export
+        ) throws UnknownExporterTypeException {
+            Exporter exporter = exporterRegistry.getExporter(type);
+            List<Individual> individuals = repo.findPeopleByOrganizationId(id);
+            return ResponseEntity.ok()
+                .header(CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.normalizeExportFilename(view)))
+                .header(CONTENT_TYPE, exporter.contentType())
+                .body(exporter.streamIndividuals(Flux.fromIterable(individuals), export));
     }
 
     @Override

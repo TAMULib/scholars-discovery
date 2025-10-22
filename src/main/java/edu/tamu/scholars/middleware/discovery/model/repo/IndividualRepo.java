@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -47,6 +48,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+
 import reactor.core.publisher.Flux;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
@@ -148,6 +150,43 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
     }
 
+    public List<Individual> findPeopleByOrganizationId(String orgId) {
+
+        if (orgId.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        try {
+            SolrQueryBuilder orgQueryBuilder = new SolrQueryBuilder()
+                .withFilters(Arrays.asList(
+                    FilterArg.of("id", Optional.of(orgId), Optional.empty(), Optional.empty())
+                ))
+                .withRows(1);
+
+            QueryResponse orgResponse = solrClient.query(collectionName, orgQueryBuilder.query());
+
+            if (orgResponse.getResults().isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            SolrDocument orgDoc = orgResponse.getResults().get(0);
+
+            List<String> orgPeopleList = (List<String>) orgDoc.getFieldValue("people");
+            if (orgPeopleList.isEmpty()) {
+                return Collections.emptyList();
+            }
+            List<String> orgPeopleListIds = orgPeopleList.stream()
+                .map(s -> s.contains("::") ? s.split("::")[1] : s)
+                .toList();
+            List<Individual> individuals = findByIdIn(orgPeopleListIds, new ArrayList<>(),Sort.unsorted(),orgPeopleListIds.size());
+
+            return individuals;
+
+        } catch (IOException | SolrServerException e) {
+            throw new SolrRequestException("Failed to fetch people for organization " + orgId, e);
+        }
+    }
+
     @Override
     public List<Individual> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort, int limit) {
         try {
@@ -155,9 +194,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .withFilters(filters)
                 .withSort(sort)
                 .withRows(limit);
-
-            JsonQueryRequest jsonRequest = builder.jsonQuery(ids);
-
+            JsonQueryRequest jsonRequest = builder.jsonQuery(new ArrayList<>(ids));
             QueryResponse response = jsonRequest.process(solrClient, collectionName);
 
             return response.getResults()
@@ -198,7 +235,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         try {
             QueryResponse response = solrClient.query(collectionName, builder.query());
-
+            System.out.println("\n\n\n QueryResponse response: "+ response.getResults() + "\n\n\n");
             List<Individual> individuals = response.getResults()
                 .stream()
                 .map(Individual::from)
@@ -208,6 +245,55 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to search documents", e);
         }
+    }
+
+    public Flux<Individual>exportSection(QueryArg query, Sort sort, String view, String type, String id) {
+        logger.info("\n\n\n\nexportSection  = \n\nview={}, \n\n type={}, \n\n\nquery={}", view, type, query);
+        logger.info("\n\n orgId: {}", id );
+
+        SolrQueryBuilder builder = new SolrQueryBuilder()
+            .withQuery(query)
+            .withSort(sort);
+
+        return Flux.create(emitter -> {
+            try {
+                solrClient.queryAndStreamResponse(collectionName, builder.query(), new StreamingResponseCallback() {
+                    private final AtomicLong remaining = new AtomicLong(0);
+                    private final AtomicBoolean docListInfoReceived  = new AtomicBoolean(false);
+
+                    @Override
+                    public void streamSolrDocument(SolrDocument document) {
+                        logger.info("{} \n {}: streamSolrDocument collectionName", collectionName, builder.getId());
+                        Individual individual = Individual.from(document);
+                        logger.debug("{}: streamSolrDocument: {}", builder.getId(), individual);
+                        emitter.next(individual);
+
+                        long numRemaining = remaining.decrementAndGet();
+                        logger.debug("{}: csv export streamSolrDocument remaining: {}", builder.getId(), numRemaining);
+                        if (numRemaining == 0 && docListInfoReceived.get()) {
+                            logger.info("{}: csv export streamSolrDocument COMPLETE", builder.getId());
+                            emitter.complete();
+                        }
+                    }
+
+                    @Override
+                    public void streamDocListInfo(long numFound, long start, Float maxScore) {
+                        logger.debug("{}: csv export streamDocListInfo {} {} {}", builder.getId(), numFound, start, maxScore);
+
+                        remaining.set(numFound);
+                        docListInfoReceived.set(true);
+
+                        if (numFound == 0) {
+                            logger.info("{}: csv export streamDocListInfo COMPLETE", builder.getId());
+                            emitter.complete();
+                        }
+                    }
+
+                });
+            } catch (IOException | SolrServerException e) {
+                throw new SolrRequestException("Failed to stream csv export", e);
+            }
+        });
     }
 
     @Override

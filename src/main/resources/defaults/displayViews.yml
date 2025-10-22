@@ -1395,7 +1395,7 @@
           order: 2
           export:
             - columnHeader: TAMU email
-              valuePath: emailAddress
+              valuePath: email
             - columnHeader: Orcid
               valuePath: orcidId
             - columnHeader: Last name
@@ -1408,7 +1408,7 @@
               valuePath: positions
             - columnHeader: Department
               valuePath: positions.organizations
-            - columnHeader: scholars uri
+            - columnHeader: Scholars uri
               valuePath: individual
           subsections:
             - name: People
