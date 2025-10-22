@@ -247,7 +247,8 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     public Flux<Individual>exportSection(QueryArg query, Sort sort, String view, String type, String id) {
-        logger.info("\n\n\n\nexportSection  = \n\nview={}, \n\n type={}  \n\n id={}, \n\n\nquery={}", view, type, query, id);
+        logger.info("\n\n\n\nexportSection  = \n\nview={}, \n\n type={}, \n\n\nquery={}", view, type, query);
+        logger.info("\n\n orgId: {}", id );
 
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
