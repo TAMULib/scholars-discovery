@@ -92,6 +92,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public long count(QueryArg query, List<FilterArg> filters) {
+
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
             .withFilters(filters);
@@ -133,6 +134,18 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     @Override
     public List<Individual> findByIdIn(List<String> ids) {
         return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
+    }
+
+    public List<Individual> findIndividualsByIds(List<String> ids) {
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        try {
+            return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
+        } catch (Exception e) {
+            throw new SolrRequestException("Failed to find individuals by IDs", e);
+        }
     }
 
     @Override
