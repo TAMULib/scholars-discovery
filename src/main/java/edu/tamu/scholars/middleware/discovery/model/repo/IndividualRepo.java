@@ -235,7 +235,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         try {
             QueryResponse response = solrClient.query(collectionName, builder.query());
-            System.out.println("\n\n\n QueryResponse response: "+ response.getResults() + "\n\n\n");
             List<Individual> individuals = response.getResults()
                 .stream()
                 .map(Individual::from)
@@ -248,8 +247,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     public Flux<Individual>exportSection(QueryArg query, Sort sort, String view, String type, String id) {
-        logger.info("\n\n\n\nexportSection  = \n\nview={}, \n\n type={}, \n\n\nquery={}", view, type, query);
-        logger.info("\n\n orgId: {}", id );
+        logger.info("\n\n\n\nexportSection  = \n\nview={}, \n\n type={}  \n\n id={}, \n\n\nquery={}", view, type, query, id);
 
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
@@ -380,7 +378,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                         dataNetwork.countLink(v1);
                     }
                     for (String v2 : values) {
-                        // prefer id as source
                         if (v2.endsWith(id)) {
                             dataNetwork.map(iid, v2, v1);
                         } else {
