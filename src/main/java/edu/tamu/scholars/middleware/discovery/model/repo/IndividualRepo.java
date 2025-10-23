@@ -65,6 +65,7 @@ import edu.tamu.scholars.middleware.discovery.response.DiscoveryAcademicAge;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryQuantityDistribution;
+import edu.tamu.scholars.middleware.export.utility.ExtractIdUtility;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 
 /**
@@ -150,40 +151,39 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
     }
 
-    public List<Individual> findPeopleByOrganizationId(String orgId) {
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Individual> getIndividualsData(String id) {
 
-        if (orgId.isEmpty()) {
+        if (id.isEmpty()) {
             return Collections.emptyList();
         }
 
         try {
-            SolrQueryBuilder orgQueryBuilder = new SolrQueryBuilder()
+            SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
                 .withFilters(Arrays.asList(
-                    FilterArg.of("id", Optional.of(orgId), Optional.empty(), Optional.empty())
+                    FilterArg.of("id", Optional.of(id), Optional.empty(), Optional.empty())
                 ))
                 .withRows(1);
 
-            QueryResponse orgResponse = solrClient.query(collectionName, orgQueryBuilder.query());
+            QueryResponse response = solrClient.query(collectionName, queryBuilder.query());
 
-            if (orgResponse.getResults().isEmpty()) {
+            if (response.getResults().isEmpty()) {
                 return Collections.emptyList();
             }
 
-            SolrDocument orgDoc = orgResponse.getResults().get(0);
+            SolrDocument document = response.getResults().get(0);
 
-            List<String> orgPeopleList = (List<String>) orgDoc.getFieldValue("people");
+            List<String> orgPeopleList = (List<String>) document.getFieldValue("people");
             if (orgPeopleList.isEmpty()) {
                 return Collections.emptyList();
             }
-            List<String> orgPeopleListIds = orgPeopleList.stream()
-                .map(s -> s.contains("::") ? s.split("::")[1] : s)
-                .toList();
-            List<Individual> individuals = findByIdIn(orgPeopleListIds, new ArrayList<>(),Sort.unsorted(),orgPeopleListIds.size());
+            List<String> orgPeopleListIds = ExtractIdUtility.extractIds(orgPeopleList);
 
-            return individuals;
+            return findByIdIn(orgPeopleListIds, new ArrayList<>(),Sort.unsorted(),orgPeopleListIds.size());
 
         } catch (IOException | SolrServerException e) {
-            throw new SolrRequestException("Failed to fetch people for organization " + orgId, e);
+            throw new SolrRequestException("Failed to fetch people for organization " + id, e);
         }
     }
 

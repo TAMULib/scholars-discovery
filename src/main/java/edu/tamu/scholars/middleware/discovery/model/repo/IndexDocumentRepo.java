@@ -17,6 +17,7 @@ import edu.tamu.scholars.middleware.discovery.argument.FilterArg;
 import edu.tamu.scholars.middleware.discovery.argument.HighlightArg;
 import edu.tamu.scholars.middleware.discovery.argument.QueryArg;
 import edu.tamu.scholars.middleware.discovery.model.AbstractIndexDocument;
+import edu.tamu.scholars.middleware.discovery.model.Individual;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryAcademicAge;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
@@ -67,5 +68,7 @@ public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
         QueryArg query,
         List<FilterArg> filters
     );
+
+    public List<Individual> getIndividualsData(String id);
 
 }

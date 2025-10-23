@@ -27,13 +27,6 @@ public interface Exporter {
         ));
     }
 
-    public default StreamingResponseBody streamIndividuals(Individual individual, List<ExportArg> export) {
-        throw new UnsupportedExporterTypeException(String.format(
-            "%s exporter does not support export field exports",
-            type()
-        ));
-    }
-
     public default StreamingResponseBody streamIndividuals(List<Individual> individuals, String name) {
         throw new UnsupportedExporterTypeException(String.format(
             "%s exporter does not support exporting multiple individuals",
@@ -44,6 +37,13 @@ public interface Exporter {
     public default StreamingResponseBody streamIndividual(Individual individual, String name) {
         throw new UnsupportedExporterTypeException(String.format(
             "%s exporter does not support individual templated exports",
+            type()
+        ));
+    }
+
+    public default StreamingResponseBody streamIndividuals(Individual individual, List<ExportArg> export) {
+        throw new UnsupportedExporterTypeException(String.format(
+            "%s exporter does not support export field exports",
             type()
         ));
     }
