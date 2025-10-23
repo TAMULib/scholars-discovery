@@ -25,12 +25,4 @@ public class ExtractIdUtility {
                      .collect(Collectors.toList());
     }
 
-    // /**
-    //  * Convenience method for a single string.
-    //  */
-    // public static String extractId(String input) {
-    //     if (input == null || input.isEmpty()) return null;
-    //     return input.contains("::") ? input.split("::")[1] : input;
-    // }
-
 }
