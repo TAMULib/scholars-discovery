@@ -1,3 +1,7 @@
-<div><span>{{streetAddress}}</span></div>
+<div>
+  {{#eachSplit streetAddress ";"}}
+    <span>{{.}}</span><br />
+  {{/eachSplit}}
+</div>
 <div><span>{{locality}}, {{region}} {{postalCode}}</span></div>
 <div><span>{{country}}</span></div>
