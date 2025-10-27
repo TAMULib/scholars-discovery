@@ -50,10 +50,6 @@ public class DisplaySectionView extends FieldView {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<DisplaySubsectionView> subsections;
 
-    @JoinColumn(name = "export_view_id")
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<ExportView> exportViews;
-
     @ElementCollection
     private List<ExportField> export;
 

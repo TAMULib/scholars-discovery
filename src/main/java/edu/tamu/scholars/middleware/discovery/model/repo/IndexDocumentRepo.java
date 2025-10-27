@@ -69,6 +69,6 @@ public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
         List<FilterArg> filters
     );
 
-    public List<Individual> getIndividualsData(String id);
+    public List<Individual> getIndividualsData(String id, String fieldName);
 
 }

@@ -153,7 +153,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Individual> getIndividualsData(String id) {
+    public List<Individual> getIndividualsData(String id, String fieldName) {
 
         if (id.isEmpty()) {
             return Collections.emptyList();
@@ -162,7 +162,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         try {
             SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
                 .withFilters(Arrays.asList(
-                    FilterArg.of("id", Optional.of(id), Optional.empty(), Optional.empty())
+                    FilterArg.of(ID, Optional.of(id), Optional.empty(), Optional.empty())
                 ))
                 .withRows(1);
 
@@ -174,7 +174,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
             SolrDocument document = response.getResults().get(0);
 
-            List<String> orgPeopleList = (List<String>) document.getFieldValue("people");
+            List<String> orgPeopleList = (List<String>) document.getFieldValue(fieldName);
             if (orgPeopleList.isEmpty()) {
                 return Collections.emptyList();
             }
@@ -244,55 +244,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to search documents", e);
         }
-    }
-
-    public Flux<Individual>exportSection(QueryArg query, Sort sort, String view, String type, String id) {
-        logger.info("\n\n\n\nexportSection  = \n\nview={}, \n\n type={}, \n\n\nquery={}", view, type, query);
-        logger.info("\n\n orgId: {}", id );
-
-        SolrQueryBuilder builder = new SolrQueryBuilder()
-            .withQuery(query)
-            .withSort(sort);
-
-        return Flux.create(emitter -> {
-            try {
-                solrClient.queryAndStreamResponse(collectionName, builder.query(), new StreamingResponseCallback() {
-                    private final AtomicLong remaining = new AtomicLong(0);
-                    private final AtomicBoolean docListInfoReceived  = new AtomicBoolean(false);
-
-                    @Override
-                    public void streamSolrDocument(SolrDocument document) {
-                        logger.info("{} \n {}: streamSolrDocument collectionName", collectionName, builder.getId());
-                        Individual individual = Individual.from(document);
-                        logger.debug("{}: streamSolrDocument: {}", builder.getId(), individual);
-                        emitter.next(individual);
-
-                        long numRemaining = remaining.decrementAndGet();
-                        logger.debug("{}: csv export streamSolrDocument remaining: {}", builder.getId(), numRemaining);
-                        if (numRemaining == 0 && docListInfoReceived.get()) {
-                            logger.info("{}: csv export streamSolrDocument COMPLETE", builder.getId());
-                            emitter.complete();
-                        }
-                    }
-
-                    @Override
-                    public void streamDocListInfo(long numFound, long start, Float maxScore) {
-                        logger.debug("{}: csv export streamDocListInfo {} {} {}", builder.getId(), numFound, start, maxScore);
-
-                        remaining.set(numFound);
-                        docListInfoReceived.set(true);
-
-                        if (numFound == 0) {
-                            logger.info("{}: csv export streamDocListInfo COMPLETE", builder.getId());
-                            emitter.complete();
-                        }
-                    }
-
-                });
-            } catch (IOException | SolrServerException e) {
-                throw new SolrRequestException("Failed to stream csv export", e);
-            }
-        });
     }
 
     @Override

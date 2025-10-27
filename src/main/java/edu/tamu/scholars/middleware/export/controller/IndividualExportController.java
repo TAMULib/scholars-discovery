@@ -108,14 +108,14 @@ public class IndividualExportController implements RepresentationModelProcessor<
     }
 
     @GetMapping(value = "/individual/{id}/export", params = "view")
-    public ResponseEntity<StreamingResponseBody> exportSectionPeople(
+    public ResponseEntity<StreamingResponseBody> exportSection(
         @PathVariable String id,
         @RequestParam(required = false, defaultValue = "People") String view,
         @RequestParam(required = false, defaultValue = "csv") String type,
         @RequestParam(required = false) List<ExportArg> export
         ) throws UnknownExporterTypeException {
             Exporter exporter = exporterRegistry.getExporter(type);
-            List<Individual> individuals = repo.getIndividualsData(id);
+            List<Individual> individuals = repo.getIndividualsData(id, view.toLowerCase());
             return ResponseEntity.ok()
                 .header(CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.normalizeExportFilename(view)))
                 .header(CONTENT_TYPE, exporter.contentType())
