@@ -1393,6 +1393,23 @@
           template: "defaults/displayViews/organizations/affiliation/people.html"
           field: people
           order: 2
+          export:
+            - columnHeader: TAMU email
+              valuePath: email
+            - columnHeader: Orcid
+              valuePath: orcidId
+            - columnHeader: Last name
+              valuePath: lastName
+            - columnHeader: First name
+              valuePath: firstName
+            - columnHeader: Preferred title
+              valuePath: preferredTitle
+            - columnHeader: Position
+              valuePath: positions
+            - columnHeader: Department
+              valuePath: positions.organizations
+            - columnHeader: Scholars uri
+              valuePath: individual
           subsections:
             - name: People
               field: people

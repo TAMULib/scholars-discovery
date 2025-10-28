@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -47,6 +48,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+
 import reactor.core.publisher.Flux;
 
 import edu.tamu.scholars.middleware.discovery.argument.BoostArg;
@@ -63,6 +65,7 @@ import edu.tamu.scholars.middleware.discovery.response.DiscoveryAcademicAge;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryFacetAndHighlightPage;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryNetwork;
 import edu.tamu.scholars.middleware.discovery.response.DiscoveryQuantityDistribution;
+import edu.tamu.scholars.middleware.export.utility.ExtractIdUtility;
 import edu.tamu.scholars.middleware.utility.DateFormatUtility;
 
 /**
@@ -148,6 +151,42 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Individual> getIndividualsData(String id, String fieldName) {
+
+        if (id.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        try {
+            SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
+                .withFilters(Arrays.asList(
+                    FilterArg.of(ID, Optional.of(id), Optional.empty(), Optional.empty())
+                ))
+                .withRows(1);
+
+            QueryResponse response = solrClient.query(collectionName, queryBuilder.query());
+
+            if (response.getResults().isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            SolrDocument document = response.getResults().get(0);
+
+            List<String> orgPeopleList = (List<String>) document.getFieldValue(fieldName);
+            if (orgPeopleList.isEmpty()) {
+                return Collections.emptyList();
+            }
+            List<String> orgPeopleListIds = ExtractIdUtility.extractIds(orgPeopleList);
+
+            return findByIdIn(orgPeopleListIds, new ArrayList<>(),Sort.unsorted(),orgPeopleListIds.size());
+
+        } catch (IOException | SolrServerException e) {
+            throw new SolrRequestException("Failed to fetch people for organization " + id, e);
+        }
+    }
+
     @Override
     public List<Individual> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort, int limit) {
         try {
@@ -155,9 +194,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .withFilters(filters)
                 .withSort(sort)
                 .withRows(limit);
-
-            JsonQueryRequest jsonRequest = builder.jsonQuery(ids);
-
+            JsonQueryRequest jsonRequest = builder.jsonQuery(new ArrayList<>(ids));
             QueryResponse response = jsonRequest.process(solrClient, collectionName);
 
             return response.getResults()
@@ -198,7 +235,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
         try {
             QueryResponse response = solrClient.query(collectionName, builder.query());
-
             List<Individual> individuals = response.getResults()
                 .stream()
                 .map(Individual::from)
@@ -294,7 +330,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                         dataNetwork.countLink(v1);
                     }
                     for (String v2 : values) {
-                        // prefer id as source
                         if (v2.endsWith(id)) {
                             dataNetwork.map(iid, v2, v1);
                         } else {

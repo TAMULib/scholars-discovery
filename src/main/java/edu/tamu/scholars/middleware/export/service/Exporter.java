@@ -41,4 +41,11 @@ public interface Exporter {
         ));
     }
 
+    public default StreamingResponseBody streamIndividuals(Individual individual, List<ExportArg> export) {
+        throw new UnsupportedExporterTypeException(String.format(
+            "%s exporter does not support export field exports",
+            type()
+        ));
+    }
+
 }
