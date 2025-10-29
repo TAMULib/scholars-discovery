@@ -19,7 +19,6 @@ import org.springframework.hateoas.server.RepresentationModelProcessor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +37,6 @@ import edu.tamu.scholars.middleware.export.exception.UnauthorizedExportException
 import edu.tamu.scholars.middleware.export.exception.UnknownExporterTypeException;
 import edu.tamu.scholars.middleware.export.service.Exporter;
 import edu.tamu.scholars.middleware.export.service.ExporterRegistry;
-import edu.tamu.scholars.middleware.export.utility.FilenameUtility;
 
 /**
  * REST controller for exporting
@@ -54,19 +52,31 @@ public class IndividualExportController implements RepresentationModelProcessor<
         this.exporterRegistry = exporterRegistry;
     }
 
-    @RequestMapping(
-        value = "/individual/{id}/export",
-        method = {RequestMethod.GET, RequestMethod.POST}
-        )
+    @RequestMapping(value = "/individual/{id}/export", method = {
+        RequestMethod.GET,
+        RequestMethod.POST
+    })
     public ResponseEntity<StreamingResponseBody> export(
         @PathVariable String id,
+        @RequestParam(required = false, defaultValue = "people") String field,
         @RequestParam(required = false, defaultValue = "docx") String type,
         @RequestParam(required = true) String name,
+        @RequestParam(required = false) List<ExportArg> export,
         @RequestBody(required = false) List<String> ids
     ) throws UnknownExporterTypeException, IllegalArgumentException {
 
+        final Optional<Individual> individual = repo.findById(id);
+
+        if (!individual.isPresent()) {
+            throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
+        }
+
+        Individual document = individual.get();
+        String contentName = normalizeExportFilename(document);
+
+        final Exporter exporter = exporterRegistry.getExporter(type);
+
         List<Individual> individuals;
-        String contentName;
         StreamingResponseBody responseBody;
 
         try {
@@ -77,23 +87,29 @@ public class IndividualExportController implements RepresentationModelProcessor<
                 }
             }
 
-            Exporter exporter = exporterRegistry.getExporter(type);
+            if (field != null && export != null && !export.isEmpty()) {
+            
+                individuals = repo.getIndividualsData(id, field);
 
-            if (ids != null && !ids.isEmpty()) {
-                individuals = repo.findIndividualsByIds(ids);
                 if (individuals.isEmpty()) {
-                    throw new EntityNotFoundException("No individuals found for the provided IDs");
+                    throw new EntityNotFoundException("No individuals found for the provided id and field");
                 }
-                contentName = name;
+
+                // validate field exist on individual with id
+
+                responseBody = exporter.streamIndividuals(Flux.fromIterable(individuals), export);
+
+            } else if (ids != null && !ids.isEmpty()) {
+                individuals = repo.findIndividualsByIds(ids);
+
+                if (individuals.isEmpty()) {
+                    throw new EntityNotFoundException("No individuals found for the provided list of ids");
+                }
+
+                // validate ids are option of export for individual id
+
                 responseBody = exporter.streamIndividuals(individuals, name);
             } else {
-                Optional<Individual> individual = repo.findById(id);
-
-                if (!individual.isPresent()) {
-                    throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
-                }
-                Individual document = individual.get();
-                contentName = normalizeExportFilename(document);
                 responseBody = exporter.streamIndividual(document, name);
             }
 
@@ -103,23 +119,8 @@ public class IndividualExportController implements RepresentationModelProcessor<
                 .body(responseBody);
             
         } catch(NullPointerException npe) {
-            throw new IllegalArgumentException("Request body for IDs is missing or invalid", npe);
+            throw new IllegalArgumentException("Request invalid", npe);
         }
-    }
-
-    @GetMapping(value = "/individual/{id}/export", params = "view")
-    public ResponseEntity<StreamingResponseBody> exportSection(
-        @PathVariable String id,
-        @RequestParam(required = false, defaultValue = "People") String view,
-        @RequestParam(required = false, defaultValue = "csv") String type,
-        @RequestParam(required = false) List<ExportArg> export
-        ) throws UnknownExporterTypeException {
-            Exporter exporter = exporterRegistry.getExporter(type);
-            List<Individual> individuals = repo.getIndividualsData(id, view.toLowerCase());
-            return ResponseEntity.ok()
-                .header(CONTENT_DISPOSITION, exporter.contentDisposition(FilenameUtility.normalizeExportFilename(view)))
-                .header(CONTENT_TYPE, exporter.contentType())
-                .body(exporter.streamIndividuals(Flux.fromIterable(individuals), export));
     }
 
     @Override
@@ -130,32 +131,50 @@ public class IndividualExportController implements RepresentationModelProcessor<
                 addResource(resource, new ResourceLink(
                     individual,
                     "docx",
+                    "",
                     "Single Page Bio",
                     "Individual single page bio export"));
                 addResource(resource, new ResourceLink(
                     individual,
                     "docx",
+                    "",
                     "Profile Summary",
                     "Individual profile summary export"));
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip", 
+                    "",
                     "Last 5 Years", 
                     "Individual 5 year publications export"));
                 addResource(resource, new ResourceLink(
                     individual,
-                    "zip", 
-                    "Last 8 Years", 
+                    "zip",
+                    "",
+                    "Last 8 Years",
                     "Individual 8 year publications export"));
             } else if (individual.getProxy().equals(Organization.class.getSimpleName())) {
                 addResource(resource, new ResourceLink(
                     individual,
+                    "csv",
+                    "people",
+                    String.format("%s people directory", individual.getContent().get("name")),
+                    "Individual collection field export"));
+                addResource(resource, new ResourceLink( // has request body for selection of ids
+                    individual,
                     "zip",
+                    "people",
+                    String.format("%s selected people profile summaries", individual.getContent().get("name")),
+                    "Individual collection field profile summary export"));
+                addResource(resource, new ResourceLink(
+                    individual,
+                    "zip",
+                    "",
                     "Last 5 Years",
                     "Organization 5 year publications export"));
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip",
+                    "",
                     "Last 8 Years",
                     "Organization 8 year publications export"));
             }
@@ -175,8 +194,10 @@ public class IndividualExportController implements RepresentationModelProcessor<
         try {
             resource.add(linkTo(methodOn(this.getClass()).export(
                 link.getIndividual().getId(),
+                link.getField(),
                 link.getType(),
                 link.getName(),
+                new ArrayList<>(),
                 new ArrayList<>()
             )).withRel(link.getName().toLowerCase().replace(" ", "_"))
                 .withTitle(link.getTitle()));
@@ -191,17 +212,20 @@ public class IndividualExportController implements RepresentationModelProcessor<
     private class ResourceLink {
         private final Individual individual;
         private final String type;
+        private final String field;
         private final String name;
         private final String title;
 
         private ResourceLink(
             Individual individual,
             String type,
+            String field,
             String name,
             String title
         ) {
             this.individual = individual;
             this.type = type;
+            this.field = field;
             this.name = name;
             this.title = title;
         }
@@ -212,6 +236,10 @@ public class IndividualExportController implements RepresentationModelProcessor<
 
         public String getType() {
             return type;
+        }
+
+        public String getField() {
+            return field;
         }
 
         public String getName() {
