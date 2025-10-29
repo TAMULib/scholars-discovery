@@ -50,6 +50,9 @@ public class DisplaySectionView extends FieldView {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<DisplaySubsectionView> subsections;
 
+    @ElementCollection
+    private List<ExportField> export;
+
     public DisplaySectionView() {
         super();
         hidden = false;
@@ -59,6 +62,15 @@ public class DisplaySectionView extends FieldView {
         requiredFields = new ArrayList<String>();
         lazyReferences = new ArrayList<String>();
         subsections = new ArrayList<DisplaySubsectionView>();
+        export = new ArrayList<ExportField>();
+    }
+
+    public List<ExportField> getExport() {
+        return export;
+    }
+
+    public void setExport(List<ExportField> export) {
+        this.export = export;
     }
 
     public boolean isHidden() {

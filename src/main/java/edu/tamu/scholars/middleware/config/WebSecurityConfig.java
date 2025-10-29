@@ -120,11 +120,14 @@ public class WebSecurityConfig {
         embedConfig.addAllowedHeader("Origin");
         embedConfig.addAllowedHeader("Content-Type");
         embedConfig.addAllowedMethod("GET");
-        embedConfig.addAllowedMethod("OPTION");
+        embedConfig.addAllowedMethod("POST");
+        embedConfig.addAllowedMethod("OPTIONS");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/displayViews/search/findByName", embedConfig);
         source.registerCorsConfiguration("/individual/{id}", embedConfig);
+        source.registerCorsConfiguration("/individual/{id}/export", embedConfig);
+        source.registerCorsConfiguration("/individual/export", embedConfig);
         source.registerCorsConfiguration("/individual/search/findByIdIn", embedConfig);
 
         CorsConfiguration samlConfig = new CorsConfiguration();
@@ -182,8 +185,6 @@ public class WebSecurityConfig {
         return serializer;
     }
 
-    
-
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
@@ -218,6 +219,10 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/login/saml2/**", "/saml2/**")
                     .permitAll()
+
+                .requestMatchers(POST, "/individual/export").permitAll()
+
+                .requestMatchers(POST, "/individual/*/export").permitAll()
                 
                 .requestMatchers(PATCH,
                     "/dataAndAnalyticsViews/{id}",
