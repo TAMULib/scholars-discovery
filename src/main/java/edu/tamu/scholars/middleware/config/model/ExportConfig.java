@@ -19,7 +19,7 @@ public class ExportConfig {
 
     private String individualBaseUri = "http://localhost:4200/display";
 
-    private Map<String, String> personTypeMapping = new HashMap<>();
+    private Map<String, String> personTypes = new HashMap<>();
 
     public String getIndividualKey() {
         return individualKey;
