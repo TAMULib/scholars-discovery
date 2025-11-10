@@ -67,6 +67,8 @@
       valuePath: positions.organizations
     - columnHeader: Individual
       valuePath: individual
+    - columnHeader: People
+      valuePath: type
   index:
     field: name_sort
     opKey: STARTS_WITH

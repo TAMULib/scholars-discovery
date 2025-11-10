@@ -1412,6 +1412,8 @@
               valuePath: positions.organizations
             - columnHeader: Scholars uri
               valuePath: individual
+            - columnHeader: People
+              valuePath: type
           subsections:
             - name: People
               field: people
