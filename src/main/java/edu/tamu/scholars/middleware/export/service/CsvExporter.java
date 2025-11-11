@@ -1,20 +1,16 @@
 package edu.tamu.scholars.middleware.export.service;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_DELIMITER;
-import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.SPACE_STRING;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -127,8 +123,7 @@ public class CsvExporter implements Exporter {
                 Object value = content.get(property);
                 if (property.equals("type")) {
 
-                    @SuppressWarnings("unchecked")
-                    List<String> values = (List<String>) value;
+                    List<String> values = asStringList(value);
 
                     if (!values.isEmpty()) {
                         value = values.stream()
@@ -139,8 +134,7 @@ public class CsvExporter implements Exporter {
 
                 if (List.class.isAssignableFrom(value.getClass())) {
 
-                    @SuppressWarnings("unchecked")
-                    List<String> values = (List<String>) value;
+                    List<String> values = asStringList(value);
 
                     if (!values.isEmpty()) {
                         data = String.join(DELIMITER, values.stream()
@@ -159,31 +153,27 @@ public class CsvExporter implements Exporter {
         return row;
     }
 
+    @SuppressWarnings("unchecked")
+    private List<String> asStringList(Object value) {
+        return (List<String>) value;
+    }
+
     private String serialize(String value) {
         return value.contains(NESTED_DELIMITER)
             ? value.substring(0, value.indexOf(NESTED_DELIMITER))
             : value;
     }
 
-    private String capitalize(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        return text.substring(0, 1).toUpperCase() + text.substring(1);
-    }
-
     private String formatPersonType(String type) {
         if (type == null || type.isEmpty()) {
             return type;
         }
-        String mapped = config.getPersonTypeMapping().get(type);
-        if (!mapped.equals(type)) return mapped;
 
-        String result = Arrays.stream(type.replaceAll("([a-z])([A-Z])", "$1 $2").split(SPACE_STRING))
-                        .map(this::capitalize)
-                        .collect(Collectors.joining(SPACE_STRING));
+        if (config.getPersonType().containsKey(type)) {
+            return config.getPersonType().get(type);
+        }
 
-        return result;
+        return WordUtils.capitalizeFully(type.replaceAll("([a-z])([A-Z])", "$1 $2"));
     }
 
 }

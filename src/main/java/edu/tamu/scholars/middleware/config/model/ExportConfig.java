@@ -19,7 +19,7 @@ public class ExportConfig {
 
     private String individualBaseUri = "http://localhost:4200/display";
 
-    private Map<String, String> personTypes = new HashMap<>();
+    private Map<String, String> personType = new HashMap<>();
 
     public String getIndividualKey() {
         return individualKey;
@@ -37,18 +37,12 @@ public class ExportConfig {
         this.individualBaseUri = individualBaseUri;
     }
 
-    public Map<String, String> getPersonTypeMapping() {
-        if (personTypeMapping == null || personTypeMapping.isEmpty()) {
-            personTypeMapping = new HashMap<>();
-            personTypeMapping.put("GraduateStudent", "Student Researcher");
-            personTypeMapping.put("FacultyMember", "Faculty Member");
-            personTypeMapping.put("NonFacultyAcademic", "Non Faculty Academic");
-        }
-        return personTypeMapping;
+    public Map<String, String> getPersonType() {
+        return personType;
     }
 
-    public void setPersonTypeMapping(Map<String, String> personTypeMapping) {
-        this.personTypeMapping = personTypeMapping;
+    public void setPersonType(Map<String, String> personType) {
+        this.personType = personType;
     }
 
 }

@@ -69,6 +69,10 @@ middleware:
   export:
     individualKey: individual
     individualBaseUri: ${ui.url}/display
+    person-type:
+      GraduateStudent: "Student Researcher"
+      FacultyMember: "Faculty Member"
+      NonFacultyAcademic: "Non Faculty Academic"
 
 solr:
   host: http://localhost:8983/solr
