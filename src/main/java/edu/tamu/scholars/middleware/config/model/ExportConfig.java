@@ -1,5 +1,8 @@
 package edu.tamu.scholars.middleware.config.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +19,8 @@ public class ExportConfig {
 
     private String individualBaseUri = "http://localhost:4200/display";
 
+    private Map<String, String> personType = new HashMap<>();
+
     public String getIndividualKey() {
         return individualKey;
     }
@@ -30,6 +35,14 @@ public class ExportConfig {
 
     public void setIndividualBaseUri(String individualBaseUri) {
         this.individualBaseUri = individualBaseUri;
+    }
+
+    public Map<String, String> getPersonType() {
+        return personType;
+    }
+
+    public void setPersonType(Map<String, String> personType) {
+        this.personType = personType;
     }
 
 }
