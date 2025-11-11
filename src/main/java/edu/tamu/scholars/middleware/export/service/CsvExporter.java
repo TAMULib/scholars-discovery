@@ -119,7 +119,6 @@ public class CsvExporter implements Exporter {
             String data = StringUtils.EMPTY;
 
             if (content.containsKey(property)) {
-
                 Object value = content.get(property);
                 if (property.equals("type")) {
 
@@ -133,7 +132,6 @@ public class CsvExporter implements Exporter {
                 }
 
                 if (List.class.isAssignableFrom(value.getClass())) {
-
                     List<String> values = asStringList(value);
 
                     if (!values.isEmpty()) {
