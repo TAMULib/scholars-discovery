@@ -121,7 +121,6 @@ public class CsvExporter implements Exporter {
             if (content.containsKey(property)) {
                 Object value = content.get(property);
                 if (property.equals("type")) {
-
                     List<String> values = asStringList(value);
 
                     if (!values.isEmpty()) {
@@ -133,7 +132,6 @@ public class CsvExporter implements Exporter {
 
                 if (List.class.isAssignableFrom(value.getClass())) {
                     List<String> values = asStringList(value);
-
                     if (!values.isEmpty()) {
                         data = String.join(DELIMITER, values.stream()
                             .map(this::serialize)
