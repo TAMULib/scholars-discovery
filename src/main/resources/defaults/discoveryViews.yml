@@ -114,6 +114,8 @@
       valuePath: individual
     - columnHeader: ORCID
       valuePath: orcidId
+    - columnHeader: People
+      valuePath: type
 
 - name: Research Overview
   layout: LIST

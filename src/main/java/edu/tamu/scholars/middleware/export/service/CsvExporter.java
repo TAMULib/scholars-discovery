@@ -1,17 +1,16 @@
 package edu.tamu.scholars.middleware.export.service;
 
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.NESTED_DELIMITER;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -111,6 +110,7 @@ public class CsvExporter implements Exporter {
         Map<String, Object> content = individual.getContent();
         List<Object> row = new ArrayList<>();
         for (String property : properties) {
+
             if (property.equals(config.getIndividualKey())) {
                 row.add(String.format("%s/%s", config.getIndividualBaseUri(), individual.getId()));
                 continue;
@@ -119,14 +119,19 @@ public class CsvExporter implements Exporter {
             String data = StringUtils.EMPTY;
 
             if (content.containsKey(property)) {
-
                 Object value = content.get(property);
+                if (property.equals("type")) {
+                    List<String> values = asStringList(value);
+
+                    if (!values.isEmpty()) {
+                        value = values.stream()
+                            .map(this::formatPersonType)
+                            .toList();
+                    }
+                }
 
                 if (List.class.isAssignableFrom(value.getClass())) {
-
-                    @SuppressWarnings("unchecked")
-                    List<String> values = (List<String>) value;
-
+                    List<String> values = asStringList(value);
                     if (!values.isEmpty()) {
                         data = String.join(DELIMITER, values.stream()
                             .map(this::serialize)
@@ -144,10 +149,27 @@ public class CsvExporter implements Exporter {
         return row;
     }
 
+    @SuppressWarnings("unchecked")
+    private List<String> asStringList(Object value) {
+        return (List<String>) value;
+    }
+
     private String serialize(String value) {
         return value.contains(NESTED_DELIMITER)
             ? value.substring(0, value.indexOf(NESTED_DELIMITER))
             : value;
+    }
+
+    private String formatPersonType(String type) {
+        if (type == null || type.isEmpty()) {
+            return type;
+        }
+
+        if (config.getPersonType().containsKey(type)) {
+            return config.getPersonType().get(type);
+        }
+
+        return WordUtils.capitalizeFully(type.replaceAll("([a-z])([A-Z])", "$1 $2"));
     }
 
 }
