@@ -21,12 +21,23 @@ public class DataAndAnalyticsView extends CollectionView {
     @Enumerated(EnumType.STRING)
     private ContainerType type;
 
+    @Column(nullable = true)
+    private String label;
+
     public ContainerType getType() {
         return type;
     }
 
     public void setType(ContainerType type) {
         this.type = type;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
 }
