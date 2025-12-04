@@ -1,5 +1,6 @@
 ---
 - name: Publications by Academic Age Group
+  label: Scholarly Works per Author's Academic Age
   layout: CONTAINER
   type: ACADEMIC_AGE_GROUP
   filters:
@@ -40,6 +41,7 @@
       useDialog: true
       hidden: false
 - name: Research by UN SDG
+  label: UN SDG Impact
   layout: CONTAINER
   type: QUANTITY_DISTRIBUTION
   filters:
@@ -70,9 +72,11 @@
       useDialog: true
       hidden: false
 - name: Download Profile Summaries by Department
+  label: Profile Summaries Export
   layout: CONTAINER
   type: PROFILE_SUMMARIES_EXPORT
 - name: Temporal Graph
+  label: Scholarly Works per Year
   layout: CONTAINER
   type: FREQUENCY_GRAPH
   filters:
