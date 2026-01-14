@@ -8,20 +8,60 @@
     <span class="ml-1"><a href="{{serviceUrl}}/individual/{{id}}" title="View individual in JSON format" download target="_blank"><i class="fa fa-link"><span class="d-none">individual record</span></i></a></span>
   </span>
 </div>
-{{#if affiliatedResearchAreas}}
+
 <div class="m2">
-  <div><span class="label">Research Areas:</span></div>
   <div class="ml-1">
-    {{#each affiliatedResearchAreas}}
-    <span><a href="display/{{id}}">{{label}}</a>{{#if @last}}{{else}}, {{/if}}</span>
-    {{/each}}
+  {{#isLong affiliatedResearchAreas 450}}
+    <div class="research-areas border-red">
+      <span class="collapsed-view">
+        {{#each (truncateArray affiliatedResearchAreas 450)}}
+          <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+        {{/each}}
+        <a href="#" class="toggle-btn">...Show more</a>
+      </span>
+
+      <span class="expanded-view">
+        {{#each affiliatedResearchAreas}}
+          <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+        {{/each}}
+        <a href="#" class="toggle-btn">...Show less</a>
+      </span>
+    </div>
+  {{else}}
+    <div class="research-areas border-green">
+      {{#each affiliatedResearchAreas}}
+        <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+      {{/each}}
+    </div>
+  {{/isLong}}
   </div>
   <hr />
 </div>
-{{/if}}
+
+
 <style>
   .label {
     font-weight: 550;
     margin-right: 2px;
+  }
+
+  .border-red {
+    border: 2px solid red;
+    padding: 4px;
+  }
+
+  .border-green {
+    border: 2px solid green;
+    padding: 4px;
+  }
+
+  .show-more-btn {
+    background: none;
+    border: none;
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font-size: inherit;
   }
 </style>
