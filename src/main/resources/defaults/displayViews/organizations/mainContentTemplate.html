@@ -9,35 +9,57 @@
   </span>
 </div>
 
+{{#if affiliatedResearchAreas}}
 <div class="m2">
-  <div class="ml-1">
-  {{#isLong affiliatedResearchAreas 450}}
-    <div class="research-areas border-red">
-      <span class="collapsed-view">
-        {{#each (truncateArray affiliatedResearchAreas 450)}}
-          <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
-        {{/each}}
-        <a href="#" class="toggle-btn">...Show more</a>
-      </span>
+  <div><span class="label">Research Areas:</span></div>
 
-      <span class="expanded-view">
-        {{#each affiliatedResearchAreas}}
-          <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+  <div class="ml-1">
+
+    {{#if (isLong affiliatedResearchAreas 20)}}
+
+      {{#unless researchExpanded}}
+        {{#each (truncateArray affiliatedResearchAreas 20)}}
+          <span class="long-list">
+            <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+          </span>
         {{/each}}
-        <a href="#" class="toggle-btn">...Show less</a>
-      </span>
-    </div>
-  {{else}}
-    <div class="research-areas border-green">
+        … <a class="toggle-btn" (click)="toggleResearchAreas($event)">
+          Show more
+        </a>
+      {{/unless}}
+
+      {{#if researchExpanded}}
+        {{#each (truncateArray affiliatedResearchAreas 20)}}
+          <span class="long-list">
+            <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+          </span>
+        {{/each}}
+
+        {{#each (remainingArray affiliatedResearchAreas 20)}}
+          <span class="long-list">
+            <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+          </span>
+        {{/each}}
+
+        <a class="toggle-btn" (click)="toggleResearchAreas($event)">
+          Show less
+        </a>
+      {{/if}}
+
+    {{else}}
+
       {{#each affiliatedResearchAreas}}
-        <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+        <span class="short-list">
+          <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+        </span>
       {{/each}}
-    </div>
-  {{/isLong}}
+
+    {{/if}}
+
   </div>
   <hr />
 </div>
-
+{{/if}}
 
 <style>
   .label {
@@ -45,12 +67,30 @@
     margin-right: 2px;
   }
 
-  .border-red {
+  .research-areas .expanded-view {
+    display: none;
+  }
+
+  .research-areas.expanded .collapsed-view {
+    display: none;
+  }
+
+  .research-areas.expanded .expanded-view {
+    display: inline;
+  }
+
+  .toggle-btn {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+  }
+
+  .long-list {
     border: 2px solid red;
     padding: 4px;
   }
 
-  .border-green {
+  .short-list {
     border: 2px solid green;
     padding: 4px;
   }
