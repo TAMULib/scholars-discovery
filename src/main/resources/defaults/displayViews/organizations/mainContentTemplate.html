@@ -10,53 +10,28 @@
 </div>
 
 {{#if affiliatedResearchAreas}}
-<div class="m2">
-  <div><span class="label">Research Areas:</span></div>
+<div class="research-areas">
+  <div class="label">Research Areas:</div>
 
-  <div class="ml-1">
+  <div class="list">
+    <span class="collapsed-view">
+      {{#each (truncateArray affiliatedResearchAreas 20)}}
+        <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+      {{/each}}
+    </span>
+    <span class="expanded-view">
+      {{#each (remainingArray affiliatedResearchAreas 20)}}
+      {{#unless @first}}, {{/unless}} <a href="display/{{id}}">{{label}}</a>
+      {{/each}}
+    </span>
 
     {{#if (isLong affiliatedResearchAreas 20)}}
-
-      {{#unless researchExpanded}}
-        {{#each (truncateArray affiliatedResearchAreas 20)}}
-          <span class="long-list">
-            <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
-          </span>
-        {{/each}}
-        … <a class="toggle-btn" (click)="toggleResearchAreas($event)">
-          Show more
-        </a>
-      {{/unless}}
-
-      {{#if researchExpanded}}
-        {{#each (truncateArray affiliatedResearchAreas 20)}}
-          <span class="long-list">
-            <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
-          </span>
-        {{/each}}
-
-        {{#each (remainingArray affiliatedResearchAreas 20)}}
-          <span class="long-list">
-            <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
-          </span>
-        {{/each}}
-
-        <a class="toggle-btn" (click)="toggleResearchAreas($event)">
-          Show less
-        </a>
-      {{/if}}
-
-    {{else}}
-
-      {{#each affiliatedResearchAreas}}
-        <span class="short-list">
-          <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
-        </span>
-      {{/each}}
-
+      <button type="button" class="toggle-btn" aria-expanded="false">
+        Show more
+      </button>
     {{/if}}
-
   </div>
+
   <hr />
 </div>
 {{/if}}
@@ -66,42 +41,31 @@
     font-weight: 550;
     margin-right: 2px;
   }
-
+  .research-areas {
+    display: block;
+  }
   .research-areas .expanded-view {
     display: none;
   }
-
-  .research-areas.expanded .collapsed-view {
-    display: none;
+  .research-areas .collapsed-view {
+    display: inline;
   }
-
-  .research-areas.expanded .expanded-view {
+  .research-areas[data-expanded="true"] .expanded-view {
     display: inline;
   }
 
+  .research-areas[data-expanded="true"] .collapsed-view {
+    display: none;
+  }
+
   .toggle-btn {
-    cursor: pointer;
-    color: blue;
-    text-decoration: underline;
-  }
-
-  .long-list {
-    border: 2px solid red;
-    padding: 4px;
-  }
-
-  .short-list {
-    border: 2px solid green;
-    padding: 4px;
-  }
-
-  .show-more-btn {
     background: none;
     border: none;
-    color: blue;
+    color: #007acc;
     cursor: pointer;
-    text-decoration: underline;
     padding: 0;
-    font-size: inherit;
+    margin-left: 6px;
+    text-decoration: underline;
+    font-style: bold;
   }
 </style>
