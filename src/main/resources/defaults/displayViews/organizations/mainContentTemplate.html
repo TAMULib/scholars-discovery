@@ -20,8 +20,8 @@
       {{/each}}
     </span>
     <span class="expanded-view">
-      {{#each (remainingArray affiliatedResearchAreas 20)}}
-      {{#unless @first}}, {{/unless}} <a href="display/{{id}}">{{label}}</a>
+      {{#each (showAllItems affiliatedResearchAreas)}}
+        {{#unless @first}}, {{/unless}}<a href="display/{{id}}">{{label}}</a>
       {{/each}}
     </span>
 
@@ -53,7 +53,6 @@
   .research-areas[data-expanded="true"] .expanded-view {
     display: inline;
   }
-
   .research-areas[data-expanded="true"] .collapsed-view {
     display: none;
   }
@@ -65,7 +64,6 @@
     cursor: pointer;
     padding: 0;
     margin-left: 6px;
-    text-decoration: underline;
     font-style: bold;
   }
 </style>
