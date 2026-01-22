@@ -47,6 +47,7 @@ class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<Dat
                     "dataAndAnalyticsViews/create",
                     requestFields(
                         describeDataAndAnalyticsView.withField("name", "The name of the Data And Analytics View."),
+                        describeDataAndAnalyticsView.withField("label", "The label of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withField("layout", "The layout of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withField("type", "The container type of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withSubsection("templates", "The result templates of the Data And Analytics View."),
@@ -64,6 +65,7 @@ class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<Dat
                     ),
                     responseFields(
                         describeDataAndAnalyticsView.withField("name", "The name of the Data And Analytics View."),
+                        describeDataAndAnalyticsView.withField("label", "The label of the Data and Analytics View."),
                         describeDataAndAnalyticsView.withField("layout", "The layout of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withField("type", "The container type of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withSubsection("templates", "The result templates of the Data And Analytics View."),
@@ -96,6 +98,7 @@ class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<Dat
                     requestFields(
                         describeDataAndAnalyticsView.withField("id", "The Data And Analytics View id."),
                         describeDataAndAnalyticsView.withField("name", "The name of the Data And Analytics View."),
+                        describeDataAndAnalyticsView.withField("label", "The label of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withField("layout", "The layout of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withField("type", "The container type of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withSubsection("templates", "The result templates of the Data And Analytics View."),
@@ -113,6 +116,7 @@ class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<Dat
                     ),
                     responseFields(
                         describeDataAndAnalyticsView.withField("name", "The name of the Data And Analytics View."),
+                        describeDataAndAnalyticsView.withField("label", "The label of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withField("layout", "The layout of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withField("type", "The container type of the Data And Analytics View."),
                         describeDataAndAnalyticsView.withSubsection("templates", "The result templates of the Data And Analytics View."),
@@ -152,6 +156,7 @@ class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<Dat
                             queryParameters(
                                 describeDataAndAnalyticsView.withParameter("id", "The Data And Analytics View id.").optional(),
                                 describeDataAndAnalyticsView.withParameter("name", "The name of the Data And Analytics View.").optional(),
+                                describeDataAndAnalyticsView.withParameter("label", "The label of the Data And Analytics View.").optional(),
                                 describeDataAndAnalyticsView.withParameter("layout", "The layout of the Data And Analytics View.").optional(),
                                 describeDataAndAnalyticsView.withParameter("type", "The container type of the Data And Analytics View.").optional(),
                                 describeDataAndAnalyticsView.withParameter("templates", "The result templates of the Data And Analytics View.").optional(),
@@ -169,6 +174,7 @@ class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<Dat
                             ),
                             responseFields(
                                 describeDataAndAnalyticsView.withField("name", "The name of the Data And Analytics View."),
+                                describeDataAndAnalyticsView.withField("label", "The label of the Data And Analytics View."),
                                 describeDataAndAnalyticsView.withField("layout", "The layout of the Data And Analytics View."),
                                 describeDataAndAnalyticsView.withField("type", "The container type of the Data And Analytics View."),
                                 describeDataAndAnalyticsView.withSubsection("templates", "The result templates of the Data And Analytics View."),
@@ -208,6 +214,7 @@ class DataAndAnalyticsViewControllerTest extends ResourceViewIntegrationTest<Dat
                         ),
                         responseFields(
                             describeDataAndAnalyticsView.withField("name", "The name of the Data And Analytics View."),
+                            describeDataAndAnalyticsView.withField("label", "The label of the Data And Analytics View."),
                             describeDataAndAnalyticsView.withField("layout", "The layout of the Data And Analytics View."),
                             describeDataAndAnalyticsView.withField("type", "The container type of the Data And Analytics View."),
                             describeDataAndAnalyticsView.withSubsection("templates", "The result templates of the Data And Analytics View."),
