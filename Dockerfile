@@ -5,7 +5,7 @@ ARG HOME_DIR=/$USER_NAME
 ARG SOURCE_DIR=$HOME_DIR/source
 
 # Maven stage.
-FROM maven:3-eclipse-temurin-17-alpine AS maven
+FROM maven:3-eclipse-temurin-21-alpine AS maven
 ARG USER_ID
 ARG USER_NAME
 ARG HOME_DIR
@@ -39,7 +39,7 @@ USER $USER_NAME
 RUN mvn package
 
 # Switch to Normal JRE Stage.
-FROM eclipse-temurin:17-alpine
+FROM eclipse-temurin:21-alpine
 ARG USER_ID
 ARG USER_NAME
 ARG HOME_DIR
