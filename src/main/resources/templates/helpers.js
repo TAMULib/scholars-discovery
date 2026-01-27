@@ -139,6 +139,7 @@ Handlebars.registerHelper('toSubsectionTypeLabel', function (value) {
     if (value) {
         switch (value) {
             case "AcademicArticle": return "Academic Articles";
+            case "EditorialArticle": return "Editorial Articles";
             case "Book": return "Books";
             case "Chapter": return "Chapters";
             case "ConferencePaper": return "Conference Papers";

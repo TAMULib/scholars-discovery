@@ -337,6 +337,19 @@
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/publications/selectedPublications/default.html"
+            - name: Editorial Articles
+              field: publications
+              order: 1
+              filters:
+                - field: type
+                  value: EditorialArticle
+              sort:
+                - field: publicationDate
+                  direction: DESC
+                  date: true
+                - field: title
+                  direction: ASC
+              template: "defaults/displayViews/persons/publications/selectedPublications/default.html"
             - name: Theses
               field: publications
               order: 7
