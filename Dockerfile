@@ -1,15 +1,17 @@
 # Settings.
+ARG JAVA_VERSION=21
 ARG USER_ID=3001
 ARG USER_NAME=scholars
 ARG HOME_DIR=/$USER_NAME
 ARG SOURCE_DIR=$HOME_DIR/source
 
 # Maven stage.
-FROM maven:3-eclipse-temurin-17-alpine AS maven
+FROM maven:3-eclipse-temurin-${JAVA_VERSION}-alpine AS maven
 ARG USER_ID
 ARG USER_NAME
 ARG HOME_DIR
 ARG SOURCE_DIR
+ARG MAVEN_COMMANDS="-DskipTests -Dcheckstyle.skip=true -Ddependency-check.skip=true -Djacoco.skip=true -Dcoveralls.skip=true -Dmaven.javadoc.skip=true"
 
 # Create the group (use a high ID to attempt to avoid conflits).
 RUN addgroup -g $USER_ID $USER_NAME
@@ -36,10 +38,10 @@ RUN chown -R ${USER_ID}:${USER_ID} ${SOURCE_DIR}
 USER $USER_NAME
 
 # Build.
-RUN mvn package
+RUN mvn package ${MAVEN_COMMANDS}
 
 # Switch to Normal JRE Stage.
-FROM eclipse-temurin:17-alpine
+FROM eclipse-temurin:${JAVA_VERSION}-alpine
 ARG USER_ID
 ARG USER_NAME
 ARG HOME_DIR
