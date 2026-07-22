@@ -9,12 +9,24 @@
   </span>
 </div>
 {{#if affiliatedResearchAreas}}
-<div class="m2">
-  <div><span class="label">Research Areas:</span></div>
-  <div class="ml-1">
-    {{#each affiliatedResearchAreas}}
-    <span><a href="display/{{id}}">{{label}}</a>{{#if @last}}{{else}}, {{/if}}</span>
-    {{/each}}
+  <div class="m2 research-areas">
+  <div class="label">Research Areas:</div>
+
+  <div class="m1 list">
+    <span class="collapsed-view">
+      {{#each (truncateArray affiliatedResearchAreas 20)}}
+        <a href="display/{{id}}">{{label}}</a>{{#unless @last}}, {{/unless}}
+      {{/each}}
+    </span>
+    <span class="expanded-view">
+      {{#each (showAllItems affiliatedResearchAreas)}}
+        {{#unless @first}}, {{/unless}}<a href="display/{{id}}">{{label}}</a>
+      {{/each}}
+    </span>
+    {{#if (isLong affiliatedResearchAreas 20)}}
+      <button type="button" class="toggle-btn" aria-expanded="false">Show more</button>
+    {{/if}}
+
   </div>
   <hr />
 </div>
@@ -23,5 +35,35 @@
   .label {
     font-weight: 550;
     margin-right: 2px;
+  }
+
+  .research-areas {
+    display: block;
+  }
+
+  .research-areas .expanded-view {
+    display: none;
+  }
+
+  .research-areas .collapsed-view {
+    display: inline;
+  }
+
+  .research-areas[data-expanded="true"] .expanded-view {
+    display: inline;
+  }
+
+  .research-areas[data-expanded="true"] .collapsed-view {
+    display: none;
+  }
+
+  .toggle-btn {
+    background: none;
+    border: none;
+    color: var(--navigation-color);
+    cursor: pointer;
+    padding: 0;
+    margin-left: 6px;
+    font-style: bold;
   }
 </style>
