@@ -6,8 +6,8 @@ import java.time.Instant;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.tdb.TDB;
-import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.tdb1.TDB1;
+import org.apache.jena.tdb1.TDB1Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +40,8 @@ public class TDBTriplestore implements Triplestore {
         final Instant start = Instant.now();
         logger.info("Intializing {}", config.getType().getSimpleName());
         // TODO: handle missing configurations
-        TDB.getContext().setTrue(TDB.symUnionDefaultGraph);
-        dataset = TDBFactory.createDataset(config.getDirectory());
+        TDB1.getContext().setTrue(TDB1.symUnionDefaultGraph);
+        dataset = TDB1Factory.createDataset(config.getDirectory());
         logger.info(
             "{} ready. {} seconds",
             config.getType().getSimpleName(),
