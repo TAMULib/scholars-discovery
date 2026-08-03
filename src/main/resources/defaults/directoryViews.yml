@@ -12,6 +12,7 @@
     - positions
     - positions.organizations
     - thumbnail
+    - organizations
   facets:
     - name: People
       field: type
@@ -22,7 +23,8 @@
       collapsed: true
       hidden: false
     - name: Organization
-      field: positions.organizations
+      field: organizations
+      opKey: EQUALS
       type: STRING
       sort: INDEX
       direction: ASC
