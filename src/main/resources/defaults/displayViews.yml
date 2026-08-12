@@ -2052,74 +2052,70 @@
           order: 4
           requiredFields:
             - endDateTime
-        - name: year awarded
-          template: "defaults/displayViews/relationships/overview/yearAwarded.html"
-          field: yearAwarded
-          order: 5
         - name: abstract
           template: "defaults/displayViews/relationships/overview/abstract.html"
           field: abstract
-          order: 6
+          order: 5
         - name: has subject area
           template: "defaults/displayViews/relationships/overview/hasSubjectArea.html"
           field: subjectAreas
-          order: 7
+          order: 6
         - name: awarded by
           template: "defaults/displayViews/relationships/overview/awardedBy.html"
           field: awardedBy
-          order: 8
+          order: 7
         - name: awarded by (preferred label)
           template: "defaults/displayViews/relationships/overview/awardedByPreferredLabel.html"
           field: awardedByPreferredLabel
-          order: 9
+          order: 8
         - name: award conferred by
           template: "defaults/displayViews/relationships/overview/awardConferredBy.html"
           field: awardConferredBy
-          order: 10
+          order: 9
         - name: award conferred by (preferred label)
           template: "defaults/displayViews/relationships/overview/awardConferredByPreferredLabel.html"
           field: awardConferredByPreferredLabel
-          order: 11
+          order: 10
         - name: administered by
           template: "defaults/displayViews/relationships/overview/administeredBy.html"
           field: administeredBy
-          order: 12
+          order: 11
         - name: subcontracted through
           template: "defaults/displayViews/relationships/overview/subcontractedThrough.html"
           field: grantSubcontractedThrough
-          order: 13
+          order: 12
         - name: geographic focus
           template: "defaults/displayViews/relationships/overview/geographicFocus.html"
           field: geographicFocus
-          order: 14
+          order: 13
         - name: has sub grant
           template: "defaults/displayViews/relationships/overview/hasSubGrant.html"
           field: subGrant
-          order: 15
+          order: 14
         - name: sub grant of
           template: "defaults/displayViews/relationships/overview/subGrantOf.html"
           field: subGrantOf
-          order: 16
+          order: 15
         - name: provides funding for
           template: "defaults/displayViews/relationships/overview/providesFundingFor.html"
           field: providesFundingFor
-          order: 17
+          order: 16
         - name: total award amount
           template: "defaults/displayViews/relationships/overview/totalAwardAmount.html"
           field: totalAwardAmount
-          order: 18
+          order: 17
         - name: direct costs
           template: "defaults/displayViews/relationships/overview/directCosts.html"
           field: directCosts
-          order: 19
+          order: 18
         - name: sponsor award ID
           template: "defaults/displayViews/relationships/overview/sponsorAwardId.html"
           field: sponsorAwardId
-          order: 20
+          order: 19
         - name: local award ID
           template: "defaults/displayViews/relationships/overview/localAwardId.html"
           field: localAwardId
-          order: 21
+          order: 20
     - name: Affiliation
       sections:
         - name: contributor
@@ -2525,27 +2521,23 @@
           template: "defaults/displayViews/concepts/overview/awardConferredByPreferredLabel.html"
           field: awardConferredByPreferredLabel
           order: 3
-        - name: year awarded
-          template: "defaults/displayViews/concepts/overview/yearAwarded.html"
-          field: yearAwarded
-          order: 4
         - name: broader concept
           template: "defaults/displayViews/concepts/overview/broaderConcept.html"
           field: broaderConcepts
-          order: 5
+          order: 4
         - name: narrower concept
           template: "defaults/displayViews/concepts/overview/narrowerConcept.html"
           field: narrowerConcepts
-          order: 6
+          order: 5
         - name: related concept
           template: "defaults/displayViews/concepts/overview/relatedConcept.html"
           field: relatedConcepts
-          order: 7
+          order: 6
         - name: receipts
           paginated: true
           template: "defaults/displayViews/concepts/overview/receipts.html"
           field: receipts
-          order: 8
+          order: 7
           sort:
             - field: recipientName
               direction: ASC
