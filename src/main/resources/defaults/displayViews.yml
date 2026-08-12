@@ -2052,70 +2052,74 @@
           order: 4
           requiredFields:
             - endDateTime
+        - name: year awarded
+          template: "defaults/displayViews/relationships/overview/yearAwarded.html"
+          field: yearAwarded
+          order: 5
         - name: abstract
           template: "defaults/displayViews/relationships/overview/abstract.html"
           field: abstract
-          order: 5
+          order: 6
         - name: has subject area
           template: "defaults/displayViews/relationships/overview/hasSubjectArea.html"
           field: subjectAreas
-          order: 6
+          order: 7
         - name: awarded by
           template: "defaults/displayViews/relationships/overview/awardedBy.html"
           field: awardedBy
-          order: 7
+          order: 8
         - name: awarded by (preferred label)
           template: "defaults/displayViews/relationships/overview/awardedByPreferredLabel.html"
           field: awardedByPreferredLabel
-          order: 8
+          order: 9
         - name: award conferred by
           template: "defaults/displayViews/relationships/overview/awardConferredBy.html"
           field: awardConferredBy
-          order: 9
+          order: 10
         - name: award conferred by (preferred label)
           template: "defaults/displayViews/relationships/overview/awardConferredByPreferredLabel.html"
           field: awardConferredByPreferredLabel
-          order: 10
+          order: 11
         - name: administered by
           template: "defaults/displayViews/relationships/overview/administeredBy.html"
           field: administeredBy
-          order: 11
+          order: 12
         - name: subcontracted through
           template: "defaults/displayViews/relationships/overview/subcontractedThrough.html"
           field: grantSubcontractedThrough
-          order: 12
+          order: 13
         - name: geographic focus
           template: "defaults/displayViews/relationships/overview/geographicFocus.html"
           field: geographicFocus
-          order: 13
+          order: 14
         - name: has sub grant
           template: "defaults/displayViews/relationships/overview/hasSubGrant.html"
           field: subGrant
-          order: 14
+          order: 15
         - name: sub grant of
           template: "defaults/displayViews/relationships/overview/subGrantOf.html"
           field: subGrantOf
-          order: 15
+          order: 16
         - name: provides funding for
           template: "defaults/displayViews/relationships/overview/providesFundingFor.html"
           field: providesFundingFor
-          order: 16
+          order: 17
         - name: total award amount
           template: "defaults/displayViews/relationships/overview/totalAwardAmount.html"
           field: totalAwardAmount
-          order: 17
+          order: 18
         - name: direct costs
           template: "defaults/displayViews/relationships/overview/directCosts.html"
           field: directCosts
-          order: 18
+          order: 19
         - name: sponsor award ID
           template: "defaults/displayViews/relationships/overview/sponsorAwardId.html"
           field: sponsorAwardId
-          order: 19
+          order: 20
         - name: local award ID
           template: "defaults/displayViews/relationships/overview/localAwardId.html"
           field: localAwardId
-          order: 20
+          order: 21
     - name: Affiliation
       sections:
         - name: contributor
