@@ -2525,27 +2525,23 @@
           template: "defaults/displayViews/concepts/overview/awardConferredByPreferredLabel.html"
           field: awardConferredByPreferredLabel
           order: 3
-        - name: year awarded
-          template: "defaults/displayViews/concepts/overview/yearAwarded.html"
-          field: yearAwarded
-          order: 4
         - name: broader concept
           template: "defaults/displayViews/concepts/overview/broaderConcept.html"
           field: broaderConcepts
-          order: 5
+          order: 4
         - name: narrower concept
           template: "defaults/displayViews/concepts/overview/narrowerConcept.html"
           field: narrowerConcepts
-          order: 6
+          order: 5
         - name: related concept
           template: "defaults/displayViews/concepts/overview/relatedConcept.html"
           field: relatedConcepts
-          order: 7
+          order: 6
         - name: receipts
           paginated: true
           template: "defaults/displayViews/concepts/overview/receipts.html"
           field: receipts
-          order: 8
+          order: 7
           sort:
             - field: recipientName
               direction: ASC
