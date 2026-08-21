@@ -73,6 +73,14 @@ public class Document extends Common {
 
     @FieldType(type = "whole_string", copyTo = "_text_")
     @FieldSource(
+        template = "document/publicationVenueOutlet",
+        predicate = "http://www.w3.org/2000/01/rdf-schema#label",
+        unique = true
+    )
+    private String publicationVenueOutlet;
+
+    @FieldType(type = "whole_string", copyTo = "_text_")
+    @FieldSource(
         template = "document/nameOfConference",
         predicate = "http://vivo.library.tamu.edu/ontology/TAMU#nameOfConference",
         unique = true
