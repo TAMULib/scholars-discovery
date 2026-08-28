@@ -18,7 +18,7 @@ public class FacetArgTest {
 
     @Test
     public void testDefaultConstructor() {
-        FacetArg facetArg = new FacetArg("class", "COUNT,DESC", 10, 1, "STRING", "CLAZZ", "0", "1000", "10");
+        FacetArg facetArg = new FacetArg("class", "COUNT,DESC", 10, 1, "STRING", "CLAZZ", "0", "1000", "10", "2000", "2020");
         assertNotNull(facetArg);
         assertEquals("class", facetArg.getField());
         assertEquals(FacetSort.COUNT, facetArg.getSort().getProperty());
@@ -42,7 +42,9 @@ public class FacetArgTest {
         Optional<String> rangeStart = Optional.of("0");
         Optional<String> rangeEnd = Optional.of("1000");
         Optional<String> rangeGap = Optional.of("10");
-        FacetArg facetArg = FacetArg.of("class", sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap);
+        Optional<String> startYear = Optional.of("2000");
+        Optional<String> endYear = Optional.of("2020");
+        FacetArg facetArg = FacetArg.of("class", sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap, startYear, endYear);
         assertNotNull(facetArg);
         assertEquals("class", facetArg.getField());
         assertEquals(FacetSort.COUNT, facetArg.getSort().getProperty());
@@ -54,6 +56,8 @@ public class FacetArgTest {
         assertEquals("0", facetArg.getRangeStart());
         assertEquals("1000", facetArg.getRangeEnd());
         assertEquals("10", facetArg.getRangeGap());
+        assertEquals("2000", facetArg.getStartYear());
+        assertEquals("2020", facetArg.getEndYear());
     }
 
 }

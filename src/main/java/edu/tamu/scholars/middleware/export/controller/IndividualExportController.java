@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,13 +63,18 @@ public class IndividualExportController implements RepresentationModelProcessor<
         @PathVariable String id,
         @RequestParam(required = false, defaultValue = "docx") String type,
         @RequestParam(required = true) String name,
+        @RequestParam(required = true) String startYear,
+        @RequestParam(required = true) String endYear,
         @RequestBody(required = false) List<String> ids
-    ) throws UnknownExporterTypeException, IllegalArgumentException {
+    ) throws UnknownExporterTypeException, IllegalArgumentException, IOException {
 
         List<Individual> individuals;
         String contentName;
         StreamingResponseBody responseBody;
 
+        // System.out.println("\n\n IndividualExportController export:name: " + name);
+        // System.out.println("\n\n IndividualExportController export:startYear: " + startYear);
+        System.out.println("\n\n IndividualExportController export: ids: " + ids);
         try {
             if (type.equals("zip")) {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -80,13 +86,17 @@ public class IndividualExportController implements RepresentationModelProcessor<
             Exporter exporter = exporterRegistry.getExporter(type);
 
             if (ids != null && !ids.isEmpty()) {
+                ids.forEach(personId -> { 
+                    System.out.println("\n To be exported id: " + personId); 
+                });
                 individuals = repo.findIndividualsByIds(ids);
                 if (individuals.isEmpty()) {
                     throw new EntityNotFoundException("No individuals found for the provided IDs");
                 }
                 contentName = name;
-                responseBody = exporter.streamIndividuals(individuals, name);
+                responseBody = exporter.streamIndividuals(individuals, name, startYear, endYear);
             } else {
+                System.out.println("\n\n ELSE FOR NULL IDS IndividualExportController export:name: " + name);
                 Optional<Individual> individual = repo.findById(id);
 
                 if (!individual.isPresent()) {
@@ -94,7 +104,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
                 }
                 Individual document = individual.get();
                 contentName = normalizeExportFilename(document);
-                responseBody = exporter.streamIndividual(document, name);
+                responseBody = exporter.streamIndividual(document, name, startYear, endYear);
             }
 
             return ResponseEntity.ok()
@@ -112,7 +122,9 @@ public class IndividualExportController implements RepresentationModelProcessor<
         @PathVariable String id,
         @RequestParam(required = false, defaultValue = "People") String view,
         @RequestParam(required = false, defaultValue = "csv") String type,
-        @RequestParam(required = false) List<ExportArg> export
+        @RequestParam(required = false) List<ExportArg> export,
+        @RequestParam(required = false) String startYear,
+         @RequestParam(required = false) String endYear
         ) throws UnknownExporterTypeException {
             Exporter exporter = exporterRegistry.getExporter(type);
             List<Individual> individuals = repo.getIndividualsData(id, view.toLowerCase());
@@ -131,33 +143,38 @@ public class IndividualExportController implements RepresentationModelProcessor<
                     individual,
                     "docx",
                     "Single Page Bio",
-                    "Individual single page bio export"));
+                    "Individual single page bio export", null, null));
                 addResource(resource, new ResourceLink(
                     individual,
                     "docx",
                     "Profile Summary",
-                    "Individual profile summary export"));
+                    "Individual profile summary export", null, null));
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip", 
-                    "Last 5 Years", 
-                    "Individual 5 year publications export"));
+                    "CustomYearsPublicationRange", 
+                    "Individual custom year range publications export", "", ""));
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip", 
                     "Last 8 Years", 
-                    "Individual 8 year publications export"));
+                    "Individual 8 year publications export", null, null));
             } else if (individual.getProxy().equals(Organization.class.getSimpleName())) {
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip",
+                    "CustomYearsPublicationRange",
+                    "Organization Custom Year publications export", "", ""));
+                addResource(resource, new ResourceLink(
+                    individual,
+                    "zip",
                     "Last 5 Years",
-                    "Organization 5 year publications export"));
+                    "Organization 5 year publications export", null, null));
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip",
                     "Last 8 Years",
-                    "Organization 8 year publications export"));
+                    "Organization 8 year publications export", null, null));
             }
         }
 
@@ -171,17 +188,21 @@ public class IndividualExportController implements RepresentationModelProcessor<
             );
     }
 
-    private void addResource(IndividualModel resource, ResourceLink link) {
+    private void addResource(IndividualModel resource, ResourceLink link)  {
         try {
             resource.add(linkTo(methodOn(this.getClass()).export(
                 link.getIndividual().getId(),
                 link.getType(),
                 link.getName(),
+                link.getStartYear(),
+                link.getEndYear(),
                 new ArrayList<>()
             )).withRel(link.getName().toLowerCase().replace(" ", "_"))
                 .withTitle(link.getTitle()));
+            // System.out.println("\n\n\n IN ADD RESOURCE resource: " + resource + "\n\n");
         } catch (NullPointerException
             | UnknownExporterTypeException
+            | IOException 
             | IllegalArgumentException e
         ) {
             e.printStackTrace();
@@ -193,17 +214,23 @@ public class IndividualExportController implements RepresentationModelProcessor<
         private final String type;
         private final String name;
         private final String title;
+        private final String startYear;
+        private final String endYear;
 
         private ResourceLink(
             Individual individual,
             String type,
             String name,
-            String title
+            String title,
+            String startYear,
+            String endYear
         ) {
             this.individual = individual;
             this.type = type;
             this.name = name;
             this.title = title;
+            this.startYear = startYear;
+            this.endYear = endYear;
         }
 
         public Individual getIndividual() {
@@ -220,6 +247,14 @@ public class IndividualExportController implements RepresentationModelProcessor<
 
         public String getTitle() {
             return title;
+        }
+
+        public String getStartYear() {
+            return startYear;
+        }
+
+        public String getEndYear() {
+            return endYear;
         }
         
     }

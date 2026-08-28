@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,6 +37,7 @@ import org.apache.solr.client.solrj.request.json.JsonQueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.slf4j.Logger;
@@ -48,6 +50,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.Flux;
 
@@ -77,6 +81,8 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     private static final Logger logger = LoggerFactory.getLogger(IndividualRepo.class);
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("^\\[(.*?) TO (.*?)\\]$");
+
+    private ObjectMapper mapper;
 
     @Value("${middleware.index.name}")
     private String collectionName;
@@ -136,20 +142,38 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findByIdIn(List<String> ids) {
+        System.out.println("\n\n\n INDIVIDUAL REPO findByIdIn: " + ids);
         return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
     }
 
     public List<Individual> findIndividualsByIds(List<String> ids) {
-        if (ids.isEmpty()) {
+        if (ids == null || ids.isEmpty()) {
             return new ArrayList<>();
         }
 
         try {
-            return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
+            System.out.println("\n\n\n Individual Repo FindIndividualsByIds: " + ids.size());
+
+            return findByIdIn(ids);
         } catch (Exception e) {
             throw new SolrRequestException("Failed to find individuals by IDs", e);
         }
     }
+
+    // public List<Individual> findIndividualsByIds(List<String> ids) {
+    //     System.out.println("\n\n\n findIndividualsByIds ids: " + ids.size() +" an id = " + ids.get(0) );
+    //     if (ids == null || ids.isEmpty()) {
+    //         return new ArrayList<>();
+    //     }
+
+    //     try {
+    //         System.out.println("\n\n\n Individual Repo FindIndividualsByIds: " + !ids.isEmpty());
+
+    //         return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
+    //     } catch (Exception e) {
+    //         throw new SolrRequestException("Failed to find individuals by IDs", e);
+    //     }
+    // }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -190,12 +214,19 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     @Override
     public List<Individual> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort, int limit) {
         try {
+            System.out.println("\n\n\n Individual Repo findByIdIn: ids" + ids);
+
+            List<FilterArg> sanitizedFilters = sanitizeFilters(filters);
+
             SolrQueryBuilder builder = new SolrQueryBuilder()
-                .withFilters(filters)
+                .withFilters(sanitizedFilters)
                 .withSort(sort)
                 .withRows(limit);
             JsonQueryRequest jsonRequest = builder.jsonQuery(new ArrayList<>(ids));
+            System.out.println("\n\n\n Individual Repo query jsonRequest: " + jsonRequest);
+
             QueryResponse response = jsonRequest.process(solrClient, collectionName);
+            System.out.println("\n\n\n Individual Repo query response: " + response);
 
             return response.getResults()
                 .stream()
@@ -204,6 +235,23 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         } catch (IOException | SolrServerException e) {
             throw new SolrRequestException("Failed to find documents from ids", e);
         }
+    }
+
+    private List<FilterArg> sanitizeFilters(List<FilterArg> filters) {
+        if (filters == null || filters.isEmpty()) {
+            return filters;
+        }
+
+        filters.forEach(filter -> {
+            String value = filter.getValue();
+            if (value != null && (value.contains("-01-01T") || value.contains("-12-31T"))) {
+                String cleanedValue = value.replaceAll("\\[\\s*-01-01T[^\\]\\s]+", "[*")
+                                        .replaceAll("TO\\s*-12-31T[^\\]\\s]+", "TO *");
+                filter.withValue(cleanedValue);
+            }
+        });
+
+        return filters;
     }
 
     @Override
@@ -404,7 +452,10 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
-                Optional.empty()));
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty())
+            );
 
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withQuery(query)
@@ -517,6 +568,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
 
         private SolrQueryBuilder(String query) {
+            System.out.println("\n\n\nSolrQueryBuilder query: " + query);
             this.id = UUID.randomUUID();
             this.query = new SolrQuery()
                 .setParam("defType", defType)
@@ -623,6 +675,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         public SolrQueryBuilder withFacets(List<FacetArg> facets) {
             facets.forEach(facet -> {
                 String name = facet.getCommand();
+                System.out.println("\n\n\n SolrQueryBuilder facet name: " + name + " and type: " + facet.getType());
                 switch (facet.getType()) {
                     case NUMBER_RANGE:
                         Integer rangeStart = Integer.parseInt(facet.getRangeStart());
@@ -630,6 +683,44 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                         Integer rangeGap = Integer.parseInt(facet.getRangeGap());
                         this.query.addNumericRangeFacet(name, rangeStart, rangeEnd, rangeGap);
                         break;
+                    case DATE_RANGE:
+                        System.out.println("\n\n\n SolrQueryBuilder DATE_RANGE startYear: "+ Integer.parseInt(facet.getStartYear()));
+
+                        System.out.println("\n\n\n SolrQueryBuilder DATE_RANGE endYear: "+ Integer.parseInt(facet.getEndYear()));
+                        String rawStartYear = facet.getStartYear().trim();
+                        String rawEndYear = facet.getEndYear().trim();
+                        System.out.println("\n\n\n SolrQueryBuilder DATE_RANGE startYear: "+ rawStartYear);
+                        System.out.println("\n\n\n SolrQueryBuilder DATE_RANGE rawEndYear: "+ rawEndYear);
+
+                        String startIso = "*";
+                        String endIso = "*";
+
+                        if (!rawStartYear.isEmpty()) {
+                            try {
+                                int startY = Integer.parseInt(rawStartYear.trim());
+                                // %04d guarantees 4-digit year formatting (e.g., 1995)
+                                startIso = String.format(Locale.ROOT, "%04d-01-01T00:00:00Z", startY);
+                            } catch (NumberFormatException e) {
+                                System.err.println("\n\n SolrQueryBuilder Invalid startYear format: " + rawStartYear);
+                            }
+                        }
+                        if (rawEndYear != null && !rawEndYear.trim().isEmpty()) {
+                            try {
+                                int endY = Integer.parseInt(rawEndYear.trim());
+                                endIso = String.format(Locale.ROOT, "%04d-12-31T23:59:59Z", endY);
+                            } catch (NumberFormatException e) {
+                                System.err.println("\n\n\n SolrQueryBuilder Invalid endYear format: " + rawEndYear);
+                            }
+                        }
+
+                        if (!"*".equals(startIso) && !"*".equals(endIso)) {
+                            String filterQuery = String.format(Locale.ROOT, "%s:[%s TO %s]", name, startIso, endIso);
+                            System.out.println("\\n\\n\\n SolrQueryBuilder Adding Solr Filter Query: " + filterQuery);
+                            this.query.addFilterQuery(filterQuery);
+                        }
+
+                        break;
+                    
                     default:
                         this.query.addFacetField(name);
                         break;

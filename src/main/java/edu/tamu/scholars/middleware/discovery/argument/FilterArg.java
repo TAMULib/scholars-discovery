@@ -54,6 +54,10 @@ public class FilterArg {
         return new FilterArg(field, valueParam, opKeyParam, tagParam);
     }
 
+    public FilterArg withValue(String newValue) {
+        return new FilterArg(this.field, newValue, this.opKey, this.tag);
+    }
+
     @Override
     public String toString() {
         return "FilterArg [field=" + field + ", value=" + value + ", opKey=" + opKey + ", tag=" + tag + "]";

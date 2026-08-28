@@ -79,6 +79,63 @@
           - field: class
             value: Relationship AND type:Grant
             opKey: EXPRESSION
+  - name: CustomYearsPublicationRange
+    contentTemplate: "defaults/displayViews/persons/customYearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    multipleReference:
+      name: Personnel
+      field: people
+      order: 1
+      sort:
+        - field: name
+          direction: ASC
+    lazyReferences:
+      - name: Custom Year Publications
+        field: publications
+        order: 1
+        sort:
+          - field: publicationDate
+            direction: DESC
+            date: true
+          - field: title
+            direction: ASC
+        filters:
+          - field: type
+            value: AcademicArticle
+          - field: type
+            value: Book
+          - field: type
+            value: Chapter
+          - field: type
+            value: ConferencePaper
+          - field: type
+            value: GreyLiterature
+          - field: type
+            value: Thesis
+          - field: type
+            value: WorkingPaper
+          - field: type
+            value: Webpage
+          - field: type
+            value: Report
+          - field: type
+            value: Review
+          - field: type
+            value: Patent
+          - field: publicationDate
+            value: "[${startYear}-01-01T00:00:00Z TO ${endYear}-12-31T23:59:59Z]"
+            opKey: EXPRESSION
+      - name: Grants
+        field: awardsAndHonors
+        order: 2
+        sort:
+          - field: yearAwarded
+            direction: DESC
+            date: true
+        filters:
+          - field: class
+            value: Relationship AND type:Grant
+            opKey: EXPRESSION
   - name: Last 5 Years
     contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
@@ -1183,6 +1240,72 @@
   asideTemplate: "defaults/displayViews/organizations/asideTemplate.html"
   asideLocation: RIGHT
   exportViews:
+  - name: CustomYearsPublicationRange
+    contentTemplate: "defaults/displayViews/persons/customYearPublicationsContentTemplate.html"
+    headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    multipleReference:
+      name: Personnel
+      field: people
+      order: 1
+      sort:
+        - field: name
+          direction: ASC
+    lazyReferences:
+      - name: Overview
+        field: overview
+        order: 1
+      - name: Positions
+        field: positions
+        order: 2
+      - name: Educational Background
+        field: educationalBackground
+        order: 3
+      - name: Publications
+        field: publications
+        order: 4
+        sort:
+          - field: publicationDate
+            direction: DESC
+            date: true
+          - field: title
+            direction: ASC
+        filters:
+          - field: type
+            value: AcademicArticle
+          - field: type
+            value: Book
+          - field: type
+            value: Chapter
+          - field: type
+            value: ConferencePaper
+          - field: type
+            value: GreyLiterature
+          - field: type
+            value: Thesis
+          - field: type
+            value: WorkingPaper
+          - field: type
+            value: Webpage
+          - field: type
+            value: Report
+          - field: type
+            value: Review
+          - field: type
+            value: Patent
+          - field: publicationDate
+            value: "[${startYear}-01-01T00:00:00Z TO ${endYear}-12-31T23:59:59Z]"
+            opKey: EXPRESSION
+      - name: Grants
+        field: awardsAndHonors
+        order: 4
+        sort:
+          - field: yearAwarded
+            direction: DESC
+            date: true
+        filters:
+          - field: class
+            value: Relationship AND type:Grant
+            opKey: EXPRESSION
   - name: Last 5 Years
     contentTemplate: "defaults/displayViews/persons/5YearPublicationsContentTemplate.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"

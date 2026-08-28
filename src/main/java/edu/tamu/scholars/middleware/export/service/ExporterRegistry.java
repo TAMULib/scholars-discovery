@@ -20,7 +20,7 @@ public class ExporterRegistry {
     public Exporter getExporter(String type) throws UnknownExporterTypeException {
         Optional<Exporter> exporter = exporters.stream().filter(e -> e.type().equals(type)).findAny();
         if (exporter.isPresent()) {
-
+            System.out.println("\n\n\n IN EXPORTer getting exporter:" + exporter.get());
             return exporter.get();
         }
 

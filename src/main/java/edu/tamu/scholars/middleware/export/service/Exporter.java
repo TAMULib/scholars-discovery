@@ -28,6 +28,15 @@ public interface Exporter {
     }
 
     public default StreamingResponseBody streamIndividuals(List<Individual> individuals, String name) {
+        System.out.println("\n\n\n REACHED initial streaming individuals\n\n\n");
+        throw new UnsupportedExporterTypeException(String.format(
+            "%s exporter does not support exporting multiple individuals",
+            type()
+        ));
+    }
+
+    public default StreamingResponseBody streamIndividuals(List<Individual> individuals, String name, String startYear, String endYear) {
+        System.out.println("\n\n\n REACHED in streaming individuals\n\n\n");
         throw new UnsupportedExporterTypeException(String.format(
             "%s exporter does not support exporting multiple individuals",
             type()
@@ -35,6 +44,15 @@ public interface Exporter {
     }
 
     public default StreamingResponseBody streamIndividual(Individual individual, String name) {
+        System.out.println("\n\n\n initial streaming INDIVIDUAL\n\n\n");
+        throw new UnsupportedExporterTypeException(String.format(
+            "%s exporter does not support individual templated exports",
+            type()
+        ));
+    }
+
+    public default StreamingResponseBody streamIndividual(Individual individual, String name, String startYear, String endYear) {
+        System.out.println("\n\n\n in streaming INDIVIDUAL\n\n\n");
         throw new UnsupportedExporterTypeException(String.format(
             "%s exporter does not support individual templated exports",
             type()

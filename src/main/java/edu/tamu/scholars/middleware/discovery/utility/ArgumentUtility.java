@@ -45,6 +45,8 @@ public class ArgumentUtility {
     private static final String FACET_RANGE_START_TAG_FORMAT = "%s.rangeStart";
     private static final String FACET_RANGE_END_TAG_FORMAT = "%s.rangeEnd";
     private static final String FACET_RANGE_GAP_TAG_FORMAT = "%s.rangeGap";
+    private static final String FACET_START_YEAR_TAG_FORMAT = "%s.startYear";
+    private static final String FACET_END_YEAR_TAG_FORMAT = "%s.endYear";
 
     private static final String FILTER_VALUE_DELIMITER = ";;";
     private static final String FILTER_VALUE_FORMAT = "%s.filter";
@@ -75,6 +77,8 @@ public class ArgumentUtility {
             final String rangeStartTagFacet = String.format(FACET_RANGE_START_TAG_FORMAT, field);
             final String rangeEndTagFacet = String.format(FACET_RANGE_END_TAG_FORMAT, field);
             final String rangeGapTagFacet = String.format(FACET_RANGE_GAP_TAG_FORMAT, field);
+            final String startYearTagFacet = String.format(FACET_START_YEAR_TAG_FORMAT, field);
+            final String endYearTagFacet = String.format(FACET_END_YEAR_TAG_FORMAT, field);
             Optional<String> sort = Optional.empty();
             Optional<String> pageSize = Optional.empty();
             Optional<String> pageNumber = Optional.empty();
@@ -83,6 +87,8 @@ public class ArgumentUtility {
             Optional<String> rangeStart = Optional.empty();
             Optional<String> rangeEnd = Optional.empty();
             Optional<String> rangeGap = Optional.empty();
+            Optional<String> startYear = Optional.empty();
+            Optional<String> endYear = Optional.empty();
             for (String paramName : parameterNames) {
                 String[] parameterValues = request.getParameterValues(paramName);
                 if (Objects.nonNull(parameterValues)) {
@@ -103,10 +109,14 @@ public class ArgumentUtility {
                         rangeEnd = value;
                     } else if (paramName.equals(rangeGapTagFacet)) {
                         rangeGap = value;
+                    } else if (paramName.equals(startYearTagFacet)) {
+                        startYear = value;
+                    } else if (paramName.equals(endYearTagFacet)) {
+                        endYear = value;
                     }
                 }
             }
-            return FacetArg.of(field, sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap);
+            return FacetArg.of(field, sort, pageSize, pageNumber, type, exclusionTag, rangeStart, rangeEnd, rangeGap, startYear, endYear);
         }).toList();
     }
 

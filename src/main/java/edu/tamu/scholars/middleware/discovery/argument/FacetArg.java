@@ -30,6 +30,10 @@ public class FacetArg {
 
     private final String rangeGap;
 
+    private final String startYear;
+
+    private final String endYear;
+
     FacetArg(
         String field,
         String sort,
@@ -39,7 +43,9 @@ public class FacetArg {
         String exclusionTag,
         String rangeStart,
         String rangeEnd,
-        String rangeGap
+        String rangeGap,
+        String startYear,
+        String endYear
     ) {
         this.field = DiscoveryUtility.findProperty(field);
         this.sort = FacetSortArg.of(sort);
@@ -50,6 +56,8 @@ public class FacetArg {
         this.rangeStart = rangeStart;
         this.rangeEnd = rangeEnd;
         this.rangeGap = rangeGap;
+        this.startYear = startYear;
+        this.endYear = endYear;
     }
 
     public String getField() {
@@ -88,6 +96,14 @@ public class FacetArg {
         return rangeGap;
     }
 
+    public String getStartYear() {
+        return startYear;
+    }
+
+    public String getEndYear() {
+        return endYear;
+    }
+
     public String getCommand() {
         return StringUtils.isEmpty(exclusionTag) ? field : String.format("{!ex=%s}%s", exclusionTag, field);
     }
@@ -101,7 +117,9 @@ public class FacetArg {
         Optional<String> exclusionTag,
         Optional<String> rangeStart,
         Optional<String> rangeEnd,
-        Optional<String> rangeGap
+        Optional<String> rangeGap,
+        Optional<String> startYear,
+        Optional<String> endYear
     ) {
         String sortParam = sort.isPresent() ? sort.get() : "COUNT,DESC";
         int pageSizeParam = pageSize.isPresent() ? Integer.valueOf(pageSize.get()) : 10;
@@ -111,6 +129,8 @@ public class FacetArg {
         String rangeStartParam = rangeStart.isPresent() ? rangeStart.get() : "0";
         String rangeEndParam = rangeEnd.isPresent() ? rangeEnd.get() : "100000";
         String rangeGapParam = rangeGap.isPresent() ? rangeGap.get() : "100";
+        String startYearParam = startYear.isPresent() ? startYear.get() : "0000";
+        String endYearParam = endYear.isPresent() ? endYear.get() : "0000";
         return new FacetArg(
             field,
             sortParam,
@@ -120,7 +140,9 @@ public class FacetArg {
             exclusionTagParam,
             rangeStartParam,
             rangeEndParam,
-            rangeGapParam
+            rangeGapParam,
+            startYearParam,
+            endYearParam
         );
     }
 
