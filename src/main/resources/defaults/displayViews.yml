@@ -1924,6 +1924,10 @@
           template: "defaults/displayViews/documents/overview/newsOutlet.html"
           field: newsOutlet
           order: 26
+        - name: Institution
+          template: "defaults/displayViews/documents/overview/placeOfPublication.html"
+          field: placeOfPublication
+          order: 27
     - name: Identity
       sections:
         - name: EAN International-Uniform Code Council (EAN-UCC) 13
