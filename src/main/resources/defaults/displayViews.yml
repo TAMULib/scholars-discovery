@@ -1511,6 +1511,14 @@
           template: "defaults/displayViews/organizations/affiliation/hasSubOrganization.html"
           field: hasSubOrganizations
           order: 3
+          subsections:
+            - name: Has Sub-Organization
+              field: hasSubOrganizations
+              order: 1
+              sort:
+                - field: label
+                  direction: ASC
+              template: "defaults/displayViews/organizations/affiliation/hasSubOrganization/default.html"
         - name: organization within
           template: "defaults/displayViews/organizations/affiliation/organizationWithin.html"
           field: organizationWithin
