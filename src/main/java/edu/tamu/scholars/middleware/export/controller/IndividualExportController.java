@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,6 +63,8 @@ public class IndividualExportController implements RepresentationModelProcessor<
         @PathVariable String id,
         @RequestParam(required = false, defaultValue = "docx") String type,
         @RequestParam(required = true) String name,
+        @RequestParam(required = true) String startYear,
+        @RequestParam(required = true) String endYear,
         @RequestBody(required = false) List<String> ids
     ) throws UnknownExporterTypeException, IllegalArgumentException {
 
@@ -80,21 +83,22 @@ public class IndividualExportController implements RepresentationModelProcessor<
             Exporter exporter = exporterRegistry.getExporter(type);
 
             if (ids != null && !ids.isEmpty()) {
-                individuals = repo.findIndividualsByIds(ids);
+                individuals = repo.findIndividualsByIds(ids, startYear, endYear);
                 if (individuals.isEmpty()) {
                     throw new EntityNotFoundException("No individuals found for the provided IDs");
                 }
                 contentName = name;
-                responseBody = exporter.streamIndividuals(individuals, name);
+
+                responseBody = exporter.streamIndividuals(individuals, name, startYear, endYear);
             } else {
-                Optional<Individual> individual = repo.findById(id);
+                Optional<Individual> individual = repo.findById(id, startYear, endYear);
 
                 if (!individual.isPresent()) {
                     throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
                 }
                 Individual document = individual.get();
                 contentName = normalizeExportFilename(document);
-                responseBody = exporter.streamIndividual(document, name);
+                responseBody = exporter.streamIndividual(document, name, startYear, endYear);
             }
 
             return ResponseEntity.ok()
@@ -131,33 +135,27 @@ public class IndividualExportController implements RepresentationModelProcessor<
                     individual,
                     "docx",
                     "Single Page Bio",
-                    "Individual single page bio export"));
+                    "Individual single page bio export", null, null));
                 addResource(resource, new ResourceLink(
                     individual,
                     "docx",
                     "Profile Summary",
-                    "Individual profile summary export"));
+                    "Individual profile summary export", null, null));
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip", 
-                    "Last 5 Years", 
-                    "Individual 5 year publications export"));
-                addResource(resource, new ResourceLink(
-                    individual,
-                    "zip", 
-                    "Last 8 Years", 
-                    "Individual 8 year publications export"));
+                    "CustomYearsPublicationRange",
+                    "Individual custom year publications export",
+                    "startYear",
+                    "endYear"));
             } else if (individual.getProxy().equals(Organization.class.getSimpleName())) {
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip",
-                    "Last 5 Years",
-                    "Organization 5 year publications export"));
-                addResource(resource, new ResourceLink(
-                    individual,
-                    "zip",
-                    "Last 8 Years",
-                    "Organization 8 year publications export"));
+                    "CustomYearsPublicationRange",
+                    "Organization custom year publications export",
+                    "startYear",
+                    "endYear"));
             }
         }
 
@@ -172,11 +170,16 @@ public class IndividualExportController implements RepresentationModelProcessor<
     }
 
     private void addResource(IndividualModel resource, ResourceLink link) {
+        if (link.getIndividual() == null) {
+            throw new IllegalArgumentException("Individual cannot be null");
+        }
         try {
             resource.add(linkTo(methodOn(this.getClass()).export(
                 link.getIndividual().getId(),
                 link.getType(),
                 link.getName(),
+                link.getStartYear(),
+                link.getEndYear(),
                 new ArrayList<>()
             )).withRel(link.getName().toLowerCase().replace(" ", "_"))
                 .withTitle(link.getTitle()));
@@ -193,17 +196,23 @@ public class IndividualExportController implements RepresentationModelProcessor<
         private final String type;
         private final String name;
         private final String title;
+        private final String startYear;
+        private final String endYear;
 
         private ResourceLink(
             Individual individual,
             String type,
             String name,
-            String title
+            String title,
+            String startYear,
+            String endYear
         ) {
             this.individual = individual;
             this.type = type;
             this.name = name;
             this.title = title;
+            this.startYear = startYear;
+            this.endYear = endYear;
         }
 
         public Individual getIndividual() {
@@ -220,6 +229,14 @@ public class IndividualExportController implements RepresentationModelProcessor<
 
         public String getTitle() {
             return title;
+        }
+
+        public String getStartYear() {
+            return startYear;
+        }
+
+        public String getEndYear() {
+            return endYear;
         }
         
     }
