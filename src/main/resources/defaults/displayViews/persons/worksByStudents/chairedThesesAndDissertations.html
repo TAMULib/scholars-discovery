@@ -2,11 +2,17 @@
 <div class="work mb-2">
   <span>{{authorAndDate}}</span>
   <span><u><a href="display/{{id}}">{{{title}}}</a></u></span>
+{{#if degree}}
   {{#if placeOfPublication}}
-  <span>({{degree}}, {{{placeOfPublication}}})</span>
+    <span>({{degree}}, {{{placeOfPublication}}})</span>
   {{else}}
-  <span>({{degree}})</span>
+    <span>({{degree}})</span>
   {{/if}}
+{{else}}
+  {{#if placeOfPublication}}
+    <span>({{{placeOfPublication}}})</span>
+  {{/if}}
+{{/if}}
   <div>
     {{#if url}}
     <span class="m-1"><a href="{{this.url}}" target="_blank"><img src="assets/images/open-access-badge.jpg" width="100" alt="open access badge" /></a></span>
