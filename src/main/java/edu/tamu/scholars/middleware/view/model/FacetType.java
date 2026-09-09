@@ -7,5 +7,5 @@ import edu.tamu.scholars.middleware.discovery.argument.FacetArg;
  */
 public enum FacetType {
     // TODO: add date range
-    STRING, DATE_YEAR, NUMBER_RANGE
+    STRING, DATE_YEAR, NUMBER_RANGE, DATE_RANGE;
 }

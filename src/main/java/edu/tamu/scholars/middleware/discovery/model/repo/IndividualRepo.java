@@ -126,7 +126,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findByType(String type) {
-        FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty());
+        FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(Arrays.asList(filter))
             .withRows(MAX_PER_TYPE);
@@ -139,13 +139,31 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
     }
 
+    public List<Individual> findByIdInWithYearFilter(List<String> ids, String startYear, String endYear) {
+        return findByIdInWithYearFilter(ids, new ArrayList<>(), Sort.unsorted(), ids.size(), startYear, endYear);
+    }
+
     public List<Individual> findIndividualsByIds(List<String> ids) {
-        if (ids.isEmpty()) {
+        if (ids == null || ids.isEmpty()) {
             return new ArrayList<>();
         }
 
         try {
             return findByIdIn(ids, new ArrayList<>(), Sort.unsorted(), ids.size());
+        } catch (Exception e) {
+            throw new SolrRequestException("Failed to find individuals by IDs", e);
+        }
+    }
+
+
+    public List<Individual> findIndividualsByIdsWithYearFilter(List<String> ids, String startYear, String endYear) {
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        try {
+            System.out.println("\n to find ids with custom year range\n\n");
+            return findByIdInWithYearFilter(ids, new ArrayList<>(), Sort.unsorted(), ids.size(), startYear, endYear);
         } catch (Exception e) {
             throw new SolrRequestException("Failed to find individuals by IDs", e);
         }
@@ -162,7 +180,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         try {
             SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
                 .withFilters(Arrays.asList(
-                    FilterArg.of(ID, Optional.of(id), Optional.empty(), Optional.empty())
+                    FilterArg.of(ID, Optional.of(id), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty())
                 ))
                 .withRows(1);
 
@@ -195,6 +213,43 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                 .withSort(sort)
                 .withRows(limit);
             JsonQueryRequest jsonRequest = builder.jsonQuery(new ArrayList<>(ids));
+            QueryResponse response = jsonRequest.process(solrClient, collectionName);
+
+            return response.getResults()
+                .stream()
+                .map(Individual::from)
+                .toList();
+        } catch (IOException | SolrServerException e) {
+            throw new SolrRequestException("Failed to find documents from ids", e);
+        }
+    }
+
+    public List<Individual> findByIdInWithYearFilter(List<String> ids, List<FilterArg> filters, Sort sort, int limit, String startYear, String endYear) {
+        filters = (filters == null) ? filters = new ArrayList<>() : new ArrayList<>(filters) ;
+
+        String startYearString = (startYear != null && !startYear.trim().isEmpty() && !startYear.equalsIgnoreCase("null")) ? startYear.trim() : null;
+        String endYearString = (endYear != null && !endYear.trim().isEmpty() && !endYear.equalsIgnoreCase("null")) ? endYear.trim() : null;
+        boolean hasDateFilter = filters.stream().anyMatch(f -> f.getField().contains("publicationDate"));
+
+        if ( !hasDateFilter && (startYearString != null || endYearString != null)){
+            filters.add(FilterArg.of(
+                "publicationDates",
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.ofNullable(startYearString),
+                Optional.ofNullable(endYearString)
+            ));
+        }
+        try {
+            SolrQueryBuilder builder = new SolrQueryBuilder()
+                .withFilters(filters)
+                .withSort(sort)
+                .withRows(limit);
+            System.out.println("\n\n Solr query : " + builder.toString() + "\n\n");
+            JsonQueryRequest jsonRequest = builder.jsonQuery(new ArrayList<>(ids));
+            System.out.println("\n\n\nQueryParams: " + jsonRequest.getParams());
+            //TODO - failing here
             QueryResponse response = jsonRequest.process(solrClient, collectionName);
 
             return response.getResults()
@@ -431,7 +486,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             year = String.valueOf(calendar.get(Calendar.YEAR));
         } else if (dateFieldFromDocument instanceof String publicationYear) {
             try {
-                year = DateFormatUtility.parseYear(publicationYear);
+                year = DateFormatUtility.parsendYearString(publicationYear);
             } catch (Exception e) {
                 logger.warn("Unable to format {}. {}", year, e.getMessage());
                 if (logger.isDebugEnabled()) {

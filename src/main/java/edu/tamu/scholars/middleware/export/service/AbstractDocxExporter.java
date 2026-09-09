@@ -76,6 +76,10 @@ public abstract class AbstractDocxExporter implements Exporter {
     @Autowired
     private ServletContext context;
 
+    private String currentStartYear = "";
+
+    private String currentEndYear = "";
+
     @Value("${vivo.base-url:http://localhost:8080/vivo}")
     protected String vivoUrl;
 
@@ -117,6 +121,8 @@ public abstract class AbstractDocxExporter implements Exporter {
         node.put("serviceUrl", serviceUrl);
         node.put("vivoUrl", vivoUrl);
         node.put("uiUrl", uiUrl);
+        // node.put("startYear", startYear);
+        // node.put("endYear", endYear);
         fetchAndAttachLazyReferences(node, view.getLazyReferences());
         return node;
     }
@@ -150,19 +156,39 @@ public abstract class AbstractDocxExporter implements Exporter {
     }
 
     protected List<Individual> fetchLazyReference(ExportFieldView lazyReference, List<String> ids) {
-        List<FilterArg> filters = lazyReference.getFilters().stream().map(f -> 
-            FilterArg.of(
-            f.getField(),
-            Optional.of(f.getValue()),
-            Optional.of(f.getOpKey().getKey()),
-            Optional.empty()
-        )).toList();
 
-        Sort sort = Sort.by(lazyReference.getSort().stream().map(s -> Order.by(s.getField()).with(s.getDirection())).toList());
+        return fetchLazyReferenceWithYearFilter(lazyReference, ids, currentStartYear, currentEndYear);
+    }
 
-        int limit = lazyReference.getLimit();
+    protected List<Individual> fetchLazyReferenceWithYearFilter(ExportFieldView lazyReference, List<String> ids, String startYear, String endYear) {
+        String startYearString = (startYear != null && !startYear.isEmpty()) ? startYear.trim() + "-01-01T00:00:00Z" : "*";
+        String endYearString = (endYear != null && !endYear.isEmpty()) ? endYear.trim() + "-12-31T23:59:59Z" : "*";
+        String resolvedDateRange = "[" + startYearString + " TO " + endYearString + "]";
 
-        return individualRepo.findByIdIn(ids, filters, sort, limit);
+        List<FilterArg> filters = lazyReference.getFilters() != null
+            ? lazyReference.getFilters().stream().map(f -> {
+                String value = f.getValue();
+                if (value != null && value.contains("${startYear}")) {
+                    value = resolvedDateRange;
+                }
+                return FilterArg.of(
+                    f.getField(),
+                    Optional.ofNullable(value),
+                    f.getOpKey() != null ? Optional.of(f.getOpKey().getKey()) : Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty()
+                );
+          }).collect(Collectors.toList())
+        : new ArrayList<>();
+
+        Sort sort = lazyReference.getSort() != null && !lazyReference.getSort().isEmpty()
+                    ? Sort.by(lazyReference.getSort().stream().map(s -> Order.by(s.getField()).with(s.getDirection())).toList())
+                    : Sort.unsorted();
+
+        int limit = lazyReference.getLimit() > 0 ? lazyReference.getLimit() : ids.size();
+
+        return individualRepo.findByIdInWithYearFilter(ids, filters, sort, limit, startYearString, endYearString);
     }
 
     protected void addMargin(final MainDocumentPart mainDocumentPart) {
