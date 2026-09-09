@@ -17,6 +17,7 @@
     - positions.organizations
     - researchAreas
     - thumbnail
+    - organizations
   facets:
     - name: People
       field: type
@@ -27,7 +28,8 @@
       collapsed: true
       hidden: false
     - name: Organization
-      field: positions.organizations
+      field: organizations
+      opKey: EQUALS
       type: STRING
       sort: COUNT
       direction: DESC

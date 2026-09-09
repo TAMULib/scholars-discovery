@@ -229,7 +229,7 @@
     - columnHeader: Publication date
       valuePath: publicationDate
     - columnHeader: Journal title
-      valuePath: publicationVenue
+      valuePath: publicationVenueOutlet
     - columnHeader: Book title
       valuePath: bookTitle
     - columnHeader: Author
