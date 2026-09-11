@@ -142,7 +142,7 @@ public class ArgumentUtility {
                 }
             }
             for (String value : values.split(FILTER_VALUE_DELIMITER)) {
-                filters.add(FilterArg.of(field, Optional.of(value), opKey, tag));
+                filters.add(FilterArg.of(field, Optional.of(value), opKey, tag, "", ""));
             }
         });
         return filters;

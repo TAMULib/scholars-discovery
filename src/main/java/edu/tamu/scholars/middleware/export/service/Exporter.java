@@ -34,9 +34,23 @@ public interface Exporter {
         ));
     }
 
+    public default StreamingResponseBody streamIndividualsByIds(List<String> ids, String name, String startYear, String endYear) {
+        throw new UnsupportedExporterTypeException(String.format(
+            "%s exporter does not support exporting multiple individual ids with year range.",
+            type()
+        ));
+    }
+
     public default StreamingResponseBody streamIndividual(Individual individual, String name) {
         throw new UnsupportedExporterTypeException(String.format(
             "%s exporter does not support individual templated exports",
+            type()
+        ));
+    }
+
+    public default StreamingResponseBody streamIndividualById(String id, String name, String startYear, String endYear) {
+        throw new UnsupportedExporterTypeException(String.format(
+            "%s exporter does not support exporting multiple individual ids with year range.",
             type()
         ));
     }

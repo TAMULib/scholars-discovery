@@ -16,7 +16,7 @@ public class FilterArgTest {
 
     @Test
     public void testDefaultConstructor() {
-        FilterArg filterArg = new FilterArg("class", "Concept", OpKey.EQUALS, "CLAZZ");
+        FilterArg filterArg = new FilterArg("class", "Concept", OpKey.EQUALS, "CLAZZ", "", "");
         assertNotNull(filterArg);
         assertEquals("class", filterArg.getField());
         assertEquals("Concept", filterArg.getValue());
@@ -29,7 +29,7 @@ public class FilterArgTest {
         Optional<String> value = Optional.of("Concept");
         Optional<String> opKey = Optional.of(OpKey.EQUALS.getKey());
         Optional<String> tag = Optional.of("CLAZZ");
-        FilterArg filterArg = FilterArg.of("class", value, opKey, tag);
+        FilterArg filterArg = FilterArg.of("class", value, opKey, tag, "", "");
         assertNotNull(filterArg);
         assertEquals("class", filterArg.getField());
         assertEquals("Concept", filterArg.getValue());

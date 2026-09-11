@@ -20,11 +20,17 @@ public class FilterArg {
 
     private final String tag;
 
-    FilterArg(String field, String value, OpKey opKey, String tag) {
+    private final String startYear;
+
+    private final String endYear;
+
+    FilterArg(String field, String value, OpKey opKey, String tag, String startYear, String endYear) {
         this.field = DiscoveryUtility.findProperty(field);
         this.value = value;
         this.opKey = opKey;
         this.tag = tag;
+        this.startYear = startYear;
+        this.endYear = endYear;
     }
 
     public String getValue() {
@@ -39,6 +45,14 @@ public class FilterArg {
         return tag;
     }
 
+    public String getStartYear() {
+        return startYear;
+    }
+
+    public String getEndYear() {
+        return endYear;
+    }
+
     public String getField() {
         return field;
     }
@@ -47,16 +61,18 @@ public class FilterArg {
         return StringUtils.isEmpty(tag) ? field : String.format("{!tag=%s}%s", tag, field);
     }
 
-    public static FilterArg of(String field, Optional<String> value, Optional<String> opKey, Optional<String> tag) {
+    public static FilterArg of(String field, Optional<String> value, Optional<String> opKey, Optional<String> tag, String startYear, String endYear) {
         String valueParam = value.isPresent() ? value.get() : StringUtils.EMPTY;
         OpKey opKeyParam = opKey.isPresent() ? OpKey.valueOf(opKey.get()) : OpKey.EQUALS;
         String tagParam = tag.isPresent() ? tag.get() : StringUtils.EMPTY;
-        return new FilterArg(field, valueParam, opKeyParam, tagParam);
+        String startYearParam = (startYear != null && !startYear.isEmpty()) ? startYear : StringUtils.EMPTY;
+        String endYearParam = (endYear != null && !endYear.isEmpty()) ? endYear : StringUtils.EMPTY;
+        return new FilterArg(field, valueParam, opKeyParam, tagParam, startYearParam, endYearParam);
     }
 
     @Override
     public String toString() {
-        return "FilterArg [field=" + field + ", value=" + value + ", opKey=" + opKey + ", tag=" + tag + "]";
+        return "FilterArg [field=" + field + ", value=" + value + ", opKey=" + opKey + ", tag=" + tag + ", startYear=" + startYear + ", endYear=" + endYear + "]";
     }
 
 }
