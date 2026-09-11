@@ -126,7 +126,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findByType(String type) {
-        FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty());
+        FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty(), "", "");
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(Arrays.asList(filter))
             .withRows(MAX_PER_TYPE);
@@ -162,7 +162,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         try {
             SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
                 .withFilters(Arrays.asList(
-                    FilterArg.of(ID, Optional.of(id), Optional.empty(), Optional.empty())
+                    FilterArg.of(ID, Optional.of(id), Optional.empty(), Optional.empty(), "", "")
                 ))
                 .withRows(1);
 
@@ -818,6 +818,16 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             return filterQuery.toString();
         }
 
+    }
+
+    @Override
+    public List<Individual> findByIdInWithYearFilter(List<String> ids, List<FilterArg> filters, Sort sort, int limit) {
+        throw new UnsupportedOperationException("Unimplemented method 'findByIdInWithYearFilter'");
+    }
+
+    @Override
+    public Optional<Individual> findByIdWithYearFilter(String id, List<FilterArg> filters, Sort sort, int limit) {
+        throw new UnsupportedOperationException("Unimplemented method 'findByIdWithYearFilter'");
     }
 
 }

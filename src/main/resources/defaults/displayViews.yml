@@ -1213,13 +1213,6 @@
   - name: CustomYearsPublicationRange
     contentTemplate: "defaults/displayViews/persons/customYearsPublications.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
-    multipleReference:
-      name: Personnel
-      field: people
-      order: 1
-      sort:
-      - field: name
-        direction: ASC
     lazyReferences:
     - name: Publications
       field: publications

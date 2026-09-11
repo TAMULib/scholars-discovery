@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -160,6 +161,9 @@ public class IndividualExportController implements RepresentationModelProcessor<
     }
 
     private void addResource(IndividualModel resource, ResourceLink link) {
+        if (link.getIndividual() == null) {
+            throw new IllegalArgumentException("Individual cannot be null");
+        }
         try {
             resource.add(linkTo(methodOn(this.getClass()).export(
                 link.getIndividual().getId(),
@@ -185,7 +189,6 @@ public class IndividualExportController implements RepresentationModelProcessor<
         private final String title;
         private final String startYear;
         private final String endYear;
-
 
         private ResourceLink(
             Individual individual,

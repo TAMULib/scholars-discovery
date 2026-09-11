@@ -155,7 +155,9 @@ public abstract class AbstractDocxExporter implements Exporter {
             f.getField(),
             Optional.of(f.getValue()),
             Optional.of(f.getOpKey().getKey()),
-            Optional.empty()
+            Optional.empty(),
+            "",
+            ""
         )).toList();
 
         Sort sort = Sort.by(lazyReference.getSort().stream().map(s -> Order.by(s.getField()).with(s.getDirection())).toList());
