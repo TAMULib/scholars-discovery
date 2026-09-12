@@ -65,8 +65,8 @@ public class FilterArg {
         String valueParam = value.isPresent() ? value.get() : StringUtils.EMPTY;
         OpKey opKeyParam = opKey.isPresent() ? OpKey.valueOf(opKey.get()) : OpKey.EQUALS;
         String tagParam = tag.isPresent() ? tag.get() : StringUtils.EMPTY;
-        String startYearParam = (startYear != null && !startYear.isEmpty()) ? startYear : StringUtils.EMPTY;
-        String endYearParam = (endYear != null && !endYear.isEmpty()) ? endYear : StringUtils.EMPTY;
+        String startYearParam = (startYear != null && !startYear.isEmpty()) ? startYear.trim(): StringUtils.EMPTY;
+        String endYearParam = (endYear != null && !endYear.isEmpty()) ? endYear.trim() : StringUtils.EMPTY;
         return new FilterArg(field, valueParam, opKeyParam, tagParam, startYearParam, endYearParam);
     }
 

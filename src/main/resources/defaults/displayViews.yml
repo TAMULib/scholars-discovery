@@ -92,7 +92,7 @@
     lazyReferences:
     - name: Publications
       field: publications
-      order: 1
+      order: 2
       sort:
         - field: publicationDate
           direction: DESC
@@ -127,9 +127,9 @@
           opKey: EXPRESSION
     - name: Grants
       field: awardsAndHonors
-      order: 2
+      order: 3
       sort:
-        - field: title_sort
+        - field: yearAwarded
           direction: ASC
       filters:
         - field: type
@@ -1213,6 +1213,13 @@
   - name: CustomYearsPublicationRange
     contentTemplate: "defaults/displayViews/persons/customYearsPublications.html"
     headerTemplate: "defaults/displayViews/emptyHeaderTemplate.html"
+    multipleReference:
+      name: Personnel
+      field: people
+      order: 1
+      sort:
+      - field: name
+        direction: ASC
     lazyReferences:
     - name: Publications
       field: publications

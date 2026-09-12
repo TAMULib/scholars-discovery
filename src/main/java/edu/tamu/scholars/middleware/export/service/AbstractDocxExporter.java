@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.ServletContext;
 import jakarta.xml.bind.JAXBException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.docx4j.jaxb.Context;
 import org.docx4j.model.structure.SectionWrapper;
 import org.docx4j.openpackaging.contenttype.ContentType;
@@ -84,7 +86,9 @@ public abstract class AbstractDocxExporter implements Exporter {
 
     protected WordprocessingMLPackage createDocx(
         ObjectNode node,
-        ExportView exportView
+        ExportView exportView,
+        String startYear,
+        String endYear
     ) throws JAXBException, Docx4JException {
         final WordprocessingMLPackage pkg = WordprocessingMLPackage.createPackage();
         final MainDocumentPart mdp = pkg.getMainDocumentPart();
@@ -93,7 +97,7 @@ public abstract class AbstractDocxExporter implements Exporter {
         pkg.getMainDocumentPart().addTargetPart(ndp);
         ndp.unmarshalDefaultNumbering();
 
-        ObjectNode json = processDocument(node, exportView);
+        ObjectNode json = processDocument(node, exportView, startYear, endYear);
 
         String contentHtml = handlebarsService.template(exportView.getContentTemplate(), json);
 
@@ -108,7 +112,7 @@ public abstract class AbstractDocxExporter implements Exporter {
         return pkg;
     }
 
-    protected ObjectNode processDocument(final ObjectNode node, ExportView view) {
+    protected ObjectNode processDocument(final ObjectNode node, ExportView view, String startYear, String endYear) {
         final UriComponents uriComponents = fromCurrentRequest()
             .replacePath(context.getContextPath())
             .replaceQuery(null)
@@ -117,11 +121,13 @@ public abstract class AbstractDocxExporter implements Exporter {
         node.put("serviceUrl", serviceUrl);
         node.put("vivoUrl", vivoUrl);
         node.put("uiUrl", uiUrl);
-        fetchAndAttachLazyReferences(node, view.getLazyReferences());
+        node.put("startYear", startYear);
+        node.put("endYear", endYear);
+        fetchAndAttachLazyReferences(node, view.getLazyReferences(), startYear, endYear);
         return node;
     }
 
-    protected void fetchAndAttachLazyReferences(ObjectNode node, List<ExportFieldView> lazyReferences) {
+    protected void fetchAndAttachLazyReferences(ObjectNode node, List<ExportFieldView> lazyReferences, String startYear, String endYear) {
         lazyReferences
             .stream()
             .filter(lazyReference -> node.hasNonNull(lazyReference.getField()))
@@ -130,7 +136,7 @@ public abstract class AbstractDocxExporter implements Exporter {
                 List<String> ids = extractIds(reference);
                 ArrayNode references = node.putArray(lazyReference.getField());
 
-                List<Individual> ref = fetchLazyReference(lazyReference, ids);
+                List<Individual> ref = fetchLazyReference(lazyReference, ids, startYear, endYear);
 
                 references.addAll((ArrayNode) mapper.valueToTree(ref));
             });
@@ -138,30 +144,64 @@ public abstract class AbstractDocxExporter implements Exporter {
 
     protected List<String> extractIds(JsonNode reference) {
         List<String> ids = new ArrayList<>();
-        if (reference.isArray()) {
+        if (reference.isArray() && !reference.isEmpty()) {
             ids = StreamSupport.stream(reference.spliterator(), true)
-                .map(rn -> rn.get(ID).asText())
-                .collect(Collectors.toList());
+                    .map(rn -> rn.get(ID))
+                    .filter(idNode -> idNode != null && !idNode.isNull())
+                    .map(JsonNode::asText)
+                    .collect(Collectors.toList());
         } else {
-            ids.add(reference.get(ID).asText());
+            JsonNode singleIdNode = reference.get(ID);
+            if (singleIdNode != null && !singleIdNode.isNull()) {
+                ids.add(singleIdNode.asText());
+            }
         }
 
         return ids;
     }
 
-    protected List<Individual> fetchLazyReference(ExportFieldView lazyReference, List<String> ids) {
-        List<FilterArg> filters = lazyReference.getFilters().stream().map(f -> 
-            FilterArg.of(
-            f.getField(),
-            Optional.of(f.getValue()),
-            Optional.of(f.getOpKey().getKey()),
-            Optional.empty(),
-            "",
-            ""
-        )).toList();
+    protected List<Individual> fetchLazyReference(ExportFieldView lazyReference, List<String> ids, String startYear, String endYear) {
+        System.out.println("\n\n ADE fetchLazyReference " + startYear + "" + endYear+ " \n\n");
+
+
+        boolean hasYears = startYear != null && !startYear.trim().isEmpty()
+                        && endYear != null && !endYear.trim().isEmpty();
+
+        List<FilterArg> filters = new ArrayList<>();
+
+        for (var filter : lazyReference.getFilters()) {
+        String value = filter.getValue();
+
+        if (value != null && value.contains("${startYear}")) {
+            if (hasYears) {
+                String processedValue = value
+                    .replace("${startYear}", startYear)
+                    .replace("${endYear}", endYear);
+
+                filters.add(FilterArg.of(
+                    filter.getField(),
+                    Optional.of(processedValue),
+                    Optional.of(filter.getOpKey().name()),
+                    Optional.empty(),
+                    "",
+                    ""
+                ));
+            } else {
+                System.out.println("No date range found.");
+            }
+        } else {
+                filters.add(FilterArg.of(
+                    filter.getField(),
+                    Optional.of(filter.getValue()),
+                    Optional.of(filter.getOpKey().name()),
+                    Optional.empty(),
+                    "",
+                    ""
+                ));
+            }
+        }
 
         Sort sort = Sort.by(lazyReference.getSort().stream().map(s -> Order.by(s.getField()).with(s.getDirection())).toList());
-
         int limit = lazyReference.getLimit();
 
         return individualRepo.findByIdIn(ids, filters, sort, limit);

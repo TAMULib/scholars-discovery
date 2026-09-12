@@ -459,7 +459,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
     }
 
-    private Individual getById(String id) {
+    public Individual getById(String id) {
         try {
             SolrDocument document = solrClient.getById(collectionName, id);
 

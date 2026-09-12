@@ -1,17 +1,21 @@
 package edu.tamu.scholars.middleware.export.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipOutputStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.apache.commons.lang3.StringUtils;
 import org.docx4j.Docx4J;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -55,21 +59,31 @@ public class ZipDocxExporter extends AbstractDocxExporter {
         return CONTENT_TYPE;
     }
 
-    public StreamingResponseBody streamIndividuals(List<Individual> individuals, String name) {
+    @Override
+    public StreamingResponseBody streamIndividualsByIds(List<String> ids, String name, String startYear, String endYear) {
+        if ( ids.isEmpty() ) {
+            throw new EntityNotFoundException("No IDs provided");
+        }
 
         return outputStream -> {
-
             try (ZipOutputStream zos = new ZipOutputStream(outputStream)) {
+                List<Individual> individuals = individualRepo.findIndividualsByIds(ids);
+                if ( individuals.isEmpty() ) {
+                    throw new EntityNotFoundException("No individuals found for the provided IDs");
+                }
+
                 for (Individual individual : individuals) {
-                    processIndividualExport(individual, name, zos);
+
+                    processIndividualExport(individual, name, zos, startYear, endYear);
                 }
             }
         };
     }
 
     @Override
-    public StreamingResponseBody streamIndividual(Individual individual, String name) {
+    public StreamingResponseBody streamIndividualById(String id, String name, String startYear, String endYear) {
 
+        Individual individual = individualRepo.getById(id);
         return outputStream -> {
 
             File zipFile = File.createTempFile(individual.getId(), ".zip");
@@ -78,12 +92,13 @@ public class ZipDocxExporter extends AbstractDocxExporter {
                 FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
                 ZipOutputStream zos = new ZipOutputStream(outputStream);
             ) {
-                processIndividualExport(individual, name, zos);
+                // TODO
+                // processIndividualExport(individual, name, zos, startYear, endYear);
             }
         };
     }
 
-    private void processIndividualExport(Individual individual, String name, ZipOutputStream zos) throws IOException {
+    private void processIndividualExport(Individual individual, String name, ZipOutputStream zos, String startYear, String endYear) {
 
         final List<String> type = individual.getType();
         Optional<DisplayView> displayView = displayViewRepo.findByTypesIn(type);
@@ -103,32 +118,52 @@ public class ZipDocxExporter extends AbstractDocxExporter {
         }
 
         final ObjectNode node = mapper.valueToTree(individual);
-
         Optional<ExportFieldView> multipleReference = Optional.ofNullable(exportView.get().getMultipleReference());
 
-        List<Individual> referenceDocuments = new ArrayList<>();
+        List<AbstractIndexDocument> referenceDocuments = new ArrayList<>();
+        boolean hasMultipleReference = false;
 
-        if (multipleReference.isPresent()) {
-            JsonNode reference = node.get(multipleReference.get().getField());
-            List<String> ids = extractIds(reference);
-            referenceDocuments.addAll(fetchLazyReference(multipleReference.get(), ids));
-        } else {
+        if (multipleReference.isPresent() && !node.isNull()) {
+            String fieldName = multipleReference.get().getField();
+            JsonNode reference = node.path(fieldName);
+
+            if (!reference.isMissingNode() && !reference.isNull() && !reference.isEmpty()) {
+                hasMultipleReference = true;
+                List<String> ids = extractIds(reference);
+                referenceDocuments.addAll(fetchLazyReference(multipleReference.get(), ids, startYear, endYear));
+            }
+        }
+
+        if (!hasMultipleReference) {
+            if (exportView.get().getLazyReferences() != null && !node.isNull()) {
+                fetchAndAttachLazyReferences(node, exportView.get().getLazyReferences(), startYear, endYear);
+            }
             referenceDocuments.add(individual);
         }
 
         for (AbstractIndexDocument refDoc : referenceDocuments) {
-            final ObjectNode refNode = mapper.valueToTree(refDoc);
+            final ObjectNode refNode;
+
+            if (hasMultipleReference) {
+                refNode = mapper.valueToTree(refDoc);
+                if (node.has("awardsAndHonors") && !refNode.has("awardsAndHonors")) {
+                    refNode.set("awardsAndHonors", node.get("awardsAndHonors"));
+                }
+                if (node.has("publications") && !refNode.has("publications")) {
+                    refNode.set("publications", node.get("publications"));
+                }
+            } else {
+                refNode = node;
+            }
 
             String filename = FilenameUtility.normalizeExportFilename(refDoc);
 
-            File refDocFile = File.createTempFile(filename, ".docx");
-
             try {
+                File refDocFile = File.createTempFile(filename, ".docx");
 
-                final WordprocessingMLPackage pkg = createDocx(refNode, exportView.get());
+                final WordprocessingMLPackage pkg = createDocx(refNode, exportView.get(), startYear, endYear);
 
                 pkg.save(refDocFile, Docx4J.FLAG_SAVE_ZIP_FILE);
-
                 ZipUtility.zipFile(zos, refDocFile);
 
             } catch (IOException | JAXBException | Docx4JException e) {
@@ -136,5 +171,4 @@ public class ZipDocxExporter extends AbstractDocxExporter {
             }
         }
     }
-
 }
