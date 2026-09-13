@@ -3,6 +3,7 @@ package edu.tamu.scholars.middleware.export.service;
 import static edu.tamu.scholars.middleware.discovery.DiscoveryConstants.ID;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -127,19 +128,24 @@ public abstract class AbstractDocxExporter implements Exporter {
         return node;
     }
 
-    protected void fetchAndAttachLazyReferences(ObjectNode node, List<ExportFieldView> lazyReferences, String startYear, String endYear) {
-        lazyReferences
-            .stream()
-            .filter(lazyReference -> node.hasNonNull(lazyReference.getField()))
-            .forEach(lazyReference -> {
-                JsonNode reference = node.get(lazyReference.getField());
-                List<String> ids = extractIds(reference);
-                ArrayNode references = node.putArray(lazyReference.getField());
+   protected void fetchAndAttachLazyReferences(ObjectNode node, List<ExportFieldView> lazyReferences, String startYear, String endYear) {
+    lazyReferences
+        .stream()
+        .filter(lazyReference -> node.hasNonNull(lazyReference.getField()))
+        .forEach(lazyReference -> {
 
-                List<Individual> ref = fetchLazyReference(lazyReference, ids, startYear, endYear);
+            JsonNode reference = node.path(lazyReference.getField());
+            List<String> ids = extractIds(reference);
 
-                references.addAll((ArrayNode) mapper.valueToTree(ref));
-            });
+            List<Individual> ref = fetchLazyReference(lazyReference, ids, startYear, endYear);
+
+            if (ref != null && !ref.isEmpty()) {
+                JsonNode jsonNode = mapper.valueToTree(ref);
+                node.set(lazyReference.getField(), jsonNode);
+            } else {
+                System.out.println("\n\n No query returned for IDs: " + ids);
+            }
+        });
     }
 
     protected List<String> extractIds(JsonNode reference) {
@@ -161,8 +167,6 @@ public abstract class AbstractDocxExporter implements Exporter {
     }
 
     protected List<Individual> fetchLazyReference(ExportFieldView lazyReference, List<String> ids, String startYear, String endYear) {
-        System.out.println("\n\n ADE fetchLazyReference " + startYear + "" + endYear+ " \n\n");
-
 
         boolean hasYears = startYear != null && !startYear.trim().isEmpty()
                         && endYear != null && !endYear.trim().isEmpty();

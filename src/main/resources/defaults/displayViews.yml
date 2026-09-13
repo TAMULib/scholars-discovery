@@ -130,11 +130,12 @@
       order: 3
       sort:
         - field: yearAwarded
-          direction: ASC
+          direction: DESC
+          date: true
       filters:
-        - field: type
-          value: Grant
-          opKey: EQUALS
+        - field: class
+          value: Relationship AND (type:Grant OR type:AwardReceipt)
+          opKey: EXPRESSION
   metaTemplates:
     title: "defaults/displayViews/persons/meta/title.txt"
     description: "defaults/displayViews/persons/meta/description.txt"
@@ -1223,7 +1224,7 @@
     lazyReferences:
     - name: Publications
       field: publications
-      order: 2
+      order: 1
       sort:
         - field: publicationDate
           direction: DESC
@@ -1258,14 +1259,14 @@
           opKey: EXPRESSION
     - name: Grants
       field: awardsAndHonors
-      order: 3
+      order: 2
       sort:
         - field: yearAwarded
           direction: DESC
           date: true
       filters:
         - field: class
-          value: Relationship AND type:Grant
+          value: Relationship AND (type:Grant OR type:AwardReceipt)
           opKey: EXPRESSION
   metaTemplates:
     title: "defaults/displayViews/organizations/meta/title.txt"

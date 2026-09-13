@@ -83,21 +83,28 @@ public class ZipDocxExporter extends AbstractDocxExporter {
     @Override
     public StreamingResponseBody streamIndividualById(String id, String name, String startYear, String endYear) {
 
-        Individual individual = individualRepo.getById(id);
+        Optional<Individual> individual = individualRepo.findById(id);
+
+        if (!individual.isPresent()) {
+            throw new EntityNotFoundException(String.format("Individual with id %s not found", id));
+        }
+
+        Individual document = individual.get();
+
         return outputStream -> {
 
-            File zipFile = File.createTempFile(individual.getId(), ".zip");
+            File zipFile = File.createTempFile(document.getId(), ".zip");
 
             try (
                 FileOutputStream fos = new FileOutputStream(zipFile.getAbsolutePath());
                 ZipOutputStream zos = new ZipOutputStream(outputStream);
             ) {
-                // TODO
-                // processIndividualExport(individual, name, zos, startYear, endYear);
+                processIndividualExport(document, name, zos, startYear, endYear);
             }
         };
     }
 
+    //TODO Refactor this method to reduce its Cognitive Complexity from 25 to the 15 allowed
     private void processIndividualExport(Individual individual, String name, ZipOutputStream zos, String startYear, String endYear) {
 
         final List<String> type = individual.getType();
@@ -159,6 +166,7 @@ public class ZipDocxExporter extends AbstractDocxExporter {
             String filename = FilenameUtility.normalizeExportFilename(refDoc);
 
             try {
+
                 File refDocFile = File.createTempFile(filename, ".docx");
 
                 final WordprocessingMLPackage pkg = createDocx(refNode, exportView.get(), startYear, endYear);
@@ -171,4 +179,5 @@ public class ZipDocxExporter extends AbstractDocxExporter {
             }
         }
     }
+
 }
