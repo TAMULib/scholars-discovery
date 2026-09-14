@@ -8,14 +8,14 @@ CONSTRUCT {
 } WHERE {
     <{{uri}}> a obo:IAO_0000030 .
 
-  OPTIONAL {
-    <{{uri}}> vivo:hasPublicationVenue ?publicationVenue .
-    ?publicationVenue rdfs:label ?label .
-  }
+    OPTIONAL {
+        <{{uri}}> vivo:hasPublicationVenue ?publicationVenue .
+        ?publicationVenue rdfs:label ?label .
+    }
 
-  OPTIONAL {
-    <{{uri}}> tamu:publishedProceedings ?publishedProceedings .
-  }
+    OPTIONAL {
+        <{{uri}}> tamu:publishedProceedings ?publishedProceedings .
+    }
 
     BIND( CONCAT( STR(?label), REPLACE(STR(?publicationVenue), "(^.*/)", "::") ) AS ?labelWithId ) .
     BIND( COALESCE(?labelWithId, ?publishedProceedings) AS ?publicationVenueOutlet)
