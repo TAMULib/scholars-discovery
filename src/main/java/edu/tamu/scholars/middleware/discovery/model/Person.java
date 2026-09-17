@@ -1297,7 +1297,8 @@ public class Person extends Common {
     @FieldType(type = "nested_whole_strings", searchable = false)
     @NestedObject(properties = {
         @Reference(value = "etdChairOfUrl", key = "url"),
-        @Reference(value = "etdChairOfPublicationDate", key = "publicationDate")
+        @Reference(value = "etdChairOfPublicationDate", key = "publicationDate"),
+        @Reference(value = "etdChairOfPlaceOfPublication", key = "placeOfPublication")
     })
     @FieldSource(
         template = "person/etdChairOf",
@@ -1357,6 +1358,13 @@ public class Person extends Common {
         predicate = "http://vivo.library.tamu.edu/ontology/TAMU#PublicationToInterfolio"
     )
     private String publicationToInterfolio;
+
+    @FieldType(type = "nested_whole_strings")
+    @FieldSource(
+        template = "person/etdChairOfPlaceOfPublication",
+        predicate = "http://vivoweb.org/ontology/core#placeOfPublication"
+    )
+    private List<String> etdChairOfPlaceOfPublication;
 
     public String getName() {
         return name;
@@ -2672,6 +2680,14 @@ public class Person extends Common {
 
     public void setPublicationToInterfolio(String publicationToInterfolio) {
         this.publicationToInterfolio = publicationToInterfolio;
+    }
+
+    public List<String> getEtdChairOfPlaceOfPublication() {
+        return etdChairOfPlaceOfPublication;
+    }
+
+    public void setEtdChairOfPlaceOfPublication(List<String> etdChairOfPlaceOfPublication) {
+        this.etdChairOfPlaceOfPublication = etdChairOfPlaceOfPublication;
     }
 
 }

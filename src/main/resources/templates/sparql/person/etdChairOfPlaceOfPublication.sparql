@@ -1,0 +1,11 @@
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX tamu: <http://vivo.library.tamu.edu/ontology/TAMU#>
+
+CONSTRUCT {
+    ?work vivo:placeOfPublication ?placeOfPublicationWithId .
+}
+WHERE {
+    <{{uri}}> tamu:ETDChairOf ?work .
+    ?work vivo:placeOfPublication ?placeOfPublication .
+    BIND( CONCAT( STR(?placeOfPublication), REPLACE(STR(?work), "(^.*/)", "::") ) AS ?placeOfPublicationWithId ) .
+}

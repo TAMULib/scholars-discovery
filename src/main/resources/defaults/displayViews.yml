@@ -433,6 +433,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -444,6 +447,9 @@
                   value: Audio Track
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -459,6 +465,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -470,6 +479,9 @@
                   value: Composition
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -485,6 +497,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -496,6 +511,9 @@
                   value: Dance
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -511,6 +529,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -522,6 +543,9 @@
                   value: Drawing
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -537,6 +561,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -548,6 +575,9 @@
                   value: Event
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -563,6 +593,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -574,6 +607,9 @@
                   value: Illustration
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -589,6 +625,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -600,6 +639,9 @@
                   value: Interactive Media
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -615,6 +657,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -626,6 +671,9 @@
                   value: Performance
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -641,6 +689,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -652,6 +703,9 @@
                   value: Play
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -667,6 +721,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -678,6 +735,9 @@
                   value: Project
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -693,6 +753,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -704,6 +767,9 @@
                   value: Screenplay
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -719,6 +785,9 @@
                 - field: dateTimeInterval.start.label
                   direction: DESC
                   date: true
+                - field: dateTimeInterval.end.label
+                  direction: DESC
+                  date: true
                 - field: title
                   direction: ASC
               template: "defaults/displayViews/persons/creativeWorks/default.html"
@@ -730,6 +799,9 @@
                   value: Time Based Media
               sort:
                 - field: dateTimeInterval.start.label
+                  direction: DESC
+                  date: true
+                - field: dateTimeInterval.end.label
                   direction: DESC
                   date: true
                 - field: title
@@ -1439,6 +1511,14 @@
           template: "defaults/displayViews/organizations/affiliation/hasSubOrganization.html"
           field: hasSubOrganizations
           order: 3
+          subsections:
+            - name: Has Sub-Organization
+              field: hasSubOrganizations
+              order: 1
+              sort:
+                - field: label
+                  direction: ASC
+              template: "defaults/displayViews/organizations/affiliation/hasSubOrganization/default.html"
         - name: organization within
           template: "defaults/displayViews/organizations/affiliation/organizationWithin.html"
           field: organizationWithin
@@ -1852,6 +1932,10 @@
           template: "defaults/displayViews/documents/overview/newsOutlet.html"
           field: newsOutlet
           order: 26
+        - name: Institution
+          template: "defaults/displayViews/documents/overview/placeOfPublication.html"
+          field: placeOfPublication
+          order: 27
     - name: Identity
       sections:
         - name: EAN International-Uniform Code Council (EAN-UCC) 13
@@ -2525,27 +2609,23 @@
           template: "defaults/displayViews/concepts/overview/awardConferredByPreferredLabel.html"
           field: awardConferredByPreferredLabel
           order: 3
-        - name: year awarded
-          template: "defaults/displayViews/concepts/overview/yearAwarded.html"
-          field: yearAwarded
-          order: 4
         - name: broader concept
           template: "defaults/displayViews/concepts/overview/broaderConcept.html"
           field: broaderConcepts
-          order: 5
+          order: 4
         - name: narrower concept
           template: "defaults/displayViews/concepts/overview/narrowerConcept.html"
           field: narrowerConcepts
-          order: 6
+          order: 5
         - name: related concept
           template: "defaults/displayViews/concepts/overview/relatedConcept.html"
           field: relatedConcepts
-          order: 7
+          order: 6
         - name: receipts
           paginated: true
           template: "defaults/displayViews/concepts/overview/receipts.html"
           field: receipts
-          order: 8
+          order: 7
           sort:
             - field: recipientName
               direction: ASC
