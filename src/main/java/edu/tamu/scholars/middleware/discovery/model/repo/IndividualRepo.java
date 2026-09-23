@@ -207,13 +207,23 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     }
 
     @Override
-    public List<Individual> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters) {
+    public List<Individual> findMostRecentlyUpdate(Integer limit, String fl, String fq, List<FilterArg> filters) {
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(filters)
             .withSort(Sort.by(Direction.DESC, MOD_TIME))
             .withRows(limit);
 
-        return findAllQuery(builder.query());
+        if (fl != null) {
+            builder = builder.withFields(fl);
+        }
+
+        SolrQuery query = builder.query();
+
+        if (fq != null) {
+            query.addFilterQuery(fq);
+        }
+
+        return findAllQuery(query);
     }
 
     @Override
