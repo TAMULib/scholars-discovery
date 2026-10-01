@@ -257,7 +257,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             .withSort(sort)
             .withRows((int) count);
 
-        logger.info("{}: Exporting {} individuals for {} {} {} {}", builder.getId(), count, query, filters, boosts, sort);
+        logger.info("{}: Exporting {} individuals for query: {}", builder.getId(), count, query);
 
         return Flux.create(emitter -> {
             try {
@@ -267,21 +267,29 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
                     @Override
                     public void streamSolrDocument(SolrDocument document) {
-                        Individual individual = Individual.from(document);
-                        logger.debug("{}: streamSolrDocument: {}", builder.getId(), individual);
-                        emitter.next(individual);
+                        try {
+                            Individual individual = Individual.from(document);
 
-                        long numRemaining = remaining.decrementAndGet();
-                        logger.debug("{}: streamSolrDocument remaining: {}", builder.getId(), numRemaining);
-                        if (numRemaining == 0 && docListInfoReceived.get()) {
-                            logger.info("{}: streamSolrDocument COMPLETE", builder.getId());
-                            emitter.complete();
+                            logger.info("{}: streamSolrDocument: Individual ID = {}", builder.getId(), individual.getId());
+                            logger.info("{}: streamSolrDocument: Details = {}", builder.getId(), individual);
+
+                            emitter.next(individual);
+
+                            long numRemaining = remaining.decrementAndGet();
+                            logger.debug("{}: streamSolrDocument remaining: {}", builder.getId(), numRemaining);
+
+                            if (numRemaining == 0 && docListInfoReceived.get()) {
+                                logger.info("{}: streamSolrDocument COMPLETE", builder.getId());
+                                emitter.complete();
+                            }
+                        } catch (Exception e) {
+                            logger.error("{}: Error mapping SolrDocument to Individual: {}", builder.getId(), e.getMessage(), e);
                         }
                     }
 
                     @Override
                     public void streamDocListInfo(long numFound, long start, Float maxScore) {
-                        logger.debug("{}: streamDocListInfo {} {} {}", builder.getId(), numFound, start, maxScore);
+                        logger.info("{}: streamDocListInfo found {} documents (start: {}, maxScore: {})", builder.getId(), numFound, start, maxScore);
 
                         remaining.set(numFound);
                         docListInfoReceived.set(true);
@@ -291,7 +299,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                             emitter.complete();
                         }
                     }
-
                 });
             } catch (IOException | SolrServerException e) {
                 throw new SolrRequestException("Failed to stream documents", e);

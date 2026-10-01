@@ -133,10 +133,10 @@ public class IndividualExportController implements RepresentationModelProcessor<
                 addResource(resource, new ResourceLink(
                     individual,
                     "zip", 
-                    "Custom Year PUblications",
+                    "Custom Year Publications",
                     "Individual custom year publications export",
-                    "",
-                    ""
+                    "startYear",
+                    "endYear"
                 ));
             } else if (individual.getProxy().equals(Organization.class.getSimpleName())) {
                 addResource(resource, new ResourceLink(
@@ -144,8 +144,8 @@ public class IndividualExportController implements RepresentationModelProcessor<
                     "zip",
                     "Custom Year Publications",
                     "Organization custom year publications export",
-                    "",
-                    ""
+                    "startYear",
+                    "endYear"
                 ));
             }
         }
