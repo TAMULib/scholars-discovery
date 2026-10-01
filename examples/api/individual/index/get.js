@@ -21,7 +21,7 @@ async function getScholarsProfile() {
     const request = await fetch(url);
 
     if (!request.ok) {
-      throw new Error(`HTTP Error! status: ${request.status}`);
+      throw new Error(`HTTP Error! status: ${request?.status}`);
     }
 
     const response = await request.json();
