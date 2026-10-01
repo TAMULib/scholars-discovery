@@ -43,7 +43,7 @@ async function getScholarsProfile() {
  */
 function createScholarsProfile(scholar) {
 
-  const profileImage = scholar.image || scholar.thumbnail;
+  const profileImage = scholar?.image || scholar?.thumbnail;
 
   const imageUrl = profileImage
     ? `https://api.library.tamu.edu/scholars-discovery${profileImage}`
