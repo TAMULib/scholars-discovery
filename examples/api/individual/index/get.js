@@ -67,7 +67,6 @@ function createScholarsProfile(scholar) {
     const organizationLabel = organization?.label ?? "N/A";
 
     return `${organizationLabel}`;
-
   });
 
   const positionOrganization = formattedPositions.join(", ") || "N/A";
