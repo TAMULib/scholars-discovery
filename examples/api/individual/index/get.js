@@ -28,7 +28,7 @@ async function getScholarsProfile() {
 
     const scholarsProfile = response._embedded.individual;
 
-    const htmlContent = scholarsProfile.map(createScholarsProfile).join('');
+    const htmlContent = scholarsProfile?.map(createScholarsProfile)?.join('');
 
     container.innerHTML = htmlContent;
 
