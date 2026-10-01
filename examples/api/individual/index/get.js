@@ -51,6 +51,10 @@ function createScholarsProfile(scholar) {
 
   const altImage = "https://energy.tamu.edu/wp-content/plugins/wp-scholars-tamu/images/TAM-LogoBox.jpg";
 
+  const displayImage = imageUrl
+    ? imageUrl
+    : altImage;
+
   const profileUrl = `https://scholars.library.tamu.edu/vivo/display/${scholar.id}`;
 
   const modTimeConversion = new Date(scholar.modTime);
@@ -73,10 +77,7 @@ function createScholarsProfile(scholar) {
 
   return `
         <div onclick="window.open('${profileUrl}', '_blank')">
-          ${imageUrl 
-            ? `<img src="${imageUrl}">` 
-            : `<img src="${altImage}">`
-          }
+          <img src=${displayImage}>
 
           <h3>
           ${scholar.firstName ?? "N/A"} ${scholar.lastName ?? "N/A"}
