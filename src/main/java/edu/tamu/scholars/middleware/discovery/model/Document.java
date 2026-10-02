@@ -674,6 +674,14 @@ public class Document extends Common {
         this.publicationOutlet = publicationOutlet;
     }
 
+    public String getPublicationVenueOutlet() {
+        return publicationVenueOutlet;
+    }
+
+    public void setPublicationVenueOutlet(String publicationVenueOutlet) {
+        this.publicationVenueOutlet = publicationVenueOutlet;
+    }
+
     public String getNameOfConference() {
         return nameOfConference;
     }
