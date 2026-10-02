@@ -62,7 +62,6 @@ async function getScholarsProfile() {
   } catch(error) {
     console.error('Failed to fetch data:', error);
   }
-
 }
 
 /**
