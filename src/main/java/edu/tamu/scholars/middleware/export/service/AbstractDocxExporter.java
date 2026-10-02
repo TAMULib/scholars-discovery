@@ -103,8 +103,6 @@ public abstract class AbstractDocxExporter implements Exporter {
         String headerHtml;
 
         try {
-            System.out.println("JSON Payload: " + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
-
             contentHtml = exportView.getContentTemplate() != null
                 ? handlebarsService.template(exportView.getContentTemplate(), json)
                 : "";
@@ -112,7 +110,6 @@ public abstract class AbstractDocxExporter implements Exporter {
                 ? handlebarsService.template(exportView.getHeaderTemplate(), json)
                 : "";
         } catch (Exception e) {
-            System.out.println("\n\n FAILED ON INDIVIDUAL ID: " + (json.has("id") ? json.get("id").asText() : "UNKNOWN"));
             throw new ExportException(String.format("Failed to render export template for view '%s': %s",
                 exportView.getName(), e.getMessage()));
         }
@@ -207,7 +204,6 @@ public abstract class AbstractDocxExporter implements Exporter {
                 try {
                     JsonNode reference = node.path(lazyReference.getField());
                     List<String> ids = extractIds(reference);
-                    System.out.println("\n\n ADE:fetchAndAttachLazyReferences ids"+ ids);
 
                     if (!ids.isEmpty()) {
                         List<Individual> ref = fetchLazyReference(lazyReference, ids, startYear, endYear);
@@ -242,7 +238,6 @@ public abstract class AbstractDocxExporter implements Exporter {
                         String processedValue = value
                             .replace("${startYear}", startYear)
                             .replace("${endYear}", endYear);
-                        System.out.println("\n\n\nfetchLazyReference:processedValue: " + processedValue + "\n\n");
                         filters.add(FilterArg.of(
                             filter.getField(),
                             Optional.of(processedValue),

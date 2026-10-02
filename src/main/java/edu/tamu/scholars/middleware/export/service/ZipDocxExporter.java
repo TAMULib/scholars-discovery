@@ -160,7 +160,6 @@ public class ZipDocxExporter extends AbstractDocxExporter {
         if (hasMultipleReference) {
             refNode = mapper.valueToTree(refDoc);
             if (node.has(AWARDS_AND_HONORS) && !refNode.has(AWARDS_AND_HONORS)) {
-                System.out.println("\n\n\n node has AwardsAndHonors:" + node.has(AWARDS_AND_HONORS)  + " and if refNode has:" + !refNode.has(AWARDS_AND_HONORS));
                 refNode.set(AWARDS_AND_HONORS, node.get(AWARDS_AND_HONORS));
             }
             if (node.has(PUBLICATIONS) && !refNode.has(PUBLICATIONS)) {
@@ -171,7 +170,6 @@ public class ZipDocxExporter extends AbstractDocxExporter {
                     for (JsonNode pub : publicationsNode) {
                         if (pub.has("publicationDate")) {
                             hasPubDate = true;
-                            System.out.println("\n\n ZE: publications " + pub + "\n\n");
                         }
                     }
                 }
