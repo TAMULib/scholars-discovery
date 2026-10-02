@@ -18,7 +18,8 @@ const fl = [
 
 const fq = 'class:Person';
 
-const apiBaseUrl = 'http://localhost:9000/individual/search/recentlyUpdated';
+const apiBaseUrl = 'http://localhost:9000/';
+const apiPath = 'individual/search/recentlyUpdated/';
 
 const apiUrl = `${apiBaseUrl}?limit=${limit}&fl=${fl},class&fq=${fq}`;
 
