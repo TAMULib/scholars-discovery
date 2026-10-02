@@ -66,6 +66,8 @@ async function getScholarsProfile() {
 
 /**
  * Function to create the HTML for a Scholars profile.
+ * 
+ * @param scholar Individual JSON object.
  */
 function createScholarsProfile(scholar) {
 
@@ -79,36 +81,36 @@ function createScholarsProfile(scholar) {
     ? imageUrl
     : altImage;
 
-  const profileUrl = `${profileBaseUrl}${scholar.id}`;
+  const profileUrl = `${profileBaseUrl}${scholar?.id}`;
 
-  const modTimeConversion = new Date(scholar.modTime);
+  const modTimeConversion = new Date(scholar?.modTime) || "N/A";
 
   /**
    * Retrieves positions and uses the first organization associated with each position from the Solr data.
    */
-  const positions = scholar.positions ?? [];
+  const positions = scholar?.positions ?? [];
 
   const formattedPositions = positions.map(position => {
 
-    const organization = position.organizations?.[0];
+    const organization = position?.organizations?.[0];
 
     const organizationLabel = organization?.label ?? "N/A";
 
     return `${organizationLabel}`;
   });
 
-  const positionOrganization = formattedPositions.join(", ") || "N/A";
+  const positionOrganization = formattedPositions?.join(", ") || "N/A";
 
   return `
     <div onclick="window.open('${profileUrl}', '_blank')">
       <img src=${displayImage}>
 
       <h3>
-      ${scholar.firstName} ${scholar.lastName}
+      ${scholar?.firstName ?? "N/A"} ${scholar?.lastName ?? "N/A"}
       </h3>
 
       <p>
-      <strong>Preferred Title:</strong> ${scholar.preferredTitle}
+      <strong>Preferred Title:</strong> ${scholar?.preferredTitle ?? "N/A"}
       </p>
 
       <p>
@@ -116,7 +118,7 @@ function createScholarsProfile(scholar) {
       </p>
 
       <p>
-      <strong>Primary Email:</strong> ${scholar.primaryEmail}
+      <strong>Primary Email:</strong> ${scholar?.primaryEmail ?? "N/A"}
       </p>
 
       <p>
