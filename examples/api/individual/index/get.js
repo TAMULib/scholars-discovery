@@ -103,7 +103,7 @@ function createScholarsProfile(scholar) {
 
   return `
     <div onclick="window.open('${profileUrl}', '_blank')">
-      <img src=${displayImage}>
+      <img src="${displayImage}">
 
       <h3>
       ${scholar?.firstName ?? "N/A"} ${scholar?.lastName ?? "N/A"}
