@@ -26,7 +26,7 @@ async function getScholarsProfile() {
 
     const response = await request.json();
 
-    const scholarsProfile = response._embedded.individual;
+    const scholarsProfile = response?._embedded?.individual;
 
     const htmlContent = scholarsProfile?.map(createScholarsProfile)?.join('');
 
