@@ -1,4 +1,34 @@
 /**
+ * URLs used to retrieve profile data and support the display of Scholars profiles.
+ */
+const limit = 15;
+
+const fl = [
+  'id',
+  'firstName',
+  'lastName',
+  'positions',
+  'positionOrganization',
+  'image',
+  'thumbnail',
+  'preferredTitle',
+  'modTime',
+  'primaryEmail'
+].join(",");
+
+const fq = 'class:Person';
+
+const apiBaseUrl = 'http://localhost:9000/individual/search/recentlyUpdated';
+
+const apiUrl = `${apiBaseUrl}?limit=${limit}&fl=${fl},class&fq=${fq}`;
+
+const imageBaseUrl = 'https://api.library.tamu.edu/scholars-discovery/';
+
+const profileBaseUrl = 'https://scholars.library.tamu.edu/vivo/display/';
+
+const altImage = 'https://energy.tamu.edu/wp-content/plugins/wp-scholars-tamu/images/TAM-LogoBox.jpg';
+
+/**
  * Calls getScholarsProfile() when the Load Scholars button is clicked.
  */
 const button = document.getElementById("load-scholars");
@@ -6,19 +36,15 @@ const button = document.getElementById("load-scholars");
 button.addEventListener("click", getScholarsProfile);
 
 /**
- * Function to fetch 15 recently updated Scholar profiles and renders them in the Scholars container.
+ * Function to fetch recently updated Scholars profiles and renders them in the Scholars container.
  */
 async function getScholarsProfile() {
 
   const container = document.getElementById('scholars-container');
 
-  const limitNum = 15;
-
-  const url = `http://localhost:9000/individual/search/recentlyUpdated?limit=${limitNum}&fl=id,firstName,lastName,positions,positionOrganization,image,thumbnail,preferredTitle,modTime,primaryEmail,class&fq=class:Person`;
-
   try {
 
-    const request = await fetch(url);
+    const request = await fetch(apiUrl);
 
     if (!request.ok) {
       throw new Error(`HTTP Error! status: ${request?.status}`);
@@ -39,23 +65,21 @@ async function getScholarsProfile() {
 }
 
 /**
- * Function to create the HTML for a Scholar profile.
+ * Function to create the HTML for a Scholars profile.
  */
 function createScholarsProfile(scholar) {
 
   const profileImage = scholar?.image || scholar?.thumbnail;
 
   const imageUrl = profileImage
-    ? `https://api.library.tamu.edu/scholars-discovery${profileImage}`
+    ? `${imageBaseUrl}${profileImage.replace(/^\/+/, "")}`
     : null;
-
-  const altImage = "https://energy.tamu.edu/wp-content/plugins/wp-scholars-tamu/images/TAM-LogoBox.jpg";
 
   const displayImage = imageUrl
     ? imageUrl
     : altImage;
 
-  const profileUrl = `https://scholars.library.tamu.edu/vivo/display/${scholar.id}`;
+  const profileUrl = `${profileBaseUrl}${scholar.id}`;
 
   const modTimeConversion = new Date(scholar.modTime);
 
