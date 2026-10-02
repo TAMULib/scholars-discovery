@@ -124,5 +124,4 @@ function createScholarsProfile(scholar) {
           </p>
         </div>
       `;
-
 }
