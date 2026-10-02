@@ -19,9 +19,10 @@ const fl = [
 const fq = 'class:Person';
 
 const apiBaseUrl = 'http://localhost:9000/';
+
 const apiPath = 'individual/search/recentlyUpdated/';
 
-const apiUrl = `${apiBaseUrl}?limit=${limit}&fl=${fl},class&fq=${fq}`;
+const apiUrl = `${apiBaseUrl}${apiPath.replace(/\/$/, "")}?limit=${limit}&fl=${fl},class&fq=${fq}`;
 
 const imageBaseUrl = 'https://api.library.tamu.edu/scholars-discovery/';
 
@@ -44,7 +45,6 @@ async function getScholarsProfile() {
   const container = document.getElementById('scholars-container');
 
   try {
-
     const request = await fetch(apiUrl);
 
     if (!request.ok) {
@@ -100,28 +100,29 @@ function createScholarsProfile(scholar) {
   const positionOrganization = formattedPositions.join(", ") || "N/A";
 
   return `
-        <div onclick="window.open('${profileUrl}', '_blank')">
-          <img src=${displayImage}>
+    <div onclick="window.open('${profileUrl}', '_blank')">
+      <img src=${displayImage}>
 
-          <h3>
-          ${scholar.firstName ?? "N/A"} ${scholar.lastName ?? "N/A"}
-          </h3>
+      <h3>
+      ${scholar.firstName} ${scholar.lastName}
+      </h3>
 
-          <p>
-          <strong>Preferred Title:</strong> ${scholar.preferredTitle ?? "N/A"}
-          </p>
+      <p>
+      <strong>Preferred Title:</strong> ${scholar.preferredTitle}
+      </p>
 
-          <p>
-          <strong>Positions:</strong> ${positionOrganization ?? "N/A"}
-          </p>
+      <p>
+      <strong>Positions:</strong> ${positionOrganization}
+      </p>
 
-          <p>
-          <strong>Primary Email:</strong> ${scholar.primaryEmail ?? "N/A"}
-          </p>
+      <p>
+      <strong>Primary Email:</strong> ${scholar.primaryEmail}
+      </p>
 
-          <p>
-          <strong>Last Updated:</strong> ${modTimeConversion}
-          </p>
-        </div>
-      `;
+      <p>
+      <strong>Last Updated:</strong> ${modTimeConversion}
+      </p>
+    </div>
+  `;
+
 }
