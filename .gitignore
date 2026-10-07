@@ -43,3 +43,7 @@ pgdata/
 zoo/
 
 config.json
+
+# Examples files
+examples/api/individual/index/node_modules
+examples/api/individual/index/yarn.lock
