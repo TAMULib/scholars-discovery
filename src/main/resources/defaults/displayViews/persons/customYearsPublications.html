@@ -128,9 +128,9 @@
   </div>
   {{/if}}
 
-  {{#if publications.length }}
+  {{#if hasPublications }}
   <div class="section">
-    <div class="label">Publications [{{yearFrom 5}} to {{year}}]</div>
+    <div class="label">Publications [{{startYear}} to {{endYear}}]</div>
     <div class="publications">
       {{#eachTypesFor publications}}
         <div class="sublabel">{{toSubsectionTypeLabel .}}</div>
@@ -145,49 +145,48 @@
           {{/if}}
 
           {{#if bookTitle}}
+            {{#if editorList}}
+            <span>{{editorList}} (Eds.),</span>
+            {{/if}}
+            <span>{{bookTitle}}.</span>
 
-          {{#if editorList}}
-          <span>{{editorList}} (Eds.),</span>
-          {{/if}}
-          <span>{{bookTitle}}.</span>
-
-          {{#if pageStart}}
-          {{#if pageEnd}}
-          <span>(pp. {{pageStart}}-{{pageEnd}}).</span>
-          {{else}}
-          <span>(pp. {{pageStart}}).</span>
-          {{/if}}
-          {{else}}
-          {{#if pageEnd}}
-          <span>(pp. {{pageEnd}}).</span>
-          {{/if}}
-          {{/if}}
+            {{#if pageStart}}
+              {{#if pageEnd}}
+              <span>(pp. {{pageStart}}-{{pageEnd}}).</span>
+              {{else}}
+              <span>(pp. {{pageStart}}).</span>
+              {{/if}}
+            {{else}}
+              {{#if pageEnd}}
+              <span>(pp. {{pageEnd}}).</span>
+              {{/if}}
+            {{/if}}
 
           {{else}}
 
-          {{#if volume}}
-          {{#if issue}}
-          <span>{{volume}}({{issue}}), </span>
-          {{else}}
-          <span>{{volume}}, </span>
-          {{/if}}
-          {{else}}
-          {{#if issue}}
-          <span>({{issue}}), </span>
-          {{/if}}
-          {{/if}}
+            {{#if volume}}
+              {{#if issue}}
+              <span>{{volume}}({{issue}}), </span>
+              {{else}}
+              <span>{{volume}}, </span>
+              {{/if}}
+            {{else}}
+              {{#if issue}}
+              <span>({{issue}}), </span>
+              {{/if}}
+            {{/if}}
 
-          {{#if pageStart}}
-          {{#if pageEnd}}
-          <span>{{pageStart}}-{{pageEnd}}.</span>
-          {{else}}
-          <span>{{pageStart}}.</span>
-          {{/if}}
-          {{else}}
-          {{#if pageEnd}}
-          <span>{{pageEnd}}.</span>
-          {{/if}}
-          {{/if}}
+            {{#if pageStart}}
+              {{#if pageEnd}}
+              <span>{{pageStart}}-{{pageEnd}}.</span>
+              {{else}}
+              <span>{{pageStart}}.</span>
+              {{/if}}
+            {{else}}
+              {{#if pageEnd}}
+              <span>{{pageEnd}}.</span>
+              {{/if}}
+            {{/if}}
 
           {{/if}}
 
@@ -198,6 +197,13 @@
         </div>
         {{/eachFilteredByType}}
       {{/eachTypesFor}}
+    </div>
+  </div>
+  {{else}}
+  <div class="section">
+    <div class="label">Publications [{{startYear}} to {{endYear}}]</div>
+    <div class="publications">
+      <span>No publications found for the selected year range.</span>
     </div>
   </div>
   {{/if}}
