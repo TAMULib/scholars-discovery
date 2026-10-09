@@ -125,7 +125,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
     @Override
     public IndividualModel process(IndividualModel resource) {
         Individual individual = resource.getContent();
-        if (individual != null) {
+        if (individual != null && individual.getProxy() != null) {
             if (individual.getProxy().equals(Person.class.getSimpleName())) {
                 addResource(resource, new ResourceLink(
                     individual,

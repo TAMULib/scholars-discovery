@@ -42,7 +42,7 @@ public interface IndexDocumentRepo<D extends AbstractIndexDocument> {
 
     public List<D> findByIdIn(List<String> ids, List<FilterArg> filters, Sort sort, int limit);
 
-    public List<D> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters);
+    public List<D> findMostRecentlyUpdate(Integer limit, String fl, String fq, List<FilterArg> filters);
 
     public DiscoveryFacetAndHighlightPage<D> search(
         QueryArg query,

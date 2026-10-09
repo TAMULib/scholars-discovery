@@ -69,10 +69,11 @@ public class IndividualSearchController implements RepresentationModelProcessor<
 
     @GetMapping("/search/recentlyUpdated")
     public ResponseEntity<CollectionModel<IndividualModel>> recentlyUpdated(
-        @RequestParam(value = "limit", defaultValue = "10") int limit,
-        List<FilterArg> filters
-    ) {
-        return ResponseEntity.ok(assembler.toCollectionModel(repo.findMostRecentlyUpdate(limit, filters)));
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(required = false) String fl,
+        @RequestParam(required = false) String fq,
+        List<FilterArg> filters) {
+        return ResponseEntity.ok(assembler.toCollectionModel(repo.findMostRecentlyUpdate(limit, fl, fq, filters)));
     }
 
     @GetMapping("/search/advanced")
@@ -110,6 +111,8 @@ public class IndividualSearchController implements RepresentationModelProcessor<
 
             resource.add(linkTo(methodOn(this.getClass()).recentlyUpdated(
                 10,
+                null,
+                null,
                 new ArrayList<FilterArg>()
             )).withRel("recentlyUpdated").withTitle("Recently updated query"));
 

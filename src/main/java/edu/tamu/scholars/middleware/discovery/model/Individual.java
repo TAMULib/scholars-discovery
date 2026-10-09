@@ -100,29 +100,31 @@ public class Individual extends AbstractIndexDocument {
     public static Individual from(SolrDocument document) {
         Map<String, Object> content = new HashMap<>();
 
-        String name = (String) normalize(document.getFieldValue(CLASS));
+        if (document.containsKey(CLASS)) {
 
-        DiscoveryUtility.getDiscoveryDocumentTypeFields(name)
-            .entrySet()
-            .stream()
-            .filter(entry -> document.containsKey(entry.getKey()))
-            .forEach(entry -> {
-                String field = entry.getKey();
-                if (Collection.class.isAssignableFrom(entry.getValue())) {
-                    Collection<Object> values = document.getFieldValues(field)
-                        .stream()
-                        .map(Individual::normalize)
-                        .collect(Collectors.toList());
-                    content.put(field, values);
-                } else {
-                    content.put(field, normalize(document.getFirstValue(field)));
-                }
-            });
+            String name = (String) normalize(document.getFieldValue(CLASS));
 
-        if (document.containsKey(ABSTRACT_TEXT)) {
-            content.put(ABSTRACT, normalize(document.getFirstValue(ABSTRACT_TEXT)));
+            DiscoveryUtility.getDiscoveryDocumentTypeFields(name)
+                .entrySet()
+                .stream()
+                .filter(entry -> document.containsKey(entry.getKey()))
+                .forEach(entry -> {
+                    String field = entry.getKey();
+                    if (Collection.class.isAssignableFrom(entry.getValue())) {
+                        Collection<Object> values = document.getFieldValues(field)
+                            .stream()
+                            .map(Individual::normalize)
+                            .collect(Collectors.toList());
+                        content.put(field, values);
+                    } else {
+                        content.put(field, normalize(document.getFirstValue(field)));
+                    }
+                });
+
+            if (document.containsKey(ABSTRACT_TEXT)) {
+                content.put(ABSTRACT, normalize(document.getFirstValue(ABSTRACT_TEXT)));
+            }
         }
-
         return Individual.from(content);
     }
 
