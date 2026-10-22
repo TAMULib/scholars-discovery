@@ -206,7 +206,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
     }
 
-    @Override
     public List<Individual> findMostRecentlyUpdate(Integer limit, String fl, String fq, List<FilterArg> filters) {
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(filters)
@@ -267,7 +266,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             .withSort(sort)
             .withRows((int) count);
 
-        logger.info("{}: Exporting {} individuals for query: {}", builder.getId(), count, query);
+        logger.debug("{}: Exporting {} individuals for query: {}", builder.getId(), count, query);
 
         return Flux.create(emitter -> {
             try {
@@ -280,8 +279,8 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                         try {
                             Individual individual = Individual.from(document);
 
-                            logger.info("{}: streamSolrDocument: Individual ID = {}", builder.getId(), individual.getId());
-                            logger.info("{}: streamSolrDocument: Details = {}", builder.getId(), individual);
+                            logger.debug("{}: streamSolrDocument: Individual ID = {}", builder.getId(), individual.getId());
+                            logger.debug("{}: streamSolrDocument: Details = {}", builder.getId(), individual);
 
                             emitter.next(individual);
 
@@ -289,7 +288,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                             logger.debug("{}: streamSolrDocument remaining: {}", builder.getId(), numRemaining);
 
                             if (numRemaining == 0 && docListInfoReceived.get()) {
-                                logger.info("{}: streamSolrDocument COMPLETE", builder.getId());
+                                logger.debug("{}: streamSolrDocument COMPLETE", builder.getId());
                                 emitter.complete();
                             }
                         } catch (Exception e) {
@@ -299,13 +298,13 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
                     @Override
                     public void streamDocListInfo(long numFound, long start, Float maxScore) {
-                        logger.info("{}: streamDocListInfo found {} documents (start: {}, maxScore: {})", builder.getId(), numFound, start, maxScore);
+                        logger.debug("{}: streamDocListInfo found {} documents (start: {}, maxScore: {})", builder.getId(), numFound, start, maxScore);
 
                         remaining.set(numFound);
                         docListInfoReceived.set(true);
 
                         if (numFound == 0) {
-                            logger.info("{}: streamDocListInfo COMPLETE", builder.getId());
+                            logger.debug("{}: streamDocListInfo COMPLETE", builder.getId());
                             emitter.complete();
                         }
                     }
@@ -845,6 +844,11 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
     @Override
     public Optional<Individual> findByIdWithYearFilter(String id, List<FilterArg> filters, Sort sort, int limit) {
         throw new UnsupportedOperationException("Unimplemented method 'findByIdWithYearFilter'");
+    }
+
+    @Override
+    public List<Individual> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters) {
+        throw new UnsupportedOperationException("Unimplemented method 'findMostRecentlyUpdate'");
     }
 
 }
