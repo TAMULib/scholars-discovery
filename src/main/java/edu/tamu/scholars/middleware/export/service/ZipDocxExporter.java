@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.docx4j.Docx4J;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -35,6 +37,8 @@ import edu.tamu.scholars.middleware.view.model.ExportView;
  */
 @Service
 public class ZipDocxExporter extends AbstractDocxExporter {
+
+    private static final Logger logger = LoggerFactory.getLogger(ZipDocxExporter.class);
 
     private static final String TYPE = "zip";
 
@@ -218,7 +222,7 @@ public class ZipDocxExporter extends AbstractDocxExporter {
             for (JsonNode pub : publicationsNode) {
                 if (pub != null && pub.has("publicationDate")) {
                     String dateStr = pub.get("publicationDate").asText();
-                    if (longerThan(dateStr, 3)) {
+                    if (dateStr != null && dateStr.length() > 3) {
                         try {
                             int docYear = Integer.parseInt(dateStr.substring(0, 4));
                             if (docYear >= start && docYear <= end) {
@@ -226,9 +230,9 @@ public class ZipDocxExporter extends AbstractDocxExporter {
                                 hasValidPublication = true;
                             }
                         } catch (NumberFormatException e) {
-                            System.err.println("Failed to parse year from publicationDate: '" + dateStr + "'"+ e.getMessage());
+                            logger.error("Failed to parse year from publicationDate: '" + dateStr + "'"+ e.getMessage());
                         } catch (Exception e) {
-                            System.err.println("Unexpected error while processing publication date '" + dateStr + "': " + e.getMessage());
+                            logger.error("Unexpected error while processing publication date '" + dateStr + "': " + e.getMessage());
                         }
                     }
                 }
@@ -243,20 +247,16 @@ public class ZipDocxExporter extends AbstractDocxExporter {
                     String dateStr = singleDate.asText();
                     if (dateStr != null && dateStr.length() >= 4) {
                         int docYear = Integer.parseInt(dateStr.substring(0, 4));
-                        boolean inRange = (docYear >= start && docYear <= end);
+                        boolean inRange = docYear >= start && docYear <= end;
                         refNode.put("hasPublications", inRange);
                         return;
                     }
                 } catch (Exception e) {
-                    System.err.println("Failed to parse single publicationDate: '" + singleDate.asText() + "'. Error: " + e.getMessage());
+                    logger.error("Failed to parse single publicationDate: '" + singleDate.asText() + "'. Error: " + e.getMessage());
                 }
             }
             refNode.put("hasPublications", false);
         }
-    }
-
-    private boolean longerThan(String str, int len) {
-        return str != null && str.length() > len;
     }
 
 }

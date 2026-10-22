@@ -39,6 +39,8 @@ import org.docx4j.wml.HeaderReference;
 import org.docx4j.wml.ObjectFactory;
 import org.docx4j.wml.SectPr;
 import org.docx4j.wml.SectPr.PgMar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -58,6 +60,8 @@ import edu.tamu.scholars.middleware.view.model.repo.DisplayViewRepo;
  * 
  */
 public abstract class AbstractDocxExporter implements Exporter {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractDocxExporter.class);
 
     private static final ContentType HTML_CONTENT_TYPE = new ContentType("text/html");
 
@@ -167,7 +171,7 @@ public abstract class AbstractDocxExporter implements Exporter {
                         }
                     }
                 } catch (Exception e) {
-                    System.err.println("Warning: Failed to fetch lazy reference for field " + lazyReference.getField() + ": " + e.getMessage());
+                    logger.error("Warning: Failed to fetch lazy reference for field " + lazyReference.getField() + ": " + e.getMessage(), e);
                 }
             }
         );
@@ -181,15 +185,15 @@ public abstract class AbstractDocxExporter implements Exporter {
 
         if (reference.isArray() && !reference.isEmpty()) {
             ids = StreamSupport.stream(reference.spliterator(), false)
-                    .filter(rn -> rn != null && rn.has(ID))
-                    .map(rn -> rn.get(ID))
-                    .filter(idNode -> idNode != null && !idNode.isNull())
-                    .map(JsonNode::asText)
-                    .collect(Collectors.toList());
+                  .filter(rn -> rn != null && rn.has(ID))
+                  .map(rn -> rn.get(ID))
+                  .filter(idNode -> idNode != null && !idNode.isNull())
+                  .map(JsonNode::asText)
+                  .collect(Collectors.toList());
         } else if (reference.has(ID)) {
             JsonNode singleIdNode = reference.get(ID);
             if (singleIdNode != null && !singleIdNode.isNull()) {
-                ids.add(singleIdNode.asText());
+              ids.add(singleIdNode.asText());
             }
         }
 
@@ -198,6 +202,7 @@ public abstract class AbstractDocxExporter implements Exporter {
 
     protected void fetchAndAttachLazyReferences(ObjectNode node, List<ExportFieldView> lazyReferences, String startYear, String endYear) {
         if (lazyReferences == null || node == null) return;
+
         lazyReferences.stream()
             .filter(lazyReference -> lazyReference != null && lazyReference.getField() != null && node.hasNonNull(lazyReference.getField()))
             .forEach(lazyReference -> {
@@ -213,7 +218,7 @@ public abstract class AbstractDocxExporter implements Exporter {
                         }
                     }
                 } catch (Exception e) {
-                    System.err.println("Warning: Failed to fetch lazy reference for field " + lazyReference.getField() + ": " + e.getMessage());
+                    logger.error("Warning: Failed to fetch lazy reference for field " + lazyReference.getField() + ": " + e.getMessage());
                 }
             }
         );

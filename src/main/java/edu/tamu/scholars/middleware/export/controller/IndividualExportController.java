@@ -80,11 +80,9 @@ public class IndividualExportController implements RepresentationModelProcessor<
 
             Exporter exporter = exporterRegistry.getExporter(type);
 
-            if (ids != null && !ids.isEmpty()) {
-                responseBody = exporter.streamIndividualsByIds(ids, name, startYear, endYear);
-            } else {
-                responseBody = exporter.streamIndividualById(id, name, startYear, endYear);
-            }
+            responseBody = ids != null && !ids.isEmpty()
+              ? exporter.streamIndividualsByIds(ids, name, startYear, endYear)
+              : exporter.streamIndividualById(id, name, startYear, endYear);
 
             return ResponseEntity.ok()
                 .header(CONTENT_DISPOSITION, exporter.contentDisposition(normalizeExportFilename(name)))
@@ -113,7 +111,7 @@ public class IndividualExportController implements RepresentationModelProcessor<
     @Override
     public IndividualModel process(IndividualModel resource) {
         Individual individual = resource.getContent();
-        if (individual != null) {
+        if (individual != null && individual.getProxy() != null) {
             if (individual.getProxy().equals(Person.class.getSimpleName())) {
                 addResource(resource, new ResourceLink(
                     individual,
