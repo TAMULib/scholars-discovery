@@ -261,7 +261,6 @@ public abstract class AbstractDocxExporter implements Exporter {
             }
         }
 
-        // Sort sort = Sort.by(lazyReference.getSort().stream().map(s -> Order.by(s.getField()).with(s.getDirection())).toList());
         Sort sort = Sort.unsorted();
         if (lazyReference.getSort() != null && !lazyReference.getSort().isEmpty()) {
             sort = Sort.by(lazyReference.getSort().stream()

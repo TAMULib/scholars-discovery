@@ -293,6 +293,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
                             }
                         } catch (Exception e) {
                             logger.error("{}: Error mapping SolrDocument to Individual: {}", builder.getId(), e.getMessage(), e);
+                             emitter.error(new SolrRequestException("Failed to stream documents", e));
                         }
                     }
 
@@ -475,7 +476,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
     }
 
-    public Individual getById(String id) {
+    private Individual getById(String id) {
         try {
             SolrDocument document = solrClient.getById(collectionName, id);
 
