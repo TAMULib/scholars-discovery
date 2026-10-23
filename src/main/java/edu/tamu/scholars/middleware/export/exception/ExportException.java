@@ -11,4 +11,8 @@ public class ExportException extends RuntimeException {
         super(message);
     }
 
+    public ExportException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
