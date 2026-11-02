@@ -126,7 +126,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
     @Override
     public List<Individual> findByType(String type) {
-        FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty());
+        FilterArg filter = FilterArg.of(TYPE, Optional.of(type), Optional.empty(), Optional.empty(), "", "");
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(Arrays.asList(filter))
             .withRows(MAX_PER_TYPE);
@@ -162,7 +162,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         try {
             SolrQueryBuilder queryBuilder = new SolrQueryBuilder()
                 .withFilters(Arrays.asList(
-                    FilterArg.of(ID, Optional.of(id), Optional.empty(), Optional.empty())
+                    FilterArg.of(ID, Optional.of(id), Optional.empty(), Optional.empty(), "", "")
                 ))
                 .withRows(1);
 
@@ -206,7 +206,6 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
         }
     }
 
-    @Override
     public List<Individual> findMostRecentlyUpdate(Integer limit, String fl, String fq, List<FilterArg> filters) {
         SolrQueryBuilder builder = new SolrQueryBuilder()
             .withFilters(filters)
@@ -267,7 +266,7 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             .withSort(sort)
             .withRows((int) count);
 
-        logger.info("{}: Exporting {} individuals for {} {} {} {}", builder.getId(), count, query, filters, boosts, sort);
+        logger.debug("{}: Exporting {} individuals for query: {}", builder.getId(), count, query);
 
         return Flux.create(emitter -> {
             try {
@@ -277,31 +276,39 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
 
                     @Override
                     public void streamSolrDocument(SolrDocument document) {
-                        Individual individual = Individual.from(document);
-                        logger.debug("{}: streamSolrDocument: {}", builder.getId(), individual);
-                        emitter.next(individual);
+                        try {
+                            Individual individual = Individual.from(document);
 
-                        long numRemaining = remaining.decrementAndGet();
-                        logger.debug("{}: streamSolrDocument remaining: {}", builder.getId(), numRemaining);
-                        if (numRemaining == 0 && docListInfoReceived.get()) {
-                            logger.info("{}: streamSolrDocument COMPLETE", builder.getId());
-                            emitter.complete();
+                            logger.debug("{}: streamSolrDocument: Individual ID = {}", builder.getId(), individual.getId());
+                            logger.debug("{}: streamSolrDocument: Details = {}", builder.getId(), individual);
+
+                            emitter.next(individual);
+
+                            long numRemaining = remaining.decrementAndGet();
+                            logger.debug("{}: streamSolrDocument remaining: {}", builder.getId(), numRemaining);
+
+                            if (numRemaining == 0 && docListInfoReceived.get()) {
+                                logger.debug("{}: streamSolrDocument COMPLETE", builder.getId());
+                                emitter.complete();
+                            }
+                        } catch (Exception e) {
+                            logger.error("{}: Error mapping SolrDocument to Individual: {}", builder.getId(), e.getMessage(), e);
+                             emitter.error(new SolrRequestException("Failed to stream documents", e));
                         }
                     }
 
                     @Override
                     public void streamDocListInfo(long numFound, long start, Float maxScore) {
-                        logger.debug("{}: streamDocListInfo {} {} {}", builder.getId(), numFound, start, maxScore);
+                        logger.debug("{}: streamDocListInfo found {} documents (start: {}, maxScore: {})", builder.getId(), numFound, start, maxScore);
 
                         remaining.set(numFound);
                         docListInfoReceived.set(true);
 
                         if (numFound == 0) {
-                            logger.info("{}: streamDocListInfo COMPLETE", builder.getId());
+                            logger.debug("{}: streamDocListInfo COMPLETE", builder.getId());
                             emitter.complete();
                         }
                     }
-
                 });
             } catch (IOException | SolrServerException e) {
                 throw new SolrRequestException("Failed to stream documents", e);
@@ -828,6 +835,21 @@ public class IndividualRepo implements IndexDocumentRepo<Individual> {
             return filterQuery.toString();
         }
 
+    }
+
+    @Override
+    public List<Individual> findByIdInWithYearFilter(List<String> ids, List<FilterArg> filters, Sort sort, int limit) {
+        throw new UnsupportedOperationException("Unimplemented method 'findByIdInWithYearFilter'");
+    }
+
+    @Override
+    public Optional<Individual> findByIdWithYearFilter(String id, List<FilterArg> filters, Sort sort, int limit) {
+        throw new UnsupportedOperationException("Unimplemented method 'findByIdWithYearFilter'");
+    }
+
+    @Override
+    public List<Individual> findMostRecentlyUpdate(Integer limit, List<FilterArg> filters) {
+        throw new UnsupportedOperationException("Unimplemented method 'findMostRecentlyUpdate'");
     }
 
 }
